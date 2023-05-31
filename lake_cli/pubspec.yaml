@@ -1,25 +1,27 @@
 name: lake_cli
-description: A starting point for Dart libraries or applications.
-version: 1.0.0
-# repository: https://github.com/my_org/my_repo
+description: A Very Good Project created by Very Good CLI.
+version: 0.0.1
+publish_to: none
 
 environment:
-  sdk: ^3.0.2
+  sdk: ">=3.0.0 <4.0.0"
 
-# Add regular dependencies here.
 dependencies:
-   analyzer: ^5.12.0
-   args: ^2.4.1
-   code_builder: ^4.4.0
-   colorize: ^3.0.0
-   path: ^1.8.3
-   yaml: ^3.1.2
+  args: ^2.4.1
+  cli_completion: ^0.3.0
+  dcli: ^1.36.2
+  mason_logger: ^0.2.5
+  pub_updater: ^0.3.0
 
 dev_dependencies:
+  build_runner: ^2.4.4
+  build_verify: ^3.1.0
+  build_version: ^2.1.1
   lint:
     git:
       url: "https://github.com/pro100andrey/lint.git"
-  test: ^1.24.3
+  mocktail: ^0.3.0
+  test: ^1.24.2
 
-executables: 
+executables:
   lake: lake_cli
