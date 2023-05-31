@@ -1,5 +1,6 @@
 include: package:lint/common.yaml
 
-analyzer: 
+analyzer:
+
   exclude:
     - "**/**/**.g.dart"

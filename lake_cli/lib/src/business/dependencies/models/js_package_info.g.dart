@@ -1,17 +1,17 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'npm_package_info.dart';
+part of 'js_package_info.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-NpmPackageInfo _$NpmPackageInfoFromJson(Map<String, dynamic> json) =>
-    NpmPackageInfo(
-      name: json['name'] as String,
+JsPackageInfo _$JsPackageInfoFromJson(Map<String, dynamic> json) =>
+    JsPackageInfo(
+      version: json['version'] as String,
     );
 
-Map<String, dynamic> _$NpmPackageInfoToJson(NpmPackageInfo instance) =>
+Map<String, dynamic> _$JsPackageInfoToJson(JsPackageInfo instance) =>
     <String, dynamic>{
-      'name': instance.name,
+      'version': instance.version,
     };

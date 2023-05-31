@@ -9,9 +9,9 @@ environment:
 dependencies:
   args: ^2.4.1
   cli_completion: ^0.3.0
-  dcli: ^1.36.2
+  dcli: ^2.2.4
   json_annotation: ^4.8.1
-  mason_logger: ^0.2.5
+  mason_logger: ^0.2.6
   pub_updater: ^0.3.0
 
 dev_dependencies:
