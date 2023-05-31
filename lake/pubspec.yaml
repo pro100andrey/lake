@@ -1,0 +1,17 @@
+name: lake
+description: A starting point for Dart libraries or applications.
+version: 1.0.0
+# repository: https://github.com/my_org/my_repo
+
+environment:
+  sdk: ^3.0.2
+
+# Add regular dependencies here.
+dependencies:
+   http: ^0.13.5
+
+dev_dependencies:
+  lint:
+    git:
+      url: "https://github.com/pro100andrey/lint.git"
+  test: ^1.21.0

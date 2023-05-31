@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "lake"
+		},
+		{
+			"path": "lake_cli"
+		}
+	],
+	"settings": {
+		"cSpell.words": [
+			"posix",
+			"pubspec"
+		]
+	}
+}
