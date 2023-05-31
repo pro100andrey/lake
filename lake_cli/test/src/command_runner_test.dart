@@ -31,7 +31,7 @@ void main() {
       pubUpdater = _MockPubUpdater();
 
       when(
-        () => pubUpdater.getLatestVersion(any()),
+        () async => pubUpdater.getLatestVersion(any()),
       ).thenAnswer((_) async => packageVersion);
 
       logger = _MockLogger();
@@ -88,8 +88,10 @@ void main() {
       final progress = _MockProgress();
       final progressLogs = <String>[];
       when(() => progress.complete(any())).thenAnswer((_) {
-        final message = _.positionalArguments.elementAt(0) as String?;
-        if (message != null) progressLogs.add(message);
+        final message = _.positionalArguments.first as String?;
+        if (message != null) {
+          progressLogs.add(message);
+        }
       });
       when(() => logger.progress(any())).thenReturn(progress);
 
@@ -98,12 +100,14 @@ void main() {
       verifyNever(() => logger.info(updatePrompt));
     });
 
-    test('can be instantiated without an explicit analytics/logger instance',
-        () {
-      final commandRunner = LakeCliCommandRunner();
-      expect(commandRunner, isNotNull);
-      expect(commandRunner, isA<CompletionCommandRunner<int>>());
-    });
+    test(
+      'can be instantiated without an explicit analytics/logger instance',
+      () {
+        final commandRunner = LakeCliCommandRunner();
+        expect(commandRunner, isNotNull);
+        expect(commandRunner, isA<CompletionCommandRunner<int>>());
+      },
+    );
 
     test('handles FormatException', () async {
       const exception = FormatException('oops!');

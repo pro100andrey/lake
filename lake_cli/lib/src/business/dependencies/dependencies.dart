@@ -2,19 +2,24 @@ import 'package:dcli/dcli.dart';
 import 'package:mason_logger/mason_logger.dart';
 
 void checkIfAllDependenciesInstalled(Logger logger) {
-  if (which('npm').notfound) {
+  final npmFound = which('npm').found;
+  final npxFound = which('npx').found;
+
+  if (!npmFound) {
     logger.err('npm is not installed');
   }
 
-  if (which('npx').notfound) {
+  if (!npxFound) {
     logger.err('npx is not installed');
   }
 
-  final npx = which('npx');
+  final result = 'npm -g -j ls prisma'.toParagraph();
 
-  if (npx.path == null) {
-    logger.info('npx - is not installed');
+  if (result.isNotEmpty) {
+    logger.info(result);
   }
 
-  dcliExit(0);
+  if (!npxFound || !npxFound) {
+    throw Exception('Dependencies is not installed');
+  }
 }

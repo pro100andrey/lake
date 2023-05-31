@@ -11,13 +11,11 @@ const executableName = 'lake_cli';
 const packageName = 'lake_cli';
 const description = 'A Very Good Project created by Very Good CLI.';
 
-/// {@template lake_cli_command_runner}
 /// A [CommandRunner] for the CLI.
 ///
 /// ```
-/// $ lake_cli --version
+/// $ lake --version
 /// ```
-/// {@endtemplate}
 class LakeCliCommandRunner extends CompletionCommandRunner<int> {
   /// {@macro lake_cli_command_runner}
   LakeCliCommandRunner({
@@ -57,6 +55,7 @@ class LakeCliCommandRunner extends CompletionCommandRunner<int> {
       if (topLevelResults['verbose'] == true) {
         _logger.level = Level.verbose;
       }
+
       return await runCommand(topLevelResults) ?? ExitCode.success.code;
     } on FormatException catch (e, stackTrace) {
       // On format errors, show the commands error message, root usage and
@@ -66,6 +65,7 @@ class LakeCliCommandRunner extends CompletionCommandRunner<int> {
         ..err('$stackTrace')
         ..info('')
         ..info(usage);
+
       return ExitCode.usage.code;
     } on UsageException catch (e) {
       // On usage errors, show the commands usage message and
@@ -74,6 +74,7 @@ class LakeCliCommandRunner extends CompletionCommandRunner<int> {
         ..err(e.message)
         ..info('')
         ..info(e.usage);
+
       return ExitCode.usage.code;
     }
   }
@@ -83,6 +84,7 @@ class LakeCliCommandRunner extends CompletionCommandRunner<int> {
     // Fast track completion command
     if (topLevelResults.command?.name == 'completion') {
       await super.runCommand(topLevelResults);
+
       return ExitCode.success.code;
     }
 
@@ -140,6 +142,6 @@ ${lightYellow.wrap('Update available!')} ${lightCyan.wrap(packageVersion)} \u219
 Run ${lightCyan.wrap('$executableName update')} to update''',
           );
       }
-    } catch (_) {}
+    } on Exception catch (_) {}
   }
 }

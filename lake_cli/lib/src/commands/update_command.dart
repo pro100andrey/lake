@@ -32,9 +32,10 @@ class UpdateCommand extends Command<int> {
     late final String latestVersion;
     try {
       latestVersion = await _pubUpdater.getLatestVersion(packageName);
-    } catch (error) {
+    } on Object catch (error) {
       updateCheckProgress.fail();
       _logger.err('$error');
+
       return ExitCode.software.code;
     }
     updateCheckProgress.complete('Checked for updates');
@@ -42,6 +43,7 @@ class UpdateCommand extends Command<int> {
     final isUpToDate = packageVersion == latestVersion;
     if (isUpToDate) {
       _logger.info('CLI is already at the latest version.');
+
       return ExitCode.success.code;
     }
 
@@ -53,15 +55,17 @@ class UpdateCommand extends Command<int> {
         packageName: packageName,
         versionConstraint: latestVersion,
       );
-    } catch (error) {
+    } on Object catch  (error) {
       updateProgress.fail();
       _logger.err('$error');
+
       return ExitCode.software.code;
     }
 
     if (result.exitCode != ExitCode.success.code) {
       updateProgress.fail();
       _logger.err('Error updating CLI: ${result.stderr}');
+      
       return ExitCode.software.code;
     }
 

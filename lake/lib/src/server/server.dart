@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import '../extensions/http_request.dart';
-import 'protocol/server.dart';
 import 'endpoint_dispatch.dart';
+import 'protocol/server.dart';
 
 final class Server implements ServerProtocol {
   Server({
@@ -48,14 +48,14 @@ final class Server implements ServerProtocol {
   }
 
   Future<void> _handleRequest(HttpRequest request) async {
-    final uri = request.requestedUri;
+    final _ = request.requestedUri;
     const maxSize = 100;
 
     switch (request.headers.contentType?.mimeType) {
       case 'application/octet-stream':
-        final bytes = request.readBytes(maxSize: maxSize);
+        final _ = request.readBytes(maxSize: maxSize);
       case 'application/json':
-        final jsonString = await request.readString(maxSize: maxSize);
+        final _ = await request.readString(maxSize: maxSize);
       case null:
     }
   }

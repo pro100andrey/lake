@@ -23,12 +23,11 @@ class GenerateCommand extends Command<int> {
 
   @override
   Future<int> run() async {
-    _logger.info('done.');
-
     checkIfAllDependenciesInstalled(_logger);
 
-    final config = GenerateConfig();
-
+    final _ = GenerateConfig();
+    _logger.info('done.');
+    
     return ExitCode.success.code;
   }
 }
