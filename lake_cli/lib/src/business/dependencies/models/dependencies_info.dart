@@ -6,8 +6,8 @@ class DependenciesInfo {
   });
 
   final String dart;
-
   final String npm;
+
   final String prisma;
 
   @override

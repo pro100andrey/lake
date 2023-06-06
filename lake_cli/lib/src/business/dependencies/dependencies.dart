@@ -1,41 +1,35 @@
-import 'package:dcli/dcli.dart';
+import 'package:dcli/dcli.dart' as dcli;
 import 'package:mason_logger/mason_logger.dart';
 
 import 'models/dependencies_info.dart';
-import 'models/js_package_info.dart';
+import 'prisma/prisma.dart';
 
-String _checkFound(String cmd, String versionArg, Logger logger) {
-  final result = which(cmd);
+String? _getVersion(String full, Logger logger) {
+  final cmd = full.split(' ').first;
+  final which = dcli.which(cmd);
 
-  if (result.found) {
-    return '$cmd $versionArg'.toParagraph();
+  if (which.found) {
+    return full.toParagraph();
   }
 
   logger.err('$cmd is not installed');
-  throw Exception('$cmd is not installed');
+
+  return null;
 }
 
-String _checkPrismaFound(Logger logger) {
-  final result = 'npm -g -j ls prisma'.toParagraph();
+DependenciesInfo? checkAllRequiredDependencies(Logger logger) {
+  final dartVersion = _getVersion('dart --version', logger);
+  final npmVersion = _getVersion('npm --version', logger);
+  final prismaVersion = getPrismaVersion(logger);
 
-  if (result.isNotEmpty) {
-    final prisma = JsPackageInfo.prisma(result);
-
-    return prisma.version;
+  if (dartVersion == null || npmVersion == null || prismaVersion == null) {
+    return null;
   }
-
-  throw Exception('prisma is not installed');
-}
-
-DependenciesInfo checkAllRequiredDependencies(Logger logger) {
-  final dartVersion = _checkFound('dart', '--version', logger);
-  final npmVersion = _checkFound('npm', '--version', logger);
-  final prismaVersion = _checkPrismaFound(logger);
 
   final info = DependenciesInfo(
     dart: dartVersion,
-    prisma: prismaVersion,
     npm: npmVersion,
+    prisma: prismaVersion,
   );
 
   logger.detail(info.toString());

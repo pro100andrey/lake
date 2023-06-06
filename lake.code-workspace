@@ -12,6 +12,7 @@
 			"dcli",
 			"mocktail",
 			"notfound",
+			"nothrow",
 			"posix",
 			"pubspec"
 		]

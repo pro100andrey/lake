@@ -2,5 +2,3 @@
 ///
 /// More dartdocs go here.
 library lake;
-
-export 'src/server/server.dart';
