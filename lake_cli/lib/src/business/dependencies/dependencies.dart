@@ -10,13 +10,14 @@ import '../providers.dart';
 /// Checks if all required dependencies are installed.
 void checkAllRequiredDependencies(Logger logger) {
   logger.info('checking dependencies...');
-  _check('dart --version', logger);
-  _check('npm --version', logger);
+  _checkCmdVersion('dart --version', logger);
+  _checkCmdVersion('npm --version', logger);
   _checkPrisma(logger);
 }
 
 /// Checks if a command is installed.
-void _check(String command, Logger logger) {
+/// Returns the version of the command if installed throws an exception if not.
+String _checkCmdVersion(String command, Logger logger) {
   // Split the command by spaces and take the first word.
   final cmd = command.split(' ').first;
   // Check if the command is installed.
@@ -26,14 +27,15 @@ void _check(String command, Logger logger) {
     case true:
       final version = command.toParagraph();
       logger.detail('$cmd: $version');
+      return version;
     case false:
       throw Exception('$cmd is not installed');
   }
 }
 
 /// Check if prisma is installed and install it if needed.
-/// Returns the version of prisma if installed or null if not.
-void _checkPrisma(Logger logger) {
+/// Returns the version of prisma if installed or throws an exception if not.
+String _checkPrisma(Logger logger) {
   final container = ProviderContainer();
   final installDir = container.read(lakeInstallDirProvider);
   final packageJsonDir = '$installDir/npm/package.json';
@@ -41,8 +43,7 @@ void _checkPrisma(Logger logger) {
   if (_checkNpmPackage(package: 'prisma', path: packageJsonDir)
       case final version when version != null) {
     logger.detail('prisma: $version');
-
-    return;
+    return version;
   }
 
   final progress = logger.progress('installing prisma');
@@ -56,13 +57,16 @@ void _checkPrisma(Logger logger) {
     logger.detail('prisma installed');
   } else {
     progress.fail();
+    throw Exception(
+      'prisma failed to install with exit code ${installing.exitCode}',
+    );
   }
 
   if (_checkNpmPackage(package: 'prisma', path: packageJsonDir)
       case final version when version != null) {
     logger.detail('prisma: $version');
 
-    return;
+    return version;
   }
 }
 
