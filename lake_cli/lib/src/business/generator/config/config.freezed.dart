@@ -15,62 +15,114 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
-mixin _$GeneratorConfig {}
+mixin _$Config {
+  String get generatePath => throw _privateConstructorUsedError;
 
-/// @nodoc
-abstract class $GeneratorConfigCopyWith<$Res> {
-  factory $GeneratorConfigCopyWith(
-          GeneratorConfig value, $Res Function(GeneratorConfig) then) =
-      _$GeneratorConfigCopyWithImpl<$Res, GeneratorConfig>;
+  @JsonKey(ignore: true)
+  $ConfigCopyWith<Config> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-class _$GeneratorConfigCopyWithImpl<$Res, $Val extends GeneratorConfig>
-    implements $GeneratorConfigCopyWith<$Res> {
-  _$GeneratorConfigCopyWithImpl(this._value, this._then);
+abstract class $ConfigCopyWith<$Res> {
+  factory $ConfigCopyWith(Config value, $Res Function(Config) then) =
+      _$ConfigCopyWithImpl<$Res, Config>;
+  @useResult
+  $Res call({String generatePath});
+}
+
+/// @nodoc
+class _$ConfigCopyWithImpl<$Res, $Val extends Config>
+    implements $ConfigCopyWith<$Res> {
+  _$ConfigCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? generatePath = null,
+  }) {
+    return _then(_value.copyWith(
+      generatePath: null == generatePath
+          ? _value.generatePath
+          : generatePath // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
 }
 
 /// @nodoc
-abstract class _$$_GeneratorConfigCopyWith<$Res> {
-  factory _$$_GeneratorConfigCopyWith(
-          _$_GeneratorConfig value, $Res Function(_$_GeneratorConfig) then) =
-      __$$_GeneratorConfigCopyWithImpl<$Res>;
+abstract class _$$_ConfigCopyWith<$Res> implements $ConfigCopyWith<$Res> {
+  factory _$$_ConfigCopyWith(_$_Config value, $Res Function(_$_Config) then) =
+      __$$_ConfigCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String generatePath});
 }
 
 /// @nodoc
-class __$$_GeneratorConfigCopyWithImpl<$Res>
-    extends _$GeneratorConfigCopyWithImpl<$Res, _$_GeneratorConfig>
-    implements _$$_GeneratorConfigCopyWith<$Res> {
-  __$$_GeneratorConfigCopyWithImpl(
-      _$_GeneratorConfig _value, $Res Function(_$_GeneratorConfig) _then)
+class __$$_ConfigCopyWithImpl<$Res>
+    extends _$ConfigCopyWithImpl<$Res, _$_Config>
+    implements _$$_ConfigCopyWith<$Res> {
+  __$$_ConfigCopyWithImpl(_$_Config _value, $Res Function(_$_Config) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? generatePath = null,
+  }) {
+    return _then(_$_Config(
+      generatePath: null == generatePath
+          ? _value.generatePath
+          : generatePath // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
 }
 
 /// @nodoc
 
-class _$_GeneratorConfig implements _GeneratorConfig {
-  _$_GeneratorConfig();
+class _$_Config implements _Config {
+  _$_Config({required this.generatePath});
+
+  @override
+  final String generatePath;
 
   @override
   String toString() {
-    return 'GeneratorConfig()';
+    return 'Config(generatePath: $generatePath)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$_GeneratorConfig);
+        (other.runtimeType == runtimeType &&
+            other is _$_Config &&
+            (identical(other.generatePath, generatePath) ||
+                other.generatePath == generatePath));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, generatePath);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$_ConfigCopyWith<_$_Config> get copyWith =>
+      __$$_ConfigCopyWithImpl<_$_Config>(this, _$identity);
 }
 
-abstract class _GeneratorConfig implements GeneratorConfig {
-  factory _GeneratorConfig() = _$_GeneratorConfig;
+abstract class _Config implements Config {
+  factory _Config({required final String generatePath}) = _$_Config;
+
+  @override
+  String get generatePath;
+  @override
+  @JsonKey(ignore: true)
+  _$$_ConfigCopyWith<_$_Config> get copyWith =>
+      throw _privateConstructorUsedError;
 }

@@ -4,7 +4,6 @@ import 'package:cli_completion/cli_completion.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:pub_updater/pub_updater.dart';
 
-import 'commands/check_dependencies.dart';
 import 'commands/commands.dart';
 import 'version.dart';
 
@@ -39,7 +38,6 @@ class LakeCliCommandRunner extends CompletionCommandRunner<int> {
       );
 
     // Add sub commands
-    addCommand(CheckDependenciesCommand(logger: _logger));
     addCommand(GenerateCommand(logger: _logger));
     addCommand(UpdateCommand(logger: _logger, pubUpdater: _pubUpdater));
   }
@@ -54,7 +52,7 @@ class LakeCliCommandRunner extends CompletionCommandRunner<int> {
   Future<int> run(Iterable<String> args) async {
     try {
       final topLevelResults = parse(args);
-      
+
       if (topLevelResults['verbose'] == true) {
         _logger.level = Level.verbose;
       }

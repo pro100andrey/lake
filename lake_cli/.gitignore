@@ -12,4 +12,4 @@ coverage/
 .test_runner.dart
 
 # Android studio and IntelliJ
-.idea
+.idea.env*

@@ -2,7 +2,7 @@ import 'package:args/command_runner.dart';
 import 'package:mason_logger/mason_logger.dart';
 
 import '../business/dependencies/dependencies.dart';
-import '../business/generator/config/config.dart';
+import '../business/generator/generator.dart';
 
 /// `lake generate`
 /// A [Command] to exemplify a sub command
@@ -22,16 +22,9 @@ class GenerateCommand extends Command<int> {
 
   @override
   Future<int> run() async {
-    final stopwatch = Stopwatch()..start();
-    final dependencies = checkAllRequiredDependencies(_logger);
-
-    if (dependencies == null) {
-      return ExitCode.unavailable.code;
-    }
-
-    final _ = GeneratorConfig();
-    _logger.success('Completed in ${stopwatch.elapsed}');
-
+    checkAllRequiredDependencies(_logger);
+    generate(_logger);
+    
     return ExitCode.success.code;
   }
 }
