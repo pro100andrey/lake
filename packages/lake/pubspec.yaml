@@ -4,7 +4,7 @@ version: 0.0.1
 repository: https://github.com/pro100andrey/lake/packages/lake
 issue_tracker: https://github.com/pro100andrey/lake/issues
 homepage: https://github.com/pro100andrey/lake
-documentation: https://github.com/pro100andrey/lake/blob/master/lake/README.md
+documentation: https://github.com/pro100andrey/lake/blob/master/packages/lake/README.md
 
 environment:
   sdk: ^3.0.0
