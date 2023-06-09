@@ -22,7 +22,7 @@ dependencies:
   args: ^2.4.2
   cli_completion: ^0.3.0
   code_builder: ^4.5.0
-  dcli: ^3.0.2
+  dcli: ^2.3.0
   dotenv: ^4.1.0
   freezed_annotation: ^2.2.0
   json_annotation: ^4.8.1
@@ -40,10 +40,6 @@ dev_dependencies:
   mocktail: ^0.3.0
   pro_lints: ^2.0.1
   test: ^1.24.2
-
-dependency_overrides: 
-  file: ^7.0.0
-  process: ^4.2.4
   
 executables:
   lake: lake_cli
