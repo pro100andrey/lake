@@ -9,7 +9,7 @@ import '../providers.dart';
 
 /// Checks if all required dependencies are installed.
 void checkAllRequiredDependencies(Logger logger) {
-  logger.info('checking dependencies...');
+  logger.info('Checking dependencies...');
   _checkCmdVersion('dart --version', logger);
   _checkCmdVersion('npm --version', logger);
   _checkPrisma(logger);
@@ -68,6 +68,8 @@ String _checkPrisma(Logger logger) {
 
     return version;
   }
+
+  throw Exception('prisma version not found');
 }
 
 /// Checks if a npm package is installed.
