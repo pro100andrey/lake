@@ -1,10 +1,10 @@
 {
 	"folders": [
 		{
-			"path": "lake"
+			"path": "packages/lake"
 		},
 		{
-			"path": "lake_cli"
+			"path": "packages/lake_cli"
 		}
 	],
 	"settings": {

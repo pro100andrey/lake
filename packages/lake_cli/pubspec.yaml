@@ -1,13 +1,25 @@
 name: lake_cli
-description: A Very Good Project created by Very Good CLI.
+description: Lake CLI.
 version: 0.0.1
-publish_to: none
+
+repository: https://github.com/pro100andrey/lake/packages/lake_cli
+issue_tracker: https://github.com/pro100andrey/lake/issues
+homepage: https://github.com/pro100andrey/lake
+documentation: https://github.com/pro100andrey/lake/blob/master/lake_cli/README.md
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ^3.0.0
+
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:
 
 dependencies:
-  args: ^2.4.1
+  args: ^2.4.2
   cli_completion: ^0.3.0
   code_builder: ^4.5.0
   dcli: ^3.0.2
