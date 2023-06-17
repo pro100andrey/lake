@@ -16,7 +16,10 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$Config {
+  String get lakeInstallDir => throw _privateConstructorUsedError;
+  String get lakeUserDir => throw _privateConstructorUsedError;
   String get generatePath => throw _privateConstructorUsedError;
+  Logger get logger => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $ConfigCopyWith<Config> get copyWith => throw _privateConstructorUsedError;
@@ -27,7 +30,11 @@ abstract class $ConfigCopyWith<$Res> {
   factory $ConfigCopyWith(Config value, $Res Function(Config) then) =
       _$ConfigCopyWithImpl<$Res, Config>;
   @useResult
-  $Res call({String generatePath});
+  $Res call(
+      {String lakeInstallDir,
+      String lakeUserDir,
+      String generatePath,
+      Logger logger});
 }
 
 /// @nodoc
@@ -43,13 +50,28 @@ class _$ConfigCopyWithImpl<$Res, $Val extends Config>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? lakeInstallDir = null,
+    Object? lakeUserDir = null,
     Object? generatePath = null,
+    Object? logger = null,
   }) {
     return _then(_value.copyWith(
+      lakeInstallDir: null == lakeInstallDir
+          ? _value.lakeInstallDir
+          : lakeInstallDir // ignore: cast_nullable_to_non_nullable
+              as String,
+      lakeUserDir: null == lakeUserDir
+          ? _value.lakeUserDir
+          : lakeUserDir // ignore: cast_nullable_to_non_nullable
+              as String,
       generatePath: null == generatePath
           ? _value.generatePath
           : generatePath // ignore: cast_nullable_to_non_nullable
               as String,
+      logger: null == logger
+          ? _value.logger
+          : logger // ignore: cast_nullable_to_non_nullable
+              as Logger,
     ) as $Val);
   }
 }
@@ -60,7 +82,11 @@ abstract class _$$_ConfigCopyWith<$Res> implements $ConfigCopyWith<$Res> {
       __$$_ConfigCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String generatePath});
+  $Res call(
+      {String lakeInstallDir,
+      String lakeUserDir,
+      String generatePath,
+      Logger logger});
 }
 
 /// @nodoc
@@ -73,13 +99,28 @@ class __$$_ConfigCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? lakeInstallDir = null,
+    Object? lakeUserDir = null,
     Object? generatePath = null,
+    Object? logger = null,
   }) {
     return _then(_$_Config(
+      lakeInstallDir: null == lakeInstallDir
+          ? _value.lakeInstallDir
+          : lakeInstallDir // ignore: cast_nullable_to_non_nullable
+              as String,
+      lakeUserDir: null == lakeUserDir
+          ? _value.lakeUserDir
+          : lakeUserDir // ignore: cast_nullable_to_non_nullable
+              as String,
       generatePath: null == generatePath
           ? _value.generatePath
           : generatePath // ignore: cast_nullable_to_non_nullable
               as String,
+      logger: null == logger
+          ? _value.logger
+          : logger // ignore: cast_nullable_to_non_nullable
+              as Logger,
     ));
   }
 }
@@ -87,14 +128,24 @@ class __$$_ConfigCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_Config implements _Config {
-  _$_Config({required this.generatePath});
+  _$_Config(
+      {required this.lakeInstallDir,
+      required this.lakeUserDir,
+      required this.generatePath,
+      required this.logger});
 
   @override
+  final String lakeInstallDir;
+  @override
+  final String lakeUserDir;
+  @override
   final String generatePath;
+  @override
+  final Logger logger;
 
   @override
   String toString() {
-    return 'Config(generatePath: $generatePath)';
+    return 'Config(lakeInstallDir: $lakeInstallDir, lakeUserDir: $lakeUserDir, generatePath: $generatePath, logger: $logger)';
   }
 
   @override
@@ -102,12 +153,18 @@ class _$_Config implements _Config {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_Config &&
+            (identical(other.lakeInstallDir, lakeInstallDir) ||
+                other.lakeInstallDir == lakeInstallDir) &&
+            (identical(other.lakeUserDir, lakeUserDir) ||
+                other.lakeUserDir == lakeUserDir) &&
             (identical(other.generatePath, generatePath) ||
-                other.generatePath == generatePath));
+                other.generatePath == generatePath) &&
+            (identical(other.logger, logger) || other.logger == logger));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, generatePath);
+  int get hashCode => Object.hash(
+      runtimeType, lakeInstallDir, lakeUserDir, generatePath, logger);
 
   @JsonKey(ignore: true)
   @override
@@ -117,10 +174,20 @@ class _$_Config implements _Config {
 }
 
 abstract class _Config implements Config {
-  factory _Config({required final String generatePath}) = _$_Config;
+  factory _Config(
+      {required final String lakeInstallDir,
+      required final String lakeUserDir,
+      required final String generatePath,
+      required final Logger logger}) = _$_Config;
 
   @override
+  String get lakeInstallDir;
+  @override
+  String get lakeUserDir;
+  @override
   String get generatePath;
+  @override
+  Logger get logger;
   @override
   @JsonKey(ignore: true)
   _$$_ConfigCopyWith<_$_Config> get copyWith =>

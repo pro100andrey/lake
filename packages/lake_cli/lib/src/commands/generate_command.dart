@@ -2,6 +2,7 @@ import 'package:args/command_runner.dart';
 import 'package:mason_logger/mason_logger.dart';
 
 import '../business/dependencies/dependencies.dart';
+import '../business/generator/config/config.dart';
 import '../business/generator/generator.dart';
 
 /// `lake generate`
@@ -22,9 +23,10 @@ class GenerateCommand extends Command<int> {
 
   @override
   Future<int> run() async {
-    checkAllRequiredDependencies(_logger);
-    generate(_logger);
-    
+    final config = Config.load(_logger);
+    checkAllRequiredDependencies(config);
+    generate(config);
+
     return ExitCode.success.code;
   }
 }
