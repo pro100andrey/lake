@@ -24,8 +24,9 @@ class GenerateCommand extends Command<int> {
   @override
   Future<int> run() async {
     final config = Config.load(_logger);
-    checkAllRequiredDependencies(config);
-    generate(config);
+
+    Dependencies(config: config).check();
+    Generator(config: config).generate();
 
     return ExitCode.success.code;
   }

@@ -1,14 +1,16 @@
-import 'dart:io';
-
-import 'package:protoc_plugin/protoc.dart';
-
 import 'config/config.dart';
 
-/// Generates project.
-void generate(Config config) {
-  config.logger.info('Generating project...');
+final class Generator {
+  Generator({
+    required this.config,
+  });
 
-  CodeGenerator(stdin, stdout).generate();
+  final Config config;
 
-  config.logger.info('Project generated');
+  /// Generates project.
+  void generate() {
+    config.logger.info('Generating project...');
+
+    config.logger.info('Project generated');
+  }
 }
