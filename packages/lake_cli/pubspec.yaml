@@ -11,11 +11,8 @@ environment:
   sdk: ^3.0.0
 
 platforms:
-  android:
-  ios:
   linux:
   macos:
-  web:
   windows:
 
 dependencies:
