@@ -24,6 +24,7 @@ void main() {
         () => logger.info('Which unicorn has a cold? The Achoo-nicorn!'),
       ).called(1);
     });
+
     test('tells a joke in cyan', () async {
       final exitCode = await commandRunner.run(['sample', '-c']);
 
@@ -44,6 +45,7 @@ void main() {
       verify(
         () => logger.err('Could not find an option or flag "-p".'),
       ).called(1);
+      
       verify(
         () => logger.info('''
 Usage: $executableName sample [arguments]

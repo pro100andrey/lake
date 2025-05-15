@@ -33,6 +33,7 @@ void main() {
       when(
         () => unawaited(pubUpdater.getLatestVersion(any())),
       ).thenAnswer((_) async => packageVersion);
+
       when(
         () => unawaited(
           pubUpdater.update(
@@ -43,6 +44,7 @@ void main() {
       ).thenAnswer(
         (_) async => ProcessResult(0, ExitCode.success.code, null, null),
       );
+
       when(
         () => unawaited(
           pubUpdater.isUpToDate(
@@ -51,12 +53,14 @@ void main() {
           ),
         ),
       ).thenAnswer((_) async => true);
+
       when(() => progress.complete(any())).thenAnswer((answer) {
         final message = answer.positionalArguments.elementAt(0) as String?;
         if (message != null) {
           progressLogs.add(message);
         }
       });
+      
       when(() => logger.progress(any())).thenReturn(progress);
     });
 
