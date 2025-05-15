@@ -1,8 +1,17 @@
 import 'dart:io';
 
 import 'package:lake_cli/src/command_runner.dart';
+import 'package:lake_cli/src/utils/find.dart';
 
 Future<void> main(List<String> args) async {
+  find(
+    '*',
+    progress: (item) {
+      print('Found item: ${item.path}');
+      return true;
+    },
+  );
+
   await _flushThenExit(await LakeCommandRunner().run(args));
 }
 

@@ -1,11 +1,89 @@
+import 'dart:io';
+
 import 'package:path/path.dart';
 
+import '../core/exceptions.dart';
 import 'is.dart';
+import 'truepath.dart';
+
+typedef FindProgressCallback = bool Function(FindItem item);
+
+void find(
+  String pattern, {
+  required FindProgressCallback progress,
+  bool caseSensitive = false,
+  bool reverse = false,
+  String workingDirectory = '.',
+  List<FileSystemEntityType> types = const [Find.file],
+  bool includeHidden = false,
+}) {
+  Find()._find(
+    pattern,
+    progress: progress,
+    caseSensitive: caseSensitive,
+    reverse: reverse,
+    workingDirectory: workingDirectory,
+    types: types,
+    includeHidden: includeHidden,
+  );
+}
+
+final class FindItem {
+  const FindItem(this.path, this.type);
+
+  /// The path of the file or directory.
+  final String path;
+
+  /// The type of the file system entity.
+  final FileSystemEntityType type;
+}
+
+final class Find {
+  static const file = FileSystemEntityType.file;
+
+  static const directory = FileSystemEntityType.directory;
+
+  static const link = FileSystemEntityType.link;
+
+  void _find(
+    String pattern, {
+    required FindProgressCallback progress,
+    bool caseSensitive = false,
+    bool reverse = false,
+    String workingDirectory = '.',
+    List<FileSystemEntityType> types = const [Find.file],
+    bool includeHidden = false,
+  }) {
+    final config = FindConfig.build(
+      pattern: pattern,
+      workingDirectory: workingDirectory,
+      includeHidden: includeHidden,
+      caseSensitive: caseSensitive,
+    );
+
+    final next = List<FileSystemEntity?>.filled(100, null, growable: true);
+    final single = List<FileSystemEntity?>.filled(100, null, growable: true);
+    final children = List<FileSystemEntity?>.filled(100, null, growable: true);
+
+    final dir = Directory(config.workingDirectory);
+    final list = dir.listSync(followLinks: false);
+
+    const nextIndex = 0;
+
+    for (final entity in list) {
+      final type = FileSystemEntity.typeSync(entity.path, followLinks: false);
+    }
+  }
+}
+
+class FindException extends CliException {
+  FindException(super.message);
+}
 
 /// A class that represents the configuration for the find command.
 final class FindConfig {
   const FindConfig({
-    required this.workDirectory,
+    required this.workingDirectory,
     required this.pattern,
     required this.includeHidden,
     required this.caseSensitive,
@@ -14,29 +92,32 @@ final class FindConfig {
 
   factory FindConfig.build({
     required String pattern,
-    required String workDirectory,
+    required String workingDirectory,
     required bool includeHidden,
     required bool caseSensitive,
   }) {
     final directoryPart = dirname(pattern);
+
     if (directoryPart != '.') {
-      workDirectory = join(workDirectory, directoryPart);
+      workingDirectory = join(workingDirectory, directoryPart);
+    }
+
+    if (!isExists(workingDirectory)) {
+      throw FindException(
+        'The directory ${truePath(workingDirectory)} does not exist.',
+      );
     }
 
     pattern = basename(pattern);
 
-    if (!isExists(workDirectory)) {
-      throw ArgumentError('The directory $workDirectory does not exist.');
-    }
-
     final matcher = PatternMatcher.build(
       pattern: pattern,
       caseSensitive: caseSensitive,
-      workingDirectory: workDirectory,
+      workingDirectory: workingDirectory,
     );
 
     return FindConfig(
-      workDirectory: workDirectory,
+      workingDirectory: workingDirectory,
       pattern: pattern,
       includeHidden: includeHidden,
       caseSensitive: caseSensitive,
@@ -44,7 +125,7 @@ final class FindConfig {
     );
   }
 
-  final String workDirectory;
+  final String workingDirectory;
   final String pattern;
   final bool includeHidden;
   final bool caseSensitive;
