@@ -116,6 +116,12 @@ final class FindConfig {
       workingDirectory: workingDirectory,
     );
 
+    if (workingDirectory == '.') {
+      workingDirectory = Directory.current.path;
+    } else {
+      workingDirectory = truePath(workingDirectory);
+    }
+
     return FindConfig(
       workingDirectory: workingDirectory,
       pattern: pattern,
