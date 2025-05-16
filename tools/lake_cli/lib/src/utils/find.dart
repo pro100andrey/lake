@@ -116,11 +116,12 @@ final class FindConfig {
       workingDirectory: workingDirectory,
     );
 
-    if (workingDirectory == '.') {
-      workingDirectory = Directory.current.path;
-    } else {
-      workingDirectory = truePath(workingDirectory);
-    }
+    workingDirectory =
+        workingDirectory == '.'
+            ? Directory.current.path
+            : truePath(workingDirectory);
+
+    includeHidden = basename(pattern).startsWith('.');
 
     return FindConfig(
       workingDirectory: workingDirectory,
