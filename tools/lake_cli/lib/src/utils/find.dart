@@ -2,240 +2,139 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 
-import '../core/exceptions.dart';
-import 'is.dart';
-import 'truepath.dart';
+/// A function type representing a filter predicate that takes a file path
+/// and returns `true` if the path matches the filter criteria.
+typedef FindFilter = bool Function(String path);
 
-typedef FindProgressCallback = bool Function(FindItem item);
-
-  void find(
-  String pattern, {
-  required FindProgressCallback progress,
-  bool caseSensitive = false,
-  bool recursive = false,
-  String workingDirectory = '.',
-  List<FileSystemEntityType> types = const [Find.file],
-  bool includeHidden = false,
-}) {
-  Find()._find(
-    pattern,
-    progress: progress,
-    caseSensitive: caseSensitive,
-    reverse: recursive,
-    workingDirectory: workingDirectory,
-    types: types,
-    includeHidden: includeHidden,
+/// Finds files in the given directory and its subdirectories based on the
+/// provided filter. If no filter is provided, all files are returned.
+///
+/// The [workingDirectory] parameter specifies the directory to search in. If
+/// [workingDirectory] is null, the current working directory is used.
+///
+/// The [filter] parameter is a function that takes a file path as input and
+/// returns true if the file should be included in the result.
+///
+/// Returns a list of file paths that match the given filter.
+Stream<String> findFiles({
+  String? workingDirectory,
+  FindFilter? filter,
+}) async* {
+  final resolvedPath = p.normalize(
+    p.absolute(workingDirectory ?? Directory.current.path),
   );
-}
 
-final class FindItem {
-  const FindItem(this.path, this.type);
+  final dir = Directory(resolvedPath);
+  if (!dir.existsSync()) {
+    throw Exception('Directory does not exist: $resolvedPath');
+  }
 
-  /// The path of the file or directory.
-  final String path;
-
-  /// The type of the file system entity.
-  final FileSystemEntityType type;
-}
-
-final class Find {
-  static const file = FileSystemEntityType.file;
-  static const directory = FileSystemEntityType.directory;
-  static const link = FileSystemEntityType.link;
-
-  void _find(
-    String pattern, {
-    required FindProgressCallback progress,
-    bool caseSensitive = false,
-    bool reverse = false,
-    String workingDirectory = '.',
-    List<FileSystemEntityType> types = const [Find.file],
-    bool includeHidden = false,
-  }) {
-    final config = FindConfig.build(
-      pattern: pattern,
-      workingDirectory: workingDirectory,
-      includeHidden: includeHidden,
-      caseSensitive: caseSensitive,
-    );
-
-    final dir = Directory(config.workingDirectory);
-    final list = dir.listSync(followLinks: false);
-
-    const nextIndex = 0;
-
-    for (final entity in list) {
-      final type = FileSystemEntity.typeSync(entity.path, followLinks: false);
-      final containts = types.contains(type);
-      final match = config.matcher.match(entity.path);
-
-      print(entity);
-
-      // if (types.contains(type) && config.matcher.match) {
-
-      // }
+  await for (final entity in dir.list(recursive: true)) {
+    final path = entity.path;
+    if (filter?.call(path) ?? true) {
+      yield path;
     }
   }
 }
 
-class FindException extends CliException {
-  FindException(super.message);
+Iterable<String> findFilesSync({
+  String? workingDirectory,
+  FindFilter? filter,
+}) sync* {
+  final resolvedPath = p.normalize(
+    p.absolute(workingDirectory ?? Directory.current.path),
+  );
+
+  final dir = Directory(resolvedPath);
+  if (!dir.existsSync()) {
+    throw Exception('Directory does not exist: $resolvedPath');
+  }
+
+  for (final entity in dir.listSync(recursive: true)) {
+    final path = entity.path;
+    if (filter?.call(path) ?? true) {
+      yield path;
+    }
+  }
 }
 
-/// A class that represents the configuration for the find command.
-final class FindConfig {
-  const FindConfig({
-    required this.workingDirectory,
-    required this.pattern,
-    required this.includeHidden,
-    required this.caseSensitive,
-    required this.matcher,
-  });
+/// A builder class to compose multiple file filters declaratively.
+///
+/// Allows the creation of complex file-matching logic using combinations
+/// of conditions such as extensions, file names, paths, and custom rules.
+class FindFiltersBuilder {
+  final List<FindFilter> _filters = [];
 
-  factory FindConfig.build({
-    required String pattern,
-    required String workingDirectory,
-    required bool includeHidden,
-    required bool caseSensitive,
-  }) {
-    final directoryPart = p.dirname(pattern);
+  /// Adds a filter that matches files with any of the given [exts].
+  ///
+  /// Example:
+  /// ```dart
+  /// builder.extensions(['.dart', '.yaml']);
+  /// ```
+  void extensions(List<String> exts) =>
+      _filters.add((path) => exts.contains(p.extension(path)));
 
-    if (directoryPart != '.') {
-      workingDirectory = p.join(workingDirectory, directoryPart);
-    }
+  /// Adds a filter that matches files whose names contain the given [str].
+  ///
+  /// Example:
+  /// ```dart
+  /// builder.nameContains('test');
+  /// ```
+  void nameContains(String str) =>
+      _filters.add((path) => p.basename(path).contains(str));
 
-    if (!isExists(workingDirectory)) {
-      throw FindException(
-        'The directory ${truePath(workingDirectory)} does not exist.',
-      );
-    }
+  /// Adds a filter that matches files whose full normalized path
+  /// contains the given [str].
+  ///
+  /// Example:
+  /// ```dart
+  /// builder.pathContains('src/generated');
+  /// ```
+  void pathContains(String str) =>
+      _filters.add((path) => p.normalize(path).contains(p.normalize(str)));
 
-    pattern = p.basename(pattern);
+  /// Adds a filter that matches only regular files (not directories).
+  ///
+  /// Example:
+  /// ```dart
+  /// builder.isFile();
+  /// ```
+  void isFile() => _filters.add(FileSystemEntity.isFileSync);
 
-    final matcher = PatternMatcher.build(
-      pattern: pattern,
-      caseSensitive: caseSensitive,
-      workingDirectory: workingDirectory,
-    );
+  /// Adds a custom filter function.
+  ///
+  /// Use this to define any arbitrary matching logic.
+  ///
+  /// Example:
+  /// ```dart
+  /// builder.custom((path) => path.endsWith('.config'));
+  /// ```
+  void custom(FindFilter filter) => _filters.add(filter);
 
-    workingDirectory =
-        workingDirectory == '.'
-            ? Directory.current.path
-            : truePath(workingDirectory);
-
-    includeHidden = p.basename(pattern).startsWith('.');
-
-    return FindConfig(
-      workingDirectory: workingDirectory,
-      pattern: pattern,
-      includeHidden: includeHidden,
-      caseSensitive: caseSensitive,
-      matcher: matcher,
-    );
+  /// Adds a group of filters combined with logical OR.
+  ///
+  /// Only one of the nested filters needs to match for the group to pass.
+  ///
+  /// Example:
+  /// ```dart
+  /// builder.groupOr((b) {
+  ///   b.nameContains('main');
+  ///   b.nameContains('test');
+  /// });
+  /// ```
+  void groupOr(void Function(FindFiltersBuilder) fn) {
+    final nested = FindFiltersBuilder();
+    fn(nested);
+    _filters.add((path) => nested._filters.any((f) => f(path)));
   }
 
-  final String workingDirectory;
-  final String pattern;
-  final bool includeHidden;
-  final bool caseSensitive;
-  final PatternMatcher matcher;
-}
+  /// Builds the combined filter from all added rules using logical AND.
+  ///
+  /// All filters must match for a file to be included.
+  ///
+  /// Returns a [FindFilter] function that can be passed to [findFiles].
+  FindFilter build() => (path) => _filters.every((f) => f(path));
 
-/// A class that matches a pattern against a file name.
-/// It uses a regular expression to perform the matching.
-/// The pattern can contain the following special characters:
-/// - `*` matches any number of characters
-/// - `?` matches a single character
-/// - `[` and `]` match a character class
-/// - `!` negates a character class
-/// - `-` matches a range of characters
-/// - `.` matches a literal dot
-/// - `\` escapes a special character
-/// The pattern is case-sensitive by default.
-final class PatternMatcher {
-  const PatternMatcher._({
-    required this.pattern,
-    required this.workingDirectory,
-    required this.caseSensitive,
-    required this.regExp,
-    required this.directoryParts,
-  });
-
-  factory PatternMatcher.build({
-    required String pattern,
-    required String workingDirectory,
-    required bool caseSensitive,
-  }) {
-    final regExp = _buildRegExp(pattern, caseSensitive: caseSensitive);
-
-    final dirname = p.dirname(pattern);
-    final patternParts = dirname.split(pattern);
-    final directoryParts = switch (patternParts) {
-      ['.'] when patternParts.length == 1 => 0,
-      _ => patternParts.length,
-    };
-
-    return PatternMatcher._(
-      pattern: pattern,
-      workingDirectory: workingDirectory,
-      caseSensitive: caseSensitive,
-      directoryParts: directoryParts,
-      regExp: regExp,
-    );
-  }
-
-  static RegExp _buildRegExp(String pattern, {required bool caseSensitive}) {
-    final buffer = StringBuffer();
-
-    for (var i = 0; i < pattern.length; i++) {
-      final char = pattern[i];
-
-      switch (char) {
-        case '[':
-          buffer.write('[');
-        case ']':
-          buffer.write(']');
-        case '*':
-          buffer.write('.*');
-        case '?':
-          buffer.write('.');
-        case '-':
-          buffer.write('-');
-        case '!':
-          buffer.write('!');
-        case '.':
-          buffer.write(r'\.');
-        case r'\':
-          buffer.write(r'\\');
-        default:
-          buffer.write(char);
-      }
-    }
-
-    return RegExp(
-      buffer.toString(),
-      caseSensitive: caseSensitive,
-      multiLine: true,
-    );
-  }
-
-  final String pattern;
-  final String workingDirectory;
-  final bool caseSensitive;
-  final int directoryParts;
-  final RegExp regExp;
-
-  bool match(String path) {
-    final matchPart = _extractMatchPart(path);
-
-    return regExp.stringMatch(matchPart) == matchPart;
-  }
-
-  String _extractMatchPart(String path) {
-    if (directoryParts == 0) {
-      return p.basename(path);
-    }
-
-    return '';
-  }
+  /// Shortcut to call the builder as a function.
+  FindFilter call() => build();
 }
