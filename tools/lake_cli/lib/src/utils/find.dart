@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:path/path.dart';
+import 'package:path/path.dart' as p;
 
 import '../core/exceptions.dart';
 import 'is.dart';
@@ -8,11 +8,11 @@ import 'truepath.dart';
 
 typedef FindProgressCallback = bool Function(FindItem item);
 
-void find(
+  void find(
   String pattern, {
   required FindProgressCallback progress,
   bool caseSensitive = false,
-  bool reverse = false,
+  bool recursive = false,
   String workingDirectory = '.',
   List<FileSystemEntityType> types = const [Find.file],
   bool includeHidden = false,
@@ -21,7 +21,7 @@ void find(
     pattern,
     progress: progress,
     caseSensitive: caseSensitive,
-    reverse: reverse,
+    reverse: recursive,
     workingDirectory: workingDirectory,
     types: types,
     includeHidden: includeHidden,
@@ -40,9 +40,7 @@ final class FindItem {
 
 final class Find {
   static const file = FileSystemEntityType.file;
-
   static const directory = FileSystemEntityType.directory;
-
   static const link = FileSystemEntityType.link;
 
   void _find(
@@ -61,10 +59,6 @@ final class Find {
       caseSensitive: caseSensitive,
     );
 
-    final next = List<FileSystemEntity?>.filled(100, null, growable: true);
-    final single = List<FileSystemEntity?>.filled(100, null, growable: true);
-    final children = List<FileSystemEntity?>.filled(100, null, growable: true);
-
     final dir = Directory(config.workingDirectory);
     final list = dir.listSync(followLinks: false);
 
@@ -72,6 +66,14 @@ final class Find {
 
     for (final entity in list) {
       final type = FileSystemEntity.typeSync(entity.path, followLinks: false);
+      final containts = types.contains(type);
+      final match = config.matcher.match(entity.path);
+
+      print(entity);
+
+      // if (types.contains(type) && config.matcher.match) {
+
+      // }
     }
   }
 }
@@ -96,10 +98,10 @@ final class FindConfig {
     required bool includeHidden,
     required bool caseSensitive,
   }) {
-    final directoryPart = dirname(pattern);
+    final directoryPart = p.dirname(pattern);
 
     if (directoryPart != '.') {
-      workingDirectory = join(workingDirectory, directoryPart);
+      workingDirectory = p.join(workingDirectory, directoryPart);
     }
 
     if (!isExists(workingDirectory)) {
@@ -108,7 +110,7 @@ final class FindConfig {
       );
     }
 
-    pattern = basename(pattern);
+    pattern = p.basename(pattern);
 
     final matcher = PatternMatcher.build(
       pattern: pattern,
@@ -121,7 +123,7 @@ final class FindConfig {
             ? Directory.current.path
             : truePath(workingDirectory);
 
-    includeHidden = basename(pattern).startsWith('.');
+    includeHidden = p.basename(pattern).startsWith('.');
 
     return FindConfig(
       workingDirectory: workingDirectory,
@@ -156,6 +158,7 @@ final class PatternMatcher {
     required this.workingDirectory,
     required this.caseSensitive,
     required this.regExp,
+    required this.directoryParts,
   });
 
   factory PatternMatcher.build({
@@ -165,10 +168,18 @@ final class PatternMatcher {
   }) {
     final regExp = _buildRegExp(pattern, caseSensitive: caseSensitive);
 
+    final dirname = p.dirname(pattern);
+    final patternParts = dirname.split(pattern);
+    final directoryParts = switch (patternParts) {
+      ['.'] when patternParts.length == 1 => 0,
+      _ => patternParts.length,
+    };
+
     return PatternMatcher._(
       pattern: pattern,
       workingDirectory: workingDirectory,
       caseSensitive: caseSensitive,
+      directoryParts: directoryParts,
       regExp: regExp,
     );
   }
@@ -211,5 +222,20 @@ final class PatternMatcher {
   final String pattern;
   final String workingDirectory;
   final bool caseSensitive;
+  final int directoryParts;
   final RegExp regExp;
+
+  bool match(String path) {
+    final matchPart = _extractMatchPart(path);
+
+    return regExp.stringMatch(matchPart) == matchPart;
+  }
+
+  String _extractMatchPart(String path) {
+    if (directoryParts == 0) {
+      return p.basename(path);
+    }
+
+    return '';
+  }
 }
