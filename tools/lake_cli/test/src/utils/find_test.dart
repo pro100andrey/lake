@@ -169,5 +169,14 @@ void main() {
         expect(foundFiles.length, expectedFullPaths.length);
       },
     );
+
+    test('finds all files and folders when no filter is provided', () async {
+      final streamResult = findFiles(workingDirectory: fs.root.path);
+      final foundFiles = await streamResult.toList();
+
+      const allFilesCount = 26;
+      expect(foundFiles.length, allFilesCount);
+      expect(foundFiles, everyElement(isA<String>()));
+    });
   });
 }
