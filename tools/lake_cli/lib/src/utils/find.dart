@@ -15,7 +15,7 @@ typedef FindFilter = bool Function(String path);
 /// The [filter] parameter is a function that takes a file path as input and
 /// returns true if the file should be included in the result.
 ///
-/// Returns a list of file paths that match the given filter.
+/// Returns a **stream** of file paths that match the given filter.
 Stream<String> findFiles({
   String? workingDirectory,
   FindFilter? filter,
@@ -37,6 +37,19 @@ Stream<String> findFiles({
   }
 }
 
+/// Synchronously finds files in the given directory and its subdirectories
+/// based on the provided filter. If no filter is provided, all files are
+/// returned.
+///
+/// The [workingDirectory] parameter specifies the directory to search in. If
+/// [workingDirectory] is null, the current working directory is used.
+///
+/// The [filter] parameter is a function that takes a file path as input and
+/// returns true if the file should be included in the result.
+///
+/// Returns an iterable of file paths that match the given filter.
+/// This method is synchronous and may block the event loop if the directory
+/// contains a large number of files.
 Iterable<String> findFilesSync({
   String? workingDirectory,
   FindFilter? filter,
@@ -69,19 +82,36 @@ class FindFiltersBuilder {
   ///
   /// Example:
   /// ```dart
-  /// builder.extensions(['.dart', '.yaml']);
+  /// builder..extensions(['.dart', '.yaml']);
   /// ```
   void extensions(List<String> exts) =>
       _filters.add((path) => exts.contains(p.extension(path)));
 
   /// Adds a filter that matches files whose names contain the given [str].
   ///
+  /// If [caseSensitive] is `false`, the comparison is case-insensitive.
   /// Example:
   /// ```dart
-  /// builder.nameContains('test');
+  /// builder.nameContains('test', caseSensitive: false);
   /// ```
-  void nameContains(String str) =>
-      _filters.add((path) => p.basename(path).contains(str));
+  void nameContains(String str, {bool caseSensitive = true}) => _filters.add(
+    (path) =>
+        caseSensitive
+            ? p.basename(path).contains(str)
+            : p.basename(path).toLowerCase().contains(str.toLowerCase()),
+  );
+
+  /// Adds a filter that matches file paths against a regular expression.
+  ///
+  /// The [pattern] is the regular expression string.
+  /// Example:
+  /// ```dart
+  /// builder.matchesRegex(r'.*\.temp$'); // Matches files ending with .temp
+  /// ```
+  void matchesRegex(String pattern, {bool caseSensitive = true}) {
+    final regex = RegExp(pattern, caseSensitive: caseSensitive);
+    _filters.add(regex.hasMatch);
+  }
 
   /// Adds a filter that matches files whose full normalized path
   /// contains the given [str].
