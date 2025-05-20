@@ -179,4 +179,75 @@ void main() {
       expect(foundFiles, everyElement(isA<String>()));
     });
   });
+
+  group('findFilesSync - sync', () {
+    late TestFsHelper fs;
+
+    setUp(() {
+      fs =
+          TestFsHelper()..createTree({
+            'main.dart': '',
+            'models': {
+              'notification.yml': '',
+              'notification_config.yaml': '',
+              'requests': {'notification_create_request.yaml': ''},
+              'responses': {'notification_create_response.yaml': ''},
+              'enums': {'notification_type.yaml': ''},
+              'exceptions': {'notification_exception.yaml': ''},
+            },
+            'services': {
+              'users_service.yaml': '',
+              'auth_with_email_service.yaml': '',
+              'auth_with_google_service.yaml': '',
+            },
+            'tmp': {'log.tmp': '', 'nested_dir': {}},
+            'docs': {'README.md': '', 'guidelines.txt': ''},
+            'misc': {'template.json': '', 'changelog.txt': ''},
+          });
+    });
+
+    tearDown(() {
+      fs.cleanUp();
+    });
+
+    test('finds files matching the pattern (extensions)', () {
+      final expectedRelativePaths = [
+        'models/notification.yml',
+        'models/notification_config.yaml',
+        'models/requests/notification_create_request.yaml',
+        'models/responses/notification_create_response.yaml',
+        'models/enums/notification_type.yaml',
+        'models/exceptions/notification_exception.yaml',
+        'services/users_service.yaml',
+        'services/auth_with_email_service.yaml',
+        'services/auth_with_google_service.yaml',
+      ];
+
+      final expectedFullPaths = expectedRelativePaths
+          .map(fs.path)
+          .toList(growable: false);
+
+      final filter = FindFiltersBuilder()..extensions(['.yaml', '.yml']);
+      final foundFiles = findFilesSync(
+        workingDirectory: fs.root.path,
+        filter: filter(),
+      );
+
+      expect(foundFiles, unorderedEquals(expectedFullPaths));
+      expect(foundFiles.length, expectedFullPaths.length);
+    });
+
+    test('throws exception for non-existent working directory', () {
+      expect(
+        () => findFilesSync(workingDirectory: fs.path('non_existent_dir')),
+        throwsA(
+          isA<Exception>().having(
+            (e) => e.toString(),
+            'description',
+            contains('Directory does not exist'),
+          ),
+        ),
+      );
+    });
+  });
 }
