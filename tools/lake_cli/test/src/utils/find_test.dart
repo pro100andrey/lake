@@ -62,5 +62,40 @@ void main() {
       expect(foundFiles, unorderedEquals(expectedFullPaths));
       expect(foundFiles.length, expectedFullPaths.length);
     });
+
+    test('Find only regular files (no directories)', () async {
+      final expectedRelativePaths = [
+        'main.dart',
+        'models/user.yml',
+        'models/user_profile.yaml',
+        'models/requests/user_create_request.yaml',
+        'models/responses/user_create_response.yaml',
+        'models/enums/scope.yaml',
+        'models/enums/user_type.yaml',
+        'models/exceptions/user_exception.yaml',
+        'services/users_service.yaml',
+        'services/auth_with_email_service.yaml',
+        'services/auth_with_google_service.yaml',
+        'tmp/file.tmp',
+        'docs/README.md',
+        'docs/CHANGELOG.md',
+        'misc/some_file.json',
+        'misc/another_file.txt',
+      ];
+
+      final expectedFullPaths = expectedRelativePaths
+          .map(fs.path)
+          .toList(growable: false);
+
+      final filter = FindFiltersBuilder()..isFile();
+      final streamResult = findFiles(
+        workingDirectory: fs.root.path,
+        filter: filter(),
+      );
+
+      final foundFiles = await streamResult.toList();
+      expect(foundFiles, unorderedEquals(expectedFullPaths));
+      expect(foundFiles.length, expectedFullPaths.length);
+    });
   });
 }
