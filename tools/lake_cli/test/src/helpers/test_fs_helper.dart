@@ -6,7 +6,7 @@ class TestFsHelper {
   TestFsHelper() {
     root = Directory.systemTemp.createTempSync('test_fs_');
   }
-  
+
   late final Directory root;
 
   String path(String relativePath) => p.join(root.path, relativePath);
@@ -32,9 +32,10 @@ class TestFsHelper {
 
       if (value is String? || value == null) {
         createFile(fullPath, content: value);
-      } else if (value is Map<String, dynamic>) {
+      } else if (value is Map) {
+        final subStructure = value.cast<String, dynamic>();
         createDir(fullPath);
-        createTree(value, fullPath);
+        createTree(subStructure, fullPath);
       } else {
         throw ArgumentError('Invalid value for "$name": $value');
       }
