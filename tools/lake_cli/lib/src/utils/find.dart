@@ -131,6 +131,14 @@ class FindFiltersBuilder {
   /// ```
   void isFile() => _filters.add(FileSystemEntity.isFileSync);
 
+  /// Adds a filter that matches only directories.
+  ///
+  /// Example:
+  /// ```dart
+  /// builder.isDirectory();
+  /// ```
+  void isDirectory() => _filters.add(FileSystemEntity.isDirectorySync);
+
   /// Adds a custom filter function.
   ///
   /// Use this to define any arbitrary matching logic.
@@ -156,6 +164,26 @@ class FindFiltersBuilder {
     final nested = FindFiltersBuilder();
     fn(nested);
     _filters.add((path) => nested._filters.any((f) => f(path)));
+  }
+
+  /// Adds a filter that negates the result of a nested group of filters.
+  ///
+  /// Example: exclude all '.tmp' files.
+  /// ```dart
+  /// builder.not((b) => b.extensions(['.tmp']));
+  /// ```
+  ///
+  /// Example: exclude files named 'main' OR files in 'test' path.
+  /// ```dart
+  /// builder.not((b) => b.groupOr((b2) {
+  ///   b2.nameContains('main');
+  ///   b2.pathContains('test');
+  /// }));
+  /// ```
+  void not(void Function(FindFiltersBuilder) fn) {
+    final nested = FindFiltersBuilder();
+    fn(nested);
+    _filters.add((path) => !nested.build()(path));
   }
 
   /// Builds the combined filter from all added rules using logical AND.
