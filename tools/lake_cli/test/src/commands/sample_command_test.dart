@@ -6,7 +6,7 @@ import 'package:test/test.dart';
 class _MockLogger extends Mock implements Logger {}
 
 void main() {
-  group('sample', () {
+  group('generate', () {
     late Logger logger;
     late LakeCommandRunner commandRunner;
 
@@ -16,7 +16,7 @@ void main() {
     });
 
     test('tells a joke', () async {
-      final exitCode = await commandRunner.run(['sample']);
+      final exitCode = await commandRunner.run(['generate']);
 
       expect(exitCode, ExitCode.success.code);
 
@@ -26,7 +26,7 @@ void main() {
     });
 
     test('tells a joke in cyan', () async {
-      final exitCode = await commandRunner.run(['sample', '-c']);
+      final exitCode = await commandRunner.run(['generate', '-c']);
 
       expect(exitCode, ExitCode.success.code);
 
@@ -48,7 +48,7 @@ void main() {
       
       verify(
         () => logger.info('''
-Usage: $executableName sample [arguments]
+Usage: $executableName generate [arguments]
 -h, --help    Print this usage information.
 -c, --cyan    Prints the same joke, but in cyan
 

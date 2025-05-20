@@ -6,9 +6,9 @@ import 'package:mason_logger/mason_logger.dart';
 /// `lake sample`
 /// A [Command] to exemplify a sub command
 /// {@endtemplate}
-class SampleCommand extends Command<int> {
+class GenerateCommand extends Command<int> {
   /// {@macro sample_command}
-  SampleCommand({required Logger logger}) : _logger = logger {
+  GenerateCommand({required Logger logger}) : _logger = logger {
     argParser.addFlag(
       'cyan',
       abbr: 'c',
