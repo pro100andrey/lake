@@ -134,5 +134,40 @@ void main() {
         expect(foundFiles.length, expectedFullPaths.length);
       },
     );
+
+    test(
+      'finds files excluding .yaml and .yml extensions (not filter)',
+      () async {
+        final expectedRelativePaths = [
+          'main.dart',
+          'tmp/file.tmp',
+          'docs/README.md',
+          'docs/CHANGELOG.md',
+          'misc/some_file.json',
+          'misc/another_file.txt',
+        ];
+
+        final expectedFullPaths = expectedRelativePaths
+            .map(fs.path)
+            .toList(growable: false);
+
+        final filter =
+            FindFiltersBuilder()..not((b) {
+              b.groupOr((b2) {
+                b2
+                  ..isDirectory()
+                  ..extensions(['.yaml', '.yml']);
+              });
+            });
+        final streamResult = findFiles(
+          workingDirectory: fs.root.path,
+          filter: filter(),
+        );
+
+        final foundFiles = await streamResult.toList();
+        expect(foundFiles, unorderedEquals(expectedFullPaths));
+        expect(foundFiles.length, expectedFullPaths.length);
+      },
+    );
   });
 }
