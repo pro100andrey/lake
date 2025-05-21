@@ -45,7 +45,7 @@ void main() {
       verify(
         () => logger.err('Could not find an option or flag "-p".'),
       ).called(1);
-      
+
       verify(
         () => logger.info('''
 Usage: $executableName generate [arguments]

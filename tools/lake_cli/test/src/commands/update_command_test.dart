@@ -60,7 +60,7 @@ void main() {
           progressLogs.add(message);
         }
       });
-      
+
       when(() => logger.progress(any())).thenReturn(progress);
     });
 

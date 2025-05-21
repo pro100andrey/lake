@@ -18,8 +18,7 @@ class CliException implements Exception {
 
   /// Creates a new [CliException] with the given message and cause.
   /// The stack trace will be set to the current stack trace.
-  CliException.from(this.cause, this.stackTrace)
-    : message = cause.toString();
+  CliException.from(this.cause, this.stackTrace) : message = cause.toString();
 
   /// Creates a new [CliException] with the given cause.
   /// The message will be set to the string representation of the cause.
