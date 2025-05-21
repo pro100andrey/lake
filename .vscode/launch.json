@@ -2,14 +2,20 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Dart",
+            "name": "lake cli",
             "type": "dart",
             "request": "launch",
             "program": "bin/lake.dart",
             "cwd": "${workspaceFolder}/tools/lake_cli",
-            "args": [
-
-            ]
+            "args": []
+        },
+        {
+            "name": "lang",
+            "type": "dart",
+            "request": "launch",
+            "program": "grammar.dart",
+            "cwd": "${workspaceFolder}/tools/lake_lang/lib/src",
+            "args": []
         }
     ]
 }
