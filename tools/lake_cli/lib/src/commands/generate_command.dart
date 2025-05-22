@@ -21,7 +21,7 @@ class GenerateCommand extends Command<int> {
   String get description => 'A sample sub command that just prints one joke';
 
   @override
-  String get name => 'sample';
+  String get name => 'generate';
 
   final Logger _logger;
 

@@ -13,8 +13,8 @@
             "name": "lang",
             "type": "dart",
             "request": "launch",
-            "program": "grammar.dart",
-            "cwd": "${workspaceFolder}/tools/lake_lang/lib/src",
+            "program": "main.dart",
+            "cwd": "${workspaceFolder}/tools/lake_lang/bin/",
             "args": []
         }
     ]

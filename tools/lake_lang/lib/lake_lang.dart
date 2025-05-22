@@ -1,3 +1,4 @@
+/// A Dart library for Lake language grammar definition.
 library;
 
-export 'src/grammar.dart';
+export 'src/lake_grammar_definition.dart';

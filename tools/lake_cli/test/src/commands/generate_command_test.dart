@@ -38,7 +38,7 @@ void main() {
     });
 
     test('wrong usage', () async {
-      final exitCode = await commandRunner.run(['sample', '-p']);
+      final exitCode = await commandRunner.run(['generate', '-p']);
 
       expect(exitCode, ExitCode.usage.code);
 
