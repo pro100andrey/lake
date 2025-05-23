@@ -14,10 +14,16 @@
 // The following line is a directive to include the base.lake file
 import "base.lake"
 
-namespace "example"
+namespace dart example
+
+typedef i32 MyInteger
 
 // This is a simple i32 constant
-const i32_constant = 42
+const i32 INT32CONSTANT = 9853
 
-
-
+struct Work {
+  1: i32 num1 = 0,
+  2: i32 num2,
+  3: Operation op,
+  4: optional string comment,
+}

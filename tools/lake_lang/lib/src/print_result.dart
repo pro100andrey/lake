@@ -2,7 +2,7 @@ import 'package:petitparser/petitparser.dart';
 
 /// Prints the result of parsing in a readable way, including the error line and
 ///  position if failed.
-void printResult(Result result) {
+void printParseResult(Result result) {
   switch (result) {
     case Success():
       break;

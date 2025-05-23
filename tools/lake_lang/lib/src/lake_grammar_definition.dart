@@ -41,6 +41,8 @@ DoubleConstant ::= ('+' | '-')? Digit* ('.' Digit+)? ( ('E' | 'e') IntConstant )
 
 import 'package:petitparser/petitparser.dart';
 
+import '../lake_lang.dart';
+
 /// Defines the grammar for the lake language using the PetitParser library.
 /// This approach helps in parsing the lake files by defining the structure and
 /// rules of the language.
@@ -55,11 +57,27 @@ class LakeGrammarDefinition extends GrammarDefinition {
   Parser header() => ref0(import) | ref0(namespace);
 
   // [3] Import ::= 'import' Literal
-  Parser import() => ref1(token, 'import') & ref0(literal);
+  Parser import() {
+    final parser = ref1(token, 'import') & ref0(literal);
+
+    return parser.map((t) {
+      final stringLiteral = t[1] as StringLiteral;
+
+      return Import(stringLiteral.value);
+    });
+  }
 
   // [4] Namespace ::= ( 'namespace' ( NamespaceScope Identifier ) )
-  Parser namespace() =>
-      ref1(token, 'namespace') & (ref0(namespaceScope) & ref0(identifier));
+  Parser namespace() {
+    final parser =
+        ref1(token, 'namespace') & (ref0(namespaceScope) & ref0(identifier));
+
+    return parser.map((t) {
+      final [_, [Token scope, Identifier identifier]] = t;
+      
+      return Namespace(scope.value, identifier);
+    });
+  }
 
   // [5] NamespaceScope ::= '*' | 'js' | 'dart'
   Parser namespaceScope() =>
@@ -251,19 +269,33 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref1(token, '}');
 
   // [30] Literal ::= ('"' [^"]* '"') | ("'" [^']* "'")
-  Parser literal() => token(
-    (char('"') & pattern('^"').star() & char('"') |
-            char("'") & pattern("^'").star() & char("'"))
-        .flatten(),
-  );
+  Parser literal() {
+    final parser = ref1(
+      token,
+      (char('"') & pattern('^"').star() & char('"') |
+              char("'") & pattern("^'").star() & char("'"))
+          .flatten(),
+    );
+
+    return parser.map((t) {
+      final value = (t as Token<dynamic>).value;
+      final strValue = value as String;
+      final trimmed = strValue.substring(1, strValue.length - 1);
+      return StringLiteral(trimmed);
+    });
+  }
 
   // [31] Identifier ::= ( Letter | '_' ) ( Letter | Digit | '.' | '_' )*
-  Parser identifier() => ref1(
-    token,
-    ((ref0(letter) | char('_')).flatten() &
-            (ref0(letter) | ref0(digit) | char('.') | char('_')).star())
-        .flatten(),
-  );
+  Parser identifier() {
+    final parser = ref1(
+      token,
+      ((ref0(letter) | char('_')).flatten() &
+              (ref0(letter) | ref0(digit) | char('.') | char('_')).star())
+          .flatten(),
+    );
+
+    return parser.map((t) => Identifier((t as Token<dynamic>).value));
+  }
 
   // [32] ListSeparator ::= ',' | ';'
   Parser listSeparator() => ref1(token, ',') | ref1(token, ';');

@@ -3,11 +3,10 @@
 import 'dart:io';
 
 import 'package:lake_lang/lake_lang.dart';
-import 'package:petitparser/petitparser.dart';
 
 void main() {
   final currentDir = Directory.current.path;
-  final schemaDir = '$currentDir/example/schema';
+  final schemaDir = '$currentDir/schema';
   final exampleLakeFilePath = '$schemaDir/example.lake';
   final exampleInput = loadLakeFile(exampleLakeFilePath);
 
@@ -15,12 +14,7 @@ void main() {
   final parser = grammar.build();
   final result = parser.parse(exampleInput);
 
-  switch (result) {
-    case Success(message: final message):
-      print('Parsing succeeded: $message');
-    case Failure(message: final message, position: final position):
-      print('Parsing failed at position $position: $message');
-  }
+  printParseResult(result);
 }
 
 String loadLakeFile(String filePath) {

@@ -13,7 +13,7 @@ void main() {
       test('simple string const - succeeds', () {
         const input = 'const string NAME = "John Doe"';
         final result = parser.parse(input);
-        printResult(result);
+        printParseResult(result);
         expect(result, isA<Success>());
         expect(result.value, '');
       });
@@ -21,7 +21,7 @@ void main() {
       test('integer const with semicolon - succeeds', () {
         const input = 'const i32 MAX_USERS = 100';
         final result = parser.parse(input);
-        printResult(result);
+        printParseResult(result);
         expect(result, isA<Success>());
       });
     });
