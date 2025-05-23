@@ -72,7 +72,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(enumDefinition) |
       ref0(structDefinition) |
       ref0(exceptionDefinition) |
-      ref0(serviceDefinition);
+      ref0(serviceDefinition).map((value) => value);
 
   // [7] Const ::= 'const' FieldType Identifier '=' ConstValue ListSeparator?
   Parser constDefinition() =>
@@ -228,10 +228,11 @@ class LakeGrammarDefinition extends GrammarDefinition {
 
   // DoubleConstant ::= ('+' | '-')? Digit* ('.' Digit+)? ( ('E' | 'e') IntConstant )?
   Parser doubleConstant() =>
-      (char('+') | char('-')).optional() &
-      ref0(digit).star() &
-      (char('.') & ref0(digit).plus()).optional() &
-      ((char('E') | char('e')) & ref0(intConstant)).optional().flatten();
+      ((char('+') | char('-')).optional() &
+              ref0(digit).star() &
+              (char('.') & ref0(digit).plus()) &
+              ((char('E') | char('e')) & ref0(intConstant)).optional())
+          .flatten();
 
   // [28] ConstList ::= '[' (ConstValue ListSeparator?)* ']'
   Parser constList() =>
