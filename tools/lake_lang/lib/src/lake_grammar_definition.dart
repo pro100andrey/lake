@@ -70,16 +70,32 @@ class LakeGrammarDefinition extends GrammarDefinition {
   Parser constDefinition() => undefined();
 
   // [29] Literal ::= ('"' [^"]* '"') | ("'" [^']* "'")
-  Parser literal() =>
-      (char('"') & pattern('^"').star() & char('"') |
-              char("'") & pattern("^'").star() & char("'"))
-          .flatten('" or \' expected');
+  Parser literal() {
+    final doubleQuote =
+        char('"') &
+        pattern('^"').star() &
+        char('"').or(FailureParser('a double quote expected'));
+
+    final singleQuote =
+        char("'") &
+        pattern("^'").star() &
+        char("'").or(FailureParser('a single quote expected'));
+
+    return (doubleQuote | singleQuote).flatten();
+  }
 
   // [30] Identifier ::= ( Letter | '_' ) ( Letter | Digit | '.' | '_' )*
+  Parser identifier() {
+    final initial = (letter() | char('_')).or(
+      FailureParser('a letter or underscore expected'),
+    );
 
-  Parser identifier() =>
-      (letter() | char('_')) &
-      (letter() | digit() | char('.') | char('_')).star().flatten();
+    final subsequent = (letter() | digit() | char('.') | char('_')).or(
+      FailureParser('a letter, digit, dot or underscore expected'),
+    );
+
+    return (initial & subsequent.star()).flatten();
+  }
 
   // Keywords
   Parser importToken() => ref1(token, 'import');
