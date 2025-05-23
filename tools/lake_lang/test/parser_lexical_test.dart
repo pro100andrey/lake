@@ -46,7 +46,7 @@ void main() {
           const input = '1myVariable';
           final result = parser.parse(input);
           expect(result, isA<Failure>());
-          expect(result.message, equals('a letter or underscore expected'));
+          expect(result.message, equals('"_" expected'));
         });
 
         test('contains hyphen - invalid character error', () {
@@ -81,20 +81,14 @@ void main() {
           const input = '';
           final result = parser.parse(input);
           expect(result, isA<Failure>());
-          expect(
-            result.message,
-            equals('a letter or underscore expected'),
-          );
+          expect(result.message, equals('"_" expected'));
         });
 
         test('only dot - initial character error', () {
           const input = '.';
           final result = parser.parse(input);
           expect(result, isA<Failure>());
-          expect(
-            result.message,
-            equals('a letter or underscore expected'),
-          );
+          expect(result.message, equals('"_" expected'));
         });
       });
     });

@@ -1,0 +1,23 @@
+
+// This file is example code for the lake language.
+
+/*
+    Multiple lines of comments
+    can be used to describe the code.
+    This is useful for providing
+    detailed explanations or documentation.
+*/
+
+// This is a single line comment
+// It is used for brief notes or explanations
+
+// The following line is a directive to include the base.lake file
+import "base.lake"
+
+namespace "example"
+
+// This is a simple i32 constant
+const i32_constant = 42
+
+
+
