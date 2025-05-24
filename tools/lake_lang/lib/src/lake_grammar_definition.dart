@@ -174,10 +174,10 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(fieldType) &
       ref1(token, '>');
 
-  // [27] ConstValue ::= IntConstant | DoubleConstant | Literal | Identifier | ConstList | ConstMap
+  // [27] ConstValue ::= DoubleConstant |IntConstant | Literal | Identifier | ConstList | ConstMap
   Parser constValue() =>
-      ref0(intConstant) |
       ref0(doubleConstant) |
+      ref0(intConstant) |
       ref0(literal) |
       ref0(identifier) |
       ref0(constList) |
@@ -191,7 +191,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
   Parser doubleConstant() =>
       ((char('+') | char('-')).optional() &
               ref0(digit).star() &
-              (ref1(token, '.') & ref0(digit).plus()) &
+              (char('.') & ref0(digit).plus()) &
               ((char('E') | char('e')) & ref0(intConstant)).optional())
           .flatten();
 
