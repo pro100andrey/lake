@@ -44,7 +44,7 @@ void main() {
           Token type,
           Token id,
           Token op,
-          [String? sign, String intValue],
+          String intValue,
           dynamic separator,
         ] = result.value as List;
 
@@ -52,8 +52,56 @@ void main() {
         expect(type.value, equals('i32'));
         expect(id.value, equals('MAX_USERS'));
         expect(op.value, equals('='));
-        expect(sign, isNull);
+        expect(int.parse(intValue), equals(100));
         expect(intValue, equals('100'));
+        expect(separator, isNull);
+      });
+
+      test('double const with decimal - succeeds', () {
+        const input = 'const double PI = +3.14';
+        final result = parser.parse(input);
+
+        expect(result, isA<Success>());
+
+        final [
+          Token keyword,
+          Token type,
+          Token id,
+          Token op,
+          String value,
+          dynamic separator,
+        ] = result.value as List;
+
+        expect(keyword.value, equals('const'));
+        expect(type.value, equals('double'));
+        expect(id.value, equals('PI'));
+        expect(op.value, equals('='));
+        expect(value, equals('+3.14'));
+        expect(double.parse(value), equals(3.14));
+        expect(separator, isNull);
+      });
+
+      test('negative double const with exponent - succeeds', () {
+        const input = 'const double NEG_EXP = -1.23e-5';
+        final result = parser.parse(input);
+
+        expect(result, isA<Success>());
+
+        final [
+          Token keyword,
+          Token type,
+          Token id,
+          Token op,
+          String value,
+          dynamic separator,
+        ] = result.value as List;
+
+        expect(keyword.value, equals('const'));
+        expect(type.value, equals('double'));
+        expect(id.value, equals('NEG_EXP'));
+        expect(op.value, equals('='));
+        expect(value, equals('-1.23e-5'));
+        expect(double.parse(value), equals(-1.23e-5));
         expect(separator, isNull);
       });
     });

@@ -185,7 +185,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
 
   // IntConstant ::= ('+' | '-')? Digit+
   Parser intConstant() =>
-      (char('+') | char('-')).optional() & ref0(digit).plus().flatten();
+      ((char('+') | char('-')).optional() & ref0(digit).plus()).flatten();
 
   // DoubleConstant ::= ('+' | '-')? Digit* ('.' Digit+)? ( ('E' | 'e') IntConstant )?
   Parser doubleConstant() =>
