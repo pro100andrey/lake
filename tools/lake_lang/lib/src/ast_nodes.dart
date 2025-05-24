@@ -1,330 +1,402 @@
-// ignore_for_file: avoid_print, lines_longer_than_80_chars
-
 import 'package:equatable/equatable.dart';
 
+/// Base sealed class for all AST nodes.
+/// All concrete AST nodes must be defined in this file (or library).
 sealed class AstNode extends Equatable {
   const AstNode();
+  // Add an accept method for the Visitor pattern
+  T accept<T>(AstVisitor<T> visitor);
+
+  // Equatable requires props, but the base AstNode itself has no specific
+  // properties that define its equality beyond its type and children, which
+  // are handled by concrete implementations.
+  @override
+  List<Object?> get props => throw UnimplementedError(
+    'props should be implemented in subclasses of AstNode',
+  );
 
   @override
-  List<Object?> get props => throw UnimplementedError();
-
-  @override
-  bool get stringify => true;
+  bool get stringify => true; // Make toString() more useful for debugging
 }
 
-/// Base class for all Abstract Syntax Tree nodes.
-/// No need for Equatable on base class unless it has properties
+/// Abstract base class for all AST Visitors
+// (AstVisitor interface remains mostly the same, ensuring exhaustive checking)
+abstract class AstVisitor<T> {
+  // Visit methods for each specific AST node type
+  T visitDocumentNode(DocumentNode node);
+  T visitImportNode(ImportNode node);
+  T visitNamespaceNode(NamespaceNode node);
+  T visitConstDefinitionNode(ConstDefinitionNode node);
+  T visitTypedefDefinitionNode(TypedefDefinitionNode node);
+  T visitEnumDefinitionNode(EnumDefinitionNode node);
+  T visitEnumValueNode(EnumValueNode node);
+  T visitStructDefinitionNode(StructDefinitionNode node);
+  T visitExceptionDefinitionNode(ExceptionDefinitionNode node);
+  T visitServiceDefinitionNode(ServiceDefinitionNode node);
+  T visitFieldNode(FieldNode node);
+  T visitFunctionNode(FunctionNode node);
 
-/// Represents the top-level document structure.
-final class Document extends AstNode {
-  const Document(this.headers, this.definitions);
+  // Type nodes
+  T visitBaseTypeNode(BaseTypeNode node);
+  T visitMapTypeNode(MapTypeNode node);
+  T visitSetTypeNode(SetTypeNode node);
+  T visitListTypeNode(ListTypeNode node);
+  T visitStreamTypeNode(StreamTypeNode node);
+  T visitCustomTypeNode(CustomTypeNode node);
+  T visitVoidTypeNode(VoidTypeNode node);
 
-  final List<Header> headers;
-  final List<Definition> definitions;
+  // Constant value nodes
+  T visitIntConstantNode(IntConstantNode node);
+  T visitDoubleConstantNode(DoubleConstantNode node);
+  T visitLiteralNode(LiteralNode node);
+  T visitIdentifierNode(IdentifierNode node);
+  T visitConstListNode(ConstListNode node);
+  T visitConstMapNode(ConstMapNode node);
+}
+
+// --- Concrete AST Node Classes ---
+
+final class DocumentNode extends AstNode {
+  const DocumentNode(this.headers, this.definitions);
+
+  final List<HeaderNode> headers;
+  final List<DefinitionNode> definitions;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitDocumentNode(this);
 
   @override
   List<Object?> get props => [headers, definitions];
 }
 
-/// --- Headers ---
-
-/// Base class for header definitions (e.g., import, namespace).
-abstract class Header extends AstNode {
-  const Header();
+sealed class HeaderNode extends AstNode {
+  const HeaderNode();
 }
 
-/// Represents an 'import' declaration.
-final class Import extends Header {
-  const Import(this.literal);
+final class ImportNode extends HeaderNode {
+  const ImportNode(this.path);
 
-  final String literal;
+  final String path;
 
   @override
-  List<Object?> get props => [literal];
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitImportNode(this);
+
+  @override
+  List<Object?> get props => [path];
 }
 
-/// Represents a 'namespace' declaration.
-final class Namespace extends Header {
-  const Namespace(this.scope, this.identifier);
+class NamespaceNode extends HeaderNode {
+  const NamespaceNode(this.scope, this.name);
 
   final String scope;
-  final Identifier identifier;
+  final IdentifierNode name;
 
   @override
-  List<Object?> get props => [scope, identifier];
-}
-
-/// --- Identifiers ---
-
-/// Represents an identifier (e.g., variable names, type names).
-final class Identifier extends AstNode {
-  const Identifier(this.name);
-
-  final String name;
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitNamespaceNode(this);
 
   @override
-  List<Object?> get props => [name];
+  List<Object?> get props => [scope, name];
 }
 
-/// --- Definitions ---
-
-/// Base class for all top-level definitions (e.g., const, enum, struct,
-/// service).
-abstract class Definition extends AstNode {
-  const Definition();
+sealed class DefinitionNode extends AstNode {
+  const DefinitionNode();
 }
 
-/// Represents a 'const' definition.
-final class Const extends AstNode {
-  const Const(this.name, this.type, this.value);
+class ConstDefinitionNode extends DefinitionNode {
+  const ConstDefinitionNode(this.type, this.name, this.value);
 
-  final Identifier name;
-  final TypeAnnotation type;
-  final ConstValue value;
+  final TypeNode type;
+  final IdentifierNode name;
+  final ConstValueNode value;
 
   @override
-  List<Object?> get props => [name, type, value];
-}
-
-/// Represents a 'typedef' definition.
-final class Typedef extends Definition {
-  const Typedef(this.name, this.type);
-
-  final Identifier name;
-  final TypeAnnotation type;
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitConstDefinitionNode(this);
 
   @override
-  List<Object?> get props => [name, type];
+  List<Object?> get props => [type, name, value];
 }
 
-/// Represents an 'enum' definition.
-final class Enum extends Definition {
-  const Enum(this.name, this.values);
+class TypedefDefinitionNode extends DefinitionNode {
+  const TypedefDefinitionNode(this.type, this.name);
 
-  final Identifier name;
-  final List<EnumValue> values;
+  final TypeNode type;
+  final IdentifierNode name;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) =>
+      visitor.visitTypedefDefinitionNode(this);
+
+  @override
+  List<Object?> get props => [type, name];
+}
+
+class EnumDefinitionNode extends DefinitionNode {
+  const EnumDefinitionNode(this.name, this.values);
+
+  final IdentifierNode name;
+  final List<EnumValueNode> values;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitEnumDefinitionNode(this);
 
   @override
   List<Object?> get props => [name, values];
 }
 
-/// Represents an entry within an 'enum' definition.
-final class EnumValue extends AstNode {
-  const EnumValue(this.identifier, {this.intConstant});
-
-  final Identifier identifier;
-  final IntConstant? intConstant;
-
-  @override
-  List<Object?> get props => [identifier, intConstant];
-}
-
-/// Represents a 'struct' definition.
-final class Struct extends Definition {
-  const Struct(this.name, this.fields);
-
-  final Identifier name;
-  final List<Field> fields;
+class EnumValueNode extends AstNode {
+  const EnumValueNode(this.name, this.value);
+  
+  final IdentifierNode name;
+  final int? value;
 
   @override
-  List<Object?> get props => [name, fields];
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitEnumValueNode(this);
+
+  @override
+  List<Object?> get props => [name, value];
 }
 
-/// Represents an 'exception' definition.
-final class ExceptionDef extends Definition {
-  const ExceptionDef(this.name, this.fields);
+class StructDefinitionNode extends DefinitionNode {
+  const StructDefinitionNode(this.name, this.fields);
 
-  final Identifier name;
-  final List<Field> fields;
+  final IdentifierNode name;
+  final List<FieldNode> fields;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitStructDefinitionNode(this);
 
   @override
   List<Object?> get props => [name, fields];
 }
 
-/// Represents a 'service' definition.
-final class Service extends Definition {
-  const Service(this.name, this.methods, {this.extendedService});
-  final Identifier name;
-  final Identifier? extendedService;
-  final List<Method> methods;
+class ExceptionDefinitionNode extends DefinitionNode {
+  const ExceptionDefinitionNode(this.name, this.fields);
+  
+  final IdentifierNode name;
+  final List<FieldNode> fields;
 
   @override
-  List<Object?> get props => [name, methods, extendedService];
+  T accept<T>(AstVisitor<T> visitor) =>
+      visitor.visitExceptionDefinitionNode(this);
+
+  @override
+  List<Object?> get props => [name, fields];
 }
 
-/// --- Fields ---
+class ServiceDefinitionNode extends DefinitionNode {
+  const ServiceDefinitionNode(this.name, this.extendsService, this.functions);
+  
+  final IdentifierNode name;
+  final IdentifierNode? extendsService;
+  final List<FunctionNode> functions;
 
-/// Represents a field within a struct or exception.
-final class Field extends AstNode {
-  const Field(
+  @override
+  T accept<T>(AstVisitor<T> visitor) =>
+      visitor.visitServiceDefinitionNode(this);
+
+  @override
+  List<Object?> get props => [name, extendsService, functions];
+}
+
+class FieldNode extends AstNode {
+  const FieldNode(
+    this.id,
+    this.requirement,
+    this.type,
     this.name,
-    this.type, {
-    this.fieldId,
-    this.isRequired = false,
     this.defaultValue,
-  });
+  );
 
-  final int? fieldId;
-  final Identifier name;
-  final TypeAnnotation type;
-  final bool isRequired;
-  final ConstValue? defaultValue;
+  final int? id;
+  final String? requirement;
+  final TypeNode type;
+  final IdentifierNode name;
+  final ConstValueNode? defaultValue;
 
   @override
-  List<Object?> get props => [fieldId, name, type, isRequired, defaultValue];
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitFieldNode(this);
+
+  @override
+  List<Object?> get props => [id, requirement, type, name, defaultValue];
 }
 
-/// --- Methods ---
-
-/// Represents a function/method within a service.
-final class Method extends AstNode {
-  const Method(
+class FunctionNode extends AstNode {
+  const FunctionNode(
+    this.returnType,
     this.name,
-    this.returnType, {
-    this.parameters = const [],
-    this.throws,
-  });
+    this.parameters,
+    this.throwsExceptions,
+  );
 
-  final Identifier name;
-  final TypeAnnotation returnType;
-  final List<Field> parameters;
-  final Throws? throws;
-
-  @override
-  List<Object?> get props => [name, returnType, parameters, throws];
-}
-
-/// Represents a 'throws' clause on a method.
-final class Throws extends AstNode {
-  const Throws(this.exceptions);
-
-  final List<Field> exceptions;
+  final TypeNode returnType;
+  final IdentifierNode name;
+  final List<FieldNode> parameters;
+  final List<IdentifierNode> throwsExceptions;
 
   @override
-  List<Object?> get props => [exceptions];
-}
-
-/// --- Type Annotations ---
-
-/// Base class for all type annotations (e.g., BaseType, ContainerType, Identifier).
-abstract class TypeAnnotation extends AstNode {
-  const TypeAnnotation();
-}
-
-/// Represents a base type (e.g., 'bool', 'string', 'i32') or a custom identifier type.
-final class BaseType extends TypeAnnotation {
-  const BaseType(this.identifier);
-
-  final Identifier identifier; // e.g., 'bool', 'string', 'MyStruct'
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitFunctionNode(this);
 
   @override
-  List<Object?> get props => [identifier];
+  List<Object?> get props => [returnType, name, parameters, throwsExceptions];
 }
 
-/// Base class for container types (Map, Set, List, Stream).
-abstract class ContainerType extends TypeAnnotation {
-  const ContainerType();
+// Types
+sealed class TypeNode extends AstNode {
+  const TypeNode();
 }
 
-/// Represents a 'map' container type.
-final class MapType extends ContainerType {
-  const MapType(this.keyType, this.valueType);
+class BaseTypeNode extends TypeNode {
+  const BaseTypeNode(this.name);
 
-  final TypeAnnotation keyType;
-  final TypeAnnotation valueType;
+  final String name;
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitBaseTypeNode(this);
+
+  @override
+  List<Object?> get props => [name];
+}
+
+sealed class ContainerTypeNode extends TypeNode {
+  const ContainerTypeNode();
+}
+
+class MapTypeNode extends ContainerTypeNode {
+  const MapTypeNode(this.keyType, this.valueType);
+
+  final TypeNode keyType;
+  final TypeNode valueType;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitMapTypeNode(this);
 
   @override
   List<Object?> get props => [keyType, valueType];
 }
 
-/// Represents a 'set' container type.
-final class SetType extends ContainerType {
-  const SetType(this.itemType);
-  final TypeAnnotation itemType;
+class SetTypeNode extends ContainerTypeNode {
+  const SetTypeNode(this.itemType);
+
+  final TypeNode itemType;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitSetTypeNode(this);
 
   @override
   List<Object?> get props => [itemType];
 }
 
-/// Represents a 'list' container type.
-final class ListType extends ContainerType {
-  const ListType(this.itemType);
+class ListTypeNode extends ContainerTypeNode {
+  const ListTypeNode(this.itemType);
 
-  final TypeAnnotation itemType;
+  final TypeNode itemType;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitListTypeNode(this);
 
   @override
   List<Object?> get props => [itemType];
 }
 
-/// Represents a 'stream' container type.
-final class StreamType extends ContainerType {
-  const StreamType(this.itemType);
-
-  final TypeAnnotation itemType;
-
+class StreamTypeNode extends ContainerTypeNode {
+  const StreamTypeNode(this.itemType);
+  final TypeNode itemType;
+  
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitStreamTypeNode(this);
+  
   @override
   List<Object?> get props => [itemType];
 }
 
-/// --- Constant Values ---
+class CustomTypeNode extends TypeNode {
+  const CustomTypeNode(this.name);
 
-/// Base class for all constant values.
-abstract class ConstValue extends AstNode {
-  const ConstValue();
-}
-
-/// Represents an integer constant value.
-final class IntConstant extends ConstValue {
-  const IntConstant(this.value);
-  final int value;
+  final IdentifierNode name;
 
   @override
-  List<Object?> get props => [value];
-}
-
-/// Represents a double/floating-point constant value.
-final class DoubleConstant extends ConstValue {
-  const DoubleConstant(this.value);
-  final String value; // Store as String to preserve exact representation
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitCustomTypeNode(this);
 
   @override
-  List<Object?> get props => [value];
+  List<Object?> get props => [name];
 }
 
-/// Represents a string literal constant value.
-final class StringLiteral extends ConstValue {
-  const StringLiteral(this.value);
+class VoidTypeNode extends TypeNode {
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitVoidTypeNode(this);
+
+  @override
+  List<Object?> get props => [];
+}
+
+// Constants
+sealed class ConstValueNode extends AstNode {
+  const ConstValueNode();
+}
+
+class IntConstantNode extends ConstValueNode {
+  const IntConstantNode(this.value);
+
   final String value;
 
   @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitIntConstantNode(this);
+
+  @override
   List<Object?> get props => [value];
 }
 
-/// Represents an identifier used as a constant value (e.g., another const).
-final class ConstIdentifier extends ConstValue {
-  const ConstIdentifier(this.identifier);
-
-  final Identifier identifier;
+class DoubleConstantNode extends ConstValueNode {
+  const DoubleConstantNode(this.value);
+  final String value;
 
   @override
-  List<Object?> get props => [identifier];
-}
-
-/// Represents a list of constant values.
-final class ConstList extends ConstValue {
-  const ConstList(this.values);
-
-  final List<ConstValue> values;
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitDoubleConstantNode(this);
 
   @override
-  List<Object?> get props => [values];
+  List<Object?> get props => [value];
 }
 
-/// Represents a map of constant values.
-final class ConstMap extends ConstValue {
-  const ConstMap(this.entries);
+class LiteralNode extends ConstValueNode {
+  const LiteralNode(this.value);
+  final String value;
 
-  final Map<ConstValue, ConstValue> entries;
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitLiteralNode(this);
+
+  @override
+  List<Object?> get props => [value];
+}
+
+class IdentifierNode extends ConstValueNode {
+  const IdentifierNode(this.name);
+
+  final String name;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitIdentifierNode(this);
+
+  @override
+  List<Object?> get props => [name];
+}
+
+class ConstListNode extends ConstValueNode {
+  const ConstListNode(this.elements);
+
+  final List<ConstValueNode> elements;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitConstListNode(this);
+
+  @override
+  List<Object?> get props => [elements];
+}
+
+class ConstMapNode extends ConstValueNode {
+  const ConstMapNode(this.entries);
+
+  final Map<ConstValueNode, ConstValueNode> entries;
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitConstMapNode(this);
 
   @override
   List<Object?> get props => [entries];
