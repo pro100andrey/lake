@@ -1,0 +1,36 @@
+[1] Document ::= Header* Definition*
+[2] Header ::= Import | Namespace
+[3] Import  ::= 'import' Literal
+[4] Namespace ::= ( 'namespace' ( NamespaceScope Identifier ) )
+[5] NamespaceScope ::= '*' | 'js' | 'dart'
+[6] Definition ::=  Const | Typedef | Enum | Struct | Exception | Service
+[7] Const ::= 'const' FieldType Identifier '=' ConstValue ListSeparator?
+[8] Typedef ::= 'typedef' DefinitionType Identifier
+[9] Enum ::= 'enum' Identifier '{' (Identifier ('=' IntConstant)? ListSeparator?)* '}'
+[10] Struct ::= 'struct' Identifier '{' Field* '}'
+[11] Exception ::= 'exception' Identifier '{' Field* '}'
+[12] Service ::= 'service' Identifier ( 'extends' Identifier )? '{' Function* '}'
+[13] Field ::= FieldID? FieldReq? FieldType Identifier ('=' ConstValue)? ListSeparator?
+[14] FieldID ::= IntConstant ':'
+[15] FieldReq ::= 'required' | 'optional'
+[16] Function ::= FunctionType Identifier '(' Field* ')' Throws? ListSeparator?
+[17] FunctionType ::= FieldType | 'void'
+[18] Throws ::= 'throws' '(' Field* ')'
+[19] FieldType ::= Identifier | BaseType | ContainerType
+[20] DefinitionType ::= BaseType | ContainerType
+[21] BaseType ::= 'bool' | 'byte' | 'i8' | 'i16' | 'i32' | 'i64' | 'double' | 'string' | 'binary' | 'uuid' | 'date' | 'duration'
+[22] ContainerType ::= MapType | SetType | ListType | StreamType
+[23] MapType ::= 'map' '<' FieldType ',' FieldType '>'
+[24] SetType ::= 'set''<' FieldType '>'
+[25] ListType ::= 'list' '<' FieldType '>'
+[26] StreamType ::= 'stream' '<' FieldType '>'
+[27] ConstValue ::= IntConstant | DoubleConstant | Literal | Identifier | ConstList | ConstMap
+IntConstant ::= ('+' | '-')? Digit+
+DoubleConstant ::= ('+' | '-')? Digit* ('.' Digit+)? ( ('E' | 'e') IntConstant )?
+[28] ConstList ::= '[' (ConstValue ListSeparator?)* ']'
+[29] ConstMap ::= '{' (ConstValue ':' ConstValue ListSeparator?)* '}'
+[30] Literal ::= ('"' [^"]* '"') | ("'" [^']* "'")
+[31] Identifier ::= ( Letter | '_' ) ( Letter | Digit | '.' | '_' )*
+[32] ListSeparator ::= ',' | ';'
+[33] Letter ::= ['A'-'Z'] | ['a'-'z']
+[34] Digit ::=  ['0'-'9']

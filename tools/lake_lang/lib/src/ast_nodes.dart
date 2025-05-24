@@ -145,7 +145,7 @@ class EnumDefinitionNode extends DefinitionNode {
 
 class EnumValueNode extends AstNode {
   const EnumValueNode(this.name, this.value);
-  
+
   final IdentifierNode name;
   final int? value;
 
@@ -171,7 +171,7 @@ class StructDefinitionNode extends DefinitionNode {
 
 class ExceptionDefinitionNode extends DefinitionNode {
   const ExceptionDefinitionNode(this.name, this.fields);
-  
+
   final IdentifierNode name;
   final List<FieldNode> fields;
 
@@ -185,7 +185,7 @@ class ExceptionDefinitionNode extends DefinitionNode {
 
 class ServiceDefinitionNode extends DefinitionNode {
   const ServiceDefinitionNode(this.name, this.extendsService, this.functions);
-  
+
   final IdentifierNode name;
   final IdentifierNode? extendsService;
   final List<FunctionNode> functions;
@@ -300,10 +300,10 @@ class ListTypeNode extends ContainerTypeNode {
 class StreamTypeNode extends ContainerTypeNode {
   const StreamTypeNode(this.itemType);
   final TypeNode itemType;
-  
+
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitStreamTypeNode(this);
-  
+
   @override
   List<Object?> get props => [itemType];
 }

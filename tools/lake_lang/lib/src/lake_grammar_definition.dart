@@ -237,6 +237,9 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(singleLineComment) |
       ref0(multiLineComment);
 
+  Parser comment() =>
+      (ref0(singleLineComment) | ref0(multiLineComment)).flatten();
+
   Parser singleLineComment() =>
       string('//') & ref0(newline).neg().star() & ref0(newline).optional();
 
