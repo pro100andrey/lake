@@ -61,9 +61,9 @@ class LakeGrammarDefinition extends GrammarDefinition {
     final parser = ref1(token, 'import') & ref0(literal);
 
     return parser.map((t) {
-      final stringLiteral = t[1] as StringLiteral;
+      final [_, StringLiteral import] = t;
 
-      return Import(stringLiteral.value);
+      return Import(import.value);
     });
   }
 
@@ -73,8 +73,8 @@ class LakeGrammarDefinition extends GrammarDefinition {
         ref1(token, 'namespace') & (ref0(namespaceScope) & ref0(identifier));
 
     return parser.map((t) {
-      final [_, [Token scope, Identifier identifier]] = t;
-      
+      final [_, [Token scope, identifier]] = t;
+
       return Namespace(scope.value, identifier);
     });
   }
@@ -84,37 +84,76 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref1(token, '*') | ref1(token, 'js') | ref1(token, 'dart');
 
   // [6] Definition ::= Const | Typedef | Enum | Struct | Exception | Service
-  Parser definition() =>
-      ref0(constDefinition) |
-      ref0(typedefDefinition) |
-      ref0(enumDefinition) |
-      ref0(structDefinition) |
-      ref0(exceptionDefinition) |
-      ref0(serviceDefinition).map((value) => value);
+  Parser definition() {
+    final parser =
+        ref0(constDefinition) |
+        ref0(typedefDefinition) |
+        ref0(enumDefinition) |
+        ref0(structDefinition) |
+        ref0(exceptionDefinition) |
+        ref0(serviceDefinition);
+
+    return parser.map((t) {
+      final r = t;
+
+      return r;
+    });
+  }
 
   // [7] Const ::= 'const' FieldType Identifier '=' ConstValue ListSeparator?
-  Parser constDefinition() =>
-      ref1(token, 'const') &
-      ref0(fieldType) &
-      ref0(identifier) &
-      ref1(token, '=') &
-      ref0(constValue) &
-      ref0(listSeparator).optional();
+  Parser constDefinition() {
+    final parser =
+        ref1(token, 'const') &
+        ref0(fieldType) &
+        ref0(identifier) &
+        ref1(token, '=') &
+        ref0(constValue) &
+        ref0(listSeparator).optional();
+
+    return parser.map((t) {
+      final r = t;
+
+      return r;
+    });
+  }
 
   // [8] Typedef ::= 'typedef' DefinitionType Identifier
-  Parser typedefDefinition() =>
-      ref1(token, 'typedef') & ref0(definitionType) & ref0(identifier);
+  Parser typedefDefinition() {
+    final parser =
+        ref1(token, 'typedef') & ref0(definitionType) & ref0(identifier);
+
+    return parser.map((t) {
+      final [_, type, identifier] = t;
+
+      return Typedef(identifier, type);
+    });
+  }
 
   // [9] Enum ::= 'enum' Identifier '{' (Identifier ('=' IntConstant)? ListSeparator?)* '}'
-  Parser enumDefinition() =>
-      ref1(token, 'enum') &
-      ref0(identifier) &
-      ref1(token, '{') &
-      (ref0(identifier) &
-              (ref1(token, '=') & ref0(intConstant)).optional() &
-              ref0(listSeparator).optional())
-          .star() &
-      ref1(token, '}');
+  Parser enumDefinition() {
+    final parser =
+        ref1(token, 'enum') &
+        ref0(identifier) &
+        ref1(token, '{') &
+        (ref0(identifier) &
+                (ref1(token, '=') & ref0(intConstant)).optional() &
+                ref0(listSeparator).optional())
+            .star()
+            .map(
+              (e) => e
+                  .map((t) {
+                    final [identifier, [_, intConstant], _] = t;
+                    return EnumValue(identifier, intConstant: intConstant);
+                  })
+                  .toList(growable: false),
+            ) &
+        ref1(token, '}');
+
+    return parser.map((t) {
+      final [_, identifier, _, values, _] = t;
+      return Enum(identifier, values);
+    });
+  }
 
   // [10] Struct ::= 'struct' Identifier '{' Field* '}'
   Parser structDefinition() =>
@@ -170,32 +209,55 @@ class LakeGrammarDefinition extends GrammarDefinition {
   Parser functionType() => ref0(fieldType) | ref1(token, 'void');
 
   // [18] Throws ::= 'throws' '(' Field* ')'
-  Parser throws() =>
-      ref1(token, 'throws') &
-      ref1(token, '(') &
-      ref0(field).star() &
-      ref1(token, ')');
+  Parser throws() {
+    final parser =
+        ref1(token, 'throws') &
+        ref1(token, '(') &
+        ref0(field).star() &
+        ref1(token, ')');
+
+    return parser.map((t) {
+      final r = t;
+
+      return r;
+    });
+  }
 
   // [19] FieldType ::= Identifier | BaseType | ContainerType
-  Parser fieldType() => ref0(identifier) | ref0(baseType) | ref0(containerType);
+  Parser fieldType() {
+    final parser = ref0(identifier) | ref0(baseType) | ref0(containerType);
+
+    return parser.map((t) {
+      final r = t;
+
+      return r;
+    });
+  }
 
   // [20] DefinitionType ::= BaseType | ContainerType
   Parser definitionType() => ref0(baseType) | ref0(containerType);
 
   // [21] BaseType ::= 'bool' | 'byte' | 'i8' | 'i16' | 'i32' | 'i64' | 'double' | 'string' | 'binary' | 'uuid' | 'date' | 'duration'
-  Parser baseType() =>
-      ref1(token, 'bool') |
-      ref1(token, 'byte') |
-      ref1(token, 'i8') |
-      ref1(token, 'i16') |
-      ref1(token, 'i32') |
-      ref1(token, 'i64') |
-      ref1(token, 'double') |
-      ref1(token, 'string') |
-      ref1(token, 'binary') |
-      ref1(token, 'uuid') |
-      ref1(token, 'date') |
-      ref1(token, 'duration');
+  Parser baseType() {
+    final parser =
+        ref1(token, 'bool') |
+        ref1(token, 'byte') |
+        ref1(token, 'i8') |
+        ref1(token, 'i16') |
+        ref1(token, 'i32') |
+        ref1(token, 'i64') |
+        ref1(token, 'double') |
+        ref1(token, 'string') |
+        ref1(token, 'binary') |
+        ref1(token, 'uuid') |
+        ref1(token, 'date') |
+        ref1(token, 'duration');
+
+    return parser.map((t) {
+      final Token(value: name) = t;
+      return BaseType(Identifier(name));
+    });
+  }
 
   // [22] ContainerType ::= MapType | SetType | ListType | StreamType
   Parser containerType() =>
@@ -232,25 +294,50 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref1(token, '>');
 
   // [27] ConstValue ::= IntConstant | DoubleConstant | Literal | Identifier | ConstList | ConstMap
-  Parser constValue() =>
-      ref0(intConstant) |
-      ref0(doubleConstant) |
-      ref0(literal) |
-      ref0(identifier) |
-      ref0(constList) |
-      ref0(constMap);
+  Parser constValue() {
+    final parser =
+        ref0(intConstant) |
+        ref0(doubleConstant) |
+        ref0(literal) |
+        ref0(identifier) |
+        ref0(constList) |
+        ref0(constMap);
+
+    return parser.map((t) {
+      final value = t;
+
+      return value;
+    });
+  }
 
   // IntConstant ::= ('+' | '-')? Digit+
-  Parser intConstant() =>
-      (char('+') | char('-')).optional() & ref0(digit).plus().flatten();
+  Parser intConstant() {
+    final parser =
+        (char('+') | char('-')).optional() & ref0(digit).plus().flatten();
+
+    return parser.map((t) {
+      final [sign, digits] = t;
+
+      final value = int.parse('${sign ?? ''}$digits');
+      return IntConstant(value);
+    });
+  }
 
   // DoubleConstant ::= ('+' | '-')? Digit* ('.' Digit+)? ( ('E' | 'e') IntConstant )?
-  Parser doubleConstant() =>
-      ((char('+') | char('-')).optional() &
-              ref0(digit).star() &
-              (char('.') & ref0(digit).plus()) &
-              ((char('E') | char('e')) & ref0(intConstant)).optional())
-          .flatten();
+  Parser doubleConstant() {
+    final parser =
+        ((char('+') | char('-')).optional() &
+                ref0(digit).star() &
+                (ref1(token, '.') & ref0(digit).plus()) &
+                ((char('E') | char('e')) & ref0(intConstant)).optional())
+            .flatten();
+
+    return parser.map((t) {
+      final value = t;
+
+      return DoubleConstant(value);
+    });
+  }
 
   // [28] ConstList ::= '[' (ConstValue ListSeparator?)* ']'
   Parser constList() =>
@@ -259,14 +346,22 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref1(token, ']');
 
   // [29] ConstMap ::= '{' (ConstValue ':' ConstValue ListSeparator?)* '}'
-  Parser constMap() =>
-      ref1(token, '{') &
-      (ref0(constValue) &
-              ref1(token, ':') &
-              ref0(constValue) &
-              ref0(listSeparator).optional())
-          .star() &
-      ref1(token, '}');
+  Parser constMap() {
+    final parser =
+        ref1(token, '{') &
+        (ref0(constValue) &
+                ref1(token, ':') &
+                ref0(constValue) &
+                ref0(listSeparator).optional())
+            .star() &
+        ref1(token, '}');
+
+    return parser.map((t) {
+      final [_, entries, _] = t;
+
+      return ConstMap(entries);
+    });
+  }
 
   // [30] Literal ::= ('"' [^"]* '"') | ("'" [^']* "'")
   Parser literal() {
@@ -278,9 +373,9 @@ class LakeGrammarDefinition extends GrammarDefinition {
     );
 
     return parser.map((t) {
-      final value = (t as Token<dynamic>).value;
-      final strValue = value as String;
-      final trimmed = strValue.substring(1, strValue.length - 1);
+      final Token(value: String value) = t;
+
+      final trimmed = value.substring(1, value.length - 1);
       return StringLiteral(trimmed);
     });
   }
@@ -294,7 +389,11 @@ class LakeGrammarDefinition extends GrammarDefinition {
           .flatten(),
     );
 
-    return parser.map((t) => Identifier((t as Token<dynamic>).value));
+    return parser.map((t) {
+      final Token(value: value) = t;
+
+      return Identifier(value);
+    });
   }
 
   // [32] ListSeparator ::= ',' | ';'

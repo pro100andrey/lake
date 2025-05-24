@@ -1,10 +1,22 @@
+// ignore_for_file: avoid_print, lines_longer_than_80_chars
+
 import 'package:equatable/equatable.dart';
+
+sealed class AstNode extends Equatable {
+  const AstNode();
+
+  @override
+  List<Object?> get props => throw UnimplementedError();
+
+  @override
+  bool get stringify => true;
+}
 
 /// Base class for all Abstract Syntax Tree nodes.
 /// No need for Equatable on base class unless it has properties
 
 /// Represents the top-level document structure.
-final class Document extends Equatable {
+final class Document extends AstNode {
   const Document(this.headers, this.definitions);
 
   final List<Header> headers;
@@ -12,15 +24,12 @@ final class Document extends Equatable {
 
   @override
   List<Object?> get props => [headers, definitions];
-
-  @override
-  String toString() => 'Document(headers: $headers, definitions: $definitions)';
 }
 
 /// --- Headers ---
 
 /// Base class for header definitions (e.g., import, namespace).
-abstract class Header extends Equatable {
+abstract class Header extends AstNode {
   const Header();
 }
 
@@ -32,9 +41,6 @@ final class Import extends Header {
 
   @override
   List<Object?> get props => [literal];
-
-  @override
-  String toString() => 'Import("$literal")';
 }
 
 /// Represents a 'namespace' declaration.
@@ -46,36 +52,30 @@ final class Namespace extends Header {
 
   @override
   List<Object?> get props => [scope, identifier];
-
-  @override
-  String toString() => 'Namespace(scope: $scope, name: $identifier)';
 }
 
 /// --- Identifiers ---
 
 /// Represents an identifier (e.g., variable names, type names).
-final class Identifier extends Equatable {
+final class Identifier extends AstNode {
   const Identifier(this.name);
 
   final String name;
 
   @override
   List<Object?> get props => [name];
-
-  @override
-  String toString() => 'Identifier($name)';
 }
 
 /// --- Definitions ---
 
 /// Base class for all top-level definitions (e.g., const, enum, struct,
 /// service).
-abstract class Definition extends Equatable {
+abstract class Definition extends AstNode {
   const Definition();
 }
 
 /// Represents a 'const' definition.
-final class Const extends Definition {
+final class Const extends AstNode {
   const Const(this.name, this.type, this.value);
 
   final Identifier name;
@@ -84,9 +84,6 @@ final class Const extends Definition {
 
   @override
   List<Object?> get props => [name, type, value];
-
-  @override
-  String toString() => 'Const($name: $type = $value)';
 }
 
 /// Represents a 'typedef' definition.
@@ -98,9 +95,6 @@ final class Typedef extends Definition {
 
   @override
   List<Object?> get props => [name, type];
-
-  @override
-  String toString() => 'Typedef($name = $type)';
 }
 
 /// Represents an 'enum' definition.
@@ -112,25 +106,17 @@ final class Enum extends Definition {
 
   @override
   List<Object?> get props => [name, values];
-
-  @override
-  String toString() =>
-      'Enum($name, values: [${values.map((v) => v.toString()).join(', ')}])';
 }
 
 /// Represents an entry within an 'enum' definition.
-final class EnumValue extends Equatable {
-  const EnumValue(this.identifier, this.intConstant);
+final class EnumValue extends AstNode {
+  const EnumValue(this.identifier, {this.intConstant});
 
   final Identifier identifier;
-  final IntConstantValue? intConstant;
+  final IntConstant? intConstant;
 
   @override
   List<Object?> get props => [identifier, intConstant];
-
-  @override
-  String toString() =>
-      'EnumValue($identifier${intConstant != null ? ' = $intConstant' : ''})';
 }
 
 /// Represents a 'struct' definition.
@@ -142,10 +128,6 @@ final class Struct extends Definition {
 
   @override
   List<Object?> get props => [name, fields];
-
-  @override
-  String toString() =>
-      'Struct($name, fields: [${fields.map((f) => f.toString()).join(', ')}])';
 }
 
 /// Represents an 'exception' definition.
@@ -157,21 +139,6 @@ final class ExceptionDef extends Definition {
 
   @override
   List<Object?> get props => [name, fields];
-
-  @override
-  String toString() {
-    final buffer = StringBuffer('ExceptionDef($name, fields: [');
-    for (var i = 0; i < fields.length; i++) {
-      buffer.write(fields[i].toString());
-      if (i < fields.length - 1) {
-        buffer.write(', ');
-      }
-    }
-
-    buffer.write('])');
-
-    return buffer.toString();
-  }
 }
 
 /// Represents a 'service' definition.
@@ -183,27 +150,12 @@ final class Service extends Definition {
 
   @override
   List<Object?> get props => [name, methods, extendedService];
-
-  @override
-  String toString() {
-    final buffer = StringBuffer('Service($name');
-
-    if (extendedService != null) {
-      buffer.write(' extends $extendedService');
-    }
-
-    buffer.write(
-      ', methods: [${methods.map((m) => m.toString()).join(', ')}])',
-    );
-
-    return buffer.toString();
-  }
 }
 
 /// --- Fields ---
 
 /// Represents a field within a struct or exception.
-final class Field extends Equatable {
+final class Field extends AstNode {
   const Field(
     this.name,
     this.type, {
@@ -220,32 +172,12 @@ final class Field extends Equatable {
 
   @override
   List<Object?> get props => [fieldId, name, type, isRequired, defaultValue];
-
-  @override
-  String toString() {
-    final buffer = StringBuffer();
-    if (fieldId != null) {
-      buffer.write('$fieldId: ');
-    }
-
-    if (isRequired) {
-      buffer.write('required ');
-    }
-
-    buffer.write('$type ${name.name}');
-
-    if (defaultValue != null) {
-      buffer.write(' = $defaultValue');
-    }
-
-    return 'Field($buffer)';
-  }
 }
 
 /// --- Methods ---
 
 /// Represents a function/method within a service.
-final class Method extends Equatable {
+final class Method extends AstNode {
   const Method(
     this.name,
     this.returnType, {
@@ -255,75 +187,54 @@ final class Method extends Equatable {
 
   final Identifier name;
   final TypeAnnotation returnType;
-  final List<Field> parameters; // Input fields
-  final Throws? throws; // Throws clause
+  final List<Field> parameters;
+  final Throws? throws;
 
   @override
   List<Object?> get props => [name, returnType, parameters, throws];
-
-  @override
-  String toString() {
-    final buffer = StringBuffer('Method($name(')
-      ..write(parameters.map((p) => p.toString()).join(', '))
-      ..write(') -> $returnType');
-
-    if (throws != null) {
-      buffer.write(' throws $throws');
-    }
-
-    buffer.write(')');
-
-    return buffer.toString();
-  }
 }
 
 /// Represents a 'throws' clause on a method.
-final class Throws extends Equatable {
+final class Throws extends AstNode {
   const Throws(this.exceptions);
 
   final List<Field> exceptions;
 
   @override
   List<Object?> get props => [exceptions];
-
-  @override
-  String toString() =>
-      'Throws([${exceptions.map((e) => e.toString()).join(', ')}])';
 }
 
 /// --- Type Annotations ---
 
-/// Represents a type annotation for fields, function return types, etc.
-final class TypeAnnotation extends Equatable {
-  const TypeAnnotation(this.referenceIdentifier, {this.isList = false});
-  final Identifier referenceIdentifier;
-  final bool isList;
-
-  @override
-  List<Object?> get props => [referenceIdentifier, isList];
-
-  @override
-  String toString() => isList
-      ? 'List<${referenceIdentifier.name}>'
-      : referenceIdentifier.toString();
+/// Base class for all type annotations (e.g., BaseType, ContainerType, Identifier).
+abstract class TypeAnnotation extends AstNode {
+  const TypeAnnotation();
 }
 
-/// Base class for container types (Map, Set, Stream).
-abstract class ContainerType extends Equatable {
+/// Represents a base type (e.g., 'bool', 'string', 'i32') or a custom identifier type.
+final class BaseType extends TypeAnnotation {
+  const BaseType(this.identifier);
+
+  final Identifier identifier; // e.g., 'bool', 'string', 'MyStruct'
+
+  @override
+  List<Object?> get props => [identifier];
+}
+
+/// Base class for container types (Map, Set, List, Stream).
+abstract class ContainerType extends TypeAnnotation {
   const ContainerType();
 }
 
 /// Represents a 'map' container type.
 final class MapType extends ContainerType {
   const MapType(this.keyType, this.valueType);
+
   final TypeAnnotation keyType;
   final TypeAnnotation valueType;
 
   @override
   List<Object?> get props => [keyType, valueType];
-
-  @override
-  String toString() => 'Map<$keyType, $valueType>';
 }
 
 /// Represents a 'set' container type.
@@ -333,9 +244,16 @@ final class SetType extends ContainerType {
 
   @override
   List<Object?> get props => [itemType];
+}
+
+/// Represents a 'list' container type.
+final class ListType extends ContainerType {
+  const ListType(this.itemType);
+
+  final TypeAnnotation itemType;
 
   @override
-  String toString() => 'Set<$itemType>';
+  List<Object?> get props => [itemType];
 }
 
 /// Represents a 'stream' container type.
@@ -346,40 +264,31 @@ final class StreamType extends ContainerType {
 
   @override
   List<Object?> get props => [itemType];
-
-  @override
-  String toString() => 'Stream<$itemType>';
 }
 
 /// --- Constant Values ---
 
 /// Base class for all constant values.
-abstract class ConstValue extends Equatable {
+abstract class ConstValue extends AstNode {
   const ConstValue();
 }
 
 /// Represents an integer constant value.
-final class IntConstantValue extends ConstValue {
-  const IntConstantValue(this.value);
-  final String value; // Store as String to preserve exact representation
+final class IntConstant extends ConstValue {
+  const IntConstant(this.value);
+  final int value;
 
   @override
   List<Object?> get props => [value];
-
-  @override
-  String toString() => 'IntConstantValue($value)';
 }
 
 /// Represents a double/floating-point constant value.
-final class DoubleConstantValue extends ConstValue {
-  const DoubleConstantValue(this.value);
+final class DoubleConstant extends ConstValue {
+  const DoubleConstant(this.value);
   final String value; // Store as String to preserve exact representation
 
   @override
   List<Object?> get props => [value];
-
-  @override
-  String toString() => 'DoubleConstantValue($value)';
 }
 
 /// Represents a string literal constant value.
@@ -389,9 +298,6 @@ final class StringLiteral extends ConstValue {
 
   @override
   List<Object?> get props => [value];
-
-  @override
-  String toString() => 'StringLiteral("$value")';
 }
 
 /// Represents an identifier used as a constant value (e.g., another const).
@@ -402,9 +308,6 @@ final class ConstIdentifier extends ConstValue {
 
   @override
   List<Object?> get props => [identifier];
-
-  @override
-  String toString() => 'ConstIdentifier(${identifier.name})';
 }
 
 /// Represents a list of constant values.
@@ -415,10 +318,6 @@ final class ConstList extends ConstValue {
 
   @override
   List<Object?> get props => [values];
-
-  @override
-  String toString() =>
-      'ConstList([${values.map((v) => v.toString()).join(', ')}])';
 }
 
 /// Represents a map of constant values.
@@ -429,17 +328,4 @@ final class ConstMap extends ConstValue {
 
   @override
   List<Object?> get props => [entries];
-
-  @override
-  String toString() {
-    final buffer = StringBuffer('ConstMap({');
-
-    entries.forEach((key, value) {
-      buffer.write('$key: $value, ');
-    });
-
-    buffer.write('})');
-
-    return buffer.toString();
-  }
 }

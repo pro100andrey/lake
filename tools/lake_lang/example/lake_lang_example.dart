@@ -12,8 +12,13 @@ void main() {
 
   final grammar = LakeGrammarDefinition();
   final parser = grammar.build();
+
+  final watch = Stopwatch()..start();
+
   final result = parser.parse(exampleInput);
 
+  print('Parsing took: ${watch.elapsedMicroseconds} microseconds');
+  watch.stop();
   printParseResult(result);
 }
 

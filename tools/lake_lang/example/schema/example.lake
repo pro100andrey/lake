@@ -1,29 +1,62 @@
-
-// This file is example code for the lake language.
-
-/*
-    Multiple lines of comments
-    can be used to describe the code.
-    This is useful for providing
-    detailed explanations or documentation.
-*/
-
-// This is a single line comment
-// It is used for brief notes or explanations
-
-// The following line is a directive to include the base.lake file
 import "base.lake"
+import "dart.lake"
+import "js.lake"
 
 namespace dart example
+namespace js js_example
 
-typedef i32 MyInteger
-
-// This is a simple i32 constant
 const i32 INT32CONSTANT = 9853
+
+const i64 INT64CONSTANT = 9853
 
 struct Work {
   1: i32 num1 = 0,
   2: i32 num2,
   3: Operation op,
   4: optional string comment,
+}
+
+struct Work2 {
+  1: i32 num1 = 0,
+  2: i32 num2,
+  3: Operation op,
+  4: optional string comment,
+}
+
+struct Work3 {
+  1: i32 num1 = 0,
+  2: i32 num2,
+  3: Operation op,
+  4: optional string comment,
+}
+
+struct Work4 {
+  1: i32 num1 = 0,
+  2: i32 num2,
+  3: Operation op,
+  4: optional string comment,
+}
+
+service Calculator extends shared.SharedService {
+
+   void ping(),
+
+   i32 add(1:i32 num1, 2:i32 num2),
+
+   i32 calculate(1:i32 logid, 2:Work w) throws (1:InvalidOperation ouch),
+
+   void zip()
+
+}
+
+service Calculator1 extends shared.SharedService {
+
+   void ping(),
+
+   i32 add(1:i32 num1, 2:i32 num2),
+
+   i32 calculate(1:i32 logid, 2:stream<Work> w) throws (1:InvalidOperation ouch),
+
+   void zip()
+
 }
