@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:petitparser/petitparser.dart';
 
 /// Prints the result of parsing in a readable way, including the error line and
