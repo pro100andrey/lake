@@ -3,7 +3,7 @@
 import 'dart:io';
 
 import 'package:lake_lang/lake_lang.dart';
-import 'package:lake_lang/src/lake_ast.dart';
+import 'package:lake_lang/src/lake_ast_definition.dart';
 
 void main() {
   final currentDir = Directory.current.path;

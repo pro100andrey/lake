@@ -33,6 +33,7 @@ abstract class AstVisitor<T> {
   T visitStructDefinitionNode(StructDefinitionNode node);
   T visitExceptionDefinitionNode(ExceptionDefinitionNode node);
   T visitServiceDefinitionNode(ServiceDefinitionNode node);
+  T visitFieldRequirementNode(FieldRequirementNode node);
   T visitFieldNode(FieldNode node);
   T visitFunctionNode(FunctionNode node);
 
@@ -206,6 +207,18 @@ final class ServiceDefinitionNode extends DefinitionNode {
   List<Object?> get props => [name, extendsService, functions];
 }
 
+final class FieldRequirementNode extends AstNode {
+  const FieldRequirementNode({required this.requirement});
+
+  final String requirement;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitFieldRequirementNode(this);
+
+  @override
+  List<Object?> get props => [requirement];
+}
+
 final class FieldNode extends AstNode {
   const FieldNode({
     required this.id,
@@ -215,8 +228,8 @@ final class FieldNode extends AstNode {
     required this.defaultValue,
   });
 
-  final int? id;
-  final String? requirement;
+  final int id;
+  final FieldRequirementNode? requirement;
   final TypeNode type;
   final IdentifierNode name;
   final ConstValueNode? defaultValue;
@@ -257,6 +270,7 @@ final class BaseTypeNode extends TypeNode {
   const BaseTypeNode({required this.name});
 
   final String name;
+
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitBaseTypeNode(this);
 
@@ -342,15 +356,17 @@ sealed class ConstValueNode extends AstNode {
 }
 
 final class IntConstantNode extends ConstValueNode {
-  const IntConstantNode({required this.value});
+  const IntConstantNode({required this.value, required this.intValue});
 
   final String value;
+
+  final int intValue;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitIntConstantNode(this);
 
   @override
-  List<Object?> get props => [value];
+  List<Object?> get props => [value, intValue];
 }
 
 final class DoubleConstantNode extends ConstValueNode {
@@ -377,7 +393,7 @@ final class LiteralNode extends ConstValueNode {
   List<Object?> get props => [value];
 }
 
-final class IdentifierNode extends ConstValueNode {
+final class IdentifierNode extends AstNode {
   const IdentifierNode({required this.name});
 
   final String name;

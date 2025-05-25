@@ -140,7 +140,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
 
   // [19] FieldType ::=
   // ContainerType| Identifier | BaseType
-  Parser fieldType() => ref0(containerType) | ref0(identifier) | ref0(baseType);
+  Parser fieldType() => ref0(containerType) | ref0(baseType)| ref0(identifier);
 
   // [20] DefinitionType ::=
   //  ContainerType | BaseType
