@@ -174,6 +174,32 @@ void main() {
         expect(separator, isNull);
       });
 
+      test(
+        'const with double value starting with decimal point - succeeds',
+        () {
+          const input = 'const double SMALL_VAL = .125';
+          final result = parser.parse(input);
+          expect(result, isA<Success>());
+
+          final [
+            Token keyword,
+            Token type,
+            Token identifier,
+            Token op,
+            Token value,
+            dynamic separator,
+          ] = result.value as List;
+
+          expect(keyword.value, equals('const'));
+          expect(type.value, equals('double'));
+          expect(identifier.value, equals('SMALL_VAL'));
+          expect(op.value, equals('='));
+          expect(value.value, equals('.125'));
+          expect(double.parse(value.value), equals(0.125));
+          expect(separator, isNull);
+        },
+      );
+
       test('const with negative double exponent value - succeeds', () {
         const input = 'const double NEG_EXP = -1.23e-5';
         final result = parser.parse(input);
@@ -197,6 +223,32 @@ void main() {
         expect(double.parse(value.value), equals(-1.23e-5));
         expect(separator, isNull);
       });
+
+      test(
+        'const with double value with exponent but no decimal - succeeds',
+        () {
+          const input = 'const double BIG_VAL = 1e3'; // 1000.0
+          final result = parser.parse(input);
+          expect(result, isA<Success>());
+
+          final [
+            Token keyword,
+            Token type,
+            Token identifier,
+            Token op,
+            Token value,
+            dynamic separator,
+          ] = result.value as List;
+
+          expect(keyword.value, equals('const'));
+          expect(type.value, equals('double'));
+          expect(identifier.value, equals('BIG_VAL'));
+          expect(op.value, equals('='));
+          expect(value.value, equals('1e3'));
+          expect(double.parse(value.value), equals(1000.0));
+          expect(separator, isNull);
+        },
+      );
 
       test('const with identifier value - succeeds', () {
         const input = 'const i32 MY_REF = OTHER_ID';
@@ -278,6 +330,81 @@ void main() {
         expect(separator.value, equals(';'));
       });
 
+      test('const with empty list value - succeeds', () {
+        const input = 'const list<i32> EMPTY_LIST = [];';
+        final result = parser.parse(input);
+        expect(result, isA<Success>());
+
+        final [
+          Token keyword,
+          [Token type, _, Token listType, _],
+          Token identifier,
+          Token op,
+          [_, List value, _],
+          Token separator,
+        ] = result.value as List;
+
+        expect(keyword.value, equals('const'));
+        expect(type.value, equals('list'));
+        expect(listType.value, equals('i32'));
+        expect(identifier.value, equals('EMPTY_LIST'));
+        expect(op.value, equals('='));
+        expect(value.isEmpty, isTrue);
+      });
+
+      test('const with list<list<i32>> value - succeeds', () {
+        const input = 'const list<list<i32>> MATRIX = [[1, 2], [3, 4]];';
+        final result = parser.parse(input);
+        expect(result, isA<Success>());
+      });
+
+      test('const with map<string, list<string>> value - succeeds', () {
+        const input = '''
+        const map<string, list<string>> DATA_MAP = {"key": ["val1", "val2"]};
+            ''';
+        final result = parser.parse(input);
+        expect(result, isA<Success>());
+
+        final [
+          Token keyword,
+          [Token type, _, Token keyT, _, List mapValueT, _],
+          Token identifier,
+          Token op,
+          List value,
+          Token separator,
+        ] = result.value as List;
+
+        expect(keyword.value, equals('const'));
+        expect(type.value, equals('map'));
+        expect(keyT.value, equals('string'));
+        expect(mapValueT, isA<List>());
+        expect(identifier.value, equals('DATA_MAP'));
+        expect(op.value, equals('='));
+      });
+
+      test('const with map<string, list<string>> value - succeeds', () {
+        const input = '''
+        const map<string, list<string>> DATA_MAP = {"key": ["val1", "val2"]};
+            ''';
+        final result = parser.parse(input);
+        expect(result, isA<Success>());
+
+        final [
+          Token keyword,
+          [Token type, _, Token keyT, _, List mapValueT, _],
+          Token identifier,
+          Token op,
+          List value,
+          Token separator,
+        ] = result.value as List;
+        expect(keyword.value, equals('const'));
+        expect(type.value, equals('map'));
+        expect(keyT.value, equals('string'));
+        expect(mapValueT, isA<List>());
+        expect(identifier.value, equals('DATA_MAP'));
+        expect(op.value, equals('='));
+      });
+
       test('const with map<string, i32> value - succeeds', () {
         const input = 'const map<string, i32> TAGS = {"id": 123};';
         final result = parser.parse(input);
@@ -300,6 +427,30 @@ void main() {
         expect(op.value, equals('='));
         expect(key.value, equals('"id"'));
         expect(value.value, equals('123'));
+        expect(separator.value, equals(';'));
+      });
+
+      test('const with empty map value - succeeds', () {
+        const input = 'const map<string, string> EMPTY_MAP = {};';
+        final result = parser.parse(input);
+        expect(result, isA<Success>());
+
+        final [
+          Token keyword,
+          [Token type, _, Token keyType, _, Token valueType, _],
+          Token identifier,
+          Token op,
+          [_, List value, _],
+          Token separator,
+        ] = result.value as List;
+
+        expect(keyword.value, equals('const'));
+        expect(type.value, equals('map'));
+        expect(keyType.value, equals('string'));
+        expect(valueType.value, equals('string'));
+        expect(identifier.value, equals('EMPTY_MAP'));
+        expect(op.value, equals('='));
+        expect(value.isEmpty, isTrue);
         expect(separator.value, equals(';'));
       });
 
