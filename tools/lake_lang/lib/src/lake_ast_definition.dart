@@ -12,8 +12,17 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   });
 
   @override
+  Parser<DocumentNode> document() => super.document().map((t) {
+    final [List headers, List definitions] = t as List;
+    final resultHeaders = headers.cast<HeaderNode>();
+    final resultDefinitions = definitions.cast<DefinitionNode>();
+
+    return DocumentNode(headers: resultHeaders, definitions: resultDefinitions);
+  });
+
+  @override
   Parser namespace() => super.namespace().map((t) {
-    final [_,  [Token lang, IdentifierNode identifier]] = t as List;
+    final [_, [Token lang, IdentifierNode identifier]] = t as List;
 
     return NamespaceNode(scope: lang.value, name: identifier);
   });
@@ -56,7 +65,6 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     return BaseTypeNode(name: token.value);
   });
 
- 
   @override
   Parser fieldReq() => super.fieldReq().map((t) {
     final token = t as Token;
@@ -77,6 +85,8 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     return ListTypeNode(itemType: itemType);
   });
+
+  
 
   @override
   Parser<FieldNode> field() => super.field().map((t) {

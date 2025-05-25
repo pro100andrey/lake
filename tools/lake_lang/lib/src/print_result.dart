@@ -7,7 +7,7 @@ import 'package:petitparser/petitparser.dart';
 void printParseResult(Result result) {
   switch (result) {
     case Success():
-      break;
+      print(result.value);
 
     case Failure(
       buffer: final buffer,

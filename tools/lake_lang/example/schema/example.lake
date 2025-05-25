@@ -3,6 +3,19 @@ import "lake_lang/schema.lake"
 namespace dart com.example.api.gen
 
 const list<i32> PRIME_NUMBERS = [2, 3, 5, 7, 11];
+const i32 DEFAULT_PAGE_SIZE = 20
+const string ADMIN_EMAIL = "admin@example.com"
+
+
+const list<string> SUPPORTED_LOCALES = ["en_US", "es_ES", "fr_FR"]
+const map<i32, string> STATUS_DESCRIPTIONS = {
+  1: "User is active",
+  2: "User is inactive",
+  3: "User has been banned"
+}
+
+typedef i64 Timestamp
+typedef string UUID
 
 enum UserStatus {
   ACTIVE = 1,
@@ -16,3 +29,4 @@ enum ProductCategory {
   CLOTHING = 30,
   FOOD = 40
 }
+
