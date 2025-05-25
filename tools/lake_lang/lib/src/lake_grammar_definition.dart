@@ -119,13 +119,13 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(field).star() &
       ref1(token, ')');
 
-  // [19] FieldType ::= Identifier | BaseType | ContainerType
-  Parser fieldType() => ref0(identifier) | ref0(baseType) | ref0(containerType);
+  // [19] FieldType ::= ContainerType| Identifier | BaseType
+  Parser fieldType() => ref0(containerType) | ref0(identifier) | ref0(baseType);
 
-  // [20] DefinitionType ::= BaseType | ContainerType
-  Parser definitionType() => ref0(baseType) | ref0(containerType);
+  // [20] DefinitionType ::= ContainerType | BaseType
+  Parser definitionType() => ref0(containerType) | ref0(baseType);
 
-  // [21] BaseType ::= 'bool' | 'byte' | 'i8' | 'i16' | 'i32' | 'i64' | 'double' | 'string' | 'binary' | 'uuid' | 'date' | 'duration'
+  // [21] BaseType ::= 'bool' | 'byte' | 'i8' | 'i16' | 'i32' | 'i64' | 'double' | 'string' | 'binary' | 'uuid' |
   Parser baseType() =>
       ref1(token, 'bool') |
       ref1(token, 'byte') |
@@ -136,9 +136,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref1(token, 'double') |
       ref1(token, 'string') |
       ref1(token, 'binary') |
-      ref1(token, 'uuid') |
-      ref1(token, 'date') |
-      ref1(token, 'duration');
+      ref1(token, 'uuid');
 
   // [22] ContainerType ::= MapType | SetType | ListType | StreamType
   Parser containerType() =>
@@ -184,16 +182,20 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(constMap);
 
   // IntConstant ::= ('+' | '-')? Digit+
-  Parser intConstant() =>
-      ((char('+') | char('-')).optional() & ref0(digit).plus()).flatten();
+  Parser intConstant() => ref1(
+    token,
+    ((char('+') | char('-')).optional() & ref0(digit).plus()).flatten(),
+  );
 
   // DoubleConstant ::= ('+' | '-')? Digit* ('.' Digit+)? ( ('E' | 'e') IntConstant )?
-  Parser doubleConstant() =>
-      ((char('+') | char('-')).optional() &
-              ref0(digit).star() &
-              (char('.') & ref0(digit).plus()) &
-              ((char('E') | char('e')) & ref0(intConstant)).optional())
-          .flatten();
+  Parser doubleConstant() => ref1(
+    token,
+    ((char('+') | char('-')).optional() &
+            ref0(digit).star() &
+            (char('.') & ref0(digit).plus()) &
+            ((char('E') | char('e')) & ref0(intConstant)).optional())
+        .flatten(),
+  );
 
   // [28] ConstList ::= '[' (ConstValue ListSeparator?)* ']'
   Parser constList() =>
