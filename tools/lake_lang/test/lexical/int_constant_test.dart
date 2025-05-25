@@ -4,7 +4,6 @@ import 'package:test/test.dart';
 
 void main() {
   final grammar = LakeGrammarDefinition();
-  // IntConstant ::= ('+' | '-')? Digit+
   final parser = resolve(grammar.intConstant()).end();
 
   group('Lake Grammar - IntConstant:', () {
@@ -13,35 +12,45 @@ void main() {
         const input = '456';
         final result = parser.parse(input);
         expect(result, isA<Success>());
-        expect(result.value, equals([null, '456']));
+
+        final intConstantToken = result.value as Token;
+        expect(intConstantToken.value, equals('456'));
       });
 
       test('negative integer - succeeds', () {
         const input = '-456';
         final result = parser.parse(input);
         expect(result, isA<Success>());
-        expect(result.value, equals(['-', '456']));
+
+        final intConstantToken = result.value as Token;
+        expect(intConstantToken.value, equals('-456'));
       });
 
       test('positive integer with plus - succeeds', () {
         const input = '+123';
         final result = parser.parse(input);
         expect(result, isA<Success>());
-        expect(result.value, equals(['+', '123']));
+
+        final intConstantToken = result.value as Token;
+        expect(intConstantToken.value, equals('+123'));
       });
 
       test('zero - succeeds', () {
         const input = '0';
         final result = parser.parse(input);
         expect(result, isA<Success>());
-        expect(result.value, equals([null, '0']));
+
+        final intConstantToken = result.value as Token;
+        expect(intConstantToken.value, equals('0'));
       });
 
       test('large integer - succeeds', () {
         const input = '9876543210987654321';
         final result = parser.parse(input);
         expect(result, isA<Success>());
-        expect(result.value, equals([null, '9876543210987654321']));
+
+        final intConstantToken = result.value as Token;
+        expect(intConstantToken.value, equals('9876543210987654321'));
       });
     });
 

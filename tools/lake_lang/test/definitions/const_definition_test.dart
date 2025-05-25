@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'package:lake_lang/lake_lang.dart';
 import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
@@ -10,7 +8,7 @@ void main() {
 
   group('Lake Grammar - ConstDefinition:', () {
     group('Valid Cases:', () {
-      test('string const with double quotes - succeeds', () {
+      test('const string with double quotes - succeeds', () {
         const input = 'const string NAME = "John Doe"';
         final result = parser.parse(input);
 
@@ -19,7 +17,7 @@ void main() {
         final [
           Token keyword,
           Token type,
-          Token id,
+          Token identifier,
           Token op,
           Token value,
           dynamic separator,
@@ -27,13 +25,13 @@ void main() {
 
         expect(keyword.value, equals('const'));
         expect(type.value, equals('string'));
-        expect(id.value, equals('NAME'));
+        expect(identifier.value, equals('NAME'));
         expect(op.value, equals('='));
         expect(value.value, equals('"John Doe"'));
         expect(separator, isNull);
       });
 
-      test('string const with single quotes - succeeds', () {
+      test('const string with single quotes - succeeds', () {
         const input = "const string GREETING = 'Hello World'";
         final result = parser.parse(input);
 
@@ -42,7 +40,7 @@ void main() {
         final [
           Token keyword,
           Token type,
-          Token id,
+          Token identifier,
           Token op,
           Token value,
           dynamic separator,
@@ -50,13 +48,13 @@ void main() {
 
         expect(keyword.value, equals('const'));
         expect(type.value, equals('string'));
-        expect(id.value, equals('GREETING'));
+        expect(identifier.value, equals('GREETING'));
         expect(op.value, equals('='));
         expect(value.value, equals("'Hello World'"));
         expect(separator, isNull);
       });
 
-      test('positive integer const - succeeds', () {
+      test('const with positive i32 value - succeeds', () {
         const input = 'const i32 MAX_USERS = 100';
         final result = parser.parse(input);
 
@@ -65,7 +63,7 @@ void main() {
         final [
           Token keyword,
           Token type,
-          Token id,
+          Token identifier,
           Token op,
           Token value,
           dynamic separator,
@@ -73,14 +71,14 @@ void main() {
 
         expect(keyword.value, equals('const'));
         expect(type.value, equals('i32'));
-        expect(id.value, equals('MAX_USERS'));
+        expect(identifier.value, equals('MAX_USERS'));
         expect(op.value, equals('='));
         expect(int.parse(value.value), equals(100));
         expect(value.value, equals('100'));
         expect(separator, isNull);
       });
 
-      test('negative integer const - succeeds', () {
+      test('const with negative i32 value - succeeds', () {
         const input = 'const i32 MIN_USERS = -50';
         final result = parser.parse(input);
 
@@ -89,7 +87,7 @@ void main() {
         final [
           Token keyword,
           Token type,
-          Token id,
+          Token identifier,
           Token op,
           Token value,
           dynamic separator,
@@ -97,14 +95,62 @@ void main() {
 
         expect(keyword.value, equals('const'));
         expect(type.value, equals('i32'));
-        expect(id.value, equals('MIN_USERS'));
+        expect(identifier.value, equals('MIN_USERS'));
         expect(op.value, equals('='));
         expect(int.parse(value.value), equals(-50));
         expect(value.value, equals('-50'));
         expect(separator, isNull);
       });
 
-      test('positive double const with decimal - succeeds', () {
+      test('const with i64 value - succeeds', () {
+        const input = 'const i64 LARGE_NUM = 9223372036854775807';
+        final result = parser.parse(input);
+
+        expect(result, isA<Success>());
+
+        final [
+          Token keyword,
+          Token type,
+          Token identifier,
+          Token op,
+          Token value,
+          dynamic separator,
+        ] = result.value as List;
+
+        expect(keyword.value, equals('const'));
+        expect(type.value, equals('i64'));
+        expect(identifier.value, equals('LARGE_NUM'));
+        expect(op.value, equals('='));
+        expect(int.parse(value.value), equals(9223372036854775807));
+        expect(value.value, equals('9223372036854775807'));
+        expect(separator, isNull);
+      });
+
+      test('const with double value without sign - succeeds', () {
+        const input = 'const double TEMP = 25.5';
+        final result = parser.parse(input);
+
+        expect(result, isA<Success>());
+
+        final [
+          Token keyword,
+          Token type,
+          Token identifier,
+          Token op,
+          Token value,
+          dynamic separator,
+        ] = result.value as List;
+
+        expect(keyword.value, equals('const'));
+        expect(type.value, equals('double'));
+        expect(identifier.value, equals('TEMP'));
+        expect(op.value, equals('='));
+        expect(value.value, equals('25.5'));
+        expect(double.parse(value.value), equals(25.5));
+        expect(separator, isNull);
+      });
+
+      test('const with positive double value - succeeds', () {
         const input = 'const double PI = +3.14';
         final result = parser.parse(input);
 
@@ -113,7 +159,7 @@ void main() {
         final [
           Token keyword,
           Token type,
-          Token id,
+          Token identifier,
           Token op,
           Token value,
           dynamic separator,
@@ -121,14 +167,14 @@ void main() {
 
         expect(keyword.value, equals('const'));
         expect(type.value, equals('double'));
-        expect(id.value, equals('PI'));
+        expect(identifier.value, equals('PI'));
         expect(op.value, equals('='));
         expect(value.value, equals('+3.14'));
         expect(double.parse(value.value), equals(3.14));
         expect(separator, isNull);
       });
 
-      test('negative double const with exponent - succeeds', () {
+      test('const with negative double exponent value - succeeds', () {
         const input = 'const double NEG_EXP = -1.23e-5';
         final result = parser.parse(input);
 
@@ -137,7 +183,7 @@ void main() {
         final [
           Token keyword,
           Token type,
-          Token id,
+          Token identifier,
           Token op,
           Token value,
           dynamic separator,
@@ -145,7 +191,7 @@ void main() {
 
         expect(keyword.value, equals('const'));
         expect(type.value, equals('double'));
-        expect(id.value, equals('NEG_EXP'));
+        expect(identifier.value, equals('NEG_EXP'));
         expect(op.value, equals('='));
         expect(value.value, equals('-1.23e-5'));
         expect(double.parse(value.value), equals(-1.23e-5));
@@ -161,7 +207,7 @@ void main() {
         final [
           Token keyword,
           Token type,
-          Token id,
+          Token identifier,
           Token op,
           Token value,
           dynamic separator,
@@ -169,13 +215,37 @@ void main() {
 
         expect(keyword.value, equals('const'));
         expect(type.value, equals('i32'));
-        expect(id.value, equals('MY_REF'));
+        expect(identifier.value, equals('MY_REF'));
         expect(op.value, equals('='));
         expect(value.value, equals('OTHER_ID'));
         expect(separator, isNull);
       });
 
-      test('int const list - succeeds', () {
+      test('const with uuid value - succeeds', () {
+        const input =
+            'const uuid USER_UUID = "a1b2c3d4-e5f6-7890-1234-567890abcdef"';
+        final result = parser.parse(input);
+
+        expect(result, isA<Success>());
+
+        final [
+          Token keyword,
+          Token type,
+          Token identifier,
+          Token op,
+          Token value,
+          dynamic separator,
+        ] = result.value as List;
+
+        expect(keyword.value, equals('const'));
+        expect(type.value, equals('uuid'));
+        expect(identifier.value, equals('USER_UUID'));
+        expect(op.value, equals('='));
+        expect(value.value, equals('"a1b2c3d4-e5f6-7890-1234-567890abcdef"'));
+        expect(separator, isNull);
+      });
+
+      test('const with list<i32> value - succeeds', () {
         const input = 'const list<i32> TEST = [1, 2, 3];';
         final result = parser.parse(input);
 
@@ -184,7 +254,7 @@ void main() {
         final [
           Token keyword,
           [Token type, Token l, Token listType, Token r],
-          Token id,
+          Token identifier,
           Token op,
           [
             Token leftBracket,
@@ -197,7 +267,7 @@ void main() {
         expect(keyword.value, equals('const'));
         expect(type.value, equals('list'));
         expect(listType.value, equals('i32'));
-        expect(id.value, equals('TEST'));
+        expect(identifier.value, equals('TEST'));
         expect(op.value, equals('='));
         expect(leftBracket.value, equals('['));
         expect(v1.value, equals('1'));
@@ -208,15 +278,15 @@ void main() {
         expect(separator.value, equals(';'));
       });
 
-      test('const map<string, int> - succeeds', () {
-        const input = 'const map<string, string> TAGS = {"id": 123};';
+      test('const with map<string, i32> value - succeeds', () {
+        const input = 'const map<string, i32> TAGS = {"id": 123};';
         final result = parser.parse(input);
         expect(result, isA<Success>());
 
         final [
           Token keyword,
           [Token type, _, Token keyType, _, Token valueType, _],
-          Token id,
+          Token identifier,
           Token op,
           [_, [[Token key, _, Token value, _]], _],
           Token separator,
@@ -225,15 +295,15 @@ void main() {
         expect(keyword.value, equals('const'));
         expect(type.value, equals('map'));
         expect(keyType.value, equals('string'));
-        expect(valueType.value, equals('string'));
-        expect(id.value, equals('TAGS'));
+        expect(valueType.value, equals('i32'));
+        expect(identifier.value, equals('TAGS'));
         expect(op.value, equals('='));
         expect(key.value, equals('"id"'));
         expect(value.value, equals('123'));
         expect(separator.value, equals(';'));
       });
 
-      test('boolean const - succeeds', () {
+      test('const with boolean value - succeeds', () {
         const input = 'const bool IS_ACTIVE = true';
         final result = parser.parse(input);
 
@@ -242,7 +312,7 @@ void main() {
         final [
           Token keyword,
           Token type,
-          Token id,
+          Token identifier,
           Token op,
           Token value,
           dynamic separator,
@@ -250,13 +320,13 @@ void main() {
 
         expect(keyword.value, equals('const'));
         expect(type.value, equals('bool'));
-        expect(id.value, equals('IS_ACTIVE'));
+        expect(identifier.value, equals('IS_ACTIVE'));
         expect(op.value, equals('='));
         expect(value.value, equals('true'));
         expect(separator, isNull);
       });
 
-      test('binary const with identifier value - succeeds', () {
+      test('const with binary value - succeeds', () {
         const input = 'const binary DATA = SOME_BINARY_ID';
         final result = parser.parse(input);
 
@@ -265,7 +335,7 @@ void main() {
         final [
           Token keyword,
           Token type,
-          Token id,
+          Token identifier,
           Token op,
           Token value,
           dynamic separator,
@@ -273,13 +343,33 @@ void main() {
 
         expect(keyword.value, equals('const'));
         expect(type.value, equals('binary'));
-        expect(id.value, equals('DATA'));
+        expect(identifier.value, equals('DATA'));
         expect(op.value, equals('='));
         expect(value.value, equals('SOME_BINARY_ID'));
         expect(separator, isNull);
       });
 
-      // const list<list<i32>> MATRIX = [[1, 2], [3, 4]]
+      test('const with byte value - succeeds', () {
+        const input = 'const byte STATUS = 123';
+        final result = parser.parse(input);
+        expect(result, isA<Success>());
+
+        final [
+          Token keyword,
+          Token type,
+          Token identifier,
+          Token op,
+          Token value,
+          dynamic separator,
+        ] = result.value as List;
+
+        expect(keyword.value, equals('const'));
+        expect(type.value, equals('byte'));
+        expect(identifier.value, equals('STATUS'));
+        expect(op.value, equals('='));
+        expect(value.value, equals('123'));
+        expect(separator, isNull);
+      });
     });
 
     group('Invalid Cases:', () {});

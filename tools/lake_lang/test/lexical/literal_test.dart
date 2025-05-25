@@ -12,42 +12,54 @@ void main() {
         const input = '"hello world"';
         final result = parser.parse(input);
         expect(result, isA<Success>());
-        expect(result.value, equals('"hello world"'));
+
+        final literalToken = result.value as Token;
+        expect(literalToken.value, equals('"hello world"'));
       });
 
       test('single quotes - succeeds', () {
         const input = "'hello world'";
         final result = parser.parse(input);
         expect(result, isA<Success>());
-        expect(result.value, equals("'hello world'"));
+
+        final literalToken = result.value as Token;
+        expect(literalToken.value, equals("'hello world'"));
       });
 
       test('empty double quotes - succeeds', () {
         const input = '""';
         final result = parser.parse(input);
         expect(result, isA<Success>());
-        expect(result.value, equals('""'));
+
+        final literalToken = result.value as Token;
+        expect(literalToken.value, equals('""'));
       });
 
       test('empty single quotes - succeeds', () {
         const input = "''";
         final result = parser.parse(input);
         expect(result, isA<Success>());
-        expect(result.value, equals("''"));
+
+        final literalToken = result.value as Token;
+        expect(literalToken.value, equals("''"));
       });
 
       test('string with numbers and special chars - succeeds', () {
         const input = r"'123 abc!@#$%'";
         final result = parser.parse(input);
         expect(result, isA<Success>());
-        expect(result.value, equals(r"'123 abc!@#$%'"));
+
+        final literalToken = result.value as Token;
+        expect(literalToken.value, equals(r"'123 abc!@#$%'"));
       });
 
       test('string with escaped quotes', () {
         const input = "'string with \" quote'";
         final result = parser.parse(input);
         expect(result, isA<Success>());
-        expect(result.value, equals("'string with \" quote'"));
+
+        final literalToken = result.value as Token;
+        expect(literalToken.value, equals("'string with \" quote'"));
       });
     });
 

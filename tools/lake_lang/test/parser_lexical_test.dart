@@ -13,31 +13,47 @@ void main() {
         test('simple, only letters - succeeds', () {
           const input = 'myVariable';
           final result = parser.parse(input);
-          expect(result.value, equals('myVariable'));
+          expect(result, isA<Success>());
+
+          final identifierToken = result.value as Token;
+          expect(identifierToken.value, equals('myVariable'));
         });
 
         test('with underscore and dot - succeeds', () {
           const input = '_my.var_123';
           final result = parser.parse(input);
-          expect(result.value, equals('_my.var_123'));
+          expect(result, isA<Success>());
+
+          final identifierToken = result.value as Token;
+          expect(identifierToken.value, equals('_my.var_123'));
         });
 
         test('starts with uppercase letter - succeeds', () {
           const input = 'MyIdentifier';
           final result = parser.parse(input);
-          expect(result.value, equals('MyIdentifier'));
+          expect(result, isA<Success>());
+
+          final identifierToken = result.value as Token;
+          expect(identifierToken.value, equals('MyIdentifier'));
         });
 
         test('only underscore - succeeds', () {
           const input = '_';
           final result = parser.parse(input);
-          expect(result.value, equals('_'));
+
+          expect(result, isA<Success>());
+
+          final identifierToken = result.value as Token;
+          expect(identifierToken.value, equals('_'));
         });
 
         test('with digits inside - succeeds', () {
           const input = 'id123Name';
           final result = parser.parse(input);
-          expect(result.value, equals('id123Name'));
+          expect(result, isA<Success>());
+
+          final identifierToken = result.value as Token;
+          expect(identifierToken.value, equals('id123Name'));
         });
       });
 
@@ -45,6 +61,7 @@ void main() {
         test('starts with digit - initial character error', () {
           const input = '1myVariable';
           final result = parser.parse(input);
+          
           expect(result, isA<Failure>());
           expect(result.message, equals('"_" expected'));
         });
