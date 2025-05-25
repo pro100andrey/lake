@@ -6,7 +6,7 @@ void main() {
   final grammar = LakeGrammarDefinition();
   final parser = resolve(grammar.intConstant()).end();
 
-  group('Lake Grammar - IntConstant:', () {
+  group('Lake Grammar - Le:', () {
     group('Valid Cases:', () {
       test('positive integer without plus - succeeds', () {
         const input = '456';

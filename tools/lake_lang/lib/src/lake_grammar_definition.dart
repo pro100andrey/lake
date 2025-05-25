@@ -49,9 +49,12 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(listSeparator).optional();
 
   // [8] Typedef ::=
-  // 'typedef' DefinitionType Identifier
+  // 'typedef' DefinitionType Identifier ListSeparator?
   Parser typedefDefinition() =>
-      ref1(token, 'typedef') & ref0(definitionType) & ref0(identifier);
+      ref1(token, 'typedef') &
+      ref0(definitionType) &
+      ref0(identifier) &
+      ref0(listSeparator).optional();
 
   // [9] Enum ::=
   // 'enum' Identifier '{' (Identifier ('=' IntConstant)? ListSeparator?)* '}'
@@ -111,19 +114,21 @@ class LakeGrammarDefinition extends GrammarDefinition {
   Parser fieldReq() => ref1(token, 'required') | ref1(token, 'optional');
 
   // [16] Function ::=
-  // FunctionType Identifier '(' Field* ')' Throws? ListSeparator?
+  // FunctionType Identifier '(' StreamType identifier | Field* ')' Throws? 
+  // ListSeparator?
   Parser function() =>
       ref0(functionType) &
       ref0(identifier) &
       ref1(token, '(') &
-      ref0(field).star() &
+      (ref0(streamType) & ref0(identifier) | ref0(field).star()) &
       ref1(token, ')') &
       ref0(throws).optional() &
       ref0(listSeparator).optional();
 
   // [17] FunctionType ::=
-  // FieldType | 'void'
-  Parser functionType() => ref0(fieldType) | ref1(token, 'void');
+  // StreamType | FieldType | 'void'
+  Parser functionType() =>
+      ref0(streamType) | ref0(fieldType) | ref1(token, 'void');
 
   // [18] Throws ::=
   // 'throws' '(' Field* ')'
@@ -145,21 +150,21 @@ class LakeGrammarDefinition extends GrammarDefinition {
   //  'bool' | 'byte' | 'i8' | 'i16' | 'i32' | 'i64' | 'double' | 'string' |
   //  'binary' | 'uuid' |
   Parser baseType() =>
-      ref1(token, 'bool') |
-      ref1(token, 'byte') |
-      ref1(token, 'i8') |
-      ref1(token, 'i16') |
-      ref1(token, 'i32') |
-      ref1(token, 'i64') |
-      ref1(token, 'double') |
-      ref1(token, 'string') |
-      ref1(token, 'binary') |
-      ref1(token, 'uuid');
+      (ref1(token, 'bool') |
+              ref1(token, 'byte') |
+              ref1(token, 'i8') |
+              ref1(token, 'i16') |
+              ref1(token, 'i32') |
+              ref1(token, 'i64') |
+              ref1(token, 'double') |
+              ref1(token, 'string') |
+              ref1(token, 'binary') |
+              ref1(token, 'uuid'))
+          .or(FailureParser('Invalid base type'));
 
   // [22] ContainerType ::=
-  // MapType | SetType | ListType | StreamType
-  Parser containerType() =>
-      ref0(mapType) | ref0(setType) | ref0(listType) | ref0(streamType);
+  // MapType | SetType | ListType
+  Parser containerType() => ref0(mapType) | ref0(setType) | ref0(listType);
 
   // [23] MapType ::=
   // 'map' '<' FieldType ',' FieldType '>'
@@ -213,7 +218,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
   );
 
   // DoubleConstant ::=
-  // ('+' | '-')? Digit* ('.' Digit+ ( ('E' | 'e') IntConstant )? | ('E' | 'e') 
+  // ('+' | '-')? Digit* ('.' Digit+ ( ('E' | 'e') IntConstant )? | ('E' | 'e')
   // IntConstant )
   Parser doubleConstant() {
     final sign = (char('+') | char('-')).optional();

@@ -305,7 +305,7 @@ void main() {
 
         final [
           Token keyword,
-          [Token type, Token l, Token listType, Token r],
+          [Token typeOuter, _, Token typeInner, _],
           Token identifier,
           Token op,
           [
@@ -317,8 +317,8 @@ void main() {
         ] = result.value as List;
 
         expect(keyword.value, equals('const'));
-        expect(type.value, equals('list'));
-        expect(listType.value, equals('i32'));
+        expect(typeOuter.value, equals('list'));
+        expect(typeInner.value, equals('i32'));
         expect(identifier.value, equals('TEST'));
         expect(op.value, equals('='));
         expect(leftBracket.value, equals('['));
@@ -337,7 +337,7 @@ void main() {
 
         final [
           Token keyword,
-          [Token type, _, Token listType, _],
+          [Token typeOuter, _, Token typeInner, _],
           Token identifier,
           Token op,
           [_, List value, _],
@@ -345,8 +345,8 @@ void main() {
         ] = result.value as List;
 
         expect(keyword.value, equals('const'));
-        expect(type.value, equals('list'));
-        expect(listType.value, equals('i32'));
+        expect(typeOuter.value, equals('list'));
+        expect(typeInner.value, equals('i32'));
         expect(identifier.value, equals('EMPTY_LIST'));
         expect(op.value, equals('='));
         expect(value.isEmpty, isTrue);
@@ -356,6 +356,22 @@ void main() {
         const input = 'const list<list<i32>> MATRIX = [[1, 2], [3, 4]];';
         final result = parser.parse(input);
         expect(result, isA<Success>());
+
+        final [
+          Token keyword,
+          [Token typeOuter, _, List typeInner, _],
+          Token identifier,
+          Token op,
+          List value,
+          Token separator,
+        ] = result.value as List;
+
+        expect(keyword.value, equals('const'));
+        expect(typeOuter.value, equals('list'));
+        // Expecting typeInner to be a list of tokens
+        expect(identifier.value, equals('MATRIX'));
+        expect(op.value, equals('='));
+        expect(value, isA<List>());
       });
 
       test('const with map<string, list<string>> value - succeeds', () {
@@ -367,42 +383,20 @@ void main() {
 
         final [
           Token keyword,
-          [Token type, _, Token keyT, _, List mapValueT, _],
+          [Token type, _, Token keyType, _, List valueType, _],
           Token identifier,
           Token op,
-          List value,
+          [_, List<List> value, _],
           Token separator,
         ] = result.value as List;
-
+        
         expect(keyword.value, equals('const'));
         expect(type.value, equals('map'));
-        expect(keyT.value, equals('string'));
-        expect(mapValueT, isA<List>());
+        expect(keyType.value, equals('string'));
+        expect(valueType, isA<List>());
         expect(identifier.value, equals('DATA_MAP'));
         expect(op.value, equals('='));
-      });
-
-      test('const with map<string, list<string>> value - succeeds', () {
-        const input = '''
-        const map<string, list<string>> DATA_MAP = {"key": ["val1", "val2"]};
-            ''';
-        final result = parser.parse(input);
-        expect(result, isA<Success>());
-
-        final [
-          Token keyword,
-          [Token type, _, Token keyT, _, List mapValueT, _],
-          Token identifier,
-          Token op,
-          List value,
-          Token separator,
-        ] = result.value as List;
-        expect(keyword.value, equals('const'));
-        expect(type.value, equals('map'));
-        expect(keyT.value, equals('string'));
-        expect(mapValueT, isA<List>());
-        expect(identifier.value, equals('DATA_MAP'));
-        expect(op.value, equals('='));
+        expect(value, isA<List>());
       });
 
       test('const with map<string, i32> value - succeeds', () {
@@ -523,6 +517,41 @@ void main() {
       });
     });
 
-    group('Invalid Cases:', () {});
+    group('Invalid Cases:', () {
+      test('missing "const" keyword - fails', () {
+        const input = 'string NAME = "John Doe";';
+        final result = parser.parse(input);
+        expect(result, isA<Failure>());
+        expect(result.message, contains('"const" expected'));
+      });
+
+      test('missing type - fails', () {
+        const input = 'const NAME = "John Doe";';
+        final result = parser.parse(input);
+        expect(result, isA<Failure>());
+        expect(result.message, contains('"_" expected'));
+      });
+
+      test('missing identifier - fails', () {
+        const input = 'const string = "John Doe";';
+        final result = parser.parse(input);
+        expect(result, isA<Failure>());
+        expect(result.message, contains('"_" expected'));
+      });
+
+      test('missing assignment operator "=" - fails', () {
+        const input = 'const string NAME "John Doe";';
+        final result = parser.parse(input);
+        expect(result, isA<Failure>());
+        expect(result.message, contains('"=" expected'));
+      });
+
+      test('missing value - fails', () {
+        const input = 'const string NAME = ;';
+        final result = parser.parse(input);
+        expect(result, isA<Failure>());
+        expect(result.message, contains('"{" expected'));
+      });
+    });
   });
 }
