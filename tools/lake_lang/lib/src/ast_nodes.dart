@@ -57,7 +57,7 @@ abstract class AstVisitor<T> {
 // --- Concrete AST Node Classes ---
 
 final class DocumentNode extends AstNode {
-  const DocumentNode(this.headers, this.definitions);
+  const DocumentNode({required this.headers, required this.definitions});
 
   final List<HeaderNode> headers;
   final List<DefinitionNode> definitions;
@@ -74,7 +74,7 @@ sealed class HeaderNode extends AstNode {
 }
 
 final class ImportNode extends HeaderNode {
-  const ImportNode(this.path);
+  const ImportNode({required this.path});
 
   final String path;
 
@@ -85,8 +85,8 @@ final class ImportNode extends HeaderNode {
   List<Object?> get props => [path];
 }
 
-class NamespaceNode extends HeaderNode {
-  const NamespaceNode(this.scope, this.name);
+final class NamespaceNode extends HeaderNode {
+  const NamespaceNode({required this.scope, required this.name});
 
   final String scope;
   final IdentifierNode name;
@@ -102,8 +102,12 @@ sealed class DefinitionNode extends AstNode {
   const DefinitionNode();
 }
 
-class ConstDefinitionNode extends DefinitionNode {
-  const ConstDefinitionNode(this.type, this.name, this.value);
+final class ConstDefinitionNode extends DefinitionNode {
+  const ConstDefinitionNode({
+    required this.type,
+    required this.name,
+    required this.value,
+  });
 
   final TypeNode type;
   final IdentifierNode name;
@@ -116,8 +120,8 @@ class ConstDefinitionNode extends DefinitionNode {
   List<Object?> get props => [type, name, value];
 }
 
-class TypedefDefinitionNode extends DefinitionNode {
-  const TypedefDefinitionNode(this.type, this.name);
+final class TypedefDefinitionNode extends DefinitionNode {
+  const TypedefDefinitionNode({required this.type, required this.name});
 
   final TypeNode type;
   final IdentifierNode name;
@@ -130,8 +134,8 @@ class TypedefDefinitionNode extends DefinitionNode {
   List<Object?> get props => [type, name];
 }
 
-class EnumDefinitionNode extends DefinitionNode {
-  const EnumDefinitionNode(this.name, this.values);
+final class EnumDefinitionNode extends DefinitionNode {
+  const EnumDefinitionNode({required this.name, required this.values});
 
   final IdentifierNode name;
   final List<EnumValueNode> values;
@@ -143,7 +147,7 @@ class EnumDefinitionNode extends DefinitionNode {
   List<Object?> get props => [name, values];
 }
 
-class EnumValueNode extends AstNode {
+final class EnumValueNode extends AstNode {
   const EnumValueNode(this.name, this.value);
 
   final IdentifierNode name;
@@ -156,8 +160,8 @@ class EnumValueNode extends AstNode {
   List<Object?> get props => [name, value];
 }
 
-class StructDefinitionNode extends DefinitionNode {
-  const StructDefinitionNode(this.name, this.fields);
+final class StructDefinitionNode extends DefinitionNode {
+  const StructDefinitionNode({required this.name, required this.fields});
 
   final IdentifierNode name;
   final List<FieldNode> fields;
@@ -169,8 +173,8 @@ class StructDefinitionNode extends DefinitionNode {
   List<Object?> get props => [name, fields];
 }
 
-class ExceptionDefinitionNode extends DefinitionNode {
-  const ExceptionDefinitionNode(this.name, this.fields);
+final class ExceptionDefinitionNode extends DefinitionNode {
+  const ExceptionDefinitionNode({required this.name, required this.fields});
 
   final IdentifierNode name;
   final List<FieldNode> fields;
@@ -183,8 +187,12 @@ class ExceptionDefinitionNode extends DefinitionNode {
   List<Object?> get props => [name, fields];
 }
 
-class ServiceDefinitionNode extends DefinitionNode {
-  const ServiceDefinitionNode(this.name, this.extendsService, this.functions);
+final class ServiceDefinitionNode extends DefinitionNode {
+  const ServiceDefinitionNode({
+    required this.name,
+    required this.extendsService,
+    required this.functions,
+  });
 
   final IdentifierNode name;
   final IdentifierNode? extendsService;
@@ -198,14 +206,14 @@ class ServiceDefinitionNode extends DefinitionNode {
   List<Object?> get props => [name, extendsService, functions];
 }
 
-class FieldNode extends AstNode {
-  const FieldNode(
-    this.id,
-    this.requirement,
-    this.type,
-    this.name,
-    this.defaultValue,
-  );
+final class FieldNode extends AstNode {
+  const FieldNode({
+    required this.id,
+    required this.requirement,
+    required this.type,
+    required this.name,
+    required this.defaultValue,
+  });
 
   final int? id;
   final String? requirement;
@@ -220,13 +228,13 @@ class FieldNode extends AstNode {
   List<Object?> get props => [id, requirement, type, name, defaultValue];
 }
 
-class FunctionNode extends AstNode {
-  const FunctionNode(
-    this.returnType,
-    this.name,
-    this.parameters,
-    this.throwsExceptions,
-  );
+final class FunctionNode extends AstNode {
+  const FunctionNode({
+    required this.returnType,
+    required this.name,
+    required this.parameters,
+    required this.throwsExceptions,
+  });
 
   final TypeNode returnType;
   final IdentifierNode name;
@@ -245,8 +253,8 @@ sealed class TypeNode extends AstNode {
   const TypeNode();
 }
 
-class BaseTypeNode extends TypeNode {
-  const BaseTypeNode(this.name);
+final class BaseTypeNode extends TypeNode {
+  const BaseTypeNode({required this.name});
 
   final String name;
   @override
@@ -260,8 +268,8 @@ sealed class ContainerTypeNode extends TypeNode {
   const ContainerTypeNode();
 }
 
-class MapTypeNode extends ContainerTypeNode {
-  const MapTypeNode(this.keyType, this.valueType);
+final class MapTypeNode extends ContainerTypeNode {
+  const MapTypeNode({required this.keyType, required this.valueType});
 
   final TypeNode keyType;
   final TypeNode valueType;
@@ -273,8 +281,8 @@ class MapTypeNode extends ContainerTypeNode {
   List<Object?> get props => [keyType, valueType];
 }
 
-class SetTypeNode extends ContainerTypeNode {
-  const SetTypeNode(this.itemType);
+final class SetTypeNode extends ContainerTypeNode {
+  const SetTypeNode({required this.itemType});
 
   final TypeNode itemType;
 
@@ -285,8 +293,8 @@ class SetTypeNode extends ContainerTypeNode {
   List<Object?> get props => [itemType];
 }
 
-class ListTypeNode extends ContainerTypeNode {
-  const ListTypeNode(this.itemType);
+final class ListTypeNode extends ContainerTypeNode {
+  const ListTypeNode({required this.itemType});
 
   final TypeNode itemType;
 
@@ -297,8 +305,8 @@ class ListTypeNode extends ContainerTypeNode {
   List<Object?> get props => [itemType];
 }
 
-class StreamTypeNode extends ContainerTypeNode {
-  const StreamTypeNode(this.itemType);
+final class StreamTypeNode extends ContainerTypeNode {
+  const StreamTypeNode({required this.itemType});
   final TypeNode itemType;
 
   @override
@@ -308,8 +316,8 @@ class StreamTypeNode extends ContainerTypeNode {
   List<Object?> get props => [itemType];
 }
 
-class CustomTypeNode extends TypeNode {
-  const CustomTypeNode(this.name);
+final class CustomTypeNode extends TypeNode {
+  const CustomTypeNode({required this.name});
 
   final IdentifierNode name;
 
@@ -333,8 +341,8 @@ sealed class ConstValueNode extends AstNode {
   const ConstValueNode();
 }
 
-class IntConstantNode extends ConstValueNode {
-  const IntConstantNode(this.value);
+final class IntConstantNode extends ConstValueNode {
+  const IntConstantNode({required this.value});
 
   final String value;
 
@@ -345,8 +353,9 @@ class IntConstantNode extends ConstValueNode {
   List<Object?> get props => [value];
 }
 
-class DoubleConstantNode extends ConstValueNode {
-  const DoubleConstantNode(this.value);
+final class DoubleConstantNode extends ConstValueNode {
+  const DoubleConstantNode({required this.value});
+
   final String value;
 
   @override
@@ -356,8 +365,9 @@ class DoubleConstantNode extends ConstValueNode {
   List<Object?> get props => [value];
 }
 
-class LiteralNode extends ConstValueNode {
-  const LiteralNode(this.value);
+final class LiteralNode extends ConstValueNode {
+  const LiteralNode({required this.value});
+
   final String value;
 
   @override
@@ -367,8 +377,8 @@ class LiteralNode extends ConstValueNode {
   List<Object?> get props => [value];
 }
 
-class IdentifierNode extends ConstValueNode {
-  const IdentifierNode(this.name);
+final class IdentifierNode extends ConstValueNode {
+  const IdentifierNode({required this.name});
 
   final String name;
 
@@ -379,8 +389,8 @@ class IdentifierNode extends ConstValueNode {
   List<Object?> get props => [name];
 }
 
-class ConstListNode extends ConstValueNode {
-  const ConstListNode(this.elements);
+final class ConstListNode extends ConstValueNode {
+  const ConstListNode({required this.elements});
 
   final List<ConstValueNode> elements;
 
@@ -391,8 +401,8 @@ class ConstListNode extends ConstValueNode {
   List<Object?> get props => [elements];
 }
 
-class ConstMapNode extends ConstValueNode {
-  const ConstMapNode(this.entries);
+final class ConstMapNode extends ConstValueNode {
+  const ConstMapNode({required this.entries});
 
   final Map<ConstValueNode, ConstValueNode> entries;
   @override

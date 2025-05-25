@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:lake_lang/lake_lang.dart';
+import 'package:lake_lang/src/lake_ast.dart';
 
 void main() {
   final currentDir = Directory.current.path;
@@ -10,7 +11,7 @@ void main() {
   final exampleLakeFilePath = '$schemaDir/example.lake';
   final exampleInput = loadLakeFile(exampleLakeFilePath);
 
-  final grammar = LakeGrammarDefinition();
+  final grammar = LakeAstGrammarDefinition();
   final parser = grammar.build();
 
   final watch = Stopwatch()..start();
