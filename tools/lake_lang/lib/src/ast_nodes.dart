@@ -1,10 +1,15 @@
 import 'package:equatable/equatable.dart';
+import 'package:source_span/source_span.dart';
 
 /// Base sealed class for all AST nodes.
 /// All concrete AST nodes must be defined in this file (or library).
 sealed class AstNode extends Equatable {
-  const AstNode();
-  // Add an accept method for the Visitor pattern
+  const AstNode({this.span});
+
+  /// Optional span for source location information.
+  final SourceSpan? span;
+
+  /// Add an accept method for the Visitor pattern
   T accept<T>(AstVisitor<T> visitor);
 
   // Equatable requires props, but the base AstNode itself has no specific
@@ -149,7 +154,7 @@ final class EnumDefinitionNode extends DefinitionNode {
 }
 
 final class EnumValueNode extends AstNode {
-  const EnumValueNode(this.name, this.value);
+  const EnumValueNode({required this.name, this.value});
 
   final IdentifierNode name;
   final int? value;
@@ -228,7 +233,7 @@ final class FieldNode extends AstNode {
     required this.defaultValue,
   });
 
-  final int id;
+  final IntConstantNode id;
   final FieldRequirementNode? requirement;
   final TypeNode type;
   final IdentifierNode name;
@@ -263,11 +268,11 @@ final class FunctionNode extends AstNode {
 
 // Types
 sealed class TypeNode extends AstNode {
-  const TypeNode();
+  const TypeNode({super.span});
 }
 
 final class BaseTypeNode extends TypeNode {
-  const BaseTypeNode({required this.name});
+  const BaseTypeNode({required this.name, required super.span});
 
   final String name;
 
@@ -350,27 +355,37 @@ class VoidTypeNode extends TypeNode {
   List<Object?> get props => [];
 }
 
+final class IdentifierNode extends AstNode {
+  const IdentifierNode({required this.name, required super.span});
+
+  final String name;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitIdentifierNode(this);
+
+  @override
+  List<Object?> get props => [name];
+}
+
 // Constants
 sealed class ConstValueNode extends AstNode {
-  const ConstValueNode();
+  const ConstValueNode({super.span});
 }
 
 final class IntConstantNode extends ConstValueNode {
-  const IntConstantNode({required this.value, required this.intValue});
+  const IntConstantNode({required this.value, required super.span});
 
   final String value;
-
-  final int intValue;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitIntConstantNode(this);
 
   @override
-  List<Object?> get props => [value, intValue];
+  List<Object?> get props => [value];
 }
 
 final class DoubleConstantNode extends ConstValueNode {
-  const DoubleConstantNode({required this.value});
+  const DoubleConstantNode({required this.value, required super.span});
 
   final String value;
 
@@ -382,7 +397,7 @@ final class DoubleConstantNode extends ConstValueNode {
 }
 
 final class LiteralNode extends ConstValueNode {
-  const LiteralNode({required this.value});
+  const LiteralNode({required this.value, required super.span});
 
   final String value;
 
@@ -393,20 +408,8 @@ final class LiteralNode extends ConstValueNode {
   List<Object?> get props => [value];
 }
 
-final class IdentifierNode extends AstNode {
-  const IdentifierNode({required this.name});
-
-  final String name;
-
-  @override
-  T accept<T>(AstVisitor<T> visitor) => visitor.visitIdentifierNode(this);
-
-  @override
-  List<Object?> get props => [name];
-}
-
 final class ConstListNode extends ConstValueNode {
-  const ConstListNode({required this.elements});
+  const ConstListNode({required this.elements, required super.span});
 
   final List<ConstValueNode> elements;
 
@@ -418,7 +421,7 @@ final class ConstListNode extends ConstValueNode {
 }
 
 final class ConstMapNode extends ConstValueNode {
-  const ConstMapNode({required this.entries});
+  const ConstMapNode({required this.entries, required super.span});
 
   final Map<ConstValueNode, ConstValueNode> entries;
   @override

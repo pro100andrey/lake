@@ -7,7 +7,7 @@ import 'package:petitparser/petitparser.dart';
 void printParseResult(Result result) {
   switch (result) {
     case Success():
-      print(result.value);
+      return;
 
     case Failure(
       buffer: final buffer,
@@ -30,8 +30,7 @@ void printParseResult(Result result) {
       final errorMessage = [
         'Failure at line $lineNumber, column $column:',
         if (errorLine.isNotEmpty) '  $errorLine',
-        if (errorLine.isNotEmpty) '  ${' ' * column}^',
-        'Message: $message',
+        if (errorLine.isNotEmpty) '  ${'.' * column}^: $message',
       ].join('\n');
 
       print(errorMessage);

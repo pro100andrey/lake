@@ -25,7 +25,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref1(token, 'namespace') & (ref0(namespaceScope) & ref0(identifier));
 
   // [5] NamespaceScope ::=
-  //  '*' | 'js' | 'dart'
+  // '*' | 'js' | 'dart'
   Parser namespaceScope() =>
       ref1(token, '*') | ref1(token, 'js') | ref1(token, 'dart');
 
@@ -114,7 +114,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
   Parser fieldReq() => ref1(token, 'required') | ref1(token, 'optional');
 
   // [16] Function ::=
-  // FunctionType Identifier '(' StreamType identifier | Field* ')' Throws? 
+  // FunctionType Identifier '(' StreamType identifier | Field* ')' Throws?
   // ListSeparator?
   Parser function() =>
       ref0(functionType) &
@@ -140,7 +140,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
 
   // [19] FieldType ::=
   // ContainerType| Identifier | BaseType
-  Parser fieldType() => ref0(containerType) | ref0(baseType)| ref0(identifier);
+  Parser fieldType() => ref0(containerType) | ref0(baseType) | ref0(identifier);
 
   // [20] DefinitionType ::=
   //  ContainerType | BaseType
@@ -236,20 +236,24 @@ class LakeGrammarDefinition extends GrammarDefinition {
   // [28] ConstList ::=
   // '[' (ConstValue ListSeparator?)* ']'
   Parser constList() =>
-      ref1(token, '[') &
-      (ref0(constValue) & ref0(listSeparator).optional()).star() &
-      ref1(token, ']');
+      (ref1(token, '[') &
+              (ref0(constValue) & ref0(listSeparator).optional())
+                  .pick(0)
+                  .star() &
+              ref1(token, ']'))
+          .pick(1);
 
   // [29] ConstMap ::=
   // '{' (ConstValue ':' ConstValue ListSeparator?)* '}'
   Parser constMap() =>
-      ref1(token, '{') &
-      (ref0(constValue) &
-              ref1(token, ':') &
-              ref0(constValue) &
-              ref0(listSeparator).optional())
-          .star() &
-      ref1(token, '}');
+      (ref1(token, '{') &
+              (ref0(constValue) &
+                      ref1(token, ':') &
+                      ref0(constValue) &
+                      ref0(listSeparator).optional())
+                  .star() &
+              ref1(token, '}'))
+          .pick(1);
 
   // [30] Literal ::=
   // ('"' [^"]* '"') | ("'" [^']* "'")
