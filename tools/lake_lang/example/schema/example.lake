@@ -1,7 +1,10 @@
-import "lake_lang/schema.lake"
+// import Lake schema file example
+import "base_types.lake"
 
+// Dart namespace example
 namespace dart "com.example.api.gen"
 
+// JavaScript namespace example
 namespace js "example"
 
 // i32 constant example
@@ -10,25 +13,31 @@ const i32 DEFAULT_PAGE_SIZE = 20
 // i64 constant example
 const i64 MAX_FILE_SIZE = 10485760 // 10 MB in bytes
 
+// list<i32> constant example
 const list<i32> PRIME_NUMBERS = [2, 3, 5, 7, 11];
 
+// string constant example
 const string ADMIN_EMAIL = "admin@example.com"
 
+// list<string> constant example
 const list<string> SUPPORTED_LOCALES = ["en_US", "es_ES", "fr_FR"]
 
-typedef i64 Timestamp
-typedef string UUID
-
-enum UserStatus {
-  active = 1,
-  inactive = 2,
-  banned = 3
-}
-
+// map<string, i32> constant example
 const map<i32, string> STATUS_DESCRIPTIONS = {
   1: "User is active",
   2: "User is inactive",
   3: "User has been banned"
+}
+
+// typedef examples
+typedef i64 Timestamp
+typedef string UUID
+
+// enum examples
+enum UserStatus {
+  active = 1,
+  inactive = 2,
+  banned = 3
 }
 
 enum ProductCategory {
@@ -38,15 +47,59 @@ enum ProductCategory {
   foot = 40
 }
 
+// struct with default values and optional fields example
+struct UserProfile {
+  1: required UUID userId = '00000000-0000-0000-0000-000000000000',
+  2: required string username = 'guest',
+  3: optional string email = '',
+  4: required UserStatus status = UserStatus.ACTIVE,
+  5: optional Timestamp lastLogin = 0,
+  6: list<string> roles = [],
+  7: map<string, string> preferences = {},
+  8: binary avatarImage,
+  9: set<i32> subscribedProductCategories = {}
+}
 
 struct UserProfile {
-  1: required UUID userId = "00000000-0000-0000-0000-000000000000",
-  2: required string username,
-  3: optional string email,
+  1: required UUID userId = '00000000-0000-0000-0000-000000000000',
+  2: required string username = 'guest',
+  3: optional string email = '',
   4: required UserStatus status = UserStatus.ACTIVE,
-  5: optional Timestamp lastLogin,
-  6: list<string> roles,
-  7: map<string, string> preferences,
+  5: optional Timestamp lastLogin = 0,
+  6: list<string> roles = [],
+  7: map<string, string> preferences = {},
   8: binary avatarImage,
-  9: set<i32> subscribedProductCategories
+  9: set<i32> subscribedProductCategories = {}
+}
+
+// struct with required and optional fields example
+struct Product {
+  1: required UUID productId,
+  2: required string name,
+  3: required double price,
+  4: optional string description,
+  5: required ProductCategory category,
+  6: list<string> tags,
+  7: map<string, string> attributes
+}
+
+struct Order {
+  1: required UUID orderId,
+  2: required UUID userId,
+  3: required Timestamp orderDate,
+  4: required list<OrderItem> items,
+  5: double totalAmount
+}
+
+exception InvalidArgumentsException {
+  1: string message,
+  2: optional i32 errorCode
+}
+
+exception UserNotFoundException {
+  1: UUID userId
+}
+
+exception ProductNotFoundException {
+  1: UUID productId
 }

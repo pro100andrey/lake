@@ -39,6 +39,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
     });
   }
 
+  /// Visits the root node of the AST.
   @override
   void visitDocumentNode(DocumentNode node) {
     _printNode('DocumentNode');

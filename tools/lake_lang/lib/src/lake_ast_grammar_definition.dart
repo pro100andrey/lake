@@ -350,4 +350,25 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
       span: span,
     );
   });
+
+  @override
+  Parser exceptionDefinition() => super.exceptionDefinition().map((t) {
+    final [
+      Token keyword,
+      IdentifierNode identifier,
+      Token ld,
+      List fields,
+      Token rd,
+    ] = t as List;
+
+    final span = _getSpan(keyword, rd);
+
+    final fieldNodes = fields.cast<FieldNode>();
+
+    return ExceptionDefinitionNode(
+      name: identifier,
+      fields: fieldNodes,
+      span: span,
+    );
+  });
 }

@@ -153,18 +153,18 @@ class LakeGrammarDefinition extends GrammarDefinition {
   // [21] BaseType ::=
   //  'bool' | 'byte' | 'i8' | 'i16' | 'i32' | 'i64' | 'double' | 'string' |
   //  'binary' | 'uuid' |
-  Parser baseType() =>
-      (ref1(token, 'bool') |
-              ref1(token, 'byte') |
-              ref1(token, 'i8') |
-              ref1(token, 'i16') |
-              ref1(token, 'i32') |
-              ref1(token, 'i64') |
-              ref1(token, 'double') |
-              ref1(token, 'string') |
-              ref1(token, 'binary') |
-              ref1(token, 'uuid'))
-          .or(FailureParser('Invalid base type'));
+  Parser baseType() => [
+    'bool',
+    'byte',
+    'i8',
+    'i16',
+    'i32',
+    'i64',
+    'double',
+    'string',
+    'binary',
+    'uuid',
+  ].map((type) => ref1(token, type)).toChoiceParser();
 
   // [22] ContainerType ::=
   // MapType | SetType | ListType
@@ -300,6 +300,9 @@ class LakeGrammarDefinition extends GrammarDefinition {
       string('/*') &
       (ref0(multiLineComment) | string('*/').neg()).star() &
       string('*/');
+
+  Parser docComment() =>
+      string('///') & ref0(newline).neg().star() & ref0(newline).optional();
 
   Parser visibleWhitespace() => whitespace();
 
