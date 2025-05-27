@@ -18,8 +18,11 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
 
   void _printNode(String nodeName, [Map<String, dynamic>? properties]) {
     final propsString = properties != null && properties.isNotEmpty
-        ? '(${properties.entries.map((e) => '${e.key}: ${e.value}').join(', ')})'
+        ? '(${properties.entries.map(
+            (e) => '${e.key}: ${e.value}', //
+          ).join(', ')})'
         : '';
+
     print('$_indent$nodeName$propsString');
   }
 
@@ -52,10 +55,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
 
   @override
   void visitNamespaceNode(NamespaceNode node) {
-    _printNode('NamespaceNode', {'scope': node.scope});
-    _withIndentation(() {
-      node.name.accept(this); // Visit the IdentifierNode
-    });
+    _printNode('NamespaceNode', {'scope': node.scope, 'name': node.name});
   }
 
   @override
@@ -94,12 +94,14 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
 
   @override
   void visitEnumValueNode(EnumValueNode node) {
-    _printNode('EnumValueNode', {
-      'value': node.value?.value, // Print the string value of IntConstantNode
-    });
+    _printNode('EnumValueNode');
     _withIndentation(() {
-      _printNode('Name:');
-      _withIndentation(() => node.name.accept(this));
+      _printNode('MemberName:');
+      _withIndentation(() => node.memberName.accept(this));
+      if (node.value != null) {
+        _printNode('Initializer:');
+        _withIndentation(() => node.value!.accept(this));
+      }
     });
   }
 
@@ -182,7 +184,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
 
   @override
   void visitBaseTypeNode(BaseTypeNode node) {
-    _printNode('BaseTypeNode', {'name': node.name});
+    _printNode('BaseTypeNode', {'type': node.type});
   }
 
   @override
@@ -227,8 +229,8 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   void visitCustomTypeNode(CustomTypeNode node) {
     _printNode('CustomTypeNode');
     _withIndentation(() {
-      _printNode('Name:');
-      _withIndentation(() => node.name.accept(this));
+      _printNode('Type:');
+      _withIndentation(() => node.type.accept(this));
     });
   }
 
@@ -250,13 +252,24 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   }
 
   @override
+  void visitEnumConstantNode(EnumConstantNode node) {
+    _printNode('EnumConstantNode');
+    _withIndentation(() {
+      _printNode('Type:');
+      _withIndentation(() => node.type.accept(this));
+      _printNode('Value:');
+      _withIndentation(() => node.value.accept(this));
+    });
+  }
+
+  @override
   void visitLiteralNode(LiteralNode node) {
     _printNode('LiteralNode', {'value': node.value});
   }
 
   @override
   void visitIdentifierNode(IdentifierNode node) {
-    _printNode('IdentifierNode', {'name': node.name});
+    _printNode('IdentifierNode', {'value': node.value});
   }
 
   @override

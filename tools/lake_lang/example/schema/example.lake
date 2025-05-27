@@ -1,8 +1,8 @@
 import "lake_lang/schema.lake"
 
-namespace dart com.example.api.gen
+namespace dart "com.example.api.gen"
 
-namespace js example
+namespace js "example"
 
 // i32 constant example
 const i32 DEFAULT_PAGE_SIZE = 20
@@ -20,9 +20,9 @@ typedef i64 Timestamp
 typedef string UUID
 
 enum UserStatus {
-  ACTIVE = 1,
-  INACTIVE = 2,
-  BANNED = 3
+  active = 1,
+  inactive = 2,
+  banned = 3
 }
 
 const map<i32, string> STATUS_DESCRIPTIONS = {
@@ -32,8 +32,21 @@ const map<i32, string> STATUS_DESCRIPTIONS = {
 }
 
 enum ProductCategory {
-  ELECTRONICS = 10,
-  BOOKS = 20,
-  CLOTHING = 30,
-  FOOD = 40
+  electronic = 10,
+  books = 20,
+  clothing = 30,
+  foot = 40
+}
+
+
+struct UserProfile {
+  1: required UUID userId = "00000000-0000-0000-0000-000000000000",
+  2: required string username,
+  3: optional string email,
+  4: required UserStatus status = UserStatus.ACTIVE,
+  5: optional Timestamp lastLogin,
+  6: list<string> roles,
+  7: map<string, string> preferences,
+  8: binary avatarImage,
+  9: set<i32> subscribedProductCategories
 }

@@ -54,6 +54,7 @@ abstract class AstVisitor<T> {
   // Constant value nodes
   T visitIntConstantNode(IntConstantNode node);
   T visitDoubleConstantNode(DoubleConstantNode node);
+  T visitEnumConstantNode(EnumConstantNode node);
   T visitLiteralNode(LiteralNode node);
   T visitIdentifierNode(IdentifierNode node);
   T visitConstListNode(ConstListNode node);
@@ -103,7 +104,7 @@ final class NamespaceNode extends HeaderNode {
   });
 
   final String scope;
-  final IdentifierNode name;
+  final String name;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitNamespaceNode(this);
@@ -171,16 +172,20 @@ final class EnumDefinitionNode extends DefinitionNode {
 }
 
 final class EnumValueNode extends AstNode {
-  const EnumValueNode({required this.name, required super.span, this.value});
+  const EnumValueNode({
+    required this.memberName,
+    required super.span,
+    this.value,
+  });
 
-  final IdentifierNode name;
+  final IdentifierNode memberName;
   final IntConstantNode? value;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitEnumValueNode(this);
 
   @override
-  List<Object?> get props => [name, value, span];
+  List<Object?> get props => [memberName, value, span];
 }
 
 final class StructDefinitionNode extends DefinitionNode {
@@ -306,15 +311,15 @@ sealed class TypeNode extends AstNode {
 }
 
 final class BaseTypeNode extends TypeNode {
-  const BaseTypeNode({required this.name, required super.span});
+  const BaseTypeNode({required this.type, required super.span});
 
-  final String name;
+  final String type;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitBaseTypeNode(this);
 
   @override
-  List<Object?> get props => [name, span];
+  List<Object?> get props => [type, span];
 }
 
 sealed class ContainerTypeNode extends TypeNode {
@@ -362,7 +367,7 @@ final class ListTypeNode extends ContainerTypeNode {
   List<Object?> get props => [itemType, span];
 }
 
-final class StreamTypeNode extends ContainerTypeNode {
+final class StreamTypeNode extends TypeNode {
   const StreamTypeNode({required this.itemType, required super.span});
   final TypeNode itemType;
 
@@ -374,15 +379,15 @@ final class StreamTypeNode extends ContainerTypeNode {
 }
 
 final class CustomTypeNode extends TypeNode {
-  const CustomTypeNode({required this.name, required super.span});
+  const CustomTypeNode({required this.type, required super.span});
 
-  final IdentifierNode name;
+  final IdentifierNode type;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitCustomTypeNode(this);
 
   @override
-  List<Object?> get props => [name, span];
+  List<Object?> get props => [type, span];
 }
 
 class VoidTypeNode extends TypeNode {
@@ -396,15 +401,15 @@ class VoidTypeNode extends TypeNode {
 }
 
 final class IdentifierNode extends AstNode {
-  const IdentifierNode({required this.name, required super.span});
+  const IdentifierNode({required this.value, required super.span});
 
-  final String name;
+  final String value;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitIdentifierNode(this);
 
   @override
-  List<Object?> get props => [name, span];
+  List<Object?> get props => [value, span];
 }
 
 // Constants
@@ -434,6 +439,23 @@ final class DoubleConstantNode extends ConstValueNode {
 
   @override
   List<Object?> get props => [value, span];
+}
+
+final class EnumConstantNode extends ConstValueNode {
+  const EnumConstantNode({
+    required this.type,
+    required this.value,
+    required super.span,
+  });
+
+  final IdentifierNode type;
+  final IdentifierNode value;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitEnumConstantNode(this);
+
+  @override
+  List<Object?> get props => [type, value, span];
 }
 
 final class LiteralNode extends ConstValueNode {
