@@ -5,7 +5,7 @@ import '../../lake_lang.dart';
 /// An AST visitor that pretty-prints the Lake AST.
 class AstPrettyPrinterVisitor implements AstVisitor<void> {
   int _indentationLevel = 0;
-  String _indent() => '  ' * _indentationLevel;
+  String get _indent => '  ' * _indentationLevel;
 
   void _withIndentation(void Function() body) {
     _indentationLevel++;
@@ -16,126 +16,278 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
     }
   }
 
-  @override
-  void visitDocumentNode(DocumentNode node) {
-    print('DocumentNode:');
+  void _printNode(String nodeName, [Map<String, dynamic>? properties]) {
+    final propsString = properties != null && properties.isNotEmpty
+        ? '(${properties.entries.map((e) => '${e.key}: ${e.value}').join(', ')})'
+        : '';
+    print('$_indent$nodeName$propsString');
+  }
 
+  void _visitNodeList<T extends AstNode>(List<T> nodes, String listName) {
+    if (nodes.isEmpty) {
+      _printNode('$listName: []');
+      return;
+    }
+    _printNode('$listName:');
     _withIndentation(() {
-      if (node.headers.isNotEmpty) {
-        print('${_indent()}Headers:');
-
-        _withIndentation(() {
-          for (final header in node.headers) {
-            header.accept(this);
-          }
-        });
-      }
-
-      if (node.definitions.isNotEmpty) {
-        print('${_indent()}Definitions:');
-
-        _withIndentation(() {
-          for (final definition in node.definitions) {
-            definition.accept(this);
-          }
-        });
+      for (final node in nodes) {
+        node.accept(this);
       }
     });
+  }
 
-    print('End');
+  @override
+  void visitDocumentNode(DocumentNode node) {
+    _printNode('DocumentNode');
+    _withIndentation(() {
+      _visitNodeList(node.headers, 'Headers');
+      _visitNodeList(node.definitions, 'Definitions');
+    });
   }
 
   @override
   void visitImportNode(ImportNode node) {
-    print('${_indent()}ImportNode(path: ${node.path})');
+    _printNode('ImportNode', {'path': node.path});
   }
 
   @override
   void visitNamespaceNode(NamespaceNode node) {
-    print(
-      '${_indent()}NamespaceNode(scope: "${node.scope}", name: "${node.name}")',
-    );
+    _printNode('NamespaceNode', {'scope': node.scope});
+    _withIndentation(() {
+      node.name.accept(this); // Visit the IdentifierNode
+    });
+  }
+
+  @override
+  void visitConstDefinitionNode(ConstDefinitionNode node) {
+    _printNode('ConstDefinitionNode');
+    _withIndentation(() {
+      _printNode('Type:');
+      _withIndentation(() => node.type.accept(this));
+      _printNode('Name:');
+      _withIndentation(() => node.name.accept(this));
+      _printNode('Value:');
+      _withIndentation(() => node.value.accept(this));
+    });
   }
 
   @override
   void visitTypedefDefinitionNode(TypedefDefinitionNode node) {
-    print('${_indent()}TypedefDefinitionNode:');
+    _printNode('TypedefDefinitionNode');
     _withIndentation(() {
-      print('${_indent()}Name: ${node.name}');
-      print('${_indent()}Type: ${node.type}');
+      _printNode('Type:');
+      _withIndentation(() => node.type.accept(this));
+      _printNode('Name:');
+      _withIndentation(() => node.name.accept(this));
     });
   }
 
   @override
-  void visitBaseTypeNode(BaseTypeNode node) {}
-
-  @override
-  void visitConstDefinitionNode(ConstDefinitionNode node) {
-    print('${_indent()}ConstDefinitionNode:');
+  void visitEnumDefinitionNode(EnumDefinitionNode node) {
+    _printNode('EnumDefinitionNode');
     _withIndentation(() {
-      print('${_indent()}Name: ${node.name}');
-      print('${_indent()}Type: ${node.type}');
-      print('${_indent()}Value: ${node.value}');
+      _printNode('Name:');
+      _withIndentation(() => node.name.accept(this));
+      _visitNodeList(node.values, 'Values');
     });
   }
 
   @override
-  void visitConstListNode(ConstListNode node) {}
+  void visitEnumValueNode(EnumValueNode node) {
+    _printNode('EnumValueNode', {
+      'value': node.value?.value, // Print the string value of IntConstantNode
+    });
+    _withIndentation(() {
+      _printNode('Name:');
+      _withIndentation(() => node.name.accept(this));
+    });
+  }
 
   @override
-  void visitConstMapNode(ConstMapNode node) {}
+  void visitStructDefinitionNode(StructDefinitionNode node) {
+    _printNode('StructDefinitionNode');
+    _withIndentation(() {
+      _printNode('Name:');
+      _withIndentation(() => node.name.accept(this));
+      _visitNodeList(node.fields, 'Fields');
+    });
+  }
 
   @override
-  void visitCustomTypeNode(CustomTypeNode node) {}
+  void visitExceptionDefinitionNode(ExceptionDefinitionNode node) {
+    _printNode('ExceptionDefinitionNode');
+    _withIndentation(() {
+      _printNode('Name:');
+      _withIndentation(() => node.name.accept(this));
+      _visitNodeList(node.fields, 'Fields');
+    });
+  }
 
   @override
-  void visitDoubleConstantNode(DoubleConstantNode node) {}
+  void visitServiceDefinitionNode(ServiceDefinitionNode node) {
+    _printNode('ServiceDefinitionNode');
+    _withIndentation(() {
+      _printNode('Name:');
+      _withIndentation(() => node.name.accept(this));
+      if (node.extendsService != null) {
+        _printNode('Extends:');
+        _withIndentation(() => node.extendsService!.accept(this));
+      }
+      _visitNodeList(node.functions, 'Functions');
+    });
+  }
 
   @override
-  void visitEnumDefinitionNode(EnumDefinitionNode node) {}
+  void visitFieldRequirementNode(FieldRequirementNode node) {
+    _printNode('FieldRequirementNode', {'requirement': node.requirement});
+  }
 
   @override
-  void visitEnumValueNode(EnumValueNode node) {}
+  void visitFieldNode(FieldNode node) {
+    _printNode('FieldNode');
+    _withIndentation(() {
+      _printNode('ID:');
+      _withIndentation(() => node.id.accept(this));
+      if (node.requirement != null) {
+        _printNode('Requirement:');
+        _withIndentation(() => node.requirement!.accept(this));
+      }
+      _printNode('Type:');
+      _withIndentation(() => node.type.accept(this));
+      _printNode('Name:');
+      _withIndentation(() => node.name.accept(this));
+      if (node.defaultValue != null) {
+        _printNode('DefaultValue:');
+        _withIndentation(() => node.defaultValue!.accept(this));
+      }
+    });
+  }
 
   @override
-  void visitExceptionDefinitionNode(ExceptionDefinitionNode node) {}
+  void visitFunctionNode(FunctionNode node) {
+    _printNode('FunctionNode');
+    _withIndentation(() {
+      _printNode('ReturnType:');
+      _withIndentation(() => node.returnType.accept(this));
+      _printNode('Name:');
+      _withIndentation(() => node.name.accept(this));
+      _visitNodeList(node.parameters, 'Parameters');
+      if (node.throwsExceptions.isNotEmpty) {
+        _visitNodeList(node.throwsExceptions, 'Throws');
+      }
+    });
+  }
+
+  // Type nodes
 
   @override
-  void visitFieldNode(FieldNode node) {}
+  void visitBaseTypeNode(BaseTypeNode node) {
+    _printNode('BaseTypeNode', {'name': node.name});
+  }
 
   @override
-  void visitFieldRequirementNode(FieldRequirementNode node) {}
+  void visitMapTypeNode(MapTypeNode node) {
+    _printNode('MapTypeNode');
+    _withIndentation(() {
+      _printNode('KeyType:');
+      _withIndentation(() => node.keyType.accept(this));
+      _printNode('ValueType:');
+      _withIndentation(() => node.valueType.accept(this));
+    });
+  }
 
   @override
-  void visitFunctionNode(FunctionNode node) {}
+  void visitSetTypeNode(SetTypeNode node) {
+    _printNode('SetTypeNode');
+    _withIndentation(() {
+      _printNode('ItemType:');
+      _withIndentation(() => node.itemType.accept(this));
+    });
+  }
 
   @override
-  void visitIdentifierNode(IdentifierNode node) {}
+  void visitListTypeNode(ListTypeNode node) {
+    _printNode('ListTypeNode');
+    _withIndentation(() {
+      _printNode('ItemType:');
+      _withIndentation(() => node.itemType.accept(this));
+    });
+  }
 
   @override
-  void visitIntConstantNode(IntConstantNode node) {}
+  void visitStreamTypeNode(StreamTypeNode node) {
+    _printNode('StreamTypeNode');
+    _withIndentation(() {
+      _printNode('ItemType:');
+      _withIndentation(() => node.itemType.accept(this));
+    });
+  }
 
   @override
-  void visitListTypeNode(ListTypeNode node) {}
+  void visitCustomTypeNode(CustomTypeNode node) {
+    _printNode('CustomTypeNode');
+    _withIndentation(() {
+      _printNode('Name:');
+      _withIndentation(() => node.name.accept(this));
+    });
+  }
 
   @override
-  void visitLiteralNode(LiteralNode node) {}
+  void visitVoidTypeNode(VoidTypeNode node) {
+    _printNode('VoidTypeNode');
+  }
+
+  // Constant value nodes
 
   @override
-  void visitMapTypeNode(MapTypeNode node) {}
+  void visitIntConstantNode(IntConstantNode node) {
+    _printNode('IntConstantNode', {'value': node.value});
+  }
 
   @override
-  void visitServiceDefinitionNode(ServiceDefinitionNode node) {}
+  void visitDoubleConstantNode(DoubleConstantNode node) {
+    _printNode('DoubleConstantNode', {'value': node.value});
+  }
 
   @override
-  void visitSetTypeNode(SetTypeNode node) {}
+  void visitLiteralNode(LiteralNode node) {
+    _printNode('LiteralNode', {'value': node.value});
+  }
 
   @override
-  void visitStreamTypeNode(StreamTypeNode node) {}
+  void visitIdentifierNode(IdentifierNode node) {
+    _printNode('IdentifierNode', {'name': node.name});
+  }
 
   @override
-  void visitStructDefinitionNode(StructDefinitionNode node) {}
+  void visitConstListNode(ConstListNode node) {
+    _printNode('ConstListNode');
+    _withIndentation(() {
+      _visitNodeList(node.elements, 'Elements');
+    });
+  }
 
   @override
-  void visitVoidTypeNode(VoidTypeNode node) {}
+  void visitConstMapNode(ConstMapNode node) {
+    _printNode('ConstMapNode');
+    _withIndentation(() {
+      // For maps, print each entry as a pair
+      if (node.entries.isEmpty) {
+        _printNode('Entries: {}');
+        return;
+      }
+      _printNode('Entries:');
+      _withIndentation(() {
+        node.entries.forEach((key, value) {
+          _printNode('Entry:');
+          _withIndentation(() {
+            _printNode('Key:');
+            _withIndentation(() => key.accept(this));
+            _printNode('Value:');
+            _withIndentation(() => value.accept(this));
+          });
+        });
+      });
+    });
+  }
 }

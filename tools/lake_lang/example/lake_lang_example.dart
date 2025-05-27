@@ -50,20 +50,21 @@ void main(List<String> args) {
     ..measure('Parser parse', () {
       parseResult = parser.parse(sourceCode);
     })
+    ..printSummary()
+    ..reset();
+
+  late AstPrettyPrinterVisitor printer;
+  timer
+    ..measure('Printer creation', () {
+      printer = AstPrettyPrinterVisitor();
+    })
+    ..measure('Printer visit', () {
+      (parseResult.value as DocumentNode).accept(printer);
+    })
     ..stop()
     ..printSummary();
 
   printParseResult(parseResult);
-
-  switch (parseResult) {
-    case Success():
-      print('\r');
-      final printer = AstPrettyPrinterVisitor();
-      final document = parseResult.value as DocumentNode;
-      document.accept(printer);
-
-    case Failure():
-  }
 }
 
 String loadLakeFile(String filePath) {
@@ -89,6 +90,12 @@ class ExecutionTimer {
   /// Stops the overall timer.
   void stop() {
     _overallWatch.stop();
+  }
+
+  /// Resets the timer and clears all recorded step timings.
+  void reset() {
+    _stepTimings.clear();
+    _overallWatch.reset();
   }
 
   /// Executes an operation and measures its time, storing it by description.

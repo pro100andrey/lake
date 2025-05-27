@@ -25,14 +25,11 @@ enum UserStatus {
   BANNED = 3
 }
 
-/*
 const map<i32, string> STATUS_DESCRIPTIONS = {
   1: "User is active",
   2: "User is inactive",
   3: "User has been banned"
 }
-
-
 
 enum ProductCategory {
   ELECTRONICS = 10,
@@ -40,6 +37,3 @@ enum ProductCategory {
   CLOTHING = 30,
   FOOD = 40
 }
-
-*/
-

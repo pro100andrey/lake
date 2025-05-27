@@ -32,56 +32,93 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   }
 
   @override
-  Parser import() => super.import().map((t) {
-    final [_, LiteralNode literal] = t as List;
-
-    return ImportNode(path: literal.value);
-  });
-
-  @override
   Parser<DocumentNode> document() => super.document().map((t) {
     final [List headers, List definitions] = t as List;
     final resultHeaders = headers.cast<HeaderNode>();
-    final resultDefinitions = definitions
-        .map((e) => e as DefinitionNode)
-        .toList();
+    final resultDefinitions = definitions.cast<DefinitionNode>();
+    final resultSpan = _getSpan(resultHeaders.first, resultDefinitions.last);
 
-    return DocumentNode(headers: resultHeaders, definitions: resultDefinitions);
+    return DocumentNode(
+      headers: resultHeaders,
+      definitions: resultDefinitions,
+      span: resultSpan,
+    );
+  });
+
+  @override
+  Parser import() => super.import().map((t) {
+    final [_, LiteralNode literal] = t as List;
+    final span = _getSpan(t.first, t.last);
+
+    return ImportNode(path: literal.value, span: span);
   });
 
   @override
   Parser namespace() => super.namespace().map((t) {
     final [Token tt, [Token lang, IdentifierNode identifier]] = t as List;
+    final span = _getSpan(tt, identifier);
 
-    return NamespaceNode(scope: lang.value, name: identifier);
+    return NamespaceNode(scope: lang.value, name: identifier, span: span);
   });
 
   @override
   Parser constList() => super.constList().map((t) {
-    final elements = (t as List).cast<ConstValueNode>();
+    final [Token ld, List<List> values, Token rd] = t as List;
+    final span = _getSpan(ld, rd);
 
-    return ConstListNode(elements: elements, span: null);
+    final elements = values
+        .map((e) => e.first as ConstValueNode)
+        .toList(growable: false);
+
+    return ConstListNode(elements: elements, span: span);
+  });
+
+  @override
+  Parser constMap() => super.constMap().map((t) {
+    final [Token ld, List<List> values, Token rd] = t as List;
+    final span = _getSpan(ld, rd);
+
+    final entriesList = values
+        .map((e) => MapEntry(e[0] as ConstValueNode, e[2] as ConstValueNode))
+        .toList(growable: false);
+
+    final entries = Map.fromEntries(entriesList);
+
+    return ConstMapNode(entries: entries, span: span);
   });
 
   @override
   Parser constDefinition() => super.constDefinition().map((t) {
     final [
-      _,
+      Token keyword,
       TypeNode type,
       IdentifierNode identifier,
-      _,
+      Token equalOp,
       ConstValueNode value,
       _,
     ] = t as List;
 
-    return ConstDefinitionNode(name: identifier, type: type, value: value);
+    final span = _getSpan(keyword, value);
+
+    return ConstDefinitionNode(
+      name: identifier,
+      type: type,
+      value: value,
+      span: span,
+    );
   });
 
   @override
   Parser typedefDefinition() => super.typedefDefinition().map((t) {
-    final [_, TypeNode type, IdentifierNode identifier, _] = t as List;
+    final [
+      Token keyword,
+      TypeNode type,
+      IdentifierNode identifier,
+      Token? listSeparator,
+    ] = t as List;
+    final span = _getSpan(keyword, listSeparator ?? identifier);
 
-    return TypedefDefinitionNode(name: identifier, type: type);
+    return TypedefDefinitionNode(name: identifier, type: type, span: span);
   });
 
   @override
@@ -134,29 +171,86 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   Parser fieldReq() => super.fieldReq().map((t) {
     final token = t as Token;
 
-    return FieldRequirementNode(requirement: token.value);
+    final span = _getSpan(token, token);
+
+    return FieldRequirementNode(requirement: token.value, span: span);
+  });
+
+  @override
+  Parser mapType() => super.mapType().map((t) {
+    final [
+      Token mapKeyword,
+      Token ld,
+      AstNode keyType,
+      Token comma,
+      AstNode valueType,
+      Token rd,
+    ] = t as List;
+
+    final keyTypeNode = switch (keyType) {
+      BaseTypeNode() => keyType,
+      IdentifierNode() => CustomTypeNode(name: keyType, span: keyType.span),
+      _ => throw StateError('Unexpected key type in map: $keyType'),
+    };
+
+    final valueTypeNode = switch (valueType) {
+      BaseTypeNode() => valueType,
+      IdentifierNode() => CustomTypeNode(name: valueType, span: valueType.span),
+      _ => throw StateError('Unexpected value type in map: $valueType'),
+    };
+
+    final span = _getSpan(ld, rd);
+
+    return MapTypeNode(
+      keyType: keyTypeNode,
+      valueType: valueTypeNode,
+      span: span,
+    );
   });
 
   @override
   Parser listType() => super.listType().map((t) {
-    final [_, _, type, _] = t as List;
+    final [Token listKeyword, Token ld, AstNode type, Token rd] = t as List;
 
     final itemType = switch (type) {
       BaseTypeNode() => type,
-      IdentifierNode() => CustomTypeNode(name: type),
+      IdentifierNode() => CustomTypeNode(name: type, span: type.span),
 
       _ => throw StateError('Unexpected type in list: $type'),
     };
 
-    return ListTypeNode(itemType: itemType);
+    final span = _getSpan(ld, rd);
+
+    return ListTypeNode(itemType: itemType, span: span);
   });
 
   @override
   Parser enumDefinition() => super.enumDefinition().map((t) {
-    final [_, identifier, _, values, _] = t as List;
+    final [
+      Token keyword,
+      IdentifierNode identifier,
+      Token ld,
+      List values,
+      Token rd,
+    ] = t as List;
     final enumValues = values.cast<EnumValueNode>();
-    final span = _getSpan(t.first, t.last);
-    return EnumDefinitionNode(name: identifier, values: enumValues);
+
+    final span = _getSpan(keyword, rd);
+
+    return EnumDefinitionNode(name: identifier, values: enumValues, span: span);
+  });
+
+  @override
+  Parser<EnumValueNode> enumValue() => super.enumValue().map((t) {
+    final [
+      IdentifierNode id,
+      [Token? equalOp, IntConstantNode? value],
+      Token? separator,
+    ] = t as List;
+
+    final span = _getSpan(id, separator ?? value ?? id);
+
+    return EnumValueNode(name: id, value: value, span: span);
   });
 
   @override
@@ -176,12 +270,15 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
       _ => throw StateError('Unexpected default value: $defaultValue'),
     };
 
+    final span = _getSpan(t.first, t.last);
+
     return FieldNode(
       id: id,
       requirement: requirement,
       type: type,
       name: name,
       defaultValue: null,
+      span: span,
     );
   });
 }
