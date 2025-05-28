@@ -1,4 +1,4 @@
-// import Lake schema file example
+
 import "base_types.lake"
 
 // Dart namespace example
@@ -103,6 +103,7 @@ exception UserNotFoundException {
 exception ProductNotFoundException {
   1: UUID productId
 }
+
 
 service Greeter {
   // Unary RPC
