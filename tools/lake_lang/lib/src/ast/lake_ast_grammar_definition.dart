@@ -10,26 +10,19 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   final SourceFile _sourceFile;
 
   SourceSpan _getSpan(Object startElement, Object endElement) {
-    int startOffset;
-    int endOffset;
+    final start = switch (startElement) {
+      Token(start: final start) => start,
+      AstNode(span: SourceSpan(start: final start)) => start.offset,
+      _ => throw ArgumentError('Invalid start element for span: $startElement'),
+    };
 
-    if (startElement is Token) {
-      startOffset = startElement.start;
-    } else if (startElement is AstNode && startElement.span != null) {
-      startOffset = startElement.span!.start.offset;
-    } else {
-      throw ArgumentError('Invalid start element for span: $startElement');
-    }
+    final end = switch (endElement) {
+      Token(stop: final stop) => stop,
+      AstNode(span: SourceSpan(end: final end)) => end.offset,
+      _ => throw ArgumentError('Invalid end element for span: $endElement'),
+    };
 
-    if (endElement is Token) {
-      endOffset = endElement.stop;
-    } else if (endElement is AstNode && endElement.span != null) {
-      endOffset = endElement.span!.end.offset;
-    } else {
-      throw ArgumentError('Invalid end element for span: $endElement');
-    }
-
-    return _sourceFile.span(startOffset, endOffset);
+    return _sourceFile.span(start, end);
   }
 
   @override
