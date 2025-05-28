@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print
 
-import '../../../lake_lang.dart';
 import '../ast_visitor.dart';
+import '../nodes/ast_nodes.dart';
 
 /// An AST visitor that pretty-prints the Lake AST.
 class AstPrettyPrinterVisitor implements AstVisitor<void> {

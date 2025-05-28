@@ -1,7 +1,8 @@
 import 'package:petitparser/petitparser.dart';
 import 'package:source_span/source_span.dart';
 
-import '../../lake_lang.dart';
+import '../grammar/lake_grammar_definition.dart';
+import 'nodes/ast_nodes.dart';
 
 class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   LakeAstGrammarDefinition(this._sourceFile);

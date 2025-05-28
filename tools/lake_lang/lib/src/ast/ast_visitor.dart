@@ -1,4 +1,4 @@
-import '../../lake_lang.dart';
+import 'nodes/ast_nodes.dart';
 
 /// Abstract base class for all AST Visitors
 // (AstVisitor interface remains mostly the same, ensuring exhaustive checking)
