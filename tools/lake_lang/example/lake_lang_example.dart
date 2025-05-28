@@ -3,8 +3,6 @@
 import 'dart:io';
 
 import 'package:lake_lang/lake_lang.dart';
-import 'package:lake_lang/src/lake_ast_grammar_definition.dart';
-import 'package:lake_lang/src/vistiter/ast_pretty_printer_visitor.dart';
 import 'package:petitparser/petitparser.dart';
 import 'package:source_span/source_span.dart';
 
@@ -63,7 +61,6 @@ void main(List<String> args) {
     })
     ..stop()
     ..printSummary();
-
 
   printParseResult(parseResult);
 }

@@ -103,3 +103,8 @@ exception UserNotFoundException {
 exception ProductNotFoundException {
   1: UUID productId
 }
+
+service Greeter {
+  // Unary RPC
+  string sayHello(1: string name) throws (1: InvalidArgumentsException invalidArgs)
+}
