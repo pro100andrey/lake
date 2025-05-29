@@ -63,34 +63,6 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   });
 
   @override
-  Parser constList() => super.constList().map((t) {
-    final [Token ld, List<List> values, Token rd] = t as List;
-
-    final span = _getSpan(ld, rd);
-
-    final elements = values
-        .map((e) => e.first as ConstValueNode)
-        .toList(growable: false);
-
-    return ConstListNode(elements: elements, span: span);
-  });
-
-  @override
-  Parser constMap() => super.constMap().map((t) {
-    final [Token ld, List<List> values, Token rd] = t as List;
-
-    final span = _getSpan(ld, rd);
-
-    final entriesList = values
-        .map((e) => MapEntry(e[0] as ConstValueNode, e[2] as ConstValueNode))
-        .toList(growable: false);
-
-    final entries = Map.fromEntries(entriesList);
-
-    return ConstMapNode(entries: entries, span: span);
-  });
-
-  @override
   Parser constDefinition() => super.constDefinition().map((t) {
     final [
       Token keyword,
@@ -126,117 +98,6 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   });
 
   @override
-  Parser literal() => super.literal().map((t) {
-    final token = t as Token;
-
-    final span = _getSpan(token, token);
-
-    return LiteralNode(value: token.value, span: span);
-  });
-
-  @override
-  Parser identifier() => super.identifier().map((t) {
-    final Token token = t;
-
-    final span = _getSpan(token, token);
-
-    return IdentifierNode(value: token.value, span: span);
-  });
-
-  @override
-  Parser intConstant() => super.intConstant().map((t) {
-    final Token token = t;
-
-    final span = _getSpan(token, token);
-
-    return IntConstantNode(value: token.value, span: span);
-  });
-
-  @override
-  Parser doubleConstant() => super.doubleConstant().map((t) {
-    final Token token = t;
-
-    final span = _getSpan(token, token);
-
-    return DoubleConstantNode(value: token.value, span: span);
-  });
-
-  @override
-  Parser enumConstant() => super.enumConstant().map((t) {
-    final [IdentifierNode type, Token comma, IdentifierNode value] = t as List;
-
-    final span = _getSpan(type, value);
-
-    return EnumConstantNode(type: type, value: value, span: span);
-  });
-
-  @override
-  Parser baseType() => super.baseType().map((t) {
-    final Token token = t;
-
-    final span = _getSpan(token, token);
-
-    return BaseTypeNode(type: token.value, span: span);
-  });
-
-  @override
-  Parser fieldReq() => super.fieldReq().map((t) {
-    final token = t as Token;
-
-    final span = _getSpan(token, token);
-
-    return FieldRequirementNode(requirement: token.value, span: span);
-  });
-
-  @override
-  Parser mapType() => super.mapType().map((t) {
-    final [
-      Token mapKeyword,
-      Token ld,
-      AstNode keyType,
-      Token comma,
-      AstNode valueType,
-      Token rd,
-    ] = t as List;
-
-    final keyTypeNode = switch (keyType) {
-      BaseTypeNode() => keyType,
-      IdentifierNode() => CustomTypeNode(type: keyType, span: keyType.span),
-      _ => throw StateError('Unexpected key type in map: $keyType'),
-    };
-
-    final valueTypeNode = switch (valueType) {
-      BaseTypeNode() => valueType,
-      IdentifierNode() => CustomTypeNode(type: valueType, span: valueType.span),
-      _ => throw StateError('Unexpected value type in map: $valueType'),
-    };
-
-    final span = _getSpan(ld, rd);
-
-    return MapTypeNode(
-      keyType: keyTypeNode,
-      valueType: valueTypeNode,
-      span: span,
-    );
-  });
-
-  @override
-  Parser listType() => super.listType().map((t) {
-    final [Token listKeyword, Token ld, AstNode type, Token rd] = t as List;
-
-    final itemType = switch (type) {
-      BaseTypeNode() => type,
-      IdentifierNode() => CustomTypeNode(type: type, span: type.span),
-
-      _ => throw StateError('Unexpected type in list: $type'),
-    };
-
-    final span = _getSpan(ld, rd);
-
-    return ListTypeNode(itemType: itemType, span: span);
-  });
-
-  @override
   Parser enumDefinition() => super.enumDefinition().map((t) {
     final [
       Token keyword,
@@ -263,65 +124,6 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     final span = _getSpan(memberName, separator ?? value ?? memberName);
 
     return EnumValueNode(memberName: memberName, value: value, span: span);
-  });
-
-  @override
-  Parser field() => super.field().map((t) {
-    final [
-      [IntConstantNode id, Token idSeparator],
-      FieldRequirementNode? requirement,
-      AstNode type,
-      IdentifierNode name,
-      List? defaultValueTuple,
-      Token? separator,
-    ] = t as List;
-
-    final defaultValue = () {
-      if (defaultValueTuple != null) {
-        final [Token equalOp, AstNode value] = defaultValueTuple;
-
-        final result = switch (value) {
-          ConstValueNode() => value,
-          _ => throw StateError('Unexpected default value type: $value'),
-        };
-
-        return result;
-      }
-    }();
-
-    final calculatedType = switch (type) {
-      BaseTypeNode() => type,
-      IdentifierNode() => CustomTypeNode(type: type, span: type.span),
-      ContainerTypeNode() => type,
-
-      _ => throw StateError('Unexpected type in field: $type'),
-    };
-
-    final span = _getSpan(id, separator ?? defaultValue ?? name);
-
-    return FieldNode(
-      id: id,
-      requirement: requirement,
-      type: calculatedType,
-      name: name,
-      defaultValue: defaultValue,
-      span: span,
-    );
-  });
-
-  @override
-  Parser setType() => super.setType().map((t) {
-    final [Token setKeyword, Token ld, AstNode type, Token rd] = t as List;
-
-    final itemType = switch (type) {
-      BaseTypeNode() => type,
-      IdentifierNode() => CustomTypeNode(type: type, span: type.span),
-      _ => throw StateError('Unexpected type in set: $type'),
-    };
-
-    final span = _getSpan(ld, rd);
-
-    return SetTypeNode(itemType: itemType, span: span);
   });
 
   @override
@@ -362,6 +164,270 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     return ExceptionDefinitionNode(
       name: identifier,
       fields: fieldNodes,
+      span: span,
+    );
+  });
+
+  @override
+  Parser field() => super.field().map((t) {
+    final [
+      [IntConstantNode id, Token idSeparator],
+      FieldRequirementNode? requirement,
+      AstNode type,
+      IdentifierNode name,
+      List? defaultValue,
+      Token? separator,
+    ] = t as List;
+
+    final defaultValueResult = switch (defaultValue) {
+      null => null,
+      [Token() /*equalOp*/, final ConstValueNode value] => switch (value) {
+        final ConstValueNode constValue => constValue,
+      },
+      _ => throw StateError('Unexpected default value list: $defaultValue'),
+    };
+
+    final calculatedType = switch (type) {
+      BaseTypeNode() => type,
+      IdentifierNode() => CustomTypeNode(type: type, span: type.span),
+      ContainerTypeNode() => type,
+
+      _ => throw StateError('Unexpected type in field: $type'),
+    };
+
+    final span = _getSpan(id, separator ?? defaultValueResult ?? name);
+
+    return FieldNode(
+      id: id,
+      requirement: requirement,
+      type: calculatedType,
+      name: name,
+      defaultValue: defaultValueResult,
+      span: span,
+    );
+  });
+
+  @override
+  Parser fieldReq() => super.fieldReq().map((t) {
+    final token = t as Token;
+
+    final span = _getSpan(token, token);
+
+    return FieldRequirementNode(requirement: token.value, span: span);
+  });
+
+  @override
+  Parser baseType() => super.baseType().map((t) {
+    final Token token = t;
+
+    final span = _getSpan(token, token);
+
+    return BaseTypeNode(type: token.value, span: span);
+  });
+
+  @override
+  Parser mapType() => super.mapType().map((t) {
+    final [
+      Token mapKeyword,
+      Token ld,
+      AstNode keyType,
+      Token comma,
+      AstNode valueType,
+      Token rd,
+    ] = t as List;
+
+    final keyTypeNode = switch (keyType) {
+      BaseTypeNode() => keyType,
+      IdentifierNode() => CustomTypeNode(type: keyType, span: keyType.span),
+      _ => throw StateError('Unexpected key type in map: $keyType'),
+    };
+
+    final valueTypeNode = switch (valueType) {
+      BaseTypeNode() => valueType,
+      IdentifierNode() => CustomTypeNode(type: valueType, span: valueType.span),
+      _ => throw StateError('Unexpected value type in map: $valueType'),
+    };
+
+    final span = _getSpan(ld, rd);
+
+    return MapTypeNode(
+      keyType: keyTypeNode,
+      valueType: valueTypeNode,
+      span: span,
+    );
+  });
+
+  @override
+  Parser setType() => super.setType().map((t) {
+    final [Token setKeyword, Token ld, AstNode type, Token rd] = t as List;
+
+    final itemType = switch (type) {
+      BaseTypeNode() => type,
+      IdentifierNode() => CustomTypeNode(type: type, span: type.span),
+      _ => throw StateError('Unexpected type in set: $type'),
+    };
+
+    final span = _getSpan(ld, rd);
+
+    return SetTypeNode(itemType: itemType, span: span);
+  });
+
+  @override
+  Parser listType() => super.listType().map((t) {
+    final [Token listKeyword, Token ld, AstNode type, Token rd] = t as List;
+
+    final itemType = switch (type) {
+      BaseTypeNode() => type,
+      IdentifierNode() => CustomTypeNode(type: type, span: type.span),
+
+      _ => throw StateError('Unexpected type in list: $type'),
+    };
+
+    final span = _getSpan(ld, rd);
+
+    return ListTypeNode(itemType: itemType, span: span);
+  });
+
+  @override
+  Parser intConstant() => super.intConstant().map((t) {
+    final Token token = t;
+
+    final span = _getSpan(token, token);
+
+    return IntConstantNode(value: token.value, span: span);
+  });
+
+  @override
+  Parser doubleConstant() => super.doubleConstant().map((t) {
+    final Token token = t;
+
+    final span = _getSpan(token, token);
+
+    return DoubleConstantNode(value: token.value, span: span);
+  });
+
+  @override
+  Parser enumConstant() => super.enumConstant().map((t) {
+    final [IdentifierNode type, Token comma, IdentifierNode value] = t as List;
+
+    final span = _getSpan(type, value);
+
+    return EnumConstantNode(type: type, value: value, span: span);
+  });
+
+  @override
+  Parser constList() => super.constList().map((t) {
+    final [Token ld, List<List> values, Token rd] = t as List;
+
+    final span = _getSpan(ld, rd);
+
+    final elements = values
+        .map((e) => e.first as ConstValueNode)
+        .toList(growable: false);
+
+    return ConstListNode(elements: elements, span: span);
+  });
+
+  @override
+  Parser constMap() => super.constMap().map((t) {
+    final [Token ld, List<List> values, Token rd] = t as List;
+
+    final span = _getSpan(ld, rd);
+
+    final entriesList = values
+        .map((e) => MapEntry(e[0] as ConstValueNode, e[2] as ConstValueNode))
+        .toList(growable: false);
+
+    final entries = Map.fromEntries(entriesList);
+
+    return ConstMapNode(entries: entries, span: span);
+  });
+
+  @override
+  Parser literal() => super.literal().map((t) {
+    final token = t as Token;
+
+    final span = _getSpan(token, token);
+
+    return LiteralNode(value: token.value, span: span);
+  });
+
+  @override
+  Parser identifier() => super.identifier().map((t) {
+    final Token token = t;
+
+    final span = _getSpan(token, token);
+
+    return IdentifierNode(value: token.value, span: span);
+  });
+
+  @override
+  Parser serviceDefinition() => super.serviceDefinition().map((t) {
+    final [
+      Token serviceKeyword,
+      IdentifierNode serviceName,
+      List? extendsClause,
+      Token ld,
+      List functions,
+      Token rd,
+    ] = t as List;
+
+    final extendsService = switch (extendsClause) {
+      null => null,
+      [final Token _ /*extends*/, final IdentifierNode extendsName] =>
+        extendsName,
+      _ => throw StateError('Unexpected extends clause: $extendsClause'),
+    };
+
+    final span = _getSpan(serviceKeyword, rd);
+    final functionsList = functions.cast<FunctionNode>();
+
+    return ServiceDefinitionNode(
+      name: serviceName,
+      extendsService: extendsService,
+      functions: functionsList,
+      span: span,
+    );
+  });
+
+  @override
+  Parser function() => super.function().map((t) {
+    final [
+      AstNode returnType,
+      IdentifierNode methodName,
+      Token lparen,
+      List parameters,
+      Token rparen,
+      List? throws,
+      Token? separator,
+    ] = t as List;
+
+    final calculatedReturnType = switch (returnType) {
+      TypeNode() => returnType,
+      IdentifierNode() => CustomTypeNode(
+        type: returnType,
+        span: returnType.span,
+      ),
+      _ => throw StateError('Unexpected return type in function: $returnType'),
+    };
+
+    final parametersList = parameters.cast<FieldNode>();
+
+    final throwsLists = switch (throws) {
+      null => <FieldNode>[],
+      [final Token _, final Token _, final List fields, final Token _] =>
+        fields.cast<FieldNode>(),
+
+      _ => throw StateError('Unexpected throws clause: $throws'),
+    };
+
+    final span = _getSpan(lparen, separator ?? rparen);
+
+    return FunctionNode(
+      returnType: calculatedReturnType,
+      name: methodName,
+      parameters: parametersList,
+      throws: throwsLists,
       span: span,
     );
   });

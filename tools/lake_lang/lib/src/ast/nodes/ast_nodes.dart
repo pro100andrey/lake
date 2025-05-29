@@ -26,7 +26,6 @@ sealed class AstNode extends Equatable {
   bool get stringify => false;
 }
 
-
 // --- Concrete AST Node Classes ---
 
 final class DocumentNode extends AstNode {
@@ -249,26 +248,20 @@ final class FunctionNode extends AstNode {
     required this.returnType,
     required this.name,
     required this.parameters,
-    required this.throwsExceptions,
+    required this.throws,
     required super.span,
   });
 
   final TypeNode returnType;
   final IdentifierNode name;
   final List<FieldNode> parameters;
-  final List<IdentifierNode> throwsExceptions;
+  final List<FieldNode> throws;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitFunctionNode(this);
 
   @override
-  List<Object?> get props => [
-    returnType,
-    name,
-    parameters,
-    throwsExceptions,
-    span,
-  ];
+  List<Object?> get props => [returnType, name, parameters, throws, span];
 }
 
 // Types
@@ -366,18 +359,6 @@ class VoidTypeNode extends TypeNode {
   List<Object?> get props => [span];
 }
 
-final class IdentifierNode extends AstNode {
-  const IdentifierNode({required this.value, required super.span});
-
-  final String value;
-
-  @override
-  T accept<T>(AstVisitor<T> visitor) => visitor.visitIdentifierNode(this);
-
-  @override
-  List<Object?> get props => [value, span];
-}
-
 // Constants
 sealed class ConstValueNode extends AstNode {
   const ConstValueNode({super.span});
@@ -458,4 +439,16 @@ final class ConstMapNode extends ConstValueNode {
 
   @override
   List<Object?> get props => [entries, span];
+}
+
+final class IdentifierNode extends ConstValueNode {
+  const IdentifierNode({required this.value, required super.span});
+
+  final String value;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitIdentifierNode(this);
+
+  @override
+  List<Object?> get props => [value, span];
 }

@@ -40,6 +40,7 @@ enum UserStatus {
   banned = 3
 }
 
+// enum with custom values example
 enum ProductCategory {
   electronic = 10,
   books = 20,
@@ -49,11 +50,11 @@ enum ProductCategory {
 
 // struct with default values and optional fields example
 struct UserProfile {
-  1: required UUID userId = '00000000-0000-0000-0000-000000000000',
-  2: required string username = 'guest',
-  3: optional string email = '',
-  4: required UserStatus status = UserStatus.ACTIVE,
-  5: optional Timestamp lastLogin = 0,
+  1: required UUID userId,
+  2: required string username,
+  3: optional string email,
+  4: required UserStatus status,
+  5: optional Timestamp lastLogin,
   6: list<string> roles = [],
   7: map<string, string> preferences = {},
   8: binary avatarImage,
@@ -104,8 +105,64 @@ exception ProductNotFoundException {
   1: UUID productId
 }
 
-
 service Greeter {
   // Unary RPC
-  string sayHello(1: string name) throws (1: InvalidArgumentsException invalidArgs)
+  string sayHello(
+    1: string name
+  ) throws (
+    // 
+    1: InvalidArgumentsException invalidArgs
+  )
+}
+
+exception UserNotFoundException {
+  1: UUID userId
+}
+
+exception UserNotFoundException {
+  1: UUID userId
+}
+
+exception ProductNotFoundException {
+  1: UUID productId
+}
+
+exception AuthenticationException {
+  1: string message
+}
+
+service UserService {
+  
+  UserProfile getUserProfile(
+    1: UUID userId
+  ) throws (
+    1: AuthenticationException authError,
+    2: InvalidArgumentsException invalidArgs,
+    3: UserNotFoundException userNotFound
+  ),
+ 
+  void updateUserProfile(
+    1: UserProfile userProfile
+  ) throws (
+    1: AuthenticationException authError,
+    2: InvalidArgumentsException invalidArgs,
+    3: UserNotFoundException userNotFound
+  ),
+
+  list<UserProfile> listUsers(
+    1: optional i32 page = 0,
+    2: optional i32 pageSize = DEFAULT_PAGE_SIZE
+  ) throws (
+    1: AuthenticationException authError,
+    2: InvalidArgumentsException invalidArgs
+  ),
+
+  UUID authenticateUser(
+    1: string username,
+    2: string password
+  ) throws (
+    1: AuthenticationException authError,
+    2: UserNotFoundException userNotFound,
+    3: InvalidArgumentsException invalidCredentials
+  )
 }

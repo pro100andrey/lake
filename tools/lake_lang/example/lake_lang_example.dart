@@ -45,11 +45,20 @@ void main(List<String> args) {
 
   late Result parseResult;
   timer
-    ..measure('Parser parse', () {
+    ..measure('Parser eparse', () {
       parseResult = parser.parse(sourceCode);
     })
     ..printSummary()
     ..reset();
+  switch (parseResult) {
+    case Success():
+      break;
+
+    case Failure():
+      printParseResult(parseResult);
+
+      return;
+  }
 
   late AstPrettyPrinterVisitor printer;
   timer

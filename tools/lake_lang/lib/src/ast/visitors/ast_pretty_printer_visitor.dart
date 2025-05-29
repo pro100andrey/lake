@@ -176,8 +176,8 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
       _printNode('Name:');
       _withIndentation(() => node.name.accept(this));
       _visitNodeList(node.parameters, 'Parameters');
-      if (node.throwsExceptions.isNotEmpty) {
-        _visitNodeList(node.throwsExceptions, 'Throws');
+      if (node.throws.isNotEmpty) {
+        _visitNodeList(node.throws, 'Throws');
       }
     });
   }
