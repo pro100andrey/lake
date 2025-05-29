@@ -15,7 +15,7 @@ const string ADMIN_EMAIL = "admin@example.com"
 const list<string> SUPPORTED_LOCALES = ["en_US", "es_ES", "fr_FR"]
 
 const map<i32, string> STATUS_DESCRIPTIONS = {
-  1: "User is active",-
+  1: "User is active",
   2: "User is inactive",
   3: "User has been banned"
 }
