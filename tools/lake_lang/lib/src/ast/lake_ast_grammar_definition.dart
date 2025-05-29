@@ -55,11 +55,11 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
   @override
   Parser namespace() => super.namespace().map((t) {
-    final [Token tt, [Token lang, LiteralNode literal]] = t as List;
+    final [Token tt, [Token lang, IdentifierNode identifier]] = t as List;
 
-    final span = _getSpan(tt, literal);
+    final span = _getSpan(tt, identifier);
 
-    return NamespaceNode(scope: lang.value, name: literal.value, span: span);
+    return NamespaceNode(scope: lang.value, name: identifier, span: span);
   });
 
   @override
@@ -304,15 +304,6 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     final span = _getSpan(token, token);
 
     return DoubleConstantNode(value: token.value, span: span);
-  });
-
-  @override
-  Parser enumConstant() => super.enumConstant().map((t) {
-    final [IdentifierNode type, Token comma, IdentifierNode value] = t as List;
-
-    final span = _getSpan(type, value);
-
-    return EnumConstantNode(type: type, value: value, span: span);
   });
 
   @override

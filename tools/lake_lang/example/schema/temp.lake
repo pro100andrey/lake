@@ -1,7 +1,7 @@
 
 import "lake_lang/schema.lake"
 
-namespace dart "com.example.api.gen"
+namespace dart com.example.api.gen
 
 const list<i32> PRIME_NUMBERS = [2, 3, 5, 7, 11];
 

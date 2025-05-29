@@ -30,7 +30,6 @@ abstract class AstVisitor<T> {
   // Constant value nodes
   T visitIntConstantNode(IntConstantNode node);
   T visitDoubleConstantNode(DoubleConstantNode node);
-  T visitEnumConstantNode(EnumConstantNode node);
   T visitLiteralNode(LiteralNode node);
   T visitIdentifierNode(IdentifierNode node);
   T visitConstListNode(ConstListNode node);

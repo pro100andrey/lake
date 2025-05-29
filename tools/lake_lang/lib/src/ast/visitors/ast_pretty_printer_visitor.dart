@@ -57,7 +57,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
 
   @override
   void visitNamespaceNode(NamespaceNode node) {
-    _printNode('NamespaceNode', {'scope': node.scope, 'name': node.name});
+    _printNode('NamespaceNode', {'scope': node.scope, 'name': node.name.value});
   }
 
   @override
@@ -251,17 +251,6 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   @override
   void visitDoubleConstantNode(DoubleConstantNode node) {
     _printNode('DoubleConstantNode', {'value': node.value});
-  }
-
-  @override
-  void visitEnumConstantNode(EnumConstantNode node) {
-    _printNode('EnumConstantNode');
-    _withIndentation(() {
-      _printNode('Type:');
-      _withIndentation(() => node.type.accept(this));
-      _printNode('Value:');
-      _withIndentation(() => node.value.accept(this));
-    });
   }
 
   @override

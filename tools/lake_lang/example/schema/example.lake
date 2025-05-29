@@ -2,10 +2,10 @@
 import "base_types.lake"
 
 // Dart namespace example
-namespace dart "com.example.api.gen"
+namespace dart com.example.api.gen
 
 // JavaScript namespace example
-namespace js "example"
+namespace js example
 
 // i32 constant example
 const i32 DEFAULT_PAGE_SIZE = 20

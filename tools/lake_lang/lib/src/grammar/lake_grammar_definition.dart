@@ -22,7 +22,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
   // [4] Namespace ::=
   // ( 'namespace' ( NamespaceScope Identifier ) )
   Parser namespace() =>
-      ref1(token, 'namespace') & (ref0(namespaceScope) & ref0(literal));
+      ref1(token, 'namespace') & (ref0(namespaceScope) & ref0(identifier));
 
   // [5] NamespaceScope ::=
   // '*' | 'js' | 'dart'
@@ -212,9 +212,8 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(constMap) |
       ref0(doubleConstant) |
       ref0(intConstant) |
-      ref0(enumConstant) |
-      ref0(literal) |
-      ref0(identifier);
+      ref0(identifier) |
+      ref0(literal);
 
   // IntConstant ::=
   // ('+' | '-')? Digit+
@@ -238,10 +237,6 @@ class LakeGrammarDefinition extends GrammarDefinition {
           .flatten(),
     );
   }
-
-  // EnumConstant ::=
-  // Identifier '.' Identifier
-  Parser enumConstant() => ref0(identifier) & token('.') & ref0(identifier);
 
   // [28] ConstList ::=
   // '[' (ConstValue ListSeparator?)* ']'
@@ -271,11 +266,11 @@ class LakeGrammarDefinition extends GrammarDefinition {
   );
 
   // [31] Identifier ::=
-  // ( Letter | '_' ) ( Letter | Digit | '_' )*
+  // ( Letter | '_' ) ( Letter | Digit | '.' | '_' )*
   Parser identifier() => ref1(
     token,
     ((ref0(letter) | char('_')).flatten() &
-            (ref0(letter) | ref0(digit) | char('_')).star())
+            (ref0(letter) | ref0(digit) | char('.') | char('_')).star())
         .flatten(),
   );
 

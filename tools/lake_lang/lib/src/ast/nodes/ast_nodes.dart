@@ -69,7 +69,7 @@ final class NamespaceNode extends HeaderNode {
   });
 
   final String scope;
-  final String name;
+  final IdentifierNode name;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitNamespaceNode(this);
@@ -386,23 +386,6 @@ final class DoubleConstantNode extends ConstValueNode {
 
   @override
   List<Object?> get props => [value, span];
-}
-
-final class EnumConstantNode extends ConstValueNode {
-  const EnumConstantNode({
-    required this.type,
-    required this.value,
-    required super.span,
-  });
-
-  final IdentifierNode type;
-  final IdentifierNode value;
-
-  @override
-  T accept<T>(AstVisitor<T> visitor) => visitor.visitEnumConstantNode(this);
-
-  @override
-  List<Object?> get props => [type, value, span];
 }
 
 final class LiteralNode extends ConstValueNode {
