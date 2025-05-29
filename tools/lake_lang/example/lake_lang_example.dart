@@ -20,36 +20,24 @@ void main(List<String> args) {
     }
   }();
 
+  
+
+  final sourceCode = loadLakeFile(filePath);
+  final sourceFile = SourceFile.fromString(sourceCode, url: filePath);
+  final  grammar = LakeAstGrammarDefinition(sourceFile);
+  final parser = grammar.build();
+
   final timer = ExecutionTimer()..start();
-
-  late String sourceCode;
-  timer.measure('File load', () {
-    sourceCode = loadLakeFile(filePath);
-  });
-
-  late SourceFile sourceFile;
-  timer.measure('Source file creation', () {
-    sourceFile = SourceFile.fromString(sourceCode, url: filePath);
-  });
-
-  late LakeAstGrammarDefinition grammar;
-
-  timer.measure('Grammar definition creation', () {
-    grammar = LakeAstGrammarDefinition(sourceFile);
-  });
-
-  late Parser parser;
-  timer.measure('Parser build', () {
-    parser = grammar.build();
-  });
 
   late Result parseResult;
   timer
-    ..measure('Parser eparse', () {
+    ..measure('Parser parse', () {
       parseResult = parser.parse(sourceCode);
     })
+    ..stop()
     ..printSummary()
     ..reset();
+
   switch (parseResult) {
     case Success():
       break;
