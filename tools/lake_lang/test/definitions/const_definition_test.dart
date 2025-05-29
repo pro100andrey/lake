@@ -389,7 +389,7 @@ void main() {
           [_, List<List> value, _],
           Token separator,
         ] = result.value as List;
-        
+
         expect(keyword.value, equals('const'));
         expect(type.value, equals('map'));
         expect(keyType.value, equals('string'));

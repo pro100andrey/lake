@@ -61,7 +61,7 @@ void main() {
         test('starts with digit - initial character error', () {
           const input = '1myVariable';
           final result = parser.parse(input);
-          
+
           expect(result, isA<Failure>());
           expect(result.message, equals('"_" expected'));
         });

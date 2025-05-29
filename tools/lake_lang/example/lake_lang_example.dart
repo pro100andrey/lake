@@ -20,11 +20,9 @@ void main(List<String> args) {
     }
   }();
 
-  
-
   final sourceCode = loadLakeFile(filePath);
   final sourceFile = SourceFile.fromString(sourceCode, url: filePath);
-  final  grammar = LakeAstGrammarDefinition(sourceFile);
+  final grammar = LakeAstGrammarDefinition(sourceFile);
   final parser = grammar.build();
 
   final timer = ExecutionTimer()..start();
