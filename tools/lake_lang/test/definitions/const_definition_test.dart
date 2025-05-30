@@ -550,7 +550,7 @@ void main() {
         const input = 'const string NAME = ;';
         final result = parser.parse(input);
         expect(result, isA<Failure>());
-        expect(result.message, contains('"{" expected'));
+        expect(result.message, contains('"\\\'" expected'));
       });
     });
   });

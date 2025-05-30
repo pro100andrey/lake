@@ -81,9 +81,9 @@ exception ProductNotFoundException {
 }
 
 service UserService {
-  
+
   UserProfile getUserProfile(1: UUID userId) throws (1: UserNotFoundException userNotFound),
- 
+
   void updateUserProfile(1: UserProfile userProfile) throws (1: InvalidArgumentsException invalidArgs),
 
   list<UserProfile> listUsers(
