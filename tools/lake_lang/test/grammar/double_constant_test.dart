@@ -1,5 +1,4 @@
 import 'package:lake_lang/lake_lang.dart';
-import 'package:petitparser/debug.dart';
 import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
@@ -7,8 +6,8 @@ void main() {
   group('DoubleConstant Rule:', () {
     final grammar = LakeGrammarDefinition();
     // [29] DoubleConstant ::= ('+' | '-')?
-    // ( Digit+ ('.' Digit*)? ( ('E' | 'e') IntConstant )? |
-    // '.' Digit+ ( ('E' | 'e') IntConstant )? )
+    // ( Digit* '.' Digit+ ( ('E' | 'e') ('+' | '-')? Digit+ )? |
+    // Digit+ ( ('E' | 'e') ('+' | '-')? Digit+ )? )
     final parser = resolve(grammar.doubleConstant().end());
 
     // Positive Test Cases
@@ -142,7 +141,7 @@ void main() {
     });
 
     test('should parse a double with leading/trailing whitespace', () {
-      final result = trace(parser).parse('    -1.23e-4    ');
+      final result = parser.parse('    -1.23e-4    ');
       final Token(:String value) = result.value;
       expect(result, isA<Success>());
       expect(value, '-1.23e-4');
@@ -179,7 +178,7 @@ void main() {
     test('should fail to parse double dot', () {
       final result = parser.parse('1..2');
       expect(result, isA<Failure>());
-      expect(result.message, '"e" expected');
+      expect(result.message, 'end of input expected');
     });
 
     test('should fail to parse only sign', () {
@@ -203,33 +202,35 @@ void main() {
       () {
         final result = parser.parse('123.');
         expect(result, isA<Failure>());
-        expect(
-          result.message,
-          contains('"e" expected'),
-        ); // Because of Digit+ after dot
+        expect(result.message, 'end of input expected');
       },
     );
     test('should fail to parse zero ending with a dot (no digits after)', () {
       final result = parser.parse('0.');
       expect(result, isA<Failure>());
-      expect(result.message, contains('"e" expected'));
+      expect(result.message, 'end of input expected');
     });
 
     test('should fail to parse sign and exponent only', () {
       final result = parser.parse('+e10');
       expect(result, isA<Failure>());
+      expect(result.message, 'digit expected');
+
       final result2 = parser.parse('-e10');
       expect(result2, isA<Failure>());
+      expect(result2.message, 'digit expected');
     });
 
     test('should fail to parse number with letters after exponent', () {
       final result = parser.parse('1.2e3abc');
       expect(result, isA<Failure>());
+      expect(result.message, 'end of input expected');
     });
 
     test('should fail to parse number with underscore', () {
       final result = parser.parse('1_2.3');
       expect(result, isA<Failure>());
+      expect(result.message, 'end of input expected');
     });
   });
 }

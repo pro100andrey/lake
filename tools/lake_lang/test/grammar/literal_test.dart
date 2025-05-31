@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 void main() {
   group('Literal Rule:', () {
     final grammar = LakeGrammarDefinition();
-    // [30] Literal ::= ('"' [^"]* '"') | ("'" [^']* "'")
+    // [32] Literal ::= ('"' [^"]* '"') | ("'" [^']* "'")
     final parser = resolve(grammar.literal().end());
 
     // Positive Test Cases

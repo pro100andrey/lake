@@ -194,26 +194,22 @@ class LakeGrammarDefinition extends GrammarDefinition {
   // [28] IntConstant ::= ('+' | '-')? Digit+
   Parser intConstant() => ref1(
     token,
-    ((char('+') | char('-')).optional() & ref0(digit).plus()).flatten(),
+    ((char('+') | char('-')).optional() & digit().plus()).flatten(),
   );
 
   // [29] DoubleConstant ::= ('+' | '-')?
-  // (Digit* '.' Digit+ ( ('E' | 'e') IntConstant )? |
-  // Digit+ ( ('E' | 'e') IntConstant ) )
+  // ( Digit* '.' Digit+ ( ('E' | 'e') ('+' | '-')? Digit+ )? |
+  // Digit+ ( ('E' | 'e') ('+' | '-')? Digit+ )? )
   Parser doubleConstant() {
     final sign = (char('+') | char('-')).optional();
-    final exponent = (char('E') | char('e')) & ref0(intConstant);
+    final exponent = (char('E') | char('e')) & (sign & digit().plus());
+    final numberBody =
+        (digit().star() & char('.') & digit().plus() & exponent.optional()) |
+        (digit().plus() & exponent.optional());
 
-    return ref1(
-      token,
-      (sign &
-              ((ref0(digit).star() &
-                      char('.') &
-                      ref0(digit).plus() &
-                      exponent.optional()) |
-                  (ref0(digit).plus() & exponent)))
-          .flatten(),
-    );
+    final combinedParts = (sign & numberBody).flatten();
+
+    return ref1(token, combinedParts);
   }
 
   // [30] ConstList ::= '[' (ConstValue ListSeparator?)* ']'
@@ -222,8 +218,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
       (ref0(constValue) & ref0(listSeparator).optional()).star() &
       ref1(token, ']');
 
-  // [31] ConstMap ::=
-  // '{' (ConstValue ':' ConstValue ListSeparator?)* '}'
+  // [31] ConstMap ::= '{' (ConstValue ':' ConstValue ListSeparator?)* '}'
   Parser constMap() =>
       ref1(token, '{') &
       (ref0(constValue) &
@@ -233,8 +228,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
           .star() &
       ref1(token, '}');
 
-  // [32] Literal ::=
-  // ('"' [^"]* '"') | ("'" [^']* "'")
+  // [32] Literal ::= ('"' [^"]* '"') | ("'" [^']* "'")
   Parser literal() => ref1(
     token,
     (char('"') & pattern('^"').star() & char('"') |
@@ -242,8 +236,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
         .flatten(),
   );
 
-  // [33] Identifier ::=
-  // ( Letter | '_' ) ( Letter | Digit | '.' | '_' )*
+  // [33] Identifier ::= ( Letter | '_' ) ( Letter | Digit | '.' | '_' )*
   Parser identifier() => ref1(
     token,
     ((ref0(letter) | char('_')).flatten() &
@@ -251,8 +244,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
         .flatten(),
   );
 
-  // [34] ListSeparator ::=
-  // ',' | ';'
+  // [34] ListSeparator ::= ',' | ';'
   Parser listSeparator() => ref1(token, ',') | ref1(token, ';');
 
   Parser hiddenWhitespace() => ref0(hiddenStuffWhitespace).plus();

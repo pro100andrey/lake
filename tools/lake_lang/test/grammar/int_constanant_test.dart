@@ -1,5 +1,4 @@
 import 'package:lake_lang/lake_lang.dart';
-import 'package:petitparser/debug.dart';
 import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
@@ -44,7 +43,7 @@ void main() {
     });
 
     test('should parse an integer with leading/trailing whitespace', () {
-      final result = trace(parser).parse('   12345   ');
+      final result = parser.parse('   12345   ');
       final Token(:String value) = result.value;
       expect(result, isA<Success>());
       expect(value, '12345');

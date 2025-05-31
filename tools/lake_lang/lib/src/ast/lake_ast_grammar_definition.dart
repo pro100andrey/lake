@@ -422,4 +422,19 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
       span: span,
     );
   });
+
+  @override
+  Parser streamType() => super.streamType().map((t) {
+    final [Token streamKeyword, Token ld, AstNode type, Token rd] = t as List;
+
+    final itemType = switch (type) {
+      BaseTypeNode() => type,
+      IdentifierNode() => CustomTypeNode(type: type, span: type.span),
+      _ => throw StateError('Unexpected type in stream: $type'),
+    };
+
+    final span = _getSpan(ld, rd);
+
+    return StreamTypeNode(itemType: itemType, span: span);
+  });
 }

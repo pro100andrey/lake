@@ -62,96 +62,6 @@ struct UserProfile {
   9: set<i32> subscribedProductCategories = {}
 }
 
-struct UserProfile {
-  1: required UUID userId = '00000000-0000-0000-0000-000000000000',
-  2: required string username = 'guest',
-  3: optional string email = '',
-  4: required UserStatus status = UserStatus.ACTIVE,
-  5: optional Timestamp lastLogin = 0,
-  6: list<string> roles = [],
-  7: map<string, string> preferences = {},
-  8: binary avatarImage,
-  9: set<i32> subscribedProductCategories = {}
-}
-
-// struct with required and optional fields example
-struct Product {
-  1: required UUID productId 
-import "base_types.lake"
-import "auth.lake"
-
-// Dart namespace example
-namespace dart com.example.api.gen
-
-// JavaScript namespace example
-namespace js example
-
-// i32 constant example
-const i32 DEFAULT_PAGE_SIZE = 20
-
-// i64 constant example
-const i64 MAX_FILE_SIZE = 10485760 // 10 MB in bytes
-
-// list<i32> constant example
-const list<i32> PRIME_NUMBERS = [2, 3, 5, 7, 11];
-
-// string constant example
-const string ADMIN_EMAIL = "admin@example.com"
-
-// list<string> constant example
-const list<string> SUPPORTED_LOCALES = ["en_US", "es_ES", "fr_FR"]
-
-// map<string, i32> constant example
-const map<i32, string> STATUS_DESCRIPTIONS = {
-  1: "User is active",
-  2: "User is inactive",
-  3: "User has been banned"
-}
-
-// typedef examples
-typedef i64 Timestamp
-typedef string UUID
-
-// enum examples
-enum UserStatus {
-  active = 1,
-  inactive = 2,
-  banned = 3
-}
-
-// enum with custom values example
-enum ProductCategory {
-  electronic = 10,
-  books = 20,
-  clothing = 30,
-  foot = 40
-}
-
-// struct with default values and optional fields example
-struct UserProfile {
-  1: required UUID userId,
-  2: required string username,
-  3: optional string email,
-  4: required UserStatus status,
-  5: optional Timestamp lastLogin,
-  6: list<string> roles = [],
-  7: map<string, string> preferences = {},
-  8: binary avatarImage,
-  9: set<i32> subscribedProductCategories = {}
-}
-
-struct UserProfile {
-  1: required UUID userId = '00000000-0000-0000-0000-000000000000',
-  2: required string username = 'guest',
-  3: optional string email = '',
-  4: required UserStatus status = UserStatus.ACTIVE,
-  5: optional Timestamp lastLogin = 0,
-  6: list<string> roles = [],
-  7: map<string, string> preferences = {},
-  8: binary avatarImage,
-  9: set<i32> subscribedProductCategories = {}
-}
-
 // struct with required and optional fields example
 struct Product {
   1: required UUID productId,
@@ -205,221 +115,26 @@ exception ProductNotFoundException {
   1: UUID productId
 }
 
-
-service UserService extends BaseService{
-  
+service UserService {
+  // Unary RPC to get user profile
   UserProfile getUserProfile(
     1: UUID userId
   ) throws (
-    1: AuthenticationException authError,
-    2: InvalidArgumentsException invalidArgs,
-    3: UserNotFoundException userNotFound
-  ),
- 
-  void updateUserProfile(
-    1: UserProfile userProfile
-  ) throws (
-    1: auth.AuthenticationException authError,
-    2: InvalidArgumentsException invalidArgs,
-    3: UserNotFoundException userNotFound
-  ),
-
-  list<UserProfile> listUsers(
-    1: optional i32 page = 0,
-    2: optional i32 pageSize = DEFAULT_PAGE_SIZE
-  ) throws (
-    1: AuthenticationException authError,
-    2: InvalidArgumentsException invalidArgs
-  ),
-
-  UUID authenticateUser(
-    1: string username,
-    2: string password
-  ) throws (
-    1: AuthenticationException authError,
-    2: UserNotFoundException userNotFound,
-    3: InvalidArgumentsException invalidCredentials
+    1: UserNotFoundException userNotFound
   )
-}
 
-service BaseService {
-  
-  // Example of a service method with a required parameter
-  string getBaseInfo(
-    1: required string infoType
-  ) throws (
-    1: InvalidArgumentsException invalidArgs
-  ),
-
-  // Example of a service method with an optional parameter
-  list<string> listBaseItems(
-    1: optional i32 page = 0,
-    2: optional i32 pageSize = DEFAULT_PAGE_SIZE
-  ) throws (
-    1: InvalidArgumentsException invalidArgs
-  )
-}
-
-service ProductService {
-  
-  Product getProduct(
-    1: UUID productId
+  // Unary RPC to update user profile
+  UserProfile updateUserProfile(
+    1: UserProfile profile
   ) throws (
     1: InvalidArgumentsException invalidArgs,
-    2: ProductNotFoundException productNotFound
-  ),
+    2: UserNotFoundException userNotFound
+  )
+}
 
-  list<Product> listProducts(
-    1: optional i32 page = 0,
-    2: optional i32 pageSize = DEFAULT_PAGE_SIZE
-  ) throws (
-    1: InvalidArgumentsException invalidArgs
-  ),
-
-  void addProduct(
-    1: Product product
-  ) throws (
-    1: InvalidArgumentsException invalidArgs
-  ),
-
-  void updateProduct(
-    1: Product product
-  ) throws (
+service ChatService {
+   stream<string> sendMessage() throws (
     1: InvalidArgumentsException invalidArgs,
-    2: ProductNotFoundException productNotFound
-  )
-},
-  2: required string name,
-  3: required double price,
-  4: optional string description,
-  5: required ProductCategory category,
-  6: list<string> tags,
-  7: map<string, string> attributes
-}
-
-struct Order {
-  1: required UUID orderId,
-  2: required UUID userId,
-  3: required Timestamp orderDate,
-  4: required list<OrderItem> items,
-  5: double totalAmount
-}
-
-exception InvalidArgumentsException {
-  1: string message,
-  2: optional i32 errorCode
-}
-
-exception UserNotFoundException {
-  1: UUID userId
-}
-
-exception ProductNotFoundException {
-  1: UUID productId
-}
-
-service Greeter {
-  // Unary RPC
-  string sayHello(
-    1: string name
-  ) throws (
-    1: InvalidArgumentsException invalidArgs
-  )
-}
-
-exception UserNotFoundException {
-  1: UUID userId
-}
-
-exception UserNotFoundException {
-  1: UUID userId
-}
-
-exception ProductNotFoundException {
-  1: UUID productId
-}
-
-
-service UserService extends BaseService{
-  
-  UserProfile getUserProfile(
-    1: UUID userId
-  ) throws (
-    1: AuthenticationException authError,
-    2: InvalidArgumentsException invalidArgs,
-    3: UserNotFoundException userNotFound
-  ),
- 
-  void updateUserProfile(
-    1: UserProfile userProfile
-  ) throws (
-    1: auth.AuthenticationException authError,
-    2: InvalidArgumentsException invalidArgs,
-    3: UserNotFoundException userNotFound
-  ),
-
-  list<UserProfile> listUsers(
-    1: optional i32 page = 0,
-    2: optional i32 pageSize = DEFAULT_PAGE_SIZE
-  ) throws (
-    1: AuthenticationException authError,
-    2: InvalidArgumentsException invalidArgs
-  ),
-
-  UUID authenticateUser(
-    1: string username,
-    2: string password
-  ) throws (
-    1: AuthenticationException authError,
-    2: UserNotFoundException userNotFound,
-    3: InvalidArgumentsException invalidCredentials
-  )
-}
-
-service BaseService {
-  
-  // Example of a service method with a required parameter
-  string getBaseInfo(
-    1: required string infoType
-  ) throws (
-    1: InvalidArgumentsException invalidArgs
-  ),
-
-  // Example of a service method with an optional parameter
-  list<string> listBaseItems(
-    1: optional i32 page = 0,
-    2: optional i32 pageSize = DEFAULT_PAGE_SIZE
-  ) throws (
-    1: InvalidArgumentsException invalidArgs
-  )
-}
-
-service ProductService {
-  
-  Product getProduct(
-    1: UUID productId
-  ) throws (
-    1: InvalidArgumentsException invalidArgs,
-    2: ProductNotFoundException productNotFound
-  ),
-
-  list<Product> listProducts(
-    1: optional i32 page = 0,
-    2: optional i32 pageSize = DEFAULT_PAGE_SIZE
-  ) throws (
-    1: InvalidArgumentsException invalidArgs
-  ),
-
-  void addProduct(
-    1: Product product
-  ) throws (
-    1: InvalidArgumentsException invalidArgs
-  ),
-
-  void updateProduct(
-    1: Product product
-  ) throws (
-    1: InvalidArgumentsException invalidArgs,
-    2: ProductNotFoundException productNotFound
+    2: UserNotFoundException userNotFound
   )
 }
