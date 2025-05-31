@@ -1,4 +1,5 @@
 import 'package:lake_lang/lake_lang.dart';
+import 'package:petitparser/debug.dart';
 import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
@@ -15,6 +16,7 @@ void main() {
       final Token(:String value) = result.value;
       expect(result, isA<Success>());
       expect(value, '123');
+      expect(int.parse(value), 123);
     });
 
     test('should parse a simple negative integer', () {
@@ -22,6 +24,7 @@ void main() {
       final Token(:String value) = result.value;
       expect(result, isA<Success>());
       expect(value, '-456');
+      expect(int.parse(value), -456);
     });
 
     test('should parse a positive integer with explicit plus sign', () {
@@ -29,20 +32,23 @@ void main() {
       final Token(:String value) = result.value;
       expect(result, isA<Success>());
       expect(value, '+789');
+      expect(int.parse(value), 789);
     });
 
     test('should parse a long integer', () {
-      final result = parser.parse('9876543210123456789');
+      final result = parser.parse('9223372036854775807');
       final Token(:String value) = result.value;
       expect(result, isA<Success>());
-      expect(value, '9876543210123456789');
+      expect(value, '9223372036854775807');
+      expect(int.parse(value), 9223372036854775807);
     });
 
     test('should parse an integer with leading/trailing whitespace', () {
-      final result = parser.parse('   12345   ');
+      final result = trace(parser).parse('   12345   ');
       final Token(:String value) = result.value;
       expect(result, isA<Success>());
       expect(value, '12345');
+      expect(int.parse(value), 12345);
     });
 
     test('should parse zero', () {
@@ -50,6 +56,7 @@ void main() {
       final Token(:String value) = result.value;
       expect(result, isA<Success>());
       expect(value, '0');
+      expect(int.parse(value), 0);
     });
 
     test('should parse positive zero', () {
@@ -57,6 +64,7 @@ void main() {
       final Token(:String value) = result.value;
       expect(result, isA<Success>());
       expect(value, '+0');
+      expect(int.parse(value), 0);
     });
 
     test('should parse negative zero', () {
@@ -64,6 +72,7 @@ void main() {
       final Token(:String value) = result.value;
       expect(result, isA<Success>());
       expect(value, '-0');
+      expect(int.parse(value), 0);
     });
 
     test('should parse a very large integer', () {
@@ -71,6 +80,7 @@ void main() {
       final Token(:String value) = result.value;
       expect(result, isA<Success>());
       expect(value, '1${'0' * 100}');
+      // expect(int.parse(value), int.parse('1${'0' * 100}'));
     });
 
     // Negative Test Cases
