@@ -263,15 +263,14 @@ class LakeGrammarDefinition extends GrammarDefinition {
       (ref0(singleLineComment) | ref0(multiLineComment)).flatten();
 
   Parser singleLineComment() =>
-      string('//') & ref0(newline).neg().star() & ref0(newline).optional();
+      string('//') &
+      ref0(newline).neg().star() &
+      ref0(newline).optional().flatten();
 
   Parser multiLineComment() =>
       string('/*') &
       (ref0(multiLineComment) | string('*/').neg()).star() &
       string('*/');
-
-  Parser docComment() =>
-      string('///') & ref0(newline).neg().star() & ref0(newline).optional();
 
   Parser visibleWhitespace() => whitespace();
 
