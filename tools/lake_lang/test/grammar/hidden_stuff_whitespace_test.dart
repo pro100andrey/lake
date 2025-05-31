@@ -62,11 +62,13 @@ void main() {
     test('should fail to parse non-whitespace character', () {
       final result = parser.parse('a');
       expect(result, isA<Failure>());
+      expect(result.message, '"/*" expected');
     });
 
     test('should fail to parse empty string', () {
       final result = parser.parse('');
       expect(result, isA<Failure>());
+      expect(result.message, '"/*" expected');
     });
 
     test(
@@ -74,17 +76,20 @@ void main() {
       () {
         final result = parser.parse('\u200B');
         expect(result, isA<Failure>());
+        expect(result.message, '"/*" expected');
       },
     );
 
     test('should fail to parse unterminated multi-line comment', () {
       final result = parser.parse('/* unterminated');
       expect(result, isA<Failure>());
+      expect(result.message, '"*/" expected');
     });
 
     test('should fail to parse malformed single-line comment', () {
       final result = parser.parse('/ not a comment');
       expect(result, isA<Failure>());
+      expect(result.message, '"/*" expected');
     });
   });
 }

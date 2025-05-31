@@ -86,21 +86,25 @@ void main() {
     test('should fail to parse type with wrong case', () {
       final result = parser.parse('Bool');
       expect(result, isA<Failure>());
+      expect(result.message, '"uuid" expected');
     });
 
     test('should fail to parse type with inner space', () {
       final result = parser.parse('b ool');
       expect(result, isA<Failure>());
+      expect(result.message, '"uuid" expected');
     });
 
     test('should fail to parse type with non-ascii character', () {
       final result = parser.parse('bóol');
       expect(result, isA<Failure>());
+      expect(result.message, '"uuid" expected');
     });
 
     test('should fail to parse type with separator', () {
       final result = parser.parse('bool;');
       expect(result, isA<Failure>());
+      expect(result.message, 'end of input expected');
     });
   });
 }

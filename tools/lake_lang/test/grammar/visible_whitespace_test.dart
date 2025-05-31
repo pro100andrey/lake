@@ -48,11 +48,13 @@ void main() {
     test('should fail to parse non-whitespace character', () {
       final result = parser.parse('a');
       expect(result, isA<Failure>());
+      expect(result.message, 'whitespace expected');
     });
 
     test('should fail to parse empty string', () {
       final result = parser.parse('');
       expect(result, isA<Failure>());
+      expect(result.message, 'whitespace expected');
     });
 
     test(
@@ -60,12 +62,14 @@ void main() {
       () {
         final result = parser.parse('\u200B');
         expect(result, isA<Failure>());
+        expect(result.message, 'whitespace expected');
       },
     );
 
     test('should fail to parse whitespace mixed with non-whitespace', () {
       final result = parser.parse(' \t\nx');
       expect(result, isA<Failure>());
+      expect(result.message, 'end of input expected');
     });
   });
 }
