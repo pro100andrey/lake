@@ -236,11 +236,16 @@ class LakeGrammarDefinition extends GrammarDefinition {
         .flatten(),
   );
 
-  // [33] Identifier ::= ( Letter | '_' ) ( Letter | Digit | '.' | '_' )*
+  // [33] Identifier ::= ( Letter | '_' ) ( ( Letter | Digit | '_' )*
+  // ( '.' ( Letter | Digit | '_' )+ )* )
   Parser identifier() => ref1(
     token,
     ((ref0(letter) | char('_')).flatten() &
-            (ref0(letter) | ref0(digit) | char('.') | char('_')).star())
+            ((ref0(letter) | ref0(digit) | char('_')).star() &
+                    (char('.') &
+                            (ref0(letter) | ref0(digit) | char('_')).plus())
+                        .star())
+                .flatten())
         .flatten(),
   );
 
