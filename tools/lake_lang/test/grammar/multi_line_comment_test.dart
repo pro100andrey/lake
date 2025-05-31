@@ -8,6 +8,7 @@ void main() {
     final parser = resolve(grammar.multiLineComment().trim().end());
 
     // Positive cases
+
     test('should parse a simple multi-line comment', () {
       final result = parser.parse('/* this is a comment */');
       expect(result, isA<Success>());
@@ -39,6 +40,7 @@ void main() {
     });
 
     // Negative cases
+    
     test('should fail to parse if not starting with /*', () {
       final result = parser.parse('not a comment');
       expect(result, isA<Failure>());

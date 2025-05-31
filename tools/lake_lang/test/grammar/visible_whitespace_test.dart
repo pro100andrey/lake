@@ -8,6 +8,7 @@ void main() {
     final parser = resolve(grammar.visibleWhitespace().plus().end());
 
     // Positive cases
+    
     test('should parse a single space', () {
       final result = parser.parse(' ');
       expect(result, isA<Success>());

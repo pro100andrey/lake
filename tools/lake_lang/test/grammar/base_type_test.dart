@@ -8,6 +8,7 @@ void main() {
     final parser = resolve(grammar.baseType().end());
 
     // Positive cases
+
     test('should parse "bool"', () {
       final result = parser.parse('bool');
       expect(result, isA<Success>());
@@ -65,6 +66,7 @@ void main() {
     });
 
     // Negative cases
+    
     test('should fail to parse unknown type', () {
       final result = parser.parse('unknown');
       expect(result, isA<Failure>());

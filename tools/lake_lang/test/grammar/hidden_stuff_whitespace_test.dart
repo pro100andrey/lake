@@ -8,6 +8,7 @@ void main() {
     final parser = resolve(grammar.hiddenStuffWhitespace().plus().end());
 
     // Positive cases
+
     test('should parse a single space', () {
       final result = parser.parse(' ');
       expect(result, isA<Success>());
@@ -59,6 +60,7 @@ void main() {
     });
 
     // Negative cases
+    
     test('should fail to parse non-whitespace character', () {
       final result = parser.parse('a');
       expect(result, isA<Failure>());
