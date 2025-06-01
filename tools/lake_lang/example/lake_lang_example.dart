@@ -48,11 +48,13 @@ void main(List<String> args) {
 
   final printer = AstPrettyPrinterVisitor();
   timer
+    ..start()
     ..measure('Printer visit', () {
       (parseResult.value as DocumentNode).accept(printer);
     })
     ..stop()
-    ..printSummary();
+    ..printSummary()
+    ..reset();
 
   printParseResult(parseResult);
 }
