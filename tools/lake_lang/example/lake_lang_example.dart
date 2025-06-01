@@ -46,11 +46,8 @@ void main(List<String> args) {
       return;
   }
 
-  late AstPrettyPrinterVisitor printer;
+  final printer = AstPrettyPrinterVisitor();
   timer
-    ..measure('Printer creation', () {
-      printer = AstPrettyPrinterVisitor();
-    })
     ..measure('Printer visit', () {
       (parseResult.value as DocumentNode).accept(printer);
     })
@@ -108,14 +105,23 @@ class ExecutionTimer {
   /// Prints a summary of all measured step timings and the total overall time.
   void printSummary() {
     print('--- Total Timing Summary ---');
-    _stepTimings.forEach((key, value) {
-      print('$key: $value microseconds');
-    });
+    _stepTimings.forEach(printElapsedTime);
 
-    print(
-      'Total execution time: ${_overallWatch.elapsedMicroseconds} microseconds',
+    printElapsedTime(
+      'Overall execution time',
+      _overallWatch.elapsedMicroseconds,
     );
 
     print('----------------------------');
+  }
+
+  /// Prints the elapsed time for a specific step.
+  /// If the elapsed time is greater than 1000 microseconds, it is printed in
+  /// milliseconds; otherwise, it is printed in microseconds.
+  void printElapsedTime(String description, int elapsedMicroseconds) {
+    final elapsed = elapsedMicroseconds > 1000
+        ? '${elapsedMicroseconds / 1000} ms'
+        : '$elapsedMicroseconds μs';
+    print('$description: $elapsed');
   }
 }
