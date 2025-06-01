@@ -5,10 +5,11 @@ import 'package:test/test.dart';
 void main() {
   group('VisibleWhitespace Rule:', () {
     final grammar = LakeGrammarDefinition();
+    // VisibleWhitespace ::= ' ' | '\t' | '\n' | '\r' | '\f'
     final parser = resolve(grammar.visibleWhitespace().plus().end());
 
     // Positive cases
-    
+
     test('should parse a single space', () {
       final result = parser.parse(' ');
       expect(result, isA<Success>());

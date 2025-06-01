@@ -5,6 +5,7 @@ import 'package:test/test.dart';
 void main() {
   group('ContainerType Rule:', () {
     final grammar = LakeGrammarDefinition();
+    // [22] ContainerType ::= MapType | SetType | ListType
     final parser = resolve(grammar.containerType().end());
 
     // Positive cases
@@ -187,7 +188,7 @@ void main() {
     test('should fail to parse map with one type', () {
       final result = parser.parse('map<string>');
       expect(result, isA<Failure>());
-      expect(result.message, '"list" expected');  
+      expect(result.message, '"list" expected');
     });
 
     test('should fail to parse map with empty types', () {

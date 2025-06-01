@@ -253,25 +253,28 @@ class LakeGrammarDefinition extends GrammarDefinition {
   Parser listSeparator() => ref1(token, ',') | ref1(token, ';');
 
   Parser hiddenWhitespace() => ref0(hiddenStuffWhitespace).plus();
-
+  
+  // [35] HiddenStuffWhitespace ::= VisibleWhitespace | Comment
   Parser hiddenStuffWhitespace() =>
       ref0(visibleWhitespace) |
-      ref0(singleLineComment) |
-      ref0(multiLineComment);
+      ref0(comment);
 
-  Parser comment() =>
-      (ref0(singleLineComment) | ref0(multiLineComment)).flatten();
+  // Comment =:: SingleLineComment | MultiLineComment
+  Parser comment() => ref0(singleLineComment) | ref0(multiLineComment);
 
+  // SingleLineComment ::= '//' [^\n]* [\n]?
   Parser singleLineComment() =>
       string('//') &
       ref0(newline).neg().star() &
       ref0(newline).optional().flatten();
 
+  // MultiLineComment ::= '/*' ( MultiLineComment | [^*] )* '*/'
   Parser multiLineComment() =>
       string('/*') &
       (ref0(multiLineComment) | string('*/').neg()).star() &
       string('*/');
 
+  // VisibleWhitespace ::= ' ' | '\t' | '\n' | '\r' | '\f'
   Parser visibleWhitespace() => whitespace();
 
   // Helper function to create a token parser

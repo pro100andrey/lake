@@ -5,6 +5,7 @@ import 'package:test/test.dart';
 void main() {
   group('Comment Rule:', () {
     final grammar = LakeGrammarDefinition();
+    // Comment =:: SingleLineComment | MultiLineComment
     final parser = resolve(grammar.comment().end());
 
     // Positive cases
@@ -35,7 +36,7 @@ void main() {
     });
 
     // Negative cases
-    
+
     test('should fail to parse if not a comment', () {
       final result = parser.parse('not a comment');
       expect(result, isA<Failure>());

@@ -5,6 +5,8 @@ import 'package:test/test.dart';
 void main() {
   group('BaseType Rule:', () {
     final grammar = LakeGrammarDefinition();
+    // [21] BaseType ::= 'bool' | 'byte' | 'i8' | 'i16' | 'i32' | 'i64' |
+    // 'double' | 'string' | 'binary' | 'uuid' |
     final parser = resolve(grammar.baseType().end());
 
     // Positive cases
@@ -66,7 +68,7 @@ void main() {
     });
 
     // Negative cases
-    
+
     test('should fail to parse unknown type', () {
       final result = parser.parse('unknown');
       expect(result, isA<Failure>());

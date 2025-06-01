@@ -5,6 +5,7 @@ import 'package:test/test.dart';
 void main() {
   group('SingleLineComment Rule:', () {
     final grammar = LakeGrammarDefinition();
+    // SingleLineComment ::= '//' [^\n]* [\n]?
     final parser = resolve(grammar.singleLineComment().trim().end());
 
     // Positive cases
@@ -35,7 +36,7 @@ void main() {
     });
 
     // Negative cases
-    
+
     test('should fail to parse if not starting with //', () {
       final result = parser.parse('not a comment');
       expect(result, isA<Failure>());

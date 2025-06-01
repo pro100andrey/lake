@@ -5,6 +5,7 @@ import 'package:test/test.dart';
 void main() {
   group('StreamType Rule:', () {
     final grammar = LakeGrammarDefinition();
+    // SingleLineComment ::= '//' [^\n]* [\n]?
     final parser = resolve(grammar.streamType().end());
 
     // Positive cases
@@ -13,12 +14,11 @@ void main() {
       final result = parser.parse('stream<bool>');
       expect(result, isA<Success>());
 
-      final [Token type, Token ld, Token innerType, Token rd] =
-          result.value as List;
+      final [Token t, Token ld, Token t1, Token rd] = result.value as List;
 
-      expect(type.value, 'stream');
+      expect(t.value, 'stream');
       expect(ld.value, '<');
-      expect(innerType.value, 'bool');
+      expect(t1.value, 'bool');
       expect(rd.value, '>');
     });
 
@@ -26,12 +26,11 @@ void main() {
       final result = parser.parse('stream<i32>');
       expect(result, isA<Success>());
 
-      final [Token type, Token ld, Token innerType, Token rd] =
-          result.value as List;
+      final [Token t, Token ld, Token t1, Token rd] = result.value as List;
 
-      expect(type.value, 'stream');
+      expect(t.value, 'stream');
       expect(ld.value, '<');
-      expect(innerType.value, 'i32');
+      expect(t1.value, 'i32');
       expect(rd.value, '>');
     });
 
@@ -39,12 +38,11 @@ void main() {
       final result = parser.parse('stream<string>');
       expect(result, isA<Success>());
 
-      final [Token type, Token ld, Token innerType, Token rd] =
-          result.value as List;
+      final [Token t, Token ld, Token t1, Token rd] = result.value as List;
 
-      expect(type.value, 'stream');
+      expect(t.value, 'stream');
       expect(ld.value, '<');
-      expect(innerType.value, 'string');
+      expect(t1.value, 'string');
       expect(rd.value, '>');
     });
 
@@ -52,12 +50,11 @@ void main() {
       final result = parser.parse('stream<binary>');
       expect(result, isA<Success>());
 
-      final [Token type, Token ld, Token innerType, Token rd] =
-          result.value as List;
+      final [Token t, Token ld, Token t1, Token rd] = result.value as List;
 
-      expect(type.value, 'stream');
+      expect(t.value, 'stream');
       expect(ld.value, '<');
-      expect(innerType.value, 'binary');
+      expect(t1.value, 'binary');
       expect(rd.value, '>');
     });
 

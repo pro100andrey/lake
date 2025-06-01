@@ -5,6 +5,7 @@ import 'package:test/test.dart';
 void main() {
   group('DefinitionType Rule:', () {
     final grammar = LakeGrammarDefinition();
+    // [20] DefinitionType ::= ContainerType | BaseType
     final parser = resolve(grammar.definitionType().end());
 
     // Positive cases

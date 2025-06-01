@@ -5,6 +5,7 @@ import 'package:test/test.dart';
 void main() {
   group('MultiLineComment Rule:', () {
     final grammar = LakeGrammarDefinition();
+    // MultiLineComment ::= '/*' ( MultiLineComment | [^*] )* '*/'
     final parser = resolve(grammar.multiLineComment().trim().end());
 
     // Positive cases
@@ -40,7 +41,7 @@ void main() {
     });
 
     // Negative cases
-    
+
     test('should fail to parse if not starting with /*', () {
       final result = parser.parse('not a comment');
       expect(result, isA<Failure>());

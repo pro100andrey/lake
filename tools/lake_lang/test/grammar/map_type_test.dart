@@ -5,6 +5,7 @@ import 'package:test/test.dart';
 void main() {
   group('MapType Rule:', () {
     final grammar = LakeGrammarDefinition();
+    // [23] MapType ::= 'map' '<' FieldType ',' FieldType '>'
     final parser = resolve(grammar.mapType().end());
 
     // Positive cases
@@ -14,19 +15,19 @@ void main() {
       expect(result, isA<Success>());
 
       final [
-        Token type,
+        Token t1,
         Token ld,
-        Token keyType,
+        Token keyT,
         Token comma,
-        Token valueType,
+        Token valueT,
         Token rd,
       ] = result.value as List;
 
-      expect(type.value, 'map');
+      expect(t1.value, 'map');
       expect(ld.value, '<');
-      expect(keyType.value, 'string');
+      expect(keyT.value, 'string');
       expect(comma.value, ',');
-      expect(valueType.value, 'bool');
+      expect(valueT.value, 'bool');
       expect(rd.value, '>');
     });
 
@@ -35,19 +36,19 @@ void main() {
       expect(result, isA<Success>());
 
       final [
-        Token type,
+        Token t1,
         Token ld,
-        Token keyType,
+        Token keyT,
         Token comma,
-        Token valueType,
+        Token valueT,
         Token rd,
       ] = result.value as List;
 
-      expect(type.value, 'map');
+      expect(t1.value, 'map');
       expect(ld.value, '<');
-      expect(keyType.value, 'i32');
+      expect(keyT.value, 'i32');
       expect(comma.value, ',');
-      expect(valueType.value, 'i64');
+      expect(valueT.value, 'i64');
       expect(rd.value, '>');
     });
 
@@ -56,20 +57,23 @@ void main() {
       expect(result, isA<Success>());
 
       final [
-        Token type,
+        Token t1,
         Token ld,
-        Token keyType,
+        Token keyT,
         Token comma,
-        [Token valueType, Token nestedLd, Token innerType, Token nestedRd],
+        [Token valueT, Token ld1, Token t2, Token rd1],
         Token rd,
       ] = result.value as List;
 
-      expect(type.value, 'map');
+      expect(t1.value, 'map');
       expect(ld.value, '<');
-      expect(keyType.value, 'string');
+      expect(keyT.value, 'string');
       expect(comma.value, ',');
       // valueType is a nested list type
-      expect(valueType.value, 'list');
+      expect(valueT.value, 'list');
+      expect(ld1.value, '<');
+      expect(t2.value, 'double');
+      expect(rd1.value, '>');
       expect(rd.value, '>');
     });
 

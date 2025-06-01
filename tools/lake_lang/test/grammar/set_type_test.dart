@@ -5,6 +5,7 @@ import 'package:test/test.dart';
 void main() {
   group('SetType Rule:', () {
     final grammar = LakeGrammarDefinition();
+    // [24] SetType ::= 'set' '<' FieldType '>'
     final parser = resolve(grammar.setType().end());
 
     // Positive cases
@@ -13,12 +14,11 @@ void main() {
       final result = parser.parse('set<bool>');
       expect(result, isA<Success>());
 
-      final [Token type, Token ld, Token innerType, Token rd] =
-          result.value as List;
+      final [Token t, Token ld, Token t1, Token rd] = result.value as List;
 
-      expect(type.value, 'set');
+      expect(t.value, 'set');
       expect(ld.value, '<');
-      expect(innerType.value, 'bool');
+      expect(t1.value, 'bool');
       expect(rd.value, '>');
     });
 
@@ -26,12 +26,11 @@ void main() {
       final result = parser.parse('set<i32>');
       expect(result, isA<Success>());
 
-      final [Token type, Token ld, Token innerType, Token rd] =
-          result.value as List;
+      final [Token t, Token ld, Token t1, Token rd] = result.value as List;
 
-      expect(type.value, 'set');
+      expect(t.value, 'set');
       expect(ld.value, '<');
-      expect(innerType.value, 'i32');
+      expect(t1.value, 'i32');
       expect(rd.value, '>');
     });
 
@@ -39,12 +38,11 @@ void main() {
       final result = parser.parse('set<string>');
       expect(result, isA<Success>());
 
-      final [Token type, Token ld, Token innerType, Token rd] =
-          result.value as List;
+      final [Token t, Token ld, Token t1, Token rd] = result.value as List;
 
-      expect(type.value, 'set');
+      expect(t.value, 'set');
       expect(ld.value, '<');
-      expect(innerType.value, 'string');
+      expect(t1.value, 'string');
       expect(rd.value, '>');
     });
 
@@ -52,12 +50,11 @@ void main() {
       final result = parser.parse('set<binary>');
       expect(result, isA<Success>());
 
-      final [Token type, Token ld, Token innerType, Token rd] =
-          result.value as List;
+      final [Token t, Token ld, Token t1, Token rd] = result.value as List;
 
-      expect(type.value, 'set');
+      expect(t.value, 'set');
       expect(ld.value, '<');
-      expect(innerType.value, 'binary');
+      expect(t1.value, 'binary');
       expect(rd.value, '>');
     });
 
@@ -66,18 +63,18 @@ void main() {
       expect(result, isA<Success>());
 
       final [
-        Token type,
+        Token t,
         Token ld,
-        [Token innerType, Token innerLd, Token innerInnerType, Token innerRd],
+        [Token t1, Token ld1, Token t2, Token rd1],
         Token rd,
       ] = result.value as List;
 
-      expect(type.value, 'set');
+      expect(t.value, 'set');
       expect(ld.value, '<');
-      expect(innerType.value, 'set');
-      expect(innerLd.value, '<');
-      expect(innerInnerType.value, 'i64');
-      expect(innerRd.value, '>');
+      expect(t1.value, 'set');
+      expect(ld1.value, '<');
+      expect(t2.value, 'i64');
+      expect(rd1.value, '>');
       expect(rd.value, '>');
     });
 

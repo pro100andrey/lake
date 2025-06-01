@@ -5,6 +5,7 @@ import 'package:test/test.dart';
 void main() {
   group('HiddenStuffWhitespace Rule:', () {
     final grammar = LakeGrammarDefinition();
+    // [35] HiddenStuffWhitespace ::= VisibleWhitespace | Comment
     final parser = resolve(grammar.hiddenStuffWhitespace().plus().end());
 
     // Positive cases
@@ -60,7 +61,7 @@ void main() {
     });
 
     // Negative cases
-    
+
     test('should fail to parse non-whitespace character', () {
       final result = parser.parse('a');
       expect(result, isA<Failure>());

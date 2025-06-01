@@ -5,6 +5,7 @@ import 'package:test/test.dart';
 void main() {
   group('ListType Rule:', () {
     final grammar = LakeGrammarDefinition();
+    // [25] ListType ::= 'list' '<' FieldType '>'
     final parser = resolve(grammar.listType().end());
 
     // Positive cases
@@ -13,12 +14,12 @@ void main() {
       final result = parser.parse('list<bool>');
       expect(result, isA<Success>());
 
-      final [Token type, Token ld, Token innerType, Token rd] =
+      final [Token t, Token ld, Token t1, Token rd] =
           result.value as List;
 
-      expect(type.value, 'list');
+      expect(t.value, 'list');
       expect(ld.value, '<');
-      expect(innerType.value, 'bool');
+      expect(t1.value, 'bool');
       expect(rd.value, '>');
     });
 
@@ -26,12 +27,12 @@ void main() {
       final result = parser.parse('list<i32>');
       expect(result, isA<Success>());
 
-      final [Token type, Token ld, Token innerType, Token rd] =
+      final [Token t, Token ld, Token t1, Token rd] =
           result.value as List;
 
-      expect(type.value, 'list');
+      expect(t.value, 'list');
       expect(ld.value, '<');
-      expect(innerType.value, 'i32');
+      expect(t1.value, 'i32');
       expect(rd.value, '>');
     });
 
@@ -39,12 +40,12 @@ void main() {
       final result = parser.parse('list<string>');
       expect(result, isA<Success>());
 
-      final [Token type, Token ld, Token innerType, Token rd] =
+      final [Token t, Token ld, Token t1, Token rd] =
           result.value as List;
 
-      expect(type.value, 'list');
+      expect(t.value, 'list');
       expect(ld.value, '<');
-      expect(innerType.value, 'string');
+      expect(t1.value, 'string');
       expect(rd.value, '>');
     });
 
@@ -52,12 +53,12 @@ void main() {
       final result = parser.parse('list<binary>');
       expect(result, isA<Success>());
 
-      final [Token type, Token ld, Token innerType, Token rd] =
+      final [Token t, Token ld, Token t1, Token rd] =
           result.value as List;
 
-      expect(type.value, 'list');
+      expect(t.value, 'list');
       expect(ld.value, '<');
-      expect(innerType.value, 'binary');
+      expect(t1.value, 'binary');
       expect(rd.value, '>');
     });
 
@@ -66,18 +67,18 @@ void main() {
       expect(result, isA<Success>());
 
       final [
-        Token type,
+        Token t,
         Token ld,
-        [Token innerType, Token innerLd, Token innerInnerType, Token innerRd],
+        [Token t1, Token ld1, Token t2, Token rd1],
         Token rd,
       ] = result.value as List;
 
-      expect(type.value, 'list');
+      expect(t.value, 'list');
       expect(ld.value, '<');
-      expect(innerType.value, 'list');
-      expect(innerLd.value, '<');
-      expect(innerInnerType.value, 'i64');
-      expect(innerRd.value, '>');
+      expect(t1.value, 'list');
+      expect(ld1.value, '<');
+      expect(t2.value, 'i64');
+      expect(rd1.value, '>');
       expect(rd.value, '>');
     });
 
