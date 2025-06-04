@@ -87,7 +87,11 @@ void main() {
         Token eq,
         [
           Token lb1,
-          [[Token v1, _], [Token v2, _], [Token v3, _]],
+          [
+            [Token v1, _],
+            [Token v2, _],
+            [Token v3, _],
+          ],
           Token rb1,
         ],
         Token? sep,
