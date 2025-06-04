@@ -12,10 +12,9 @@ void main() {
 
     test('should parse "stream<bool>"', () {
       final result = parser.parse('stream<bool>');
-      expect(result, isA<Success>());
-
       final [Token t, Token ld, Token t1, Token rd] = result.value as List;
 
+      expect(result, isA<Success>());
       expect(t.value, 'stream');
       expect(ld.value, '<');
       expect(t1.value, 'bool');
@@ -24,10 +23,9 @@ void main() {
 
     test('should parse "stream<i32>"', () {
       final result = parser.parse('stream<i32>');
-      expect(result, isA<Success>());
-
       final [Token t, Token ld, Token t1, Token rd] = result.value as List;
 
+      expect(result, isA<Success>());
       expect(t.value, 'stream');
       expect(ld.value, '<');
       expect(t1.value, 'i32');
@@ -36,10 +34,9 @@ void main() {
 
     test('should parse "stream<string>"', () {
       final result = parser.parse('stream<string>');
-      expect(result, isA<Success>());
-
       final [Token t, Token ld, Token t1, Token rd] = result.value as List;
 
+      expect(result, isA<Success>());
       expect(t.value, 'stream');
       expect(ld.value, '<');
       expect(t1.value, 'string');
@@ -48,10 +45,9 @@ void main() {
 
     test('should parse "stream<binary>"', () {
       final result = parser.parse('stream<binary>');
-      expect(result, isA<Success>());
-
       final [Token t, Token ld, Token t1, Token rd] = result.value as List;
 
+      expect(result, isA<Success>());
       expect(t.value, 'stream');
       expect(ld.value, '<');
       expect(t1.value, 'binary');
@@ -62,42 +58,49 @@ void main() {
 
     test('should fail to parse stream with missing type', () {
       final result = parser.parse('stream<>');
+      
       expect(result, isA<Failure>());
       expect(result.message, '"_" expected');
     });
 
     test('should fail to parse stream with extra characters', () {
       final result = parser.parse('stream<bool>1');
+      
       expect(result, isA<Failure>());
       expect(result.message, 'end of input expected');
     });
 
     test('should fail to parse stream with wrong case', () {
       final result = parser.parse('Stream<bool>');
+      
       expect(result, isA<Failure>());
       expect(result.message, '"stream" expected');
     });
 
     test('should fail to parse stream with inner space in type', () {
       final result = parser.parse('stream<b ool>');
+      
       expect(result, isA<Failure>());
       expect(result.message, '">" expected');
     });
 
     test('should fail to parse stream with non-ascii character', () {
       final result = parser.parse('stream<bóol>');
+      
       expect(result, isA<Failure>());
       expect(result.message, '">" expected');
     });
 
     test('should fail to parse stream with separator', () {
       final result = parser.parse('stream<bool>;');
+      
       expect(result, isA<Failure>());
       expect(result.message, 'end of input expected');
     });
 
     test('should fail to parse empty string', () {
       final result = parser.parse('');
+      
       expect(result, isA<Failure>());
       expect(result.message, '"stream" expected');
     });
