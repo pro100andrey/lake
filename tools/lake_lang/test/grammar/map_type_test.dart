@@ -35,18 +35,17 @@ void main() {
       final [
         Token t1,
         Token ld,
-        Token keyT,
-        Token comma,
-        Token valueT,
+        Token kt,
+        _,
+        Token vt,
         Token rd,
       ] = result.value as List;
 
       expect(result, isA<Success>());
       expect(t1.value, 'map');
       expect(ld.value, '<');
-      expect(keyT.value, 'i32');
-      expect(comma.value, ',');
-      expect(valueT.value, 'i64');
+      expect(kt.value, 'i32');
+      expect(vt.value, 'i64');
       expect(rd.value, '>');
     });
 
@@ -55,18 +54,17 @@ void main() {
       final [
         Token t1,
         Token ld,
-        Token keyT,
-        Token comma,
-        [Token valueT, Token ld1, Token t2, Token rd1],
+        Token kt,
+        _,
+        [Token vt, Token ld1, Token t2, Token rd1],
         Token rd,
       ] = result.value as List;
 
       expect(result, isA<Success>());
       expect(t1.value, 'map');
       expect(ld.value, '<');
-      expect(keyT.value, 'string');
-      expect(comma.value, ',');
-      expect(valueT.value, 'list');
+      expect(kt.value, 'string');
+      expect(vt.value, 'list');
       expect(ld1.value, '<');
       expect(t2.value, 'double');
       expect(rd1.value, '>');

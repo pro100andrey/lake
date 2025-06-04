@@ -12,66 +12,66 @@ void main() {
 
     test('should parse a single space', () {
       final result = parser.parse(' ');
-      final [String value] = result.value;
+      final [String v] = result.value;
 
       expect(result, isA<Success>());
-      expect(value, ' ');
+      expect(v, ' ');
     });
 
     test('should parse a single tab', () {
       final result = parser.parse('\t');
-      final [String value] = result.value;
+      final [String v] = result.value;
 
       expect(result, isA<Success>());
-      expect(value, '\t');
+      expect(v, '\t');
     });
 
     test('should parse a single newline', () {
       final result = parser.parse('\n');
-      final [String value] = result.value;
+      final [String v] = result.value;
 
       expect(result, isA<Success>());
-      expect(value, '\n');
+      expect(v, '\n');
     });
 
     test('should parse a single carriage return', () {
       final result = parser.parse('\r');
-      final [String value] = result.value;
+      final [String v] = result.value;
 
       expect(result, isA<Success>());
-      expect(value, '\r');
+      expect(v, '\r');
     });
 
     test('should parse a single-line comment', () {
       final result = parser.parse('// comment\n');
-      final [String value] = result.value;
+      final [String v] = result.value;
 
       expect(result, isA<Success>());
-      expect(value, '// comment\n');
+      expect(v, '// comment\n');
     });
 
     test('should parse a single-line comment without newline', () {
       final result = parser.parse('// comment');
-      final [String value] = result.value;
+      final [String v] = result.value;
 
       expect(result, isA<Success>());
-      expect(value, '// comment');
+      expect(v, '// comment');
     });
 
     test('should parse a multi-line comment', () {
       final result = parser.parse('/* multi\nline\ncomment */');
-      final [String value] = result.value;
+      final [String v] = result.value;
 
       expect(result, isA<Success>());
-      expect(value, '/* multi\nline\ncomment */');
+      expect(v, '/* multi\nline\ncomment */');
     });
 
     test('should parse an empty multi-line comment', () {
       final result = parser.parse('/**/');
-      final [String value] = result.value;
+      final [String v] = result.value;
 
       expect(result, isA<Success>());
-      expect(value, '/**/');
+      expect(v, '/**/');
     });
 
     test('should parse whitespace and comment mixed', () {

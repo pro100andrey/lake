@@ -105,7 +105,7 @@ void main() {
       );
 
       final [
-        Token returnT,
+        Token t,
         Token id,
         Token ld,
         List args,
@@ -123,7 +123,7 @@ void main() {
       ] = result.value as List;
 
       expect(result, isA<Success>());
-      expect(returnT.value, 'void');
+      expect(t.value, 'void');
       expect(id.value, 'errFunc');
       expect(ld.value, '(');
       expect(args, isEmpty);

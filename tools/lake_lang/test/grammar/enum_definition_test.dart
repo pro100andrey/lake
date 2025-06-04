@@ -126,7 +126,10 @@ void main() {
         Token keyword,
         Token id,
         Token lb,
-        [[Token id1, _, _], [Token id2, _, _]],
+        [
+          [Token id1, _, _],
+          [Token id2, _, _],
+        ],
         Token rb,
       ] = result.value as List;
 

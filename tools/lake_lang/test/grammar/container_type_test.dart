@@ -14,12 +14,11 @@ void main() {
       final result = parser.parse('list<bool>');
       expect(result, isA<Success>());
 
-      final [Token type, Token ld, Token innerType, Token rd] =
-          result.value as List;
+      final [Token t, Token ld, Token t1, Token rd] = result.value as List;
 
-      expect(type.value, 'list');
+      expect(t.value, 'list');
       expect(ld.value, '<');
-      expect(innerType.value, 'bool');
+      expect(t1.value, 'bool');
       expect(rd.value, '>');
     });
 
@@ -27,12 +26,11 @@ void main() {
       final result = parser.parse('set<i32>');
       expect(result, isA<Success>());
 
-      final [Token type, Token ld, Token innerType, Token rd] =
-          result.value as List;
+      final [Token t, Token ld, Token t1, Token rd] = result.value as List;
 
-      expect(type.value, 'set');
+      expect(t.value, 'set');
       expect(ld.value, '<');
-      expect(innerType.value, 'i32');
+      expect(t1.value, 'i32');
       expect(rd.value, '>');
     });
 
@@ -41,18 +39,18 @@ void main() {
       expect(result, isA<Success>());
 
       final [
-        Token type,
+        Token t,
         Token ld,
-        Token innerKeyType,
-        Token comma,
-        Token innerValueType,
+        Token kt,
+        _,
+        Token vt,
         Token rd,
       ] = result.value as List;
 
-      expect(type.value, 'map');
+      expect(t.value, 'map');
       expect(ld.value, '<');
-      expect(innerKeyType.value, 'string');
-      expect(innerValueType.value, 'bool');
+      expect(kt.value, 'string');
+      expect(vt.value, 'bool');
       expect(rd.value, '>');
     });
 
@@ -61,18 +59,18 @@ void main() {
       expect(result, isA<Success>());
 
       final [
-        Token type,
+        Token t,
         Token ld,
-        [Token innerList, Token innerLd, Token innerType, Token innerRd],
+        [Token t1, Token ld1, Token t2, Token rd1],
         Token rd,
       ] = result.value as List;
 
-      expect(type.value, 'list');
+      expect(t.value, 'list');
       expect(ld.value, '<');
-      expect(innerList.value, 'list');
-      expect(innerLd.value, '<');
-      expect(innerType.value, 'i64');
-      expect(innerRd.value, '>');
+      expect(t1.value, 'list');
+      expect(ld1.value, '<');
+      expect(t2.value, 'i64');
+      expect(rd1.value, '>');
       expect(rd.value, '>');
     });
 
@@ -81,45 +79,64 @@ void main() {
       expect(result, isA<Success>());
 
       final [
-        Token type,
+        Token t,
         Token ld,
-        Token innerKeyType,
-        Token comma,
-        [Token innerList, Token innerLd, Token innerType, Token innerRd],
+        Token kt,
+        Token _,
+        [Token vt, Token ld1, Token t2, Token rd1],
         Token rd,
       ] = result.value as List;
 
-      expect(type.value, 'map');
+      expect(t.value, 'map');
       expect(ld.value, '<');
-      expect(innerKeyType.value, 'string');
-      expect(innerList.value, 'list');
-      expect(innerLd.value, '<');
-      expect(innerType.value, 'i32');
-      expect(innerRd.value, '>');
+      expect(kt.value, 'string');
+      expect(vt.value, 'list');
+      expect(ld1.value, '<');
+      expect(t2.value, 'i32');
+      expect(rd1.value, '>');
       expect(rd.value, '>');
     });
 
     test('should parse deeply nested containers', () {
       final result = parser.parse('list<map<string,list<i32>>>');
+      final [
+        Token t,
+        Token ld,
+        [
+          Token t1,
+          Token ld1,
+          Token kt,
+          Token _,
+          [Token vt, Token ld2, Token t2, Token rd2],
+          Token rd1,
+        ],
+        Token rd,
+      ] = result.value as List;
+
       expect(result, isA<Success>());
+      expect(t.value, 'list');
+      expect(ld.value, '<');
+      expect(t1.value, 'map');
+      expect(ld1.value, '<');
+      expect(kt.value, 'string');
+      expect(vt.value, 'list');
+      expect(ld2.value, '<');
+      expect(t2.value, 'i32');
+      expect(rd2.value, '>');
+      expect(rd1.value, '>');
+      expect(rd.value, '>');
     });
 
     test('should parse map with spaces after comma', () {
       final result = parser.parse('map<string, bool>');
+      final [Token t, Token ld, Token kt, Token _, Token vt, Token rd] =
+          result.value as List;
+
       expect(result, isA<Success>());
-      final [
-        Token type,
-        Token ld,
-        Token innerKeyType,
-        Token comma,
-        Token innerValueType,
-        Token rd,
-      ] = result.value as List;
-      expect(type.value, 'map');
+      expect(t.value, 'map');
       expect(ld.value, '<');
-      expect(innerKeyType.value, 'string');
-      expect(comma.value, ',');
-      expect(innerValueType.value, 'bool');
+      expect(kt.value, 'string');
+      expect(vt.value, 'bool');
       expect(rd.value, '>');
     });
 
@@ -127,72 +144,84 @@ void main() {
 
     test('should fail to parse container with missing type', () {
       final result = parser.parse('list<>');
+
       expect(result, isA<Failure>());
       expect(result.message, '"_" expected');
     });
 
     test('should fail to parse container with extra characters', () {
       final result = parser.parse('set<bool>1');
+
       expect(result, isA<Failure>());
       expect(result.message, 'end of input expected');
     });
 
     test('should fail to parse container with wrong case', () {
       final result = parser.parse('List<bool>');
+
       expect(result, isA<Failure>());
       expect(result.message, '"list" expected');
     });
 
     test('should fail to parse container with non-ascii character', () {
       final result = parser.parse('set<bóol>');
+
       expect(result, isA<Failure>());
       expect(result.message, '"list" expected');
     });
 
     test('should fail to parse container with separator', () {
       final result = parser.parse('list<bool>;');
+
       expect(result, isA<Failure>());
       expect(result.message, 'end of input expected');
     });
 
     test('should fail to parse empty string', () {
       final result = parser.parse('');
+
       expect(result, isA<Failure>());
       expect(result.message, '"list" expected');
     });
 
     test('should fail to parse map with missing comma', () {
       final result = parser.parse('map<string bool>');
+
       expect(result, isA<Failure>());
       expect(result.message, '"list" expected');
     });
 
     test('should fail to parse map with extra comma', () {
       final result = parser.parse('map<string,,bool>');
+
       expect(result, isA<Failure>());
       expect(result.message, '"list" expected');
     });
 
     test('should fail to parse unknown container', () {
       final result = parser.parse('bag<i32>');
+
       expect(result, isA<Failure>());
       expect(result.message, '"list" expected');
     });
 
     test('should fail to parse container with space in name', () {
       final result = parser.parse('li st<i32>');
+
       expect(result, isA<Failure>());
       expect(result.message, '"list" expected');
     });
 
     test('should fail to parse map with one type', () {
       final result = parser.parse('map<string>');
+
       expect(result, isA<Failure>());
       expect(result.message, '"list" expected');
     });
 
     test('should fail to parse map with empty types', () {
       final result = parser.parse('map<>');
+
       expect(result, isA<Failure>());
       expect(result.message, '"list" expected');
     });

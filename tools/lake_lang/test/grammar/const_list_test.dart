@@ -24,7 +24,11 @@ void main() {
       final result = parser.parse('[1, 2, 3]');
       final [
         Token lb,
-        [[Token v1, _], [Token v2, _], [Token v3, _]],
+        [
+          [Token v1, _],
+          [Token v2, _],
+          [Token v3, _],
+        ],
         Token rb,
       ] = result.value as List;
 
@@ -40,7 +44,11 @@ void main() {
       final result = parser.parse('[1.1, 2.2, 3.3]');
       final [
         Token lb,
-        [[Token v1, _], [Token v2, _], [Token v3, _]],
+        [
+          [Token v1, _],
+          [Token v2, _],
+          [Token v3, _],
+        ],
         Token rb,
       ] = result.value as List;
 
@@ -56,7 +64,11 @@ void main() {
       final result = parser.parse('["a", "b", "c"]');
       final [
         Token lb,
-        [[Token v1, _], [Token v2, _], [Token v3, _]],
+        [
+          [Token v1, _],
+          [Token v2, _],
+          [Token v3, _],
+        ],
         Token rb,
       ] = result.value as List;
 
@@ -72,7 +84,12 @@ void main() {
       final result = parser.parse('[1, "two", 3.0, SOME_CONST]');
       final [
         Token lb,
-        [[Token v1, _], [Token v2, _], [Token v3, _], [Token v4, _]],
+        [
+          [Token v1, _],
+          [Token v2, _],
+          [Token v3, _],
+          [Token v4, _],
+        ],
         Token rb,
       ] = result.value as List;
 
@@ -89,7 +106,11 @@ void main() {
       final result = parser.parse('[1, 2, 3, ]');
       final [
         Token lb,
-        [[Token v1, _], [Token v2, _], [Token v3, _]],
+        [
+          [Token v1, _],
+          [Token v2, _],
+          [Token v3, _],
+        ],
         Token rb,
       ] = result.value as List;
 
@@ -105,7 +126,11 @@ void main() {
       final result = parser.parse('[1; 2; 3]');
       final [
         Token lb,
-        [[Token v1, _], [Token v2, _], [Token v3, _]],
+        [
+          [Token v1, _],
+          [Token v2, _],
+          [Token v3, _],
+        ],
         Token rb,
       ] = result.value as List;
 
@@ -121,7 +146,12 @@ void main() {
       final result = parser.parse('[1, 2; 3, 4;]');
       final [
         Token lb,
-        [[Token v1, _], [Token v2, _], [Token v3, _], [Token v4, _]],
+        [
+          [Token v1, _],
+          [Token v2, _],
+          [Token v3, _],
+          [Token v4, _],
+        ],
         Token rb,
       ] = result.value as List;
 
@@ -158,7 +188,11 @@ void main() {
       final result = parser.parse('[ 1 , 2 , 3 ]');
       final [
         Token lb,
-        [[Token v1, _], [Token v2, _], [Token v3, _]],
+        [
+          [Token v1, _],
+          [Token v2, _],
+          [Token v3, _],
+        ],
         Token rb,
       ] = result.value as List;
 
@@ -174,30 +208,35 @@ void main() {
 
     test('should fail to parse missing closing bracket', () {
       final result = parser.parse('[1, 2, 3');
+
       expect(result, isA<Failure>());
       expect(result.message, '"]" expected');
     });
 
     test('should fail to parse missing opening bracket', () {
       final result = parser.parse('1, 2, 3]');
+
       expect(result, isA<Failure>());
       expect(result.message, '"[" expected');
     });
 
     test('should fail to parse not a list', () {
       final result = parser.parse('notalist');
+
       expect(result, isA<Failure>());
       expect(result.message, '"[" expected');
     });
 
     test('should fail to parse list with invalid separator', () {
       final result = parser.parse('[1 | 2]');
+
       expect(result, isA<Failure>());
       expect(result.message, '"]" expected');
     });
 
     test('should fail to parse empty string', () {
       final result = parser.parse('');
+
       expect(result, isA<Failure>());
       expect(result.message, '"[" expected');
     });

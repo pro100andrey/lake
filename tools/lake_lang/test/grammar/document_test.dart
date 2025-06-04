@@ -23,14 +23,14 @@ void main() {
       final result = parser.parse('import "foo.lake"');
       final [
         [
-          [Token import, Token identifier],
+          [Token import, Token id],
         ],
         List definitions,
       ] = result.value as List;
 
       expect(result, isA<Success>());
       expect(import.value, 'import');
-      expect(identifier.value, '"foo.lake"');
+      expect(id.value, '"foo.lake"');
       expect(definitions, isEmpty);
     });
 
@@ -38,7 +38,7 @@ void main() {
       final result = parser.parse('namespace * Foo');
       final [
         [
-          [Token namespace, [Token star, Token identifier]],
+          [Token namespace, [Token star, Token id]],
         ],
         List definitions,
       ] = result.value as List;
@@ -46,7 +46,7 @@ void main() {
       expect(result, isA<Success>());
       expect(namespace.value, 'namespace');
       expect(star.value, '*');
-      expect(identifier.value, 'Foo');
+      expect(id.value, 'Foo');
       expect(definitions, isEmpty);
     });
 
@@ -55,7 +55,7 @@ void main() {
       final [
         [
           [Token import, Token importId],
-          [Token namespace, [Token scope, Token namespaceId]],
+          [Token namespace, [Token scope, Token id]],
         ],
         List definitions,
       ] = result.value as List;
@@ -65,7 +65,7 @@ void main() {
       expect(importId.value, '"foo.lake"');
       expect(namespace.value, 'namespace');
       expect(scope.value, 'dart');
-      expect(namespaceId.value, 'Bar');
+      expect(id.value, 'Bar');
       expect(definitions, isEmpty);
     });
 
@@ -76,11 +76,11 @@ void main() {
         [
           [
             Token keyword,
-            Token type,
-            Token identifier,
-            Token equal,
-            Token value,
-            Token? separator,
+            Token t,
+            Token id,
+            Token eq,
+            Token v,
+            Token? sep,
           ],
         ],
       ] = result.value as List;
@@ -88,11 +88,11 @@ void main() {
       expect(result, isA<Success>());
       expect(headers, isEmpty);
       expect(keyword.value, 'const');
-      expect(type.value, 'i32');
-      expect(identifier.value, 'X');
-      expect(equal.value, '=');
-      expect(value.value, '1');
-      expect(separator, isNull);
+      expect(t.value, 'i32');
+      expect(id.value, 'X');
+      expect(eq.value, '=');
+      expect(v.value, '1');
+      expect(sep, isNull);
     });
 
     test('should parse document with enum definition', () {
@@ -102,7 +102,7 @@ void main() {
         [
           [
             Token keyword,
-            Token identifier,
+            Token id,
             Token lb,
             [[Token id1, _, _], [Token id2, _, _]],
             Token rb,
@@ -113,7 +113,7 @@ void main() {
       expect(result, isA<Success>());
       expect(headers, isEmpty);
       expect(keyword.value, 'enum');
-      expect(identifier.value, 'E');
+      expect(id.value, 'E');
       expect(lb.value, '{');
       expect(id1.value, 'A');
       expect(id2.value, 'B');
@@ -129,7 +129,7 @@ void main() {
             Token keyword,
             Token id,
             Token lb,
-            [[_, _, Token type, Token id2, _, _]],
+            [[_, _, Token t, Token id2, _, _]],
             Token rb,
           ],
         ],
@@ -140,7 +140,7 @@ void main() {
       expect(keyword.value, 'struct');
       expect(id.value, 'S');
       expect(lb.value, '{');
-      expect(type.value, 'i32');
+      expect(t.value, 'i32');
       expect(id2.value, 'x');
       expect(rb.value, '}');
     });
@@ -157,7 +157,7 @@ void main() {
             Token lb,
             [
               [
-                Token returnType,
+                Token t,
                 Token id2,
                 Token lb2,
                 List fields,
@@ -176,7 +176,7 @@ void main() {
       expect(keyword.value, 'service');
       expect(id.value, 'S');
       expect(lb.value, '{');
-      expect(returnType.value, 'void');
+      expect(t.value, 'void');
       expect(id2.value, 'foo');
       expect(lb2.value, '(');
       expect(fields, isEmpty);

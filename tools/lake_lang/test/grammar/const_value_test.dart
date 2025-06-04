@@ -55,7 +55,11 @@ void main() {
       final result = parser.parse('[1, 2, 3]');
       final [
         Token lb,
-        [[Token v1, _], [Token v2, _], [Token v3, _]],
+        [
+          [Token v1, _],
+          [Token v2, _],
+          [Token v3, _],
+        ],
         Token rb,
       ] = result.value as List;
 
@@ -71,7 +75,11 @@ void main() {
       final result = parser.parse('[1, "two", SOME_CONST]');
       final [
         Token lb,
-        [[Token v1, _], [Token v2, _], [Token v3, _]],
+        [
+          [Token v1, _],
+          [Token v2, _],
+          [Token v3, _],
+        ],
         Token rb,
       ] = result.value as List;
 
@@ -97,7 +105,10 @@ void main() {
       final result = parser.parse('{"a": 1, "b": 2}');
       final [
         Token lb,
-        [[Token key1, _, Token val1, _], [Token key2, _, Token val2, _]],
+        [
+          [Token key1, _, Token val1, _],
+          [Token key2, _, Token val2, _],
+        ],
         Token rb,
       ] = result.value as List;
 
@@ -116,12 +127,15 @@ void main() {
         Token lb,
         [
           [Token key1, Token _, Token val1, Token _],
-          [Token key2, _, [Token lb1, List listValues, Token rb1], _],
+          [
+            Token key2,
+            _,
+            [Token lb1, [[Token v1, _], [Token v2, _]], Token rb1],
+            _,
+          ],
         ],
         Token rb,
       ] = result.value as List;
-
-      final [[Token v1, _], [Token v2, _]] = listValues;
 
       expect(result, isA<Success>());
       expect(lb.value, '{');
@@ -147,25 +161,28 @@ void main() {
 
     test('should parse a nested const list and map', () {
       final result = parser.parse('[{"a": [1,2]}, 3]');
-      final [Token lb, [List v1, List v2], Token rb] = result.value as List;
-
       final [
+        Token lb,
         [
-          Token lb1,
           [
             [
-              Token key,
-              _,
-              [Token lb2, [[Token lv1, _], [Token lv2, _]], Token rb2],
-              _,
+              Token lb1,
+              [
+                [
+                  Token key,
+                  _,
+                  [Token lb2, [[Token lv1, _], [Token lv2, _]], Token rb2],
+                  _,
+                ],
+              ],
+              Token rb1,
             ],
+            _,
           ],
-          Token rb1,
+          [Token intValue, _],
         ],
-        _,
-      ] = v1;
-
-      final [Token intValue, _] = v2;
+        Token rb,
+      ] = result.value as List;
 
       expect(result, isA<Success>());
       expect(lb.value, '[');
@@ -184,30 +201,35 @@ void main() {
 
     test('should fail to parse invalid literal', () {
       final result = parser.parse('"unterminated');
+
       expect(result, isA<Failure>());
       expect(result.message, '"\\\'" expected');
     });
 
     test('should fail to parse invalid int', () {
       final result = parser.parse('--1');
+
       expect(result, isA<Failure>());
       expect(result.message, '"\\\'" expected');
     });
 
     test('should fail to parse invalid list', () {
       final result = parser.parse('[1, 2');
+
       expect(result, isA<Failure>());
       expect(result.message, '"\\\'" expected');
     });
 
     test('should fail to parse invalid map', () {
       final result = parser.parse('{"a": 1, "b" 2}');
+
       expect(result, isA<Failure>());
       expect(result.message, '"\\\'" expected');
     });
 
     test('should fail to parse empty string', () {
       final result = parser.parse('');
+
       expect(result, isA<Failure>());
       expect(result.message, '"\\\'" expected');
     });

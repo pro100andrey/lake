@@ -95,7 +95,7 @@ void main() {
           Token t1,
           Token ld1,
           Token keyT,
-          Token comma,
+          _,
           [Token t2, Token rd2, Token t3, Token rd3],
           Token rd1,
         ],
@@ -108,7 +108,6 @@ void main() {
       expect(t1.value, 'map');
       expect(ld1.value, '<');
       expect(keyT.value, 'string');
-      expect(comma.value, ',');
       expect(t2.value, 'list');
       expect(rd2.value, '<');
       expect(t3.value, 'i32');

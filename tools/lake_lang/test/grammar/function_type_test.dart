@@ -23,34 +23,34 @@ void main() {
 
     test('should parse stream type with whitespace', () {
       final result = parser.parse(' stream < string > ');
-      final [Token t, Token ld, Token type, Token rd] = result.value as List;
+      final [Token t, Token ld, Token t1, Token rd] = result.value as List;
 
       expect(result, isA<Success>());
       expect(t.value, 'stream');
       expect(ld.value, '<');
-      expect(type.value, 'string');
+      expect(t1.value, 'string');
       expect(rd.value, '>');
     });
 
     test('should parse list type as field type', () {
       final result = parser.parse('list<double>');
-      final [Token t, Token ld, Token type, Token rd] = result.value as List;
+      final [Token t, Token ld, Token t1, Token rd] = result.value as List;
 
       expect(result, isA<Success>());
       expect(t.value, 'list');
       expect(ld.value, '<');
-      expect(type.value, 'double');
+      expect(t1.value, 'double');
       expect(rd.value, '>');
     });
 
     test('should parse set type as field type', () {
       final result = parser.parse('set<i32>');
-      final [Token t, Token ld, Token type, Token rd] = result.value as List;
+      final [Token t, Token ld, Token t1, Token rd] = result.value as List;
 
       expect(result, isA<Success>());
       expect(t.value, 'set');
       expect(ld.value, '<');
-      expect(type.value, 'i32');
+      expect(t1.value, 'i32');
       expect(rd.value, '>');
     });
 
@@ -59,18 +59,17 @@ void main() {
       final [
         Token t,
         Token ld,
-        Token keyT,
-        Token comma,
-        Token valueT,
+        Token kt,
+        _,
+        Token vt,
         Token rd,
       ] = result.value as List;
 
       expect(result, isA<Success>());
       expect(t.value, 'map');
       expect(ld.value, '<');
-      expect(keyT.value, 'string');
-      expect(comma.value, ',');
-      expect(valueT.value, 'int');
+      expect(kt.value, 'string');
+      expect(vt.value, 'int');
       expect(rd.value, '>');
     });
 

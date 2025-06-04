@@ -16,6 +16,40 @@ void main() {
       final [
         _,
         _,
+        Token t,
+        Token id,
+        _,
+        _,
+      ] = result.value as List;
+
+      expect(result, isA<Success>());
+      expect(t.value, 'i32');
+      expect(id.value, 'count');
+    });
+
+    test('should parse a field with field id', () {
+      final result = parser.parse('1: i32 count');
+      final [
+        [Token idx, Token colon],
+        _,
+        Token t,
+        Token id,
+        _,
+        _,
+      ] = result.value as List;
+
+      expect(result, isA<Success>());
+      expect(idx.value, '1');
+      expect(colon.value, ':');
+      expect(t.value, 'i32');
+      expect(id.value, 'count');
+    });
+
+    test('should parse a field with field id and required', () {
+      final result = parser.parse('2: required string name');
+      final [
+        [Token idx, Token colon],
+        Token req,
         Token type,
         Token id,
         _,
@@ -23,64 +57,30 @@ void main() {
       ] = result.value as List;
 
       expect(result, isA<Success>());
-      expect(type.value, 'i32');
-      expect(id.value, 'count');
-    });
-
-    test('should parse a field with field id', () {
-      final result = parser.parse('1: i32 count');
-      final [
-        [Token id, Token colon],
-        _,
-        Token type,
-        Token name,
-        _,
-        _,
-      ] = result.value as List;
-
-      expect(result, isA<Success>());
-      expect(id.value, '1');
-      expect(colon.value, ':');
-      expect(type.value, 'i32');
-      expect(name.value, 'count');
-    });
-
-    test('should parse a field with field id and required', () {
-      final result = parser.parse('2: required string name');
-      final [
-        [Token id, Token colon],
-        Token req,
-        Token type,
-        Token name,
-        _,
-        _,
-      ] = result.value as List;
-
-      expect(result, isA<Success>());
-      expect(id.value, '2');
+      expect(idx.value, '2');
       expect(colon.value, ':');
       expect(req.value, 'required');
       expect(type.value, 'string');
-      expect(name.value, 'name');
+      expect(id.value, 'name');
     });
 
     test('should parse a field with field id and optional', () {
       final result = parser.parse('3: optional bool flag');
 
       final [
-        [Token id, Token colon],
+        [Token idx, Token colon],
         Token opt,
         Token type,
-        Token name,
+        Token id,
         _,
         _,
       ] = result.value as List;
       expect(result, isA<Success>());
-      expect(id.value, '3');
+      expect(idx.value, '3');
       expect(colon.value, ':');
       expect(opt.value, 'optional');
       expect(type.value, 'bool');
-      expect(name.value, 'flag');
+      expect(id.value, 'flag');
     });
 
     test('should parse a field with default value', () {
@@ -88,44 +88,44 @@ void main() {
       final [
         _,
         _,
-        Token type,
+        Token t,
         Token id,
         [
           Token eq,
-          Token defaultValue,
+          Token v,
         ],
         _,
       ] = result.value as List;
 
       expect(result, isA<Success>());
-      expect(type.value, 'i32');
+      expect(t.value, 'i32');
       expect(id.value, 'count');
       expect(eq.value, '=');
-      expect(defaultValue.value, '0');
+      expect(v.value, '0');
     });
 
     test('should parse a field with field id, required, and default value', () {
       final result = parser.parse('4: required i32 count = 10');
       final [
-        [Token id, Token colon],
+        [Token idx, Token colon],
         Token req,
-        Token type,
-        Token name,
+        Token t,
+        Token id,
         [
           Token eq,
-          Token defaultValue,
+          Token v,
         ],
         _,
       ] = result.value as List;
 
       expect(result, isA<Success>());
-      expect(id.value, '4');
+      expect(idx.value, '4');
       expect(colon.value, ':');
       expect(req.value, 'required');
-      expect(type.value, 'i32');
-      expect(name.value, 'count');
+      expect(t.value, 'i32');
+      expect(id.value, 'count');
       expect(eq.value, '=');
-      expect(defaultValue.value, '10');
+      expect(v.value, '10');
     });
 
     test('should parse a field with list type', () {
@@ -174,30 +174,30 @@ void main() {
 
     test('should parse a field with trailing comma', () {
       final result = parser.parse('i32 count,');
-      final [_, _, Token type, Token id, _, Token sep] = result.value as List;
+      final [_, _, Token t, Token id, _, Token sep] = result.value as List;
 
       expect(result, isA<Success>());
-      expect(type.value, 'i32');
+      expect(t.value, 'i32');
       expect(id.value, 'count');
       expect(sep.value, ',');
     });
 
     test('should parse a field with trailing semicolon', () {
       final result = parser.parse('i32 count;');
-      final [_, _, Token type, Token id, _, Token sep] = result.value as List;
+      final [_, _, Token t, Token id, _, Token sep] = result.value as List;
 
       expect(result, isA<Success>());
-      expect(type.value, 'i32');
+      expect(t.value, 'i32');
       expect(id.value, 'count');
       expect(sep.value, ';');
     });
 
     test('should parse a field with whitespace', () {
       final result = parser.parse('   i32    count   ');
-      final [_, _, Token type, Token id, _, _] = result.value as List;
+      final [_, _, Token t, Token id, _, _] = result.value as List;
 
       expect(result, isA<Success>());
-      expect(type.value, 'i32');
+      expect(t.value, 'i32');
       expect(id.value, 'count');
     });
 
