@@ -126,7 +126,7 @@ void main() {
 
     test('should fail to parse whitespace mixed with non-whitespace', () {
       final result = parser.parse(' \t\nx');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, 'end of input expected');
     });

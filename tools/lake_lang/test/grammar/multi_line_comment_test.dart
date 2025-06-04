@@ -83,7 +83,7 @@ void main() {
 
     test('should fail to parse empty string', () {
       final result = parser.parse('');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, '"/*" expected');
     });

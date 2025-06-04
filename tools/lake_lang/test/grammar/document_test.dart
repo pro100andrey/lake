@@ -248,7 +248,7 @@ void main() {
 
     test('should fail to parse random text', () {
       final result = parser.parse('random text');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, 'end of input expected');
     });

@@ -13,7 +13,7 @@ void main() {
         'comments', () {
       final result = parser.parse('const');
       final Token(:String value) = result.value;
-      
+
       expect(result, isA<Success>());
       expect(value, 'const');
     });
@@ -21,7 +21,7 @@ void main() {
     test('should parse a keyword with leading spaces', () {
       final result = parser.parse('   const');
       final Token(:String value) = result.value;
-      
+
       expect(result, isA<Success>());
       expect(value, 'const');
     });
@@ -29,7 +29,7 @@ void main() {
     test('should parse a keyword with trailing tabs', () {
       final result = parser.parse('const\t\t');
       final Token(:String value) = result.value;
-      
+
       expect(result, isA<Success>());
       expect(value, 'const');
     });
@@ -37,7 +37,7 @@ void main() {
     test('should parse a keyword with leading and trailing newlines', () {
       final result = parser.parse('\nconst\n');
       final Token(:String value) = result.value;
-      
+
       expect(result, isA<Success>());
       expect(value, 'const');
     });
@@ -45,7 +45,7 @@ void main() {
     test('should parse a keyword with a single-line comment before', () {
       final result = parser.parse('// My comment\nconst');
       final Token(:String value) = result.value;
-      
+
       expect(result, isA<Success>());
       expect(value, 'const');
     });
@@ -53,7 +53,7 @@ void main() {
     test('should parse a keyword with a single-line comment after', () {
       final result = parser.parse('const// My comment');
       final Token(:String value) = result.value;
-      
+
       expect(result, isA<Success>());
       expect(value, 'const');
     });
@@ -61,7 +61,7 @@ void main() {
     test('should parse a keyword with a multi-line comment before', () {
       final result = parser.parse('/* Multi\nline\ncomment */const');
       final Token(:String value) = result.value;
-      
+
       expect(result, isA<Success>());
       expect(value, 'const');
     });
@@ -69,7 +69,7 @@ void main() {
     test('should parse a keyword with a multi-line comment after', () {
       final result = parser.parse('const/* Multi\nline\ncomment */');
       final Token(:String value) = result.value;
-      
+
       expect(result, isA<Success>());
       expect(value, 'const');
     });
@@ -79,7 +79,7 @@ void main() {
         '   /* C1 */ \n // C2 \n \t const \t /* C3 */ // C4 \n',
       );
       final Token(:String value) = result.value;
-      
+
       expect(result, isA<Success>());
       expect(value, 'const');
     });
@@ -119,7 +119,7 @@ void main() {
 
     test('should fail to parse if the actual keyword is missing', () {
       final result = parser.parse('   /* comment */   ');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, '"const" expected');
     });

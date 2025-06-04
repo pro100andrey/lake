@@ -130,7 +130,7 @@ void main() {
 
     test('should fail to parse malformed single-line comment', () {
       final result = parser.parse('/ not a comment');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, '"/*" expected');
     });

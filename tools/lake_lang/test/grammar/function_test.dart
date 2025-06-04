@@ -224,7 +224,7 @@ void main() {
 
     test('should fail to parse invalid argument', () {
       final result = parser.parse('void foo(,)');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, '")" expected');
     });
@@ -238,7 +238,7 @@ void main() {
 
     test('should fail to parse only type', () {
       final result = parser.parse('i32');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, '"_" expected');
     });

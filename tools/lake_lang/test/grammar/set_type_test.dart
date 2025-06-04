@@ -77,49 +77,49 @@ void main() {
 
     test('should fail to parse set with missing type', () {
       final result = parser.parse('set<>');
-  
+
       expect(result, isA<Failure>());
       expect(result.message, '"_" expected');
     });
 
     test('should fail to parse set with extra characters', () {
       final result = parser.parse('set<bool>1');
-  
+
       expect(result, isA<Failure>());
       expect(result.message, 'end of input expected');
     });
 
     test('should fail to parse set with wrong case', () {
       final result = parser.parse('Set<bool>');
-  
+
       expect(result, isA<Failure>());
       expect(result.message, '"set" expected');
     });
 
     test('should fail to parse set with inner space in type', () {
       final result = parser.parse('set<b ool>');
-  
+
       expect(result, isA<Failure>());
       expect(result.message, '">" expected');
     });
 
     test('should fail to parse set with non-ascii character', () {
       final result = parser.parse('set<bóol>');
-  
+
       expect(result, isA<Failure>());
       expect(result.message, '">" expected');
     });
 
     test('should fail to parse set with separator', () {
       final result = parser.parse('set<bool>;');
-  
+
       expect(result, isA<Failure>());
       expect(result.message, 'end of input expected');
     });
 
     test('should fail to parse empty string', () {
       final result = parser.parse('');
-  
+
       expect(result, isA<Failure>());
       expect(result.message, '"set" expected');
     });

@@ -54,21 +54,21 @@ void main() {
 
     test('should fail to parse if not starting with //', () {
       final result = parser.parse('not a comment');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, '"//" expected');
     });
 
     test('should fail to parse multi-line comment as single-line', () {
       final result = parser.parse('/* not a single-line comment */');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, '"//" expected');
     });
 
     test('should fail to parse empty string', () {
       final result = parser.parse('');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, '"//" expected');
     });

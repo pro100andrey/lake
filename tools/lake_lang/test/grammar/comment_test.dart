@@ -12,45 +12,63 @@ void main() {
 
     test('should parse a single-line comment', () {
       final result = parser.parse('// this is a comment\n');
+      final value = result.value as String;
+
       expect(result, isA<Success>());
+      expect(value, '// this is a comment\n');
     });
 
     test('should parse a single-line comment without newline', () {
       final result = parser.parse('// end of file');
+      final value = result.value as String;
+
       expect(result, isA<Success>());
+      expect(value, '// end of file');
     });
 
     test('should parse a multi-line comment', () {
       final result = parser.parse('/* multi\nline\ncomment */');
+      final value = result.value as String;
+
       expect(result, isA<Success>());
+      expect(value, '/* multi\nline\ncomment */');
     });
 
     test('should parse an empty multi-line comment', () {
       final result = parser.parse('/**/');
+      final value = result.value as String;
+
       expect(result, isA<Success>());
+      expect(value, '/**/');
     });
 
     test('should parse a multi-line comment with nested markers', () {
       final result = parser.parse('/* outer /* inner */ outer */');
+      final value = result.value as String;
+
       expect(result, isA<Success>());
+      expect(value, '/* outer /* inner */ outer */');
     });
 
     // Negative cases
 
     test('should fail to parse if not a comment', () {
       final result = parser.parse('not a comment');
+
       expect(result, isA<Failure>());
       expect(result.message, '"/*" expected');
     });
 
     test('should fail to parse unterminated multi-line comment', () {
       final result = parser.parse('/* unterminated');
+
       expect(result, isA<Failure>());
       expect(result.message, '"*/" expected');
     });
 
     test('should fail to parse empty string', () {
       final result = parser.parse('');
+
       expect(result, isA<Failure>());
       expect(result.message, '"/*" expected');
     });

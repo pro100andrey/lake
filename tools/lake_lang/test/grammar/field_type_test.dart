@@ -128,7 +128,7 @@ void main() {
     test('should parse type with whitespace', () {
       final result = parser.parse('   i64   ');
       final Token(:String value) = result.value;
-      
+
       expect(result, isA<Success>());
       expect(value, 'i64');
     });
@@ -172,7 +172,7 @@ void main() {
 
     test('should fail to parse type with invalid characters', () {
       final result = parser.parse('list<i32!>');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, 'end of input expected');
     });

@@ -194,42 +194,42 @@ void main() {
 
     test('should fail to parse missing closing brace', () {
       final result = parser.parse('{"a": 1');
-     
+
       expect(result, isA<Failure>());
       expect(result.message, '"}" expected');
     });
 
     test('should fail to parse missing opening brace', () {
       final result = parser.parse('"a": 1}');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, '"{" expected');
     });
 
     test('should fail to parse not a map', () {
       final result = parser.parse('notamap');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, '"{" expected');
     });
 
     test('should fail to parse map with missing colon', () {
       final result = parser.parse('{"a" 1}');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, '"}" expected');
     });
 
     test('should fail to parse map with invalid separator', () {
       final result = parser.parse('{1:2 | 3:4}');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, '"}" expected');
     });
 
     test('should fail to parse empty string', () {
       final result = parser.parse('');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, '"{" expected');
     });

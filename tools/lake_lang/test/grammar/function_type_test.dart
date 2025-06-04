@@ -116,14 +116,14 @@ void main() {
 
     test('should fail to parse partial stream type', () {
       final result = parser.parse('stream<');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, 'end of input expected');
     });
 
     test('should fail to parse random text', () {
       final result = parser.parse('random text');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, 'end of input expected');
     });

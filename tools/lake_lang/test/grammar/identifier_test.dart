@@ -158,7 +158,7 @@ void main() {
 
     test('should fail to parse identifier with tab inside', () {
       final result = parser.parse('foo\tbar');
-      
+
       expect(result, isA<Failure>());
       expect(result.message, 'end of input expected');
     });
