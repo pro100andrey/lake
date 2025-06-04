@@ -12,8 +12,6 @@ void main() {
 
     test('should parse "map<string, bool>"', () {
       final result = parser.parse('map<string,bool>');
-      expect(result, isA<Success>());
-
       final [
         Token t1,
         Token ld,
@@ -23,6 +21,7 @@ void main() {
         Token rd,
       ] = result.value as List;
 
+      expect(result, isA<Success>());
       expect(t1.value, 'map');
       expect(ld.value, '<');
       expect(keyT.value, 'string');
@@ -33,8 +32,6 @@ void main() {
 
     test('should parse "map<i32, i64>"', () {
       final result = parser.parse('map<i32,i64>');
-      expect(result, isA<Success>());
-
       final [
         Token t1,
         Token ld,
@@ -44,6 +41,7 @@ void main() {
         Token rd,
       ] = result.value as List;
 
+      expect(result, isA<Success>());
       expect(t1.value, 'map');
       expect(ld.value, '<');
       expect(keyT.value, 'i32');
@@ -54,8 +52,6 @@ void main() {
 
     test('should parse "map<string, list<double>>"', () {
       final result = parser.parse('map<string,list<double>>');
-      expect(result, isA<Success>());
-
       final [
         Token t1,
         Token ld,
@@ -65,11 +61,11 @@ void main() {
         Token rd,
       ] = result.value as List;
 
+      expect(result, isA<Success>());
       expect(t1.value, 'map');
       expect(ld.value, '<');
       expect(keyT.value, 'string');
       expect(comma.value, ',');
-      // valueType is a nested list type
       expect(valueT.value, 'list');
       expect(ld1.value, '<');
       expect(t2.value, 'double');
@@ -81,54 +77,63 @@ void main() {
 
     test('should fail to parse map with missing key type', () {
       final result = parser.parse('map<,bool>');
+      
       expect(result, isA<Failure>());
       expect(result.message, '"_" expected');
     });
 
     test('should fail to parse map with missing value type', () {
       final result = parser.parse('map<string,>');
+      
       expect(result, isA<Failure>());
       expect(result.message, '"_" expected');
     });
 
     test('should fail to parse map with missing comma', () {
       final result = parser.parse('map<string bool>');
+      
       expect(result, isA<Failure>());
       expect(result.message, '"," expected');
     });
 
     test('should fail to parse map with extra characters', () {
       final result = parser.parse('map<string,bool>1');
+      
       expect(result, isA<Failure>());
       expect(result.message, 'end of input expected');
     });
 
     test('should fail to parse map with wrong case', () {
       final result = parser.parse('Map<string,bool>');
+      
       expect(result, isA<Failure>());
       expect(result.message, '"map" expected');
     });
 
     test('should fail to parse map with inner space in key type', () {
       final result = parser.parse('map<str ing,bool>');
+      
       expect(result, isA<Failure>());
       expect(result.message, '"," expected');
     });
 
     test('should fail to parse map with non-ascii character', () {
       final result = parser.parse('map<stríng,bool>');
+      
       expect(result, isA<Failure>());
       expect(result.message, '"," expected');
     });
 
     test('should fail to parse map with separator', () {
       final result = parser.parse('map<string,bool>;');
+      
       expect(result, isA<Failure>());
       expect(result.message, 'end of input expected');
     });
 
     test('should fail to parse empty string', () {
       final result = parser.parse('');
+      
       expect(result, isA<Failure>());
       expect(result.message, '"map" expected');
     });
