@@ -222,7 +222,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final span = _getSpan(token, token);
 
-    return BaseTypeNode(type: token.value, span: span);
+    return BaseTypeNode(value: token.value, span: span);
   });
 
   @override

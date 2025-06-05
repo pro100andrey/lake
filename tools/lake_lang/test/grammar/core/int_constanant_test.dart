@@ -104,13 +104,13 @@ void main() {
     test('should fail to parse a number with a decimal point', () {
       final result = parser.parse('123.45');
       expect(result, isA<Failure>());
-      expect(result.message, 'end of input expected');
+      expect(result.message, 'success not expected');
     });
 
     test('should fail to parse a number with an exponent', () {
       final result = parser.parse('1e10');
       expect(result, isA<Failure>());
-      expect(result.message, 'end of input expected');
+      expect(result.message, 'success not expected');
     });
 
     test('should fail to parse an empty string', () {

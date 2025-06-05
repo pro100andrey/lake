@@ -186,16 +186,24 @@ class LakeGrammarDefinition extends GrammarDefinition {
   Parser constValue() =>
       ref0(constList) |
       ref0(constMap) |
-      ref0(doubleConstant) |
       ref0(intConstant) |
+      ref0(doubleConstant) |
       ref0(identifier) |
       ref0(literal);
 
   // [28] IntConstant ::= ('+' | '-')? Digit+
-  Parser intConstant() => ref1(
-    token,
-    ((char('+') | char('-')).optional() & digit().plus()).flatten(),
-  );
+  Parser intConstant() {
+    final sign = (char('+') | char('-')).optional();
+    final integerPart = sign & digit().plus();
+
+    final noDecimalOrExponent = (char('.') | char('E') | char('e')).not();
+    final combined = integerPart & noDecimalOrExponent;
+
+    return ref1(
+      token,
+      combined.flatten(),
+    );
+  }
 
   // [29] DoubleConstant ::= ('+' | '-')?
   // ( Digit* '.' Digit+ ( ('E' | 'e') ('+' | '-')? Digit+ )? |
@@ -203,9 +211,13 @@ class LakeGrammarDefinition extends GrammarDefinition {
   Parser doubleConstant() {
     final sign = (char('+') | char('-')).optional();
     final exponent = (char('E') | char('e')) & (sign & digit().plus());
+
+    final decimalPart = digit().star() & char('.') & digit().plus();
+    final integerWithDecimal = decimalPart & exponent.optional();
+    final integerWithExponent = digit().plus() & exponent;
+
     final numberBody =
-        (digit().star() & char('.') & digit().plus() & exponent.optional()) |
-        (digit().plus() & exponent.optional());
+        integerWithDecimal | integerWithExponent;
 
     final combinedParts = (sign & numberBody).flatten();
 

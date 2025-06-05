@@ -181,6 +181,13 @@ void main() {
       expect(result.message, 'digit expected');
     });
 
+    test('should fail to parse only a digit', () {
+      final result = parser.parse('5');
+
+      expect(result, isA<Failure>());
+      expect(result.message, '"e" expected');
+    });
+
     test('should fail to parse only an exponent', () {
       final result = parser.parse('e10');
 
@@ -199,7 +206,7 @@ void main() {
       final result = parser.parse('1..2');
 
       expect(result, isA<Failure>());
-      expect(result.message, 'end of input expected');
+      expect(result.message, '"e" expected');
     });
 
     test('should fail to parse only sign', () {
@@ -228,14 +235,15 @@ void main() {
         final result = parser.parse('123.');
 
         expect(result, isA<Failure>());
-        expect(result.message, 'end of input expected');
+        expect(result.message, '"e" expected');
       },
     );
+
     test('should fail to parse zero ending with a dot (no digits after)', () {
       final result = parser.parse('0.');
 
       expect(result, isA<Failure>());
-      expect(result.message, 'end of input expected');
+      expect(result.message, '"e" expected');
     });
 
     test('should fail to parse sign and exponent only', () {
@@ -257,6 +265,27 @@ void main() {
 
     test('should fail to parse number with underscore', () {
       final result = parser.parse('1_2.3');
+
+      expect(result, isA<Failure>());
+      expect(result.message, '"e" expected');
+    });
+
+    test('should fail to parse number with multiple dots', () {
+      final result = parser.parse('1.2.3');
+
+      expect(result, isA<Failure>());
+      expect(result.message, 'end of input expected');
+    });
+
+    test('should fail to parse number with multiple exponents', () {
+      final result = parser.parse('1.2e3e4');
+
+      expect(result, isA<Failure>());
+      expect(result.message, 'end of input expected');
+    });
+
+    test('should fail to parse number with invalid characters', () {
+      final result = parser.parse(r'1.2e3$');
 
       expect(result, isA<Failure>());
       expect(result.message, 'end of input expected');

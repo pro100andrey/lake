@@ -270,15 +270,15 @@ sealed class TypeNode extends AstNode {
 }
 
 final class BaseTypeNode extends TypeNode {
-  const BaseTypeNode({required this.type, required super.span});
+  const BaseTypeNode({required this.value, required super.span});
 
-  final String type;
+  final String value;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitBaseTypeNode(this);
 
   @override
-  List<Object?> get props => [type, span];
+  List<Object?> get props => [value, span];
 }
 
 sealed class ContainerTypeNode extends TypeNode {

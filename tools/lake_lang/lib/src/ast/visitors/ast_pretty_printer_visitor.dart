@@ -186,7 +186,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
 
   @override
   void visitBaseTypeNode(BaseTypeNode node) {
-    _printNode('BaseTypeNode', {'type': node.type});
+    _printNode('BaseTypeNode', {'type': node.value});
   }
 
   @override
