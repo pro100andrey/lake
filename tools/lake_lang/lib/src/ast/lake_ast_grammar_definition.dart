@@ -110,7 +110,11 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final span = _getSpan(keyword, rd);
 
-    return EnumDefinitionNode(name: identifier, values: enumValues, span: span);
+    return EnumDefinitionNode(
+      identifier: identifier,
+      values: enumValues,
+      span: span,
+    );
   });
 
   @override
@@ -123,7 +127,11 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final span = _getSpan(memberName, separator ?? value ?? memberName);
 
-    return EnumValueNode(memberName: memberName, value: value, span: span);
+    return EnumValueNode(
+      identifier: memberName,
+      value: value,
+      span: span,
+    );
   });
 
   @override
@@ -141,7 +149,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     final fieldNodes = fields.cast<FieldNode>();
 
     return StructDefinitionNode(
-      name: identifier,
+      identifier: identifier,
       fields: fieldNodes,
       span: span,
     );

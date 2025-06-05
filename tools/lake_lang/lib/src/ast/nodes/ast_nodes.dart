@@ -121,53 +121,53 @@ final class TypedefDefinitionNode extends DefinitionNode {
 
 final class EnumDefinitionNode extends DefinitionNode {
   const EnumDefinitionNode({
-    required this.name,
+    required this.identifier,
     required this.values,
     required super.span,
   });
 
-  final IdentifierNode name;
+  final IdentifierNode identifier;
   final List<EnumValueNode> values;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitEnumDefinitionNode(this);
 
   @override
-  List<Object?> get props => [name, values, span];
+  List<Object?> get props => [identifier, values, span];
 }
 
 final class EnumValueNode extends AstNode {
   const EnumValueNode({
-    required this.memberName,
+    required this.identifier,
     required super.span,
     this.value,
   });
 
-  final IdentifierNode memberName;
+  final IdentifierNode identifier;
   final IntConstantNode? value;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitEnumValueNode(this);
 
   @override
-  List<Object?> get props => [memberName, value, span];
+  List<Object?> get props => [identifier, value, span];
 }
 
 final class StructDefinitionNode extends DefinitionNode {
   const StructDefinitionNode({
-    required this.name,
+    required this.identifier,
     required this.fields,
     required super.span,
   });
 
-  final IdentifierNode name;
+  final IdentifierNode identifier;
   final List<FieldNode> fields;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitStructDefinitionNode(this);
 
   @override
-  List<Object?> get props => [name, fields, span];
+  List<Object?> get props => [identifier, fields, span];
 }
 
 final class ExceptionDefinitionNode extends DefinitionNode {

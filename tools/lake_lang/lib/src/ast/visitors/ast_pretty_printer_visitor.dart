@@ -89,7 +89,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
     _printNode('EnumDefinitionNode');
     _withIndentation(() {
       _printNode('Name:');
-      _withIndentation(() => node.name.accept(this));
+      _withIndentation(() => node.identifier.accept(this));
       _visitNodeList(node.values, 'Values');
     });
   }
@@ -99,7 +99,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
     _printNode('EnumValueNode');
     _withIndentation(() {
       _printNode('MemberName:');
-      _withIndentation(() => node.memberName.accept(this));
+      _withIndentation(() => node.identifier.accept(this));
       if (node.value != null) {
         _printNode('Initializer:');
         _withIndentation(() => node.value!.accept(this));
@@ -112,7 +112,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
     _printNode('StructDefinitionNode');
     _withIndentation(() {
       _printNode('Name:');
-      _withIndentation(() => node.name.accept(this));
+      _withIndentation(() => node.identifier.accept(this));
       _visitNodeList(node.fields, 'Fields');
     });
   }
