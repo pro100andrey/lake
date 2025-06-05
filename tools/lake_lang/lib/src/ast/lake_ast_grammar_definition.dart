@@ -127,7 +127,8 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final value = switch (v) {
       [_, final IntConstantNode value] => value,
-      _ => null,
+      null => null,
+      _ => throw StateError('Unexpected enum value list: $v'),
     };
 
     final span = _getSpan(identifier, separator ?? value ?? identifier);
