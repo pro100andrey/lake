@@ -68,15 +68,15 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
       Token keyword,
       TypeNode type,
       IdentifierNode identifier,
-      Token equalOp,
+      Token eq,
       ConstValueNode value,
-      _,
+      Token? listSeparator,
     ] = t as List;
 
-    final span = _getSpan(keyword, value);
+    final span = _getSpan(keyword, listSeparator ?? value);
 
     return ConstDefinitionNode(
-      name: identifier,
+      identifier: identifier,
       type: type,
       value: value,
       span: span,
@@ -222,7 +222,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final span = _getSpan(token, token);
 
-    return BaseTypeNode(value: token.value, span: span);
+    return BaseTypeNode(type: token.value, span: span);
   });
 
   @override
@@ -248,7 +248,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
       _ => throw StateError('Unexpected value type in map: $valueType'),
     };
 
-    final span = _getSpan(ld, rd);
+    final span = _getSpan(mapKeyword, rd);
 
     return MapTypeNode(
       keyType: keyTypeNode,
@@ -274,18 +274,18 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
   @override
   Parser listType() => super.listType().map((t) {
-    final [Token listKeyword, Token ld, AstNode type, Token rd] = t as List;
+    final [Token keyword, Token ld, AstNode type, Token rd] = t as List;
 
-    final itemType = switch (type) {
+    final elementType = switch (type) {
       BaseTypeNode() => type,
       IdentifierNode() => CustomTypeNode(type: type, span: type.span),
 
       _ => throw StateError('Unexpected type in list: $type'),
     };
 
-    final span = _getSpan(ld, rd);
+    final span = _getSpan(keyword, rd);
 
-    return ListTypeNode(itemType: itemType, span: span);
+    return ListTypeNode(elementType: elementType, span: span);
   });
 
   @override
@@ -325,11 +325,9 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final span = _getSpan(ld, rd);
 
-    final entriesList = values
+    final entries = values
         .map((e) => MapEntry(e[0] as ConstValueNode, e[2] as ConstValueNode))
         .toList(growable: false);
-
-    final entries = Map.fromEntries(entriesList);
 
     return ConstMapNode(entries: entries, span: span);
   });
@@ -382,7 +380,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   });
 
   @override
-  Parser function() => super.function().map((t) {
+  Parser function() => super.function().map((e) {
     final [
       AstNode returnType,
       IdentifierNode methodName,
@@ -391,7 +389,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
       Token rparen,
       List? throws,
       Token? separator,
-    ] = t as List;
+    ] = e as List;
 
     final calculatedReturnType = switch (returnType) {
       TypeNode() => returnType,
@@ -424,17 +422,17 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   });
 
   @override
-  Parser streamType() => super.streamType().map((t) {
-    final [Token streamKeyword, Token ld, AstNode type, Token rd] = t as List;
+  Parser streamType() => super.streamType().map((e) {
+    final [Token keyword, Token ld, AstNode t, Token rd] = e as List;
 
-    final itemType = switch (type) {
-      BaseTypeNode() => type,
-      IdentifierNode() => CustomTypeNode(type: type, span: type.span),
-      _ => throw StateError('Unexpected type in stream: $type'),
+    final type = switch (t) {
+      BaseTypeNode() => t,
+      IdentifierNode() => CustomTypeNode(type: t, span: t.span),
+      _ => throw StateError('Unexpected type in stream: $t'),
     };
 
     final span = _getSpan(ld, rd);
 
-    return StreamTypeNode(itemType: itemType, span: span);
+    return StreamTypeNode(type: type, span: span);
   });
 }

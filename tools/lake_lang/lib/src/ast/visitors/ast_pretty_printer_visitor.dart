@@ -66,8 +66,8 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
     _withIndentation(() {
       _printNode('Type:');
       _withIndentation(() => node.type.accept(this));
-      _printNode('Name:');
-      _withIndentation(() => node.name.accept(this));
+      _printNode('Identifier:');
+      _withIndentation(() => node.identifier.accept(this));
       _printNode('Value:');
       _withIndentation(() => node.value.accept(this));
     });
@@ -186,7 +186,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
 
   @override
   void visitBaseTypeNode(BaseTypeNode node) {
-    _printNode('BaseTypeNode', {'type': node.value});
+    _printNode('BaseTypeNode', {'type': node.type});
   }
 
   @override
@@ -213,8 +213,8 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   void visitListTypeNode(ListTypeNode node) {
     _printNode('ListTypeNode');
     _withIndentation(() {
-      _printNode('ItemType:');
-      _withIndentation(() => node.itemType.accept(this));
+      _printNode('elementType:');
+      _withIndentation(() => node.elementType.accept(this));
     });
   }
 
@@ -222,8 +222,8 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   void visitStreamTypeNode(StreamTypeNode node) {
     _printNode('StreamTypeNode');
     _withIndentation(() {
-      _printNode('ItemType:');
-      _withIndentation(() => node.itemType.accept(this));
+      _printNode('type:');
+      _withIndentation(() => node.type.accept(this));
     });
   }
 
@@ -282,15 +282,15 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
       }
       _printNode('Entries:');
       _withIndentation(() {
-        node.entries.forEach((key, value) {
+        for (final entry in node.entries) {
           _printNode('Entry:');
           _withIndentation(() {
             _printNode('Key:');
-            _withIndentation(() => key.accept(this));
+            _withIndentation(() => entry.key.accept(this));
             _printNode('Value:');
-            _withIndentation(() => value.accept(this));
+            _withIndentation(() => entry.value.accept(this));
           });
-        });
+        }
       });
     });
   }

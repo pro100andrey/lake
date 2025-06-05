@@ -50,6 +50,17 @@ void main() {
       expect(value, 'pkg.Type');
     });
 
+    test('should parse stream type', () {
+      final result = parser.parse('stream<i32>');
+      final [Token t, Token ld, Token t1, Token rd] = result.value as List;
+
+      expect(result, isA<Success>());
+      expect(t.value, 'stream');
+      expect(ld.value, '<');
+      expect(t1.value, 'i32');
+      expect(rd.value, '>');
+    });
+
     test('should parse list type', () {
       final result = parser.parse('list<i32>');
       final [Token t, Token ld, Token t1, Token rd] = result.value as List;
@@ -143,13 +154,6 @@ void main() {
 
     test('should fail to parse map with missing comma', () {
       final result = parser.parse('map<string string>');
-
-      expect(result, isA<Failure>());
-      expect(result.message, 'end of input expected');
-    });
-
-    test('should fail to parse map with missing comma', () {
-      final result = parser.parse('stream<string>');
 
       expect(result, isA<Failure>());
       expect(result.message, 'end of input expected');

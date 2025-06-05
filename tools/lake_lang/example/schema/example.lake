@@ -132,12 +132,15 @@ service UserService {
     1: UserProfile profile
   ) throws (
     1: InvalidArgumentsException invalidArgs,
-    2: UserNotFoundException userNotFound
+    2: UserNotFoundException userNotFound*-
   )
 }
 
 service ChatService {
-   stream<string> sendMessage(1: string test, 2: UUID userId) throws (
+   stream<string> sendMessage(
+    1: string test, 
+    2: UUID userId
+  ) throws (
     1: InvalidArgumentsException invalidArgs,
     2: UserNotFoundException userNotFound
   )

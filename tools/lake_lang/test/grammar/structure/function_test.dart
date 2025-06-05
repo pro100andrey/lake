@@ -77,7 +77,16 @@ void main() {
         Token t,
         Token id,
         Token ld,
-        [[Token stream, Token lt, Token type, Token gt], Token id1],
+        [
+          [
+            _,
+            _,
+            [Token stream, Token lt, Token type, Token gt],
+            Token id1,
+            _,
+            _,
+          ],
+        ],
         Token rd,
         _,
         _,

@@ -85,20 +85,20 @@ sealed class DefinitionNode extends AstNode {
 final class ConstDefinitionNode extends DefinitionNode {
   const ConstDefinitionNode({
     required this.type,
-    required this.name,
+    required this.identifier,
     required this.value,
     required super.span,
   });
 
   final TypeNode type;
-  final IdentifierNode name;
+  final IdentifierNode identifier;
   final ConstValueNode value;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitConstDefinitionNode(this);
 
   @override
-  List<Object?> get props => [type, name, value, span];
+  List<Object?> get props => [type, identifier, value, span];
 }
 
 final class TypedefDefinitionNode extends DefinitionNode {
@@ -270,15 +270,15 @@ sealed class TypeNode extends AstNode {
 }
 
 final class BaseTypeNode extends TypeNode {
-  const BaseTypeNode({required this.value, required super.span});
+  const BaseTypeNode({required this.type, required super.span});
 
-  final String value;
+  final String type;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitBaseTypeNode(this);
 
   @override
-  List<Object?> get props => [value, span];
+  List<Object?> get props => [type, span];
 }
 
 sealed class ContainerTypeNode extends TypeNode {
@@ -315,26 +315,26 @@ final class SetTypeNode extends ContainerTypeNode {
 }
 
 final class ListTypeNode extends ContainerTypeNode {
-  const ListTypeNode({required this.itemType, required super.span});
+  const ListTypeNode({required this.elementType, required super.span});
 
-  final TypeNode itemType;
+  final TypeNode elementType;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitListTypeNode(this);
 
   @override
-  List<Object?> get props => [itemType, span];
+  List<Object?> get props => [elementType, span];
 }
 
 final class StreamTypeNode extends TypeNode {
-  const StreamTypeNode({required this.itemType, required super.span});
-  final TypeNode itemType;
+  const StreamTypeNode({required this.type, required super.span});
+  final TypeNode type;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitStreamTypeNode(this);
 
   @override
-  List<Object?> get props => [itemType, span];
+  List<Object?> get props => [type, span];
 }
 
 final class CustomTypeNode extends TypeNode {
@@ -415,7 +415,7 @@ final class ConstListNode extends ConstValueNode {
 final class ConstMapNode extends ConstValueNode {
   const ConstMapNode({required this.entries, required super.span});
 
-  final Map<ConstValueNode, ConstValueNode> entries;
+  final List<MapEntry<ConstValueNode, ConstValueNode>> entries;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitConstMapNode(this);

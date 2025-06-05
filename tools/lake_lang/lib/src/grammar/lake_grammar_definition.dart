@@ -111,14 +111,13 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(functionType) &
       ref0(identifier) &
       ref1(token, '(') &
-      (ref0(streamType) & ref0(identifier) | ref0(field).star()) &
+      ref0(field).star() &
       ref1(token, ')') &
       ref0(throws).optional() &
       ref0(listSeparator).optional();
 
-  // [17] FunctionType ::= StreamType | FieldType | 'void'
-  Parser functionType() =>
-      ref0(streamType) | ref0(fieldType) | ref1(token, 'void');
+  // [17] FunctionType ::= FieldType | 'void'
+  Parser functionType() => ref0(fieldType) | ref1(token, 'void');
 
   // [18] Throws ::= 'throws' '(' Field* ')'
   Parser throws() =>
@@ -127,8 +126,12 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(field).star() &
       ref1(token, ')');
 
-  // [19] FieldType ::= ContainerType | BaseType | Identifier
-  Parser fieldType() => ref0(containerType) | ref0(baseType) | ref0(identifier);
+  // [19] FieldType ::= StreamType | ContainerType | BaseType | Identifier
+  Parser fieldType() =>
+      ref0(streamType) |
+      ref0(containerType) |
+      ref0(baseType) |
+      ref0(identifier);
 
   // [20] DefinitionType ::= ContainerType | BaseType
   Parser definitionType() => ref0(containerType) | ref0(baseType);
@@ -216,8 +219,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
     final integerWithDecimal = decimalPart & exponent.optional();
     final integerWithExponent = digit().plus() & exponent;
 
-    final numberBody =
-        integerWithDecimal | integerWithExponent;
+    final numberBody = integerWithDecimal | integerWithExponent;
 
     final combinedParts = (sign & numberBody).flatten();
 
