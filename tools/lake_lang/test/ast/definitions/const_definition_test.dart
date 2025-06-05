@@ -134,27 +134,23 @@ void main() {
       final elements = (def.value as ConstListNode).elements
           .cast<IntConstantNode>();
 
-      final e0 = elements[0];
-      final e1 = elements[1];
-      final e2 = elements[2];
-
       expect(def.identifier.value, 'myArray');
       expect(elementType.type, 'i32');
 
-      expect(e0.value, '1');
-      expect(e0.span!.text, '1');
-      expect(e0.span!.start.offset, 27);
-      expect(e0.span!.end.offset, 28);
+      expect(elements[0].value, '1');
+      expect(elements[0].span!.text, '1');
+      expect(elements[0].span!.start.offset, 27);
+      expect(elements[0].span!.end.offset, 28);
 
-      expect(e1.value, '2');
-      expect(e1.span!.text, '2');
-      expect(e1.span!.start.offset, 30);
-      expect(e1.span!.end.offset, 31);
+      expect(elements[1].value, '2');
+      expect(elements[1].span!.text, '2');
+      expect(elements[1].span!.start.offset, 30);
+      expect(elements[1].span!.end.offset, 31);
 
-      expect(e2.value, '3');
-      expect(e2.span!.text, '3');
-      expect(e2.span!.start.offset, 33);
-      expect(e2.span!.end.offset, 34);
+      expect(elements[2].value, '3');
+      expect(elements[2].span!.text, '3');
+      expect(elements[2].span!.start.offset, 33);
+      expect(elements[2].span!.end.offset, 34);
 
       expect(def.span!.text, 'const list<i32> myArray = [1, 2, 3];');
       expect(def.span!.start.offset, 0);

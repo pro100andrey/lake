@@ -120,15 +120,20 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   @override
   Parser enumValue() => super.enumValue().map((t) {
     final [
-      IdentifierNode memberName,
-      [Token? equalOp, IntConstantNode? value],
+      IdentifierNode identifier,
+      List? v,
       Token? separator,
     ] = t as List;
 
-    final span = _getSpan(memberName, separator ?? value ?? memberName);
+    final value = switch (v) {
+      [_, final IntConstantNode value] => value,
+      _ => null,
+    };
+
+    final span = _getSpan(identifier, separator ?? value ?? identifier);
 
     return EnumValueNode(
-      identifier: memberName,
+      identifier: identifier,
       value: value,
       span: span,
     );

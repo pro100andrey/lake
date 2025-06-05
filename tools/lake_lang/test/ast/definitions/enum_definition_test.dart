@@ -16,7 +16,7 @@ void main() {
       expect(def.values, isEmpty);
       expect(def.span!.text, 'enum Color {}');
       expect(def.span!.start.offset, 0);
-      expect(def.span!.end.offset, 14);
+      expect(def.span!.end.offset, 13);
 
       expect(def.identifier.span!.text, 'Color');
       expect(def.identifier.span!.start.offset, 5);
@@ -35,13 +35,14 @@ void main() {
       expect(def.values[0].identifier.value, 'RED');
       expect(def.values[1].identifier.value, 'GREEN');
       expect(def.values[2].identifier.value, 'BLUE');
+      
       expect(def.values[0].value, isNull);
       expect(def.values[1].value, isNull);
       expect(def.values[2].value, isNull);
 
       expect(def.span!.text, 'enum Color { RED, GREEN, BLUE }');
       expect(def.span!.start.offset, 0);
-      expect(def.span!.end.offset, 30);
+      expect(def.span!.end.offset, 31);
     });
 
     test('should parse enum with explicit int values', () {
