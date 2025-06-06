@@ -101,5 +101,26 @@ void main() {
       expect(def.values[0].identifier.value, 'A');
       expect(def.values[1].identifier.value, 'B');
     });
+
+    test('should parse enum with comments', () {
+      const source = '''
+        enum Color {
+          // Primary colors
+          RED, // Red color
+          GREEN, /* Green color */
+          BLUE // Blue color
+        }
+      ''';
+      final doc = parseAst(source);
+
+      expect(doc.definitions, hasLength(1));
+      final def = doc.definitions.first as EnumDefinitionNode;
+
+      expect(def.identifier.value, 'Color');
+      expect(def.values, hasLength(3));
+      expect(def.values[0].identifier.value, 'RED');
+      expect(def.values[1].identifier.value, 'GREEN');
+      expect(def.values[2].identifier.value, 'BLUE');
+    });
   });
 }

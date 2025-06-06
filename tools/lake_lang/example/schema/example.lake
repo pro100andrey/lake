@@ -132,7 +132,7 @@ service UserService {
     1: UserProfile profile
   ) throws (
     1: InvalidArgumentsException invalidArgs,
-    2: UserNotFoundException userNotFound*-
+    2: UserNotFoundException userNotFound
   )
 }
 

@@ -104,19 +104,19 @@ final class ConstDefinitionNode extends DefinitionNode {
 final class TypedefDefinitionNode extends DefinitionNode {
   const TypedefDefinitionNode({
     required this.type,
-    required this.name,
+    required this.identifier,
     required super.span,
   });
 
   final TypeNode type;
-  final IdentifierNode name;
+  final IdentifierNode identifier;
 
   @override
   T accept<T>(AstVisitor<T> visitor) =>
       visitor.visitTypedefDefinitionNode(this);
 
   @override
-  List<Object?> get props => [type, name, span];
+  List<Object?> get props => [type, identifier, span];
 }
 
 final class EnumDefinitionNode extends DefinitionNode {
@@ -172,12 +172,12 @@ final class StructDefinitionNode extends DefinitionNode {
 
 final class ExceptionDefinitionNode extends DefinitionNode {
   const ExceptionDefinitionNode({
-    required this.name,
+    required this.identifier,
     required this.fields,
     required super.span,
   });
 
-  final IdentifierNode name;
+  final IdentifierNode identifier;
   final List<FieldNode> fields;
 
   @override
@@ -185,18 +185,18 @@ final class ExceptionDefinitionNode extends DefinitionNode {
       visitor.visitExceptionDefinitionNode(this);
 
   @override
-  List<Object?> get props => [name, fields, span];
+  List<Object?> get props => [identifier, fields, span];
 }
 
 final class ServiceDefinitionNode extends DefinitionNode {
   const ServiceDefinitionNode({
-    required this.name,
+    required this.identifier,
     required this.extendsService,
     required this.functions,
     required super.span,
   });
 
-  final IdentifierNode name;
+  final IdentifierNode identifier;
   final IdentifierNode? extendsService;
   final List<FunctionNode> functions;
 
@@ -205,7 +205,7 @@ final class ServiceDefinitionNode extends DefinitionNode {
       visitor.visitServiceDefinitionNode(this);
 
   @override
-  List<Object?> get props => [name, extendsService, functions, span];
+  List<Object?> get props => [identifier, extendsService, functions, span];
 }
 
 final class FieldRequirementNode extends AstNode {
@@ -222,38 +222,45 @@ final class FieldRequirementNode extends AstNode {
 
 final class FieldNode extends AstNode {
   const FieldNode({
-    required this.id,
+    required this.fieldId,
     required this.requirement,
     required this.type,
-    required this.name,
+    required this.identifier,
     required this.defaultValue,
     required super.span,
   });
 
-  final IntConstantNode id;
+  final IntConstantNode? fieldId;
   final FieldRequirementNode? requirement;
   final TypeNode type;
-  final IdentifierNode name;
+  final IdentifierNode identifier;
   final ConstValueNode? defaultValue;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitFieldNode(this);
 
   @override
-  List<Object?> get props => [id, requirement, type, name, defaultValue, span];
+  List<Object?> get props => [
+    fieldId,
+    requirement,
+    type,
+    identifier,
+    defaultValue,
+    span,
+  ];
 }
 
 final class FunctionNode extends AstNode {
   const FunctionNode({
     required this.returnType,
-    required this.name,
+    required this.identifier,
     required this.parameters,
     required this.throws,
     required super.span,
   });
 
   final TypeNode returnType;
-  final IdentifierNode name;
+  final IdentifierNode identifier;
   final List<FieldNode> parameters;
   final List<FieldNode> throws;
 
@@ -261,7 +268,7 @@ final class FunctionNode extends AstNode {
   T accept<T>(AstVisitor<T> visitor) => visitor.visitFunctionNode(this);
 
   @override
-  List<Object?> get props => [returnType, name, parameters, throws, span];
+  List<Object?> get props => [returnType, identifier, parameters, throws, span];
 }
 
 // Types

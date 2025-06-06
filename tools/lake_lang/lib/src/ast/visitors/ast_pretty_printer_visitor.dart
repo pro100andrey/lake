@@ -79,8 +79,8 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
     _withIndentation(() {
       _printNode('Type:');
       _withIndentation(() => node.type.accept(this));
-      _printNode('Name:');
-      _withIndentation(() => node.name.accept(this));
+      _printNode('Identifier:');
+      _withIndentation(() => node.identifier.accept(this));
     });
   }
 
@@ -88,7 +88,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   void visitEnumDefinitionNode(EnumDefinitionNode node) {
     _printNode('EnumDefinitionNode');
     _withIndentation(() {
-      _printNode('Name:');
+      _printNode('Identifier:');
       _withIndentation(() => node.identifier.accept(this));
       _visitNodeList(node.values, 'Values');
     });
@@ -98,7 +98,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   void visitEnumValueNode(EnumValueNode node) {
     _printNode('EnumValueNode');
     _withIndentation(() {
-      _printNode('MemberName:');
+      _printNode('Identifier:');
       _withIndentation(() => node.identifier.accept(this));
       if (node.value != null) {
         _printNode('Initializer:');
@@ -111,7 +111,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   void visitStructDefinitionNode(StructDefinitionNode node) {
     _printNode('StructDefinitionNode');
     _withIndentation(() {
-      _printNode('Name:');
+      _printNode('Identifier:');
       _withIndentation(() => node.identifier.accept(this));
       _visitNodeList(node.fields, 'Fields');
     });
@@ -121,8 +121,8 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   void visitExceptionDefinitionNode(ExceptionDefinitionNode node) {
     _printNode('ExceptionDefinitionNode');
     _withIndentation(() {
-      _printNode('Name:');
-      _withIndentation(() => node.name.accept(this));
+      _printNode('Identifier:');
+      _withIndentation(() => node.identifier.accept(this));
       _visitNodeList(node.fields, 'Fields');
     });
   }
@@ -131,8 +131,8 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   void visitServiceDefinitionNode(ServiceDefinitionNode node) {
     _printNode('ServiceDefinitionNode');
     _withIndentation(() {
-      _printNode('Name:');
-      _withIndentation(() => node.name.accept(this));
+      _printNode('Identifier:');
+      _withIndentation(() => node.identifier.accept(this));
       if (node.extendsService != null) {
         _printNode('Extends:');
         _withIndentation(() => node.extendsService!.accept(this));
@@ -150,16 +150,21 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   void visitFieldNode(FieldNode node) {
     _printNode('FieldNode');
     _withIndentation(() {
-      _printNode('ID:');
-      _withIndentation(() => node.id.accept(this));
+      if (node.fieldId != null) {
+        _printNode('FieldId:');
+        _withIndentation(() => node.fieldId!.accept(this));
+      }
+
       if (node.requirement != null) {
         _printNode('Requirement:');
         _withIndentation(() => node.requirement!.accept(this));
       }
+
       _printNode('Type:');
       _withIndentation(() => node.type.accept(this));
-      _printNode('Name:');
-      _withIndentation(() => node.name.accept(this));
+      _printNode('Identifier:');
+      _withIndentation(() => node.identifier.accept(this));
+
       if (node.defaultValue != null) {
         _printNode('DefaultValue:');
         _withIndentation(() => node.defaultValue!.accept(this));
@@ -173,8 +178,10 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
     _withIndentation(() {
       _printNode('ReturnType:');
       _withIndentation(() => node.returnType.accept(this));
-      _printNode('Name:');
-      _withIndentation(() => node.name.accept(this));
+
+      _printNode('Identifier:');
+      _withIndentation(() => node.identifier.accept(this));
+
       _visitNodeList(node.parameters, 'Parameters');
       if (node.throws.isNotEmpty) {
         _visitNodeList(node.throws, 'Throws');

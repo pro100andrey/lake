@@ -94,7 +94,11 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final span = _getSpan(keyword, listSeparator ?? identifier);
 
-    return TypedefDefinitionNode(name: identifier, type: type, span: span);
+    return TypedefDefinitionNode(
+      identifier: identifier,
+      type: type,
+      span: span,
+    );
   });
 
   @override
@@ -176,7 +180,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     final fieldNodes = fields.cast<FieldNode>();
 
     return ExceptionDefinitionNode(
-      name: identifier,
+      identifier: identifier,
       fields: fieldNodes,
       span: span,
     );
@@ -185,13 +189,19 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   @override
   Parser field() => super.field().map((t) {
     final [
-      [IntConstantNode id, Token idSeparator],
+      List? fieldIdentifier,
       FieldRequirementNode? requirement,
       AstNode type,
-      IdentifierNode name,
+      IdentifierNode identifier,
       List? defaultValue,
       Token? separator,
     ] = t as List;
+
+    final fieldId = switch (fieldIdentifier) {
+      [final IntConstantNode index, _] => index,
+      null => null,
+      _ => throw StateError('Unexpected field index format: $fieldIdentifier'),
+    };
 
     final defaultValueResult = switch (defaultValue) {
       null => null,
@@ -209,13 +219,16 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
       _ => throw StateError('Unexpected type in field: $type'),
     };
 
-    final span = _getSpan(id, separator ?? defaultValueResult ?? name);
+    final span = _getSpan(
+      fieldId ?? requirement ?? type,
+      separator ?? defaultValueResult ?? identifier,
+    );
 
     return FieldNode(
-      id: id,
+      fieldId: fieldId,
       requirement: requirement,
       type: calculatedType,
-      name: name,
+      identifier: identifier,
       defaultValue: defaultValueResult,
       span: span,
     );
@@ -368,7 +381,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   Parser serviceDefinition() => super.serviceDefinition().map((t) {
     final [
       Token serviceKeyword,
-      IdentifierNode serviceName,
+      IdentifierNode identifier,
       List? extendsClause,
       Token ld,
       List functions,
@@ -386,7 +399,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     final functionsList = functions.cast<FunctionNode>();
 
     return ServiceDefinitionNode(
-      name: serviceName,
+      identifier: identifier,
       extendsService: extendsService,
       functions: functionsList,
       span: span,
@@ -396,8 +409,8 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   @override
   Parser function() => super.function().map((e) {
     final [
-      AstNode returnType,
-      IdentifierNode methodName,
+      AstNode rType,
+      IdentifierNode identifier,
       Token lparen,
       List parameters,
       Token rparen,
@@ -405,13 +418,13 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
       Token? separator,
     ] = e as List;
 
-    final calculatedReturnType = switch (returnType) {
-      TypeNode() => returnType,
+    final returnType = switch (rType) {
+      TypeNode() => rType,
       IdentifierNode() => CustomTypeNode(
-        type: returnType,
-        span: returnType.span,
+        type: rType,
+        span: rType.span,
       ),
-      _ => throw StateError('Unexpected return type in function: $returnType'),
+      _ => throw StateError('Unexpected return type in function: $rType'),
     };
 
     final parametersList = parameters.cast<FieldNode>();
@@ -427,8 +440,8 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     final span = _getSpan(lparen, separator ?? rparen);
 
     return FunctionNode(
-      returnType: calculatedReturnType,
-      name: methodName,
+      returnType: returnType,
+      identifier: identifier,
       parameters: parametersList,
       throws: throwsLists,
       span: span,
