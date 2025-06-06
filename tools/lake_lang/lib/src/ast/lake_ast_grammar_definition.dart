@@ -420,10 +420,11 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final returnType = switch (rType) {
       TypeNode() => rType,
-      IdentifierNode() => CustomTypeNode(
-        type: rType,
-        span: rType.span,
-      ),
+      IdentifierNode() => switch(rType.value) {
+        'void' => VoidTypeNode(span: rType.span),
+        _ => CustomTypeNode(type: rType, span: rType.span), 
+      }, 
+      
       _ => throw StateError('Unexpected return type in function: $rType'),
     };
 

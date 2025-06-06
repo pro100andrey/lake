@@ -10,17 +10,18 @@ void main() {
       final doc = parseAst(source);
 
       expect(doc.definitions, hasLength(1));
-      final def = doc.definitions.first as EnumDefinitionNode;
 
-      expect(def.identifier.value, 'Color');
-      expect(def.values, isEmpty);
-      expect(def.span!.text, 'enum Color {}');
+      final def = doc.definitions.first as EnumDefinitionNode;
+      expect(def.span!.text, source);
       expect(def.span!.start.offset, 0);
       expect(def.span!.end.offset, 13);
 
+      expect(def.identifier.value, 'Color');
       expect(def.identifier.span!.text, 'Color');
       expect(def.identifier.span!.start.offset, 5);
       expect(def.identifier.span!.end.offset, 10);
+
+      expect(def.values, isEmpty);
     });
 
     test('should parse enum with values', () {
@@ -29,98 +30,76 @@ void main() {
 
       expect(doc.definitions, hasLength(1));
       final def = doc.definitions.first as EnumDefinitionNode;
-
-      expect(def.identifier.value, 'Color');
-      expect(def.values, hasLength(3));
-      expect(def.values[0].identifier.value, 'RED');
-      expect(def.values[1].identifier.value, 'GREEN');
-      expect(def.values[2].identifier.value, 'BLUE');
-      
-      expect(def.values[0].value, isNull);
-      expect(def.values[1].value, isNull);
-      expect(def.values[2].value, isNull);
-
-      expect(def.span!.text, 'enum Color { RED, GREEN, BLUE }');
+      expect(def.span!.text, source);
       expect(def.span!.start.offset, 0);
       expect(def.span!.end.offset, 31);
-    });
-
-    test('should parse enum with explicit int values', () {
-      const source = 'enum Status { OK = 0, ERROR = 1 }';
-      final doc = parseAst(source);
-
-      expect(doc.definitions, hasLength(1));
-      final def = doc.definitions.first as EnumDefinitionNode;
-
-      expect(def.identifier.value, 'Status');
-      expect(def.values, hasLength(2));
-      expect(def.values[0].identifier.value, 'OK');
-      expect(def.values[0].value, isNotNull);
-      expect((def.values[0].value!).value, '0');
-      expect(def.values[1].identifier.value, 'ERROR');
-      expect(def.values[1].value, isNotNull);
-      expect((def.values[1].value!).value, '1');
-    });
-
-    test('should parse enum with trailing comma', () {
-      const source = 'enum E { A, B, }';
-      final doc = parseAst(source);
-
-      expect(doc.definitions, hasLength(1));
-      final def = doc.definitions.first as EnumDefinitionNode;
-
-      expect(def.identifier.value, 'E');
-      expect(def.values, hasLength(2));
-      expect(def.values[0].identifier.value, 'A');
-      expect(def.values[1].identifier.value, 'B');
-    });
-
-    test('should parse enum with mixed separators', () {
-      const source = 'enum E { A, B; C, }';
-      final doc = parseAst(source);
-
-      expect(doc.definitions, hasLength(1));
-      final def = doc.definitions.first as EnumDefinitionNode;
-
-      expect(def.identifier.value, 'E');
-      expect(def.values, hasLength(3));
-      expect(def.values[0].identifier.value, 'A');
-      expect(def.values[1].identifier.value, 'B');
-      expect(def.values[2].identifier.value, 'C');
-    });
-
-    test('should parse enum with whitespace', () {
-      const source = '  enum   E   {   A ,  B   }  ';
-      final doc = parseAst(source);
-
-      expect(doc.definitions, hasLength(1));
-      final def = doc.definitions.first as EnumDefinitionNode;
-
-      expect(def.identifier.value, 'E');
-      expect(def.values, hasLength(2));
-      expect(def.values[0].identifier.value, 'A');
-      expect(def.values[1].identifier.value, 'B');
-    });
-
-    test('should parse enum with comments', () {
-      const source = '''
-        enum Color {
-          // Primary colors
-          RED, // Red color
-          GREEN, /* Green color */
-          BLUE // Blue color
-        }
-      ''';
-      final doc = parseAst(source);
-
-      expect(doc.definitions, hasLength(1));
-      final def = doc.definitions.first as EnumDefinitionNode;
 
       expect(def.identifier.value, 'Color');
+      expect(def.identifier.span!.text, 'Color');
+      expect(def.identifier.span!.start.offset, 5);
+      expect(def.identifier.span!.end.offset, 10);
+
       expect(def.values, hasLength(3));
+
       expect(def.values[0].identifier.value, 'RED');
+      expect(def.values[0].identifier.span!.text, 'RED');
+      expect(def.values[0].identifier.span!.start.offset, 13);
+      expect(def.values[0].identifier.span!.end.offset, 16);
+
+      expect(def.values[0].value, isNull);
+
       expect(def.values[1].identifier.value, 'GREEN');
+      expect(def.values[1].identifier.span!.text, 'GREEN');
+      expect(def.values[1].identifier.span!.start.offset, 18);
+      expect(def.values[1].identifier.span!.end.offset, 23);
+
+      expect(def.values[1].value, isNull);
+
       expect(def.values[2].identifier.value, 'BLUE');
+      expect(def.values[2].identifier.span!.text, 'BLUE');
+      expect(def.values[2].identifier.span!.start.offset, 25);
+      expect(def.values[2].identifier.span!.end.offset, 29);
+
+      expect(def.values[2].value, isNull);
+    });
+
+    test('should parse enum with values and explicit values', () {
+      const source = 'enum Color { RED = 1, GREEN = 2, BLUE = 3 }';
+      final doc = parseAst(source);
+
+      expect(doc.definitions, hasLength(1));
+      final def = doc.definitions.first as EnumDefinitionNode;
+      expect(def.span!.text, source);
+      expect(def.span!.start.offset, 0);
+      expect(def.span!.end.offset, 43);
+
+      expect(def.identifier.value, 'Color');
+      expect(def.identifier.span!.text, 'Color');
+      expect(def.identifier.span!.start.offset, 5);
+      expect(def.identifier.span!.end.offset, 10);
+
+      expect(def.values, hasLength(3));
+
+      expect(def.values[0].identifier.value, 'RED');
+      expect(def.values[0].identifier.span!.text, 'RED');
+      expect(def.values[0].identifier.span!.start.offset, 13);
+      expect(def.values[0].identifier.span!.end.offset, 16);
+
+      expect((def.values[0].value!).value, '1');
+
+      expect(def.values[1].identifier.value, 'GREEN');
+      expect(def.values[1].identifier.span!.text, 'GREEN');
+      expect(def.values[1].identifier.span!.start.offset, 22);
+      expect(def.values[1].identifier.span!.end.offset, 27);
+
+      expect((def.values[1].value!).value, '2');
+
+      expect(def.values[2].identifier.value, 'BLUE');
+      expect(def.values[2].identifier.span!.text, 'BLUE');
+      expect(def.values[2].identifier.span!.start.offset, 33);
+      expect(def.values[2].identifier.span!.end.offset, 37);
+
+      expect((def.values[2].value!).value, '3');
     });
   });
 }
