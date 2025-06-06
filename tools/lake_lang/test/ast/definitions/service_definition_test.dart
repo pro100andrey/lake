@@ -137,7 +137,7 @@ void main() {
       expect(def.identifier.span!.end.offset, 9);
 
       expect(def.extendsService, isNull);
-      
+
       expect(def.functions, hasLength(1));
 
       final fn = def.functions[0];

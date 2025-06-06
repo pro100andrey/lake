@@ -40,8 +40,12 @@ void main(List<String> args) {
     case Success():
       break;
 
-    case Failure():
-      printParseResult(parseResult);
+    case Failure(:final position, :final message):
+      final span = sourceFile.span(position, position + 1);
+      print(
+        'Failed to parse AST at position $position: $message\n'
+        '${span.highlight()}',
+      );
 
       return;
   }

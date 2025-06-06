@@ -162,6 +162,40 @@ void main() {
       expect(elements[2].span!.end.offset, 34);
     });
 
+    test('should parse empty array constant', () {
+      const source = 'const list<i32> myArray = [];';
+      final doc = parseAst(source);
+
+      expect(doc.definitions, hasLength(1));
+
+      final def = doc.definitions[0] as ConstDefinitionNode;
+      expect(def.span!.text, source);
+      expect(def.span!.start.offset, 0);
+      expect(def.span!.end.offset, 29);
+
+      final type = def.type as ListTypeNode;
+      expect(type.span!.text, 'list<i32>');
+      expect(type.span!.start.offset, 6);
+      expect(type.span!.end.offset, 15);
+
+      final elementType = type.elementType as BaseTypeNode;
+      expect(elementType.type, 'i32');
+      expect(elementType.span!.text, 'i32');
+      expect(elementType.span!.start.offset, 11);
+      expect(elementType.span!.end.offset, 14);
+
+      expect(def.identifier.value, 'myArray');
+      expect(def.identifier.span!.text, 'myArray');
+      expect(def.identifier.span!.start.offset, 16);
+      expect(def.identifier.span!.end.offset, 23);
+
+      expect((def.value as ConstListNode).elements, isEmpty);
+
+      expect(def.value.span!.text, '[]');
+      expect(def.value.span!.start.offset, 26);
+      expect(def.value.span!.end.offset, 28);
+    });
+
     test('should parse map constant', () {
       const source = 'const map<string, i32> myMap = {"a": 1, "b": 2};';
       final doc = parseAst(source);
@@ -224,6 +258,34 @@ void main() {
       expect(v2.span!.text, '2');
       expect(v2.span!.start.offset, 45);
       expect(v2.span!.end.offset, 46);
+    });
+
+    test('should parse empty map constant', () {
+      const source = 'const map<string, i32> myMap = {};';
+      final doc = parseAst(source);
+
+      expect(doc.definitions, hasLength(1));
+
+      final def = doc.definitions[0] as ConstDefinitionNode;
+      expect(def.span!.text, source);
+      expect(def.span!.start.offset, 0);
+      expect(def.span!.end.offset, 34);
+
+      final type = def.type as MapTypeNode;
+      expect(type.span!.text, 'map<string, i32>');
+      expect(type.span!.start.offset, 6);
+      expect(type.span!.end.offset, 22);
+
+      expect(def.identifier.value, 'myMap');
+      expect(def.identifier.span!.text, 'myMap');
+      expect(def.identifier.span!.start.offset, 23);
+      expect(def.identifier.span!.end.offset, 28);
+
+      expect((def.value as ConstMapNode).entries, isEmpty);
+
+      expect(def.value.span!.text, '{}');
+      expect(def.value.span!.start.offset, 31);
+      expect(def.value.span!.end.offset, 33);
     });
   });
 }

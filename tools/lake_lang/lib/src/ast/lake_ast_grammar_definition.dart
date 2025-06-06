@@ -294,7 +294,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
       _ => throw StateError('Unexpected type in set: $type'),
     };
 
-    final span = _getSpan(ld, rd);
+    final span = _getSpan(setKeyword, rd);
 
     return SetTypeNode(itemType: itemType, span: span);
   });
@@ -420,11 +420,11 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final returnType = switch (rType) {
       TypeNode() => rType,
-      IdentifierNode() => switch(rType.value) {
+      IdentifierNode() => switch (rType.value) {
         'void' => VoidTypeNode(span: rType.span),
-        _ => CustomTypeNode(type: rType, span: rType.span), 
-      }, 
-      
+        _ => CustomTypeNode(type: rType, span: rType.span),
+      },
+
       _ => throw StateError('Unexpected return type in function: $rType'),
     };
 
@@ -459,7 +459,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
       _ => throw StateError('Unexpected type in stream: $t'),
     };
 
-    final span = _getSpan(ld, rd);
+    final span = _getSpan(keyword, rd);
 
     return StreamTypeNode(type: type, span: span);
   });
