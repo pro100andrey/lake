@@ -68,6 +68,7 @@ void main() {
       final doc = parseAst(source);
 
       expect(doc.definitions, hasLength(1));
+      
       final def = doc.definitions.first as EnumDefinitionNode;
       expect(def.span!.text, source);
       expect(def.span!.start.offset, 0);
