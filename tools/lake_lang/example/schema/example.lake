@@ -52,6 +52,13 @@ enum ProductCategory {
   foot = 40
 }
 
+
+struct Matrix {
+  1: required i32 rows,
+  2: required i32 columns,
+  3: required list<list<double>> data
+}
+
 // struct with default values and optional fields example
 struct UserProfile {
   1: required UUID userId,

@@ -321,7 +321,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     final [Token keyword, Token ld, AstNode type, Token rd] = t as List;
 
     final elementType = switch (type) {
-      BaseTypeNode() => type,
+      TypeNode() => type,
       IdentifierNode() => CustomTypeNode(value: type.value, span: type.span),
 
       _ => throw StateError('Unexpected type in list: $type'),
@@ -471,7 +471,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     final [Token keyword, Token ld, AstNode t, Token rd] = e as List;
 
     final type = switch (t) {
-      BaseTypeNode() => t,
+      TypeNode() => t,
       IdentifierNode() => CustomTypeNode(value: t.value, span: t.span),
       _ => throw StateError('Unexpected type in stream: $t'),
     };

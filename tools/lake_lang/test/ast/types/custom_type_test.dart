@@ -18,5 +18,21 @@ void main() {
       expect(def.fields[0].type.span!.start.offset, 14);
       expect(def.fields[0].type.span!.end.offset, 24);
     });
+
+    test('should parse custom type when used as a service return type', () {
+      const source = 'CustomType';
+      final doc = parseAst('service MyService { CustomType getData(); }');
+
+      expect(doc.definitions, hasLength(1));
+
+      final def = doc.definitions.first as ServiceDefinitionNode;
+
+      final function1 = def.functions.first;
+      expect(function1.returnType, isA<CustomTypeNode>());
+      expect((function1.returnType as CustomTypeNode).value, 'CustomType');
+      expect(function1.returnType.span!.text, source);
+      expect(function1.returnType.span!.start.offset, 20);
+      expect(function1.returnType.span!.end.offset, 30);
+    });
   });
 }
