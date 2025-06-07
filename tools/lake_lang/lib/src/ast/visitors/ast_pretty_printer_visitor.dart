@@ -221,8 +221,8 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   void visitSetTypeNode(SetTypeNode node) {
     _printNode('SetTypeNode');
     _withIndentation(() {
-      _printNode('ItemType:');
-      _withIndentation(() => node.itemType.accept(this));
+      _printNode('ElementType:');
+      _withIndentation(() => node.elementType.accept(this));
     });
   }
 
@@ -230,7 +230,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   void visitListTypeNode(ListTypeNode node) {
     _printNode('ListTypeNode');
     _withIndentation(() {
-      _printNode('elementType:');
+      _printNode('ElementType:');
       _withIndentation(() => node.elementType.accept(this));
     });
   }
@@ -239,7 +239,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   void visitStreamTypeNode(StreamTypeNode node) {
     _printNode('StreamTypeNode');
     _withIndentation(() {
-      _printNode('type:');
+      _printNode('Type:');
       _withIndentation(() => node.type.accept(this));
     });
   }

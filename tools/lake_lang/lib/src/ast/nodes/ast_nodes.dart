@@ -310,15 +310,15 @@ final class MapTypeNode extends ContainerTypeNode {
 }
 
 final class SetTypeNode extends ContainerTypeNode {
-  const SetTypeNode({required this.itemType, required super.span});
+  const SetTypeNode({required this.elementType, required super.span});
 
-  final TypeNode itemType;
+  final TypeNode elementType;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitSetTypeNode(this);
 
   @override
-  List<Object?> get props => [itemType, span];
+  List<Object?> get props => [elementType, span];
 }
 
 final class ListTypeNode extends ContainerTypeNode {

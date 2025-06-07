@@ -275,7 +275,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     ] = t as List;
 
     final keyTypeNode = switch (keyType) {
-      BaseTypeNode() => keyType,
+      TypeNode() => keyType,
       IdentifierNode() => CustomTypeNode(
         value: keyType.value,
         span: keyType.span,
@@ -284,7 +284,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     };
 
     final valueTypeNode = switch (valueType) {
-      BaseTypeNode() => valueType,
+      TypeNode() => valueType,
       IdentifierNode() => CustomTypeNode(
         value: valueType.value,
         span: valueType.span,
@@ -313,7 +313,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final span = _getSpan(setKeyword, rd);
 
-    return SetTypeNode(itemType: itemType, span: span);
+    return SetTypeNode(elementType: itemType, span: span);
   });
 
   @override

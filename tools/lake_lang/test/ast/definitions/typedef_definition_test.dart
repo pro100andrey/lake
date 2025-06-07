@@ -105,7 +105,7 @@ void main() {
       expect(type.span!.start.offset, 8);
       expect(type.span!.end.offset, 19);
 
-      final itemType = type.itemType as BaseTypeNode;
+      final itemType = type.elementType as BaseTypeNode;
       expect(itemType.value, 'binary');
       expect(itemType.span!.text, 'binary');
       expect(itemType.span!.start.offset, 12);
