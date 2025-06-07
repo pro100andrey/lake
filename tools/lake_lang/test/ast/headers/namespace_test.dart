@@ -72,7 +72,7 @@ void main() {
     });
 
     test('should parse multiple namespaces', () {
-      const source = 'namespace js foo\nnamespace dar7t bar';
+      const source = 'namespace js foo\nnamespace dart bar';
       final doc = parseAst(source);
 
       expect(doc.headers, hasLength(2));

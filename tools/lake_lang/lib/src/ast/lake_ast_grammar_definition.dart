@@ -251,7 +251,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final span = _getSpan(token, token);
 
-    return FieldRequirementNode(requirement: token.value, span: span);
+    return FieldRequirementNode(value: token.value, span: span);
   });
 
   @override

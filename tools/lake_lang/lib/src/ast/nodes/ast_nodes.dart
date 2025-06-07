@@ -209,15 +209,15 @@ final class ServiceDefinitionNode extends DefinitionNode {
 }
 
 final class FieldRequirementNode extends AstNode {
-  const FieldRequirementNode({required this.requirement, required super.span});
+  const FieldRequirementNode({required this.value, required super.span});
 
-  final String requirement;
+  final String value;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitFieldRequirementNode(this);
 
   @override
-  List<Object?> get props => [requirement, span];
+  List<Object?> get props => [value, span];
 }
 
 final class FieldNode extends AstNode {

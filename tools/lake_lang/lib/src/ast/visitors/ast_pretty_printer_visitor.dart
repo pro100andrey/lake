@@ -153,7 +153,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
 
   @override
   void visitFieldRequirementNode(FieldRequirementNode node) {
-    _printNode('FieldRequirementNode', {'requirement': node.requirement});
+    _printNode('FieldRequirementNode', {'value': node.value});
   }
 
   @override

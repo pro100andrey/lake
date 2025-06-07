@@ -287,5 +287,171 @@ void main() {
       expect(def.value.span!.start.offset, 31);
       expect(def.value.span!.end.offset, 33);
     });
+
+    test('should parse byte constant', () {
+      const source = 'const byte myByte = 255;';
+      final doc = parseAst(source);
+
+      expect(doc.definitions, hasLength(1));
+
+      final def = doc.definitions.first as ConstDefinitionNode;
+      expect(def.span!.text, source);
+      expect(def.span!.start.offset, 0);
+      expect(def.span!.end.offset, 24);
+
+      expect((def.type as BaseTypeNode).type, 'byte');
+      expect(def.type.span!.text, 'byte');
+      expect(def.type.span!.start.offset, 6);
+      expect(def.type.span!.end.offset, 10);
+
+      expect(def.identifier.value, 'myByte');
+      expect(def.identifier.span!.text, 'myByte');
+      expect(def.identifier.span!.start.offset, 11);
+      expect(def.identifier.span!.end.offset, 17);
+
+      expect((def.value as IntConstantNode).value, '255');
+      expect(def.value.span!.text, '255');
+      expect(def.value.span!.start.offset, 20);
+      expect(def.value.span!.end.offset, 23);
+    });
+
+    test('should parse i8 constant', () {
+      const source = 'const i8 myI8 = 127;';
+      final doc = parseAst(source);
+
+      expect(doc.definitions, hasLength(1));
+
+      final def = doc.definitions.first as ConstDefinitionNode;
+      expect(def.span!.text, source);
+      expect(def.span!.start.offset, 0);
+      expect(def.span!.end.offset, 20);
+
+      expect((def.type as BaseTypeNode).type, 'i8');
+      expect(def.type.span!.text, 'i8');
+      expect(def.type.span!.start.offset, 6);
+      expect(def.type.span!.end.offset, 8);
+
+      expect(def.identifier.value, 'myI8');
+      expect(def.identifier.span!.text, 'myI8');
+      expect(def.identifier.span!.start.offset, 9);
+      expect(def.identifier.span!.end.offset, 13);
+
+      expect((def.value as IntConstantNode).value, '127');
+      expect(def.value.span!.text, '127');
+      expect(def.value.span!.start.offset, 16);
+      expect(def.value.span!.end.offset, 19);
+    });
+
+    test('should parse i16 constant', () {
+      const source = 'const i16 myI16 = 32767;';
+      final doc = parseAst(source);
+
+      expect(doc.definitions, hasLength(1));
+
+      final def = doc.definitions.first as ConstDefinitionNode;
+      expect(def.span!.text, source);
+      expect(def.span!.start.offset, 0);
+      expect(def.span!.end.offset, 24);
+
+      expect((def.type as BaseTypeNode).type, 'i16');
+      expect(def.type.span!.text, 'i16');
+      expect(def.type.span!.start.offset, 6);
+      expect(def.type.span!.end.offset, 9);
+
+      expect(def.identifier.value, 'myI16');
+      expect(def.identifier.span!.text, 'myI16');
+      expect(def.identifier.span!.start.offset, 10);
+      expect(def.identifier.span!.end.offset, 15);
+
+      expect((def.value as IntConstantNode).value, '32767');
+      expect(def.value.span!.text, '32767');
+      expect(def.value.span!.start.offset, 18);
+      expect(def.value.span!.end.offset, 23);
+    });
+
+    test('should parse i64 constant', () {
+      const source = 'const i64 myI64 = 9223372036854775807;';
+      final doc = parseAst(source);
+
+      expect(doc.definitions, hasLength(1));
+
+      final def = doc.definitions.first as ConstDefinitionNode;
+      expect(def.span!.text, source);
+      expect(def.span!.start.offset, 0);
+      expect(def.span!.end.offset, 38);
+
+      expect((def.type as BaseTypeNode).type, 'i64');
+      expect(def.type.span!.text, 'i64');
+      expect(def.type.span!.start.offset, 6);
+      expect(def.type.span!.end.offset, 9);
+
+      expect(def.identifier.value, 'myI64');
+      expect(def.identifier.span!.text, 'myI64');
+      expect(def.identifier.span!.start.offset, 10);
+      expect(def.identifier.span!.end.offset, 15);
+
+      expect((def.value as IntConstantNode).value, '9223372036854775807');
+      expect(def.value.span!.text, '9223372036854775807');
+      expect(def.value.span!.start.offset, 18);
+      expect(def.value.span!.end.offset, 37);
+    });
+
+    test('should parse binary constant', () {
+      const source = 'const binary myBinary = "01010101";';
+      final doc = parseAst(source);
+
+      expect(doc.definitions, hasLength(1));
+
+      final def = doc.definitions.first as ConstDefinitionNode;
+      expect(def.span!.text, source);
+      expect(def.span!.start.offset, 0);
+      expect(def.span!.end.offset, 35);
+
+      expect((def.type as BaseTypeNode).type, 'binary');
+      expect(def.type.span!.text, 'binary');
+      expect(def.type.span!.start.offset, 6);
+      expect(def.type.span!.end.offset, 12);
+
+      expect(def.identifier.value, 'myBinary');
+      expect(def.identifier.span!.text, 'myBinary');
+      expect(def.identifier.span!.start.offset, 13);
+      expect(def.identifier.span!.end.offset, 21);
+
+      expect((def.value as LiteralNode).value, '"01010101"');
+      expect(def.value.span!.text, '"01010101"');
+      expect(def.value.span!.start.offset, 24);
+      expect(def.value.span!.end.offset, 34);
+    });
+
+    test('should parse uuid constant', () {
+      const source =
+          'const uuid myUuid = "123e4567-e89b-12d3-a456-426614174000";';
+      final doc = parseAst(source);
+
+      expect(doc.definitions, hasLength(1));
+
+      final def = doc.definitions.first as ConstDefinitionNode;
+      expect(def.span!.text, source);
+      expect(def.span!.start.offset, 0);
+      expect(def.span!.end.offset, 59);
+
+      expect((def.type as BaseTypeNode).type, 'uuid');
+      expect(def.type.span!.text, 'uuid');
+      expect(def.type.span!.start.offset, 6);
+      expect(def.type.span!.end.offset, 10);
+
+      expect(def.identifier.value, 'myUuid');
+      expect(def.identifier.span!.text, 'myUuid');
+      expect(def.identifier.span!.start.offset, 11);
+      expect(def.identifier.span!.end.offset, 17);
+
+      expect(
+        (def.value as LiteralNode).value,
+        '"123e4567-e89b-12d3-a456-426614174000"',
+      );
+      expect(def.value.span!.text, '"123e4567-e89b-12d3-a456-426614174000"');
+      expect(def.value.span!.start.offset, 20);
+      expect(def.value.span!.end.offset, 58);
+    });
   });
 }
