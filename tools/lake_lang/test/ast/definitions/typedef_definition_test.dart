@@ -16,7 +16,7 @@ void main() {
       expect(def.span!.start.offset, 0);
       expect(def.span!.end.offset, 18);
 
-      expect((def.type as BaseTypeNode).type, 'i32');
+      expect((def.type as BaseTypeNode).value, 'i32');
       expect(def.type.span!.text, 'i32');
       expect(def.type.span!.start.offset, 8);
       expect(def.type.span!.end.offset, 11);
@@ -44,7 +44,7 @@ void main() {
       expect(type.span!.end.offset, 20);
 
       final itemType = type.elementType as BaseTypeNode;
-      expect(itemType.type, 'string');
+      expect(itemType.value, 'string');
       expect(itemType.span!.text, 'string');
       expect(itemType.span!.start.offset, 13);
       expect(itemType.span!.end.offset, 19);
@@ -72,13 +72,13 @@ void main() {
       expect(type.span!.end.offset, 24);
 
       final keyType = type.keyType as BaseTypeNode;
-      expect(keyType.type, 'string');
+      expect(keyType.value, 'string');
       expect(keyType.span!.text, 'string');
       expect(keyType.span!.start.offset, 12);
       expect(keyType.span!.end.offset, 18);
 
       final valueType = type.valueType as BaseTypeNode;
-      expect(valueType.type, 'i32');
+      expect(valueType.value, 'i32');
       expect(valueType.span!.text, 'i32');
       expect(valueType.span!.start.offset, 20);
       expect(valueType.span!.end.offset, 23);
@@ -106,7 +106,7 @@ void main() {
       expect(type.span!.end.offset, 19);
 
       final itemType = type.itemType as BaseTypeNode;
-      expect(itemType.type, 'binary');
+      expect(itemType.value, 'binary');
       expect(itemType.span!.text, 'binary');
       expect(itemType.span!.start.offset, 12);
       expect(itemType.span!.end.offset, 18);

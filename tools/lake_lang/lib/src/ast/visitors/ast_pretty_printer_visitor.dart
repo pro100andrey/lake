@@ -203,7 +203,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
 
   @override
   void visitBaseTypeNode(BaseTypeNode node) {
-    _printNode('BaseTypeNode', {'type': node.type});
+    _printNode('BaseTypeNode', {'value': node.value});
   }
 
   @override
@@ -246,11 +246,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
 
   @override
   void visitCustomTypeNode(CustomTypeNode node) {
-    _printNode('CustomTypeNode');
-    _withIndentation(() {
-      _printNode('Type:');
-      _withIndentation(() => node.type.accept(this));
-    });
+    _printNode('CustomTypeNode', {'value': node.value});
   }
 
   @override

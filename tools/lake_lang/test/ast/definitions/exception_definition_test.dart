@@ -44,7 +44,7 @@ void main() {
 
       expect(def.fields[0].fieldId, isNull);
 
-      expect((def.fields[0].type as BaseTypeNode).type, 'string');
+      expect((def.fields[0].type as BaseTypeNode).value, 'string');
       expect(def.fields[0].type.span!.text, 'string');
       expect(def.fields[0].type.span!.start.offset, 24);
       expect(def.fields[0].type.span!.end.offset, 30);
@@ -56,7 +56,7 @@ void main() {
 
       expect(def.fields[1].fieldId, isNull);
 
-      expect((def.fields[1].type as BaseTypeNode).type, 'i32');
+      expect((def.fields[1].type as BaseTypeNode).value, 'i32');
       expect(def.fields[1].type.span!.text, 'i32');
       expect(def.fields[1].type.span!.start.offset, 40);
       expect(def.fields[1].type.span!.end.offset, 43);
@@ -91,7 +91,7 @@ void main() {
       expect(def.fields[0].fieldId!.span!.start.offset, 23);
       expect(def.fields[0].fieldId!.span!.end.offset, 24);
 
-      expect((def.fields[0].type as BaseTypeNode).type, 'string');
+      expect((def.fields[0].type as BaseTypeNode).value, 'string');
       expect(def.fields[0].type.span!.text, 'string');
       expect(def.fields[0].type.span!.start.offset, 26);
       expect(def.fields[0].type.span!.end.offset, 32);
@@ -107,7 +107,7 @@ void main() {
       expect(def.fields[1].fieldId!.span!.start.offset, 42);
       expect(def.fields[1].fieldId!.span!.end.offset, 43);
 
-      expect((def.fields[1].type as BaseTypeNode).type, 'i32');
+      expect((def.fields[1].type as BaseTypeNode).value, 'i32');
       expect(def.fields[1].type.span!.text, 'i32');
       expect(def.fields[1].type.span!.start.offset, 45);
       expect(def.fields[1].type.span!.end.offset, 48);
@@ -144,7 +144,7 @@ void main() {
       expect(def.fields[0].requirement!.span!.start.offset, 22);
       expect(def.fields[0].requirement!.span!.end.offset, 30);
 
-      expect((def.fields[0].type as BaseTypeNode).type, 'string');
+      expect((def.fields[0].type as BaseTypeNode).value, 'string');
       expect(def.fields[0].type.span!.text, 'string');
       expect(def.fields[0].type.span!.start.offset, 31);
       expect(def.fields[0].type.span!.end.offset, 37);
@@ -160,7 +160,7 @@ void main() {
       expect(def.fields[1].requirement!.span!.start.offset, 48);
       expect(def.fields[1].requirement!.span!.end.offset, 56);
 
-      expect((def.fields[1].type as BaseTypeNode).type, 'i32');
+      expect((def.fields[1].type as BaseTypeNode).value, 'i32');
       expect(def.fields[1].type.span!.text, 'i32');
       expect(def.fields[1].type.span!.start.offset, 57);
       expect(def.fields[1].type.span!.end.offset, 60);

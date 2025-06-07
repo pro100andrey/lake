@@ -12,7 +12,7 @@ void main() {
       expect(doc.definitions, hasLength(1));
 
       final def = doc.definitions.first as StructDefinitionNode;
-      expect((def.fields[0].type as BaseTypeNode).type, 'string');
+      expect((def.fields[0].type as BaseTypeNode).value, 'string');
       expect(def.fields[0].type.span!.text, source);
       expect(def.fields[0].type.span!.start.offset, 11);
       expect(def.fields[0].type.span!.end.offset, 17);
@@ -26,7 +26,7 @@ void main() {
 
       final def = doc.definitions.first as StructDefinitionNode;
 
-      expect((def.fields[0].type as BaseTypeNode).type, 'bool');
+      expect((def.fields[0].type as BaseTypeNode).value, 'bool');
       expect(def.fields[0].type.span!.text, source);
       expect(def.fields[0].type.span!.start.offset, 11);
       expect(def.fields[0].type.span!.end.offset, 15);
@@ -40,7 +40,7 @@ void main() {
 
       final def = doc.definitions.first as StructDefinitionNode;
 
-      expect((def.fields[0].type as BaseTypeNode).type, 'byte');
+      expect((def.fields[0].type as BaseTypeNode).value, 'byte');
       expect(def.fields[0].type.span!.text, source);
       expect(def.fields[0].type.span!.start.offset, 11);
       expect(def.fields[0].type.span!.end.offset, 15);
@@ -54,7 +54,7 @@ void main() {
 
       final def = doc.definitions.first as StructDefinitionNode;
 
-      expect((def.fields[0].type as BaseTypeNode).type, 'double');
+      expect((def.fields[0].type as BaseTypeNode).value, 'double');
       expect(def.fields[0].type.span!.text, source);
       expect(def.fields[0].type.span!.start.offset, 11);
       expect(def.fields[0].type.span!.end.offset, 17);
@@ -68,7 +68,7 @@ void main() {
 
       final def = doc.definitions.first as StructDefinitionNode;
 
-      expect((def.fields[0].type as BaseTypeNode).type, 'uuid');
+      expect((def.fields[0].type as BaseTypeNode).value, 'uuid');
       expect(def.fields[0].type.span!.text, source);
       expect(def.fields[0].type.span!.start.offset, 11);
       expect(def.fields[0].type.span!.end.offset, 15);
@@ -82,7 +82,7 @@ void main() {
 
       final def = doc.definitions.first as StructDefinitionNode;
 
-      expect((def.fields[0].type as BaseTypeNode).type, 'i8');
+      expect((def.fields[0].type as BaseTypeNode).value, 'i8');
       expect(def.fields[0].type.span!.text, source);
       expect(def.fields[0].type.span!.start.offset, 11);
       expect(def.fields[0].type.span!.end.offset, 13);
@@ -96,7 +96,7 @@ void main() {
 
       final def = doc.definitions.first as StructDefinitionNode;
 
-      expect((def.fields[0].type as BaseTypeNode).type, 'i16');
+      expect((def.fields[0].type as BaseTypeNode).value, 'i16');
       expect(def.fields[0].type.span!.text, source);
       expect(def.fields[0].type.span!.start.offset, 11);
       expect(def.fields[0].type.span!.end.offset, 14);
@@ -110,7 +110,7 @@ void main() {
 
       final def = doc.definitions.first as StructDefinitionNode;
 
-      expect((def.fields[0].type as BaseTypeNode).type, 'i32');
+      expect((def.fields[0].type as BaseTypeNode).value, 'i32');
       expect(def.fields[0].type.span!.text, source);
       expect(def.fields[0].type.span!.start.offset, 11);
       expect(def.fields[0].type.span!.end.offset, 14);
@@ -124,7 +124,7 @@ void main() {
 
       final def = doc.definitions.first as StructDefinitionNode;
 
-      expect((def.fields[0].type as BaseTypeNode).type, 'i64');
+      expect((def.fields[0].type as BaseTypeNode).value, 'i64');
       expect(def.fields[0].type.span!.text, source);
       expect(def.fields[0].type.span!.start.offset, 11);
       expect(def.fields[0].type.span!.end.offset, 14);
@@ -138,7 +138,7 @@ void main() {
 
       final def = doc.definitions.first as StructDefinitionNode;
 
-      expect((def.fields[0].type as BaseTypeNode).type, 'binary');
+      expect((def.fields[0].type as BaseTypeNode).value, 'binary');
       expect(def.fields[0].type.span!.text, source);
       expect(def.fields[0].type.span!.start.offset, 11);
       expect(def.fields[0].type.span!.end.offset, 17);
