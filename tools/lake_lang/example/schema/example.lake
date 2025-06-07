@@ -131,9 +131,9 @@ exception ProductNotFoundException {
 service UserService {
   // Unary RPC to get user profile
   UserProfile getUserProfile(
-    1: UUID userId
+    1: required UUID userId
   ) throws (
-    1: UserNotFoundException userNotFound
+    1: required UserNotFoundException userNotFound
   )
 
   // Unary RPC to update user profile
@@ -147,20 +147,10 @@ service UserService {
 
 service ChatService {
    stream<string> sendMessage(
-    1: string test, 
-    2: UUID userId
+    1: required string test, 
+    2: optional UUID userId
   ) throws (
     1: InvalidArgumentsException invalidArgs,
     2: UserNotFoundException userNotFound
   )
-
-  // void sendClientMessages(stream<string> messages) throws (
-  //   1: InvalidArgumentsException invalidArgs,
-  //   2: UserNotFoundException userNotFound
-  // )
-
-  // stream<string> chat(stream<string> messages) throws (
-  //   1: InvalidArgumentsException invalidArgs,
-  //   2: UserNotFoundException userNotFound
-  // )
 }

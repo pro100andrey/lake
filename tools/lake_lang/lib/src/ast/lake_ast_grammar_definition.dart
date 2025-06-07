@@ -35,7 +35,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final span = allNodes.isNotEmpty
         ? _getSpan(allNodes.first, allNodes.last)
-        : null;
+        : _sourceFile.span(0, 0);
 
     return DocumentNode(
       headers: resultHeaders,
@@ -62,7 +62,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final span = _getSpan(keyword, identifier);
 
-    return NamespaceNode(scope: lang, name: identifier, span: span);
+    return NamespaceNode(scope: lang, identifier: identifier, span: span);
   });
 
   @override
@@ -121,9 +121,9 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
       List values,
       Token rd,
     ] = t as List;
-    final enumValues = values.cast<EnumValueNode>();
 
     final span = _getSpan(keyword, rd);
+    final enumValues = values.cast<EnumValueNode>();
 
     return EnumDefinitionNode(
       identifier: identifier,
@@ -231,7 +231,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     };
 
     final span = _getSpan(
-      fieldId ?? requirement ?? type,
+      fieldId ?? requirement ?? calculatedType,
       separator ?? defaultValueResult ?? identifier,
     );
 
@@ -266,7 +266,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   @override
   Parser mapType() => super.mapType().map((t) {
     final [
-      Token mapKeyword,
+      Token keyword,
       Token ld,
       AstNode keyType,
       Token comma,
@@ -292,7 +292,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
       _ => throw StateError('Unexpected value type in map: $valueType'),
     };
 
-    final span = _getSpan(mapKeyword, rd);
+    final span = _getSpan(keyword, rd);
 
     return MapTypeNode(
       keyType: keyTypeNode,
@@ -303,7 +303,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
   @override
   Parser setType() => super.setType().map((t) {
-    final [Token setKeyword, Token ld, AstNode type, Token rd] = t as List;
+    final [Token keyword, Token ld, AstNode type, Token rd] = t as List;
 
     final itemType = switch (type) {
       BaseTypeNode() => type,
@@ -311,7 +311,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
       _ => throw StateError('Unexpected type in set: $type'),
     };
 
-    final span = _getSpan(setKeyword, rd);
+    final span = _getSpan(keyword, rd);
 
     return SetTypeNode(elementType: itemType, span: span);
   });
@@ -397,7 +397,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   @override
   Parser serviceDefinition() => super.serviceDefinition().map((t) {
     final [
-      Token serviceKeyword,
+      Token keyword,
       IdentifierNode identifier,
       List? extendsClause,
       Token ld,
@@ -412,7 +412,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
       _ => throw StateError('Unexpected extends clause: $extendsClause'),
     };
 
-    final span = _getSpan(serviceKeyword, rd);
+    final span = _getSpan(keyword, rd);
     final functionsList = functions.cast<FunctionNode>();
 
     return ServiceDefinitionNode(
@@ -455,7 +455,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
       _ => throw StateError('Unexpected throws clause: $throws'),
     };
 
-    final span = _getSpan(lparen, separator ?? rparen);
+    final span = _getSpan(type, separator ?? throws?.last ?? rparen);
 
     return FunctionNode(
       returnType: returnType,

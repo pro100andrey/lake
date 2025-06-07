@@ -6,10 +6,10 @@ import '../ast_visitor.dart';
 /// Base sealed class for all AST nodes.
 /// All concrete AST nodes must be defined in this file (or library).
 sealed class AstNode extends Equatable {
-  const AstNode({this.span});
+  const AstNode({required this.span});
 
   /// Optional span for source location information.
-  final SourceSpan? span;
+  final SourceSpan span;
 
   /// Add an accept method for the Visitor pattern
   T accept<T>(AstVisitor<T> visitor);
@@ -46,7 +46,7 @@ final class DocumentNode extends AstNode {
 }
 
 sealed class HeaderNode extends AstNode {
-  const HeaderNode({super.span});
+  const HeaderNode({required super.span});
 }
 
 final class ImportNode extends HeaderNode {
@@ -64,22 +64,22 @@ final class ImportNode extends HeaderNode {
 final class NamespaceNode extends HeaderNode {
   const NamespaceNode({
     required this.scope,
-    required this.name,
+    required this.identifier,
     required super.span,
   });
 
   final LiteralNode scope;
-  final IdentifierNode name;
+  final IdentifierNode identifier;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitNamespaceNode(this);
 
   @override
-  List<Object?> get props => [scope, name, span];
+  List<Object?> get props => [scope, identifier, span];
 }
 
 sealed class DefinitionNode extends AstNode {
-  const DefinitionNode({super.span});
+  const DefinitionNode({required super.span});
 }
 
 final class ConstDefinitionNode extends DefinitionNode {
@@ -273,7 +273,7 @@ final class FunctionNode extends AstNode {
 
 // Types
 sealed class TypeNode extends AstNode {
-  const TypeNode({super.span});
+  const TypeNode({required super.span});
 }
 
 final class BaseTypeNode extends TypeNode {
@@ -289,7 +289,7 @@ final class BaseTypeNode extends TypeNode {
 }
 
 sealed class ContainerTypeNode extends TypeNode {
-  const ContainerTypeNode({super.span});
+  const ContainerTypeNode({required super.span});
 }
 
 final class MapTypeNode extends ContainerTypeNode {
@@ -368,7 +368,7 @@ class VoidTypeNode extends TypeNode {
 
 // Constants
 sealed class ConstValueNode extends AstNode {
-  const ConstValueNode({super.span});
+  const ConstValueNode({required super.span});
 }
 
 final class IntConstantNode extends ConstValueNode {
