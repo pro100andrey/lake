@@ -81,5 +81,22 @@ void main() {
       expect(import2.path.span!.start.offset, 23);
       expect(import2.path.span!.end.offset, 31);
     });
+
+    test('should parse import with path containing directories', () {
+      const source = 'import "../common/types/enums.lake"';
+      final doc = parseAst(source);
+
+      expect(doc.headers, hasLength(1));
+
+      final import = doc.headers.first as ImportNode;
+      expect(import.span!.text, source);
+      expect(import.span!.start.offset, 0);
+      expect(import.span!.end.offset, 35);
+
+      expect(import.path.value, '"../common/types/enums.lake"');
+      expect(import.path.span!.text, '"../common/types/enums.lake"');
+      expect(import.path.span!.start.offset, 7);
+      expect(import.path.span!.end.offset, 35);
+    });
   });
 }

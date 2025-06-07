@@ -27,6 +27,34 @@ void main() {
       expect(def.identifier.span!.end.offset, 17);
     });
 
+    test('should parse typedef with List type', () {
+      const source = 'typedef list<string> StringList;';
+      final doc = parseAst(source);
+
+      expect(doc.definitions, hasLength(1));
+
+      final def = doc.definitions.first as TypedefDefinitionNode;
+      expect(def.span!.text, source);
+      expect(def.span!.start.offset, 0);
+      expect(def.span!.end.offset, 32);
+
+      final type = def.type as ListTypeNode;
+      expect(type.span!.text, 'list<string>');
+      expect(type.span!.start.offset, 8);
+      expect(type.span!.end.offset, 20);
+
+      final itemType = type.elementType as BaseTypeNode;
+      expect(itemType.type, 'string');
+      expect(itemType.span!.text, 'string');
+      expect(itemType.span!.start.offset, 13);
+      expect(itemType.span!.end.offset, 19);
+
+      expect(def.identifier.value, 'StringList');
+      expect(def.identifier.span!.text, 'StringList');
+      expect(def.identifier.span!.start.offset, 21);
+      expect(def.identifier.span!.end.offset, 31);
+    });
+
     test('should parse typedef with Map type', () {
       const source = 'typedef map<string, i32> BaseMapType;';
       final doc = parseAst(source);

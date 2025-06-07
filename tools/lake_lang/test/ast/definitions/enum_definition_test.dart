@@ -144,10 +144,10 @@ void main() {
       expect(def.values[3].value, isNull);
     });
 
-   test('should parse enum with mixed explicit and implicit values', () {
+    test('should parse enum with mixed explicit and implicit values', () {
       const source =
           'enum Status { PENDING = 1, PROCESSING, COMPLETED = 5, FAILED }';
-      
+
       final doc = parseAst(source);
       expect(doc.definitions, hasLength(1));
 
@@ -167,7 +167,7 @@ void main() {
       expect(def.values[0].identifier.span!.text, 'PENDING');
       expect(def.values[0].identifier.span!.start.offset, 14);
       expect(def.values[0].identifier.span!.end.offset, 21);
-      
+
       expect(def.values[0].value!.value, '1');
       expect(def.values[0].value!.span!.text, '1');
       expect(def.values[0].value!.span!.start.offset, 24);
@@ -194,8 +194,6 @@ void main() {
       expect(def.values[3].identifier.span!.start.offset, 54);
       expect(def.values[3].identifier.span!.end.offset, 60);
       expect(def.values[3].value, isNull);
-      
-
     });
   });
 }

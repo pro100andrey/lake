@@ -393,7 +393,7 @@ void main() {
       },
     );
 
-     test(
+    test(
       'should parse service with multiple functions separated by semicolon',
       () {
         const source =
