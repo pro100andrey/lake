@@ -52,12 +52,22 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
 
   @override
   void visitImportNode(ImportNode node) {
-    _printNode('ImportNode', {'path': node.path});
+    _printNode('ImportNode');
+    _withIndentation(() {
+      _printNode('Path:');
+      _withIndentation(() => node.path.accept(this));
+    });
   }
 
   @override
   void visitNamespaceNode(NamespaceNode node) {
-    _printNode('NamespaceNode', {'scope': node.scope, 'name': node.name.value});
+    _printNode('NamespaceNode');
+    _withIndentation(() {
+      _printNode('Scope:');
+      _withIndentation(() => node.scope.accept(this));
+      _printNode('Name:');
+      _withIndentation(() => node.name.accept(this));
+    });
   }
 
   @override

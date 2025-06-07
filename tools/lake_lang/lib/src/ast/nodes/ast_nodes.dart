@@ -52,7 +52,7 @@ sealed class HeaderNode extends AstNode {
 final class ImportNode extends HeaderNode {
   const ImportNode({required this.path, required super.span});
 
-  final String path;
+  final LiteralNode path;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitImportNode(this);
@@ -68,7 +68,7 @@ final class NamespaceNode extends HeaderNode {
     required super.span,
   });
 
-  final String scope;
+  final LiteralNode scope;
   final IdentifierNode name;
 
   @override

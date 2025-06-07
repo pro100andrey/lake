@@ -46,20 +46,31 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
   @override
   Parser import() => super.import().map((t) {
-    final [_, LiteralNode literal] = t as List;
+    final [Token keyword, LiteralNode literal] = t as List;
 
-    final span = _getSpan(t.first, t.last);
+    final span = _getSpan(keyword, literal);
 
-    return ImportNode(path: literal.value, span: span);
+    return ImportNode(path: literal, span: span);
   });
 
   @override
   Parser namespace() => super.namespace().map((t) {
-    final [Token tt, [Token lang, IdentifierNode identifier]] = t as List;
+    final [
+      Token keyword,
+      [LiteralNode lang, IdentifierNode identifier],
+    ] = t as List;
 
-    final span = _getSpan(tt, identifier);
+    final span = _getSpan(keyword, identifier);
 
-    return NamespaceNode(scope: lang.value, name: identifier, span: span);
+    return NamespaceNode(scope: lang, name: identifier, span: span);
+  });
+
+  @override
+  Parser namespaceScope() => super.namespaceScope().map((t) {
+    final token = t as Token;
+
+    final span = _getSpan(token, token);
+    return LiteralNode(value: token.value, span: span);
   });
 
   @override
