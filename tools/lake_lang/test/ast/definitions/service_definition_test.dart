@@ -392,5 +392,63 @@ void main() {
         expect(fn.throws[0].span!.end.offset, 61);
       },
     );
+
+     test(
+      'should parse service with multiple functions separated by semicolon',
+      () {
+        const source =
+            'service S { void func1(); string func2(); i32 func3(); }';
+        final doc = parseAst(source);
+
+        expect(doc.definitions, hasLength(1));
+
+        final def = doc.definitions.first as ServiceDefinitionNode;
+        expect(def.span!.text, source);
+        expect(def.span!.start.offset, 0);
+        expect(def.span!.end.offset, 56);
+
+        expect(def.identifier.value, 'S');
+        expect(def.identifier.span!.text, 'S');
+        expect(def.identifier.span!.start.offset, 8);
+        expect(def.identifier.span!.end.offset, 9);
+
+        expect(def.extendsService, isNull);
+        expect(def.functions, hasLength(3));
+
+        final func1 = def.functions[0];
+        expect(func1.returnType, isA<VoidTypeNode>());
+        expect(func1.returnType.span!.text, 'void');
+        expect(func1.returnType.span!.start.offset, 12);
+        expect(func1.returnType.span!.end.offset, 16);
+
+        expect(func1.identifier.value, 'func1');
+        expect(func1.identifier.span!.text, 'func1');
+        expect(func1.identifier.span!.start.offset, 17);
+        expect(func1.identifier.span!.end.offset, 22);
+
+        final func2 = def.functions[1];
+        expect((func2.returnType as BaseTypeNode).type, 'string');
+        expect(func2.returnType.span!.text, 'string');
+        expect(func2.returnType.span!.start.offset, 26);
+        expect(func2.returnType.span!.end.offset, 32);
+
+        expect(func2.identifier.value, 'func2');
+        expect(func2.identifier.span!.text, 'func2');
+        expect(func2.identifier.span!.start.offset, 33);
+        expect(func2.identifier.span!.end.offset, 38);
+
+        final func3 = def.functions[2];
+        expect((func3.returnType as BaseTypeNode).type, 'i32');
+        expect(func3.returnType.span!.text, 'i32');
+        expect(func3.returnType.span!.start.offset, 42);
+        expect(func3.returnType.span!.end.offset, 45);
+
+        expect(func3.identifier.value, 'func3');
+        expect(func3.identifier.span!.text, 'func3');
+        expect(func3.identifier.span!.start.offset, 46);
+        expect(func3.identifier.span!.end.offset, 51);
+        expect(func3.parameters, isEmpty);
+      },
+    );
   });
 }
