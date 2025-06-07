@@ -56,6 +56,9 @@ void main(List<String> args) {
     ..measure('Printer visit', () {
       (parseResult.value as DocumentNode).accept(printer);
     })
+    ..measure('Print result', () {
+      print(printer.output);
+    })
     ..stop()
     ..printSummary()
     ..reset();

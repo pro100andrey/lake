@@ -7,20 +7,28 @@ import '../nodes/ast_nodes.dart';
 class AstPrettyPrinterVisitor implements AstVisitor<void> {
   final List<bool> _isLastNodeStack = [];
 
-  String get _indent {
-    final buffer = StringBuffer();
+  final _outputBuffer = StringBuffer();
 
+  String get output {
+    final result = _outputBuffer.toString();
+    _outputBuffer.clear();
+    return result;
+  }
+
+  String get _indent {
     final level = _isLastNodeStack.length;
 
-    for (var i = 0; i < level - 1; i++) {
-      buffer.write(_isLastNodeStack[i] ? '    ' : '│   ');
-    }
+    final result = List.generate(level, (i) {
+      final isLast = _isLastNodeStack[i];
 
-    if (level > 0) {
-      buffer.write(_isLastNodeStack.last ? '└── ' : '├── ');
-    }
+      if (i == level - 1) {
+        return isLast ? '└── ' : '├── ';
+      } else {
+        return isLast ? '    ' : '│   ';
+      }
+    });
 
-    return buffer.toString();
+    return result.join();
   }
 
   void _withNodeContext(bool isLast, void Function() body) {
@@ -32,32 +40,54 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
     }
   }
 
+  void _writeResult(String message) {
+    _outputBuffer.writeln('$_indent$message');
+  }
+
   void _printNode(
     AstNode node, [
-    Map<String, dynamic>? properties,
+    Map<String, dynamic>? props,
   ]) {
-    final nodeName = node.runtimeType.toString();
-    final propsString = properties != null && properties.isNotEmpty
-        ? '(${properties.entries.map(
-            (e) => '${e.key}: ${e.value}', //
-          ).join(', ')})'
-        : '';
+    final nodeName = node.runtimeType;
+    final propsStr = props?.entries
+        .map((e) => '${e.key}: ${e.value}')
+        .join(', ');
+    final location =
+        ' [${node.span.start.line + 1}:${node.span.start.column + 1}]';
 
-    var location = '';
-    final start = node.span.start;
+    _writeResult('$nodeName${propsStr != null ? '($propsStr)' : ''}$location');
+  }
 
-    location = ' [${start.line + 1}:${start.column + 1}]';
+  void _visit<T extends AstNode>(T? node, {bool isLast = false}) {
+    if (node == null) {
+      _writeResult('<null>');
+      return;
+    }
 
-    print('$_indent$nodeName$propsString$location');
+    _withNodeContext(isLast, () => node.accept(this));
+  }
+
+  void _visitList<T extends AstNode>(
+    String listName,
+    List<T> nodes, {
+    bool isLast = false,
+  }) {
+    _withNodeContext(isLast, () => _visitNodeList(nodes, listName));
+  }
+
+  void _visitChildren(List<AstNode> children) {
+    for (var i = 0; i < children.length; i++) {
+      _visit(children[i], isLast: i == children.length - 1);
+    }
   }
 
   void _visitNodeList<T extends AstNode>(List<T> nodes, String listName) {
     if (nodes.isEmpty) {
-      print('$_indent$listName: []');
+      _writeResult('$listName: []');
       return;
     }
 
-    print('$_indent$listName:');
+    _writeResult('$listName:');
 
     for (var i = 0; i < nodes.length; i++) {
       final node = nodes[i];
@@ -73,73 +103,64 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   void visitDocumentNode(DocumentNode node) {
     _withNodeContext(true, () {
       _printNode(node);
-      _withNodeContext(false, () => _visitNodeList(node.headers, 'Headers'));
-      _withNodeContext(
-        true,
-        () => _visitNodeList(node.definitions, 'Definitions'),
-      );
+      _visitList('Headers', node.headers);
+      _visitList('Definitions', node.definitions, isLast: true);
     });
   }
 
   @override
   void visitImportNode(ImportNode node) {
     _printNode(node);
-    _withNodeContext(true, () => node.path.accept(this));
+
+    _visit(node.path, isLast: true);
   }
 
   @override
   void visitNamespaceNode(NamespaceNode node) {
     _printNode(node);
-    _withNodeContext(false, () => node.scope.accept(this));
-    _withNodeContext(true, () => node.identifier.accept(this));
+    _visit(node.scope);
+    _visit(node.identifier, isLast: true);
   }
 
   @override
   void visitConstDefinitionNode(ConstDefinitionNode node) {
     _printNode(node);
-    final children = [node.type, node.identifier, node.value];
-    for (var i = 0; i < children.length; i++) {
-      final child = children[i];
-      final isLast = (i == children.length - 1);
-      _withNodeContext(isLast, () => child.accept(this));
-    }
+    _visitChildren([node.type, node.identifier, node.value]);
   }
 
   @override
   void visitTypedefDefinitionNode(TypedefDefinitionNode node) {
     _printNode(node);
-    _withNodeContext(false, () => node.type.accept(this));
-    _withNodeContext(true, () => node.identifier.accept(this));
+    _visit(node.type);
+    _visit(node.identifier, isLast: true);
   }
 
   @override
   void visitEnumDefinitionNode(EnumDefinitionNode node) {
     _printNode(node);
-    _withNodeContext(false, () => node.identifier.accept(this));
-    _withNodeContext(true, () => _visitNodeList(node.values, 'Values'));
+    _visit(node.identifier);
+    _visitList('Values', node.values, isLast: true);
   }
 
   @override
   void visitEnumValueNode(EnumValueNode node) {
     _printNode(node);
-    _withNodeContext(node.value == null, () => node.identifier.accept(this));
-    if (node.value != null) {
-      _withNodeContext(true, () => node.value!.accept(this));
-    }
+    _visit(node.identifier, isLast: node.value == null);
+    _visit(node.value, isLast: true);
   }
 
   @override
   void visitStructDefinitionNode(StructDefinitionNode node) {
     _printNode(node);
-    _withNodeContext(false, () => node.identifier.accept(this));
-    _withNodeContext(true, () => _visitNodeList(node.fields, 'Fields'));
+    _visit(node.identifier);
+    _visitList('Fields', node.fields, isLast: true);
   }
 
   @override
   void visitExceptionDefinitionNode(ExceptionDefinitionNode node) {
     _printNode(node);
-    _withNodeContext(false, () => node.identifier.accept(this));
-    _withNodeContext(true, () => _visitNodeList(node.fields, 'Fields'));
+    _visit(node.identifier);
+    _visitList('Fields', node.fields, isLast: true);
   }
 
   @override
@@ -149,17 +170,14 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
     final hasExtends = node.extendsService != null;
     final hasFunctions = node.functions.isNotEmpty;
 
-    _withNodeContext(
-      !hasExtends && !hasFunctions,
-      () => node.identifier.accept(this),
-    );
+    _visit(node.identifier, isLast: !hasExtends && !hasFunctions);
 
     if (hasExtends) {
-      _withNodeContext(!hasFunctions, () => node.extendsService!.accept(this));
+      _visit(node.extendsService, isLast: !hasFunctions);
     }
 
     if (hasFunctions) {
-      _withNodeContext(true, () => _visitNodeList(node.functions, 'Functions'));
+      _visitList('Functions', node.functions, isLast: true);
     }
   }
 
@@ -172,19 +190,13 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   void visitFieldNode(FieldNode node) {
     _printNode(node);
 
-    final children = [
+    _visitChildren([
       ?node.fieldId,
       ?node.requirement,
       node.type,
       node.identifier,
       ?node.defaultValue,
-    ].toList(growable: false);
-
-    for (var i = 0; i < children.length; i++) {
-      final child = children[i];
-      final isLast = (i == children.length - 1);
-      _withNodeContext(isLast, () => child.accept(this));
-    }
+    ]);
   }
 
   @override
@@ -194,20 +206,14 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
     final hasParameters = node.parameters.isNotEmpty;
     final hasThrows = node.throws.isNotEmpty;
 
-    _withNodeContext(false, () => node.returnType.accept(this));
-    _withNodeContext(
-      !hasParameters && !hasThrows,
-      () => node.identifier.accept(this),
-    );
+    _visit(node.returnType);
+    _visit(node.identifier, isLast: !hasParameters && !hasThrows);
 
     if (hasParameters) {
-      _withNodeContext(
-        !hasThrows,
-        () => _visitNodeList(node.parameters, 'Parameters'),
-      );
+      _visitList('Parameters', node.parameters, isLast: !hasThrows);
 
       if (hasThrows) {
-        _withNodeContext(true, () => _visitNodeList(node.throws, 'Throws'));
+        _visitList('Throws', node.throws, isLast: true);
       }
     }
   }
@@ -222,26 +228,27 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   @override
   void visitMapTypeNode(MapTypeNode node) {
     _printNode(node);
-    _withNodeContext(false, () => node.keyType.accept(this));
-    _withNodeContext(true, () => node.valueType.accept(this));
+
+    _visit(node.keyType);
+    _visit(node.valueType, isLast: true);
   }
 
   @override
   void visitSetTypeNode(SetTypeNode node) {
     _printNode(node);
-    _withNodeContext(true, () => node.elementType.accept(this));
+    _visit(node.elementType, isLast: true);
   }
 
   @override
   void visitListTypeNode(ListTypeNode node) {
     _printNode(node);
-    _withNodeContext(true, () => node.elementType.accept(this));
+    _visit(node.elementType, isLast: true);
   }
 
   @override
   void visitStreamTypeNode(StreamTypeNode node) {
     _printNode(node);
-    _withNodeContext(true, () => node.type.accept(this));
+    _visit(node.type, isLast: true);
   }
 
   @override
@@ -279,7 +286,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   @override
   void visitConstListNode(ConstListNode node) {
     _printNode(node);
-    _withNodeContext(true, () => _visitNodeList(node.elements, 'Elements'));
+    _visitList('Elements', node.elements, isLast: true);
   }
 
   @override
@@ -287,22 +294,22 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
     _printNode(node);
 
     if (node.entries.isEmpty) {
-      print('${_indent}Entries: []');
+      _writeResult('Entries: []');
       return;
     }
 
     _withNodeContext(true, () {
-      print('${_indent}Entries:');
+      _writeResult('Entries:');
 
       for (var i = 0; i < node.entries.length; i++) {
         final entry = node.entries[i];
         final isLast = (i == node.entries.length - 1);
 
         _withNodeContext(isLast, () {
-          print('${_indent}Entry($i):');
+          _writeResult('Entry:');
 
-          _withNodeContext(false, () => entry.key.accept(this));
-          _withNodeContext(true, () => entry.value.accept(this));
+          _visit(entry.key);
+          _visit(entry.value, isLast: true);
         });
       }
     });

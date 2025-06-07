@@ -8,23 +8,29 @@ namespace dart com.example.api.gen
 namespace js example
 
 // i32 constant example
-const i32 DEFAULT_PAGE_SIZE = 20
+const i32 DEFAULT_PAGE_SIZE = 20;
 
-const double PI = 3.14159
+// i32 constant with a negative value example
+const double PI = 3.14159;
 
-const double DOUBLE_WITH_EXPONENT = 1.23456789e-10
+// i32 constant with a exponent example
+const double DOUBLE_WITH_EXPONENT = 1.23456789e-10;
 
 // i64 constant example
-const i64 MAX_FILE_SIZE = 10485760 // 10 MB in bytes
+const i64 MAX_FILE_SIZE = 10485760; // 10 MB in bytes
 
 // list<i32> constant example
 const list<i32> PRIME_NUMBERS = [2, 3, 5, 7, 11];
 
 // string constant example
-const string ADMIN_EMAIL = "admin@example.com"
+const string ADMIN_EMAIL = "admin@example.com";
 
 // list<string> constant example
-const list<string> SUPPORTED_LOCALES = ["en_US", "es_ES", "fr_FR"]
+const list<string> SUPPORTED_LOCALES = [
+  "en_US", 
+  "es_ES", 
+  "fr_FR"
+];
 
 // map<string, i32> constant example
 const map<i32, string> STATUS_DESCRIPTIONS = {
