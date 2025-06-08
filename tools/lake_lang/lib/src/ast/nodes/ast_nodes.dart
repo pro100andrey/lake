@@ -334,14 +334,14 @@ final class ListTypeNode extends ContainerTypeNode {
 }
 
 final class StreamTypeNode extends TypeNode {
-  const StreamTypeNode({required this.type, required super.span});
-  final TypeNode type;
+  const StreamTypeNode({required this.elementType, required super.span});
+  final TypeNode elementType;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitStreamTypeNode(this);
 
   @override
-  List<Object?> get props => [type, span];
+  List<Object?> get props => [elementType, span];
 }
 
 final class CustomTypeNode extends TypeNode {

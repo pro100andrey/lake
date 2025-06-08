@@ -478,6 +478,6 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final span = _getSpan(keyword, rd);
 
-    return StreamTypeNode(type: type, span: span);
+    return StreamTypeNode(elementType: type, span: span);
   });
 }

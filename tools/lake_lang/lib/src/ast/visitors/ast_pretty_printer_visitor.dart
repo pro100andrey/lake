@@ -248,7 +248,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   @override
   void visitStreamTypeNode(StreamTypeNode node) {
     _printNode(node);
-    _visit(node.type, isLast: true);
+    _visit(node.elementType, isLast: true);
   }
 
   @override
