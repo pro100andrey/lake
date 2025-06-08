@@ -27,34 +27,111 @@ class SymbolTableVisitor extends AstVisitor<void> {
   void visitNamespaceNode(NamespaceNode node) {}
 
   @override
-  void visitConstDefinitionNode(ConstDefinitionNode node) {}
+  void visitConstDefinitionNode(ConstDefinitionNode node) {
+    _symbolTable.addSymbol(node.identifier.value, node, node.span);
+
+    node.type.accept(this);
+    node.value.accept(this);
+  }
 
   @override
-  void visitTypedefDefinitionNode(TypedefDefinitionNode node) {}
+  void visitTypedefDefinitionNode(TypedefDefinitionNode node) {
+    _symbolTable.addSymbol(node.identifier.value, node, node.span);
+
+    node.type.accept(this);
+  }
 
   @override
-  void visitEnumDefinitionNode(EnumDefinitionNode node) {}
+  void visitEnumDefinitionNode(EnumDefinitionNode node) {
+    _symbolTable
+      ..addSymbol(node.identifier.value, node, node.span)
+      ..pushScope();
+
+    for (final value in node.values) {
+      value.accept(this);
+    }
+
+    _symbolTable.popScope();
+  }
 
   @override
-  void visitEnumValueNode(EnumValueNode node) {}
+  void visitEnumValueNode(EnumValueNode node) {
+    _symbolTable.addSymbol(node.identifier.value, node, node.span);
+    node.value?.accept(this);
+  }
 
   @override
-  void visitStructDefinitionNode(StructDefinitionNode node) {}
+  void visitStructDefinitionNode(StructDefinitionNode node) {
+    _symbolTable
+      ..addSymbol(node.identifier.value, node, node.span)
+      ..pushScope();
+
+    for (final field in node.fields) {
+      field.accept(this);
+    }
+
+    _symbolTable.popScope();
+  }
 
   @override
-  void visitExceptionDefinitionNode(ExceptionDefinitionNode node) {}
+  void visitExceptionDefinitionNode(ExceptionDefinitionNode node) {
+    _symbolTable
+      ..addSymbol(node.identifier.value, node, node.span)
+      ..pushScope();
+
+    for (final field in node.fields) {
+      field.accept(this);
+    }
+
+    _symbolTable.popScope();
+  }
 
   @override
-  void visitServiceDefinitionNode(ServiceDefinitionNode node) {}
+  void visitServiceDefinitionNode(ServiceDefinitionNode node) {
+    _symbolTable
+      ..addSymbol(node.identifier.value, node, node.span)
+      ..pushScope();
+
+    if (node.extendsService != null) {
+      node.extendsService!.accept(this);
+    }
+
+    for (final method in node.functions) {
+      method.accept(this);
+    }
+
+    _symbolTable.popScope();
+  }
 
   @override
   void visitFieldRequirementNode(FieldRequirementNode node) {}
 
   @override
-  void visitFieldNode(FieldNode node) {}
+  void visitFieldNode(FieldNode node) {
+    node.type.accept(this);
+    node.defaultValue?.accept(this);
+    node.requirement?.accept(this);
+  }
 
   @override
-  void visitFunctionNode(FunctionNode node) {}
+  void visitFunctionNode(FunctionNode node) {
+    _symbolTable
+      ..addSymbol(node.identifier.value, node, node.span)
+      ..pushScope();
+
+    node.returnType.accept(this);
+
+    for (final param in node.parameters) {
+      _symbolTable.addSymbol(param.identifier.value, param, param.span);
+      param.type.accept(this);
+    }
+
+    for (final th in node.throws) {
+      th.type.accept(this);
+    }
+
+    _symbolTable.popScope();
+  }
 
   // Type nodes
 
@@ -62,16 +139,25 @@ class SymbolTableVisitor extends AstVisitor<void> {
   void visitBaseTypeNode(BaseTypeNode node) {}
 
   @override
-  void visitMapTypeNode(MapTypeNode node) {}
+  void visitMapTypeNode(MapTypeNode node) {
+    node.keyType.accept(this);
+    node.valueType.accept(this);
+  }
 
   @override
-  void visitSetTypeNode(SetTypeNode node) {}
+  void visitSetTypeNode(SetTypeNode node) {
+    node.elementType.accept(this);
+  }
 
   @override
-  void visitListTypeNode(ListTypeNode node) {}
+  void visitListTypeNode(ListTypeNode node) {
+    node.elementType.accept(this);
+  }
 
   @override
-  void visitStreamTypeNode(StreamTypeNode node) {}
+  void visitStreamTypeNode(StreamTypeNode node) {
+    node.elementType.accept(this);
+  }
 
   @override
   void visitCustomTypeNode(CustomTypeNode node) {}
@@ -94,8 +180,17 @@ class SymbolTableVisitor extends AstVisitor<void> {
   void visitIdentifierNode(IdentifierNode node) {}
 
   @override
-  void visitConstListNode(ConstListNode node) {}
+  void visitConstListNode(ConstListNode node) {
+    for (final element in node.elements) {
+      element.accept(this);
+    }
+  }
 
   @override
-  void visitConstMapNode(ConstMapNode node) {}
+  void visitConstMapNode(ConstMapNode node) {
+    for (final entry in node.entries) {
+      entry.key.accept(this);
+      entry.value.accept(this);
+    }
+  }
 }

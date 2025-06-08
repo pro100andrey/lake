@@ -1,7 +1,6 @@
 import 'package:source_span/source_span.dart';
 
 import '../../../lake_lang.dart';
-import 'error_reporter.dart';
 import 'semantic_types.dart';
 
 class SymbolEntry {
@@ -71,6 +70,30 @@ class SymbolTable {
     }
 
     _currentScope = _currentScope!.parent;
+  }
+
+  void addSymbol(
+    String name,
+    AstNode declaration,
+    SourceSpan span, [
+    SemanticType? resolvedType,
+  ]) {
+    if (_currentScope == null) {
+      _errorReporter.reportError(
+        'Cannot add symbol "$name": no active scope. '
+        'This is an internal error.',
+        span,
+      );
+      return;
+    }
+
+    _currentScope!.addSymbol(
+      name,
+      declaration,
+      resolvedType,
+      span,
+      _errorReporter,
+    );
   }
 
   SymbolEntry? lookup(String name, SourceSpan span) {

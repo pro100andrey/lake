@@ -25,7 +25,7 @@ class NoUndefinedSymbolsRule extends SemanticRule {
   void check(AstNode node) {
     switch (node) {
       case CustomTypeNode(:final value):
-        final entry = table.lookup(value, node.span);
+        final _ = table.lookup(value, node.span);
       case _:
         break;
     }

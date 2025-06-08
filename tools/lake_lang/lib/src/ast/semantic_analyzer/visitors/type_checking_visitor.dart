@@ -39,7 +39,7 @@ class TypeCheckingVisitor implements AstVisitor<void> {
 
         return type;
       case CustomTypeNode(:final value):
-        final entry = _symbolTable.lookup(value, astTypeNode.span);
+        final _ = _symbolTable.lookup(value, astTypeNode.span);
 
       case _:
         // For custom types, lists, maps, sets, streams, and void,

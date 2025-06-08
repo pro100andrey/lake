@@ -14,16 +14,7 @@ class SemanticAnalyzer {
     final symbolTableVisitor = SymbolTableVisitor(symbolTable, reporter);
     ast.accept(symbolTableVisitor);
 
-    if (reporter.hasErrors) {
-      reporter.printErrors();
-      return;
-    }
-
     final typeCheckingVisitor = TypeCheckingVisitor(symbolTable, reporter);
     ast.accept(typeCheckingVisitor);
-    if (reporter.hasErrors) {
-      reporter.printErrors();
-      return;
-    }
   }
 }

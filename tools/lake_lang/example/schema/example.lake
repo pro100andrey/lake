@@ -1,5 +1,4 @@
-import "base_types.lake"
-import "auth.lake"
+import "base.lake"
 
 // Dart namespace example
 namespace dart com.example.api.gen

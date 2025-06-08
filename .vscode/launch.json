@@ -10,12 +10,21 @@
             "args": []
         },
         {
-            "name": "lang",
+            "name": "lang exampel (debug)",
             "type": "dart",
             "request": "launch",
-            "program": "lake_lang_example.dart",
+            "program": "bin/main.dart",
             "cwd": "${workspaceFolder}/tools/lake_lang/example/",
-            "args": []
+            "args": [
+                "-i",
+                "schema/example.lake",
+                "-i",
+                "schema/base.lake",
+                "-i",
+                "schema/types.lake",
+                "-s",
+                "schema/service.lake"
+            ]
         }
     ]
 }
