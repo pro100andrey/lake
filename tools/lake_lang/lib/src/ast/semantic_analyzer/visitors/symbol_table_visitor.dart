@@ -3,33 +3,23 @@
 import '../../ast_visitor.dart';
 import '../../nodes/ast_nodes.dart';
 import '../error_reporter.dart';
-import '../rules/declaration_rule.dart';
+import '../rules/base_rule.dart';
+import '../rules/declaration/const_assignment_type_check_rule.dart';
 import '../semantic_types.dart';
 import '../symbol_entry.dart';
 import '../symbol_table.dart';
 
 class SymbolTableVisitor extends AstVisitor<void> {
-  SymbolTableVisitor(this._symbolTable, this._reporter) {
-    _addRule<ConstDefinitionNode>(ConstValueBasicTypeRule(_reporter));
+  SymbolTableVisitor(this._symbolTable, this._reporter)
+    : _ruleDispatcher = RuleDispatcher() {
+    _ruleDispatcher.addRule<ConstDefinitionNode>(
+      ConstAssignmentTypeCheckRule(_reporter),
+    );
   }
 
   final SymbolTable _symbolTable;
   final ErrorReporter _reporter;
-
-  final Map<Type, List<DeclarationRule>> _ruleMap = {};
-
-  void _addRule<T extends AstNode>(DeclarationRule rule) {
-    _ruleMap.putIfAbsent(T, () => []).add(rule);
-  }
-
-  void _applyRules(AstNode node) {
-    final rulesForNode = _ruleMap[node.runtimeType];
-    if (rulesForNode != null) {
-      for (final rule in rulesForNode) {
-        rule.check(node);
-      }
-    }
-  }
+  final RuleDispatcher _ruleDispatcher;
 
   // --- Visit Methods ---
   // Each visit method:
@@ -71,7 +61,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
 
   @override
   void visitConstDefinitionNode(ConstDefinitionNode node) {
-    _applyRules(node);
+    _ruleDispatcher.applyRules(node);
 
     // Add the constant identifier to the current scope.
     // The `resolvedType` can be null for now; TypeCheckingVisitor will set it.

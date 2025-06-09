@@ -27,11 +27,12 @@ final class ErrorReporter {
 
   void reportValueCannotBeAssigned(
     String valueType,
+    String valueKind,
     String constType,
     SourceSpan span,
   ) {
     report(
-      ValueCannotBeAssignedError(valueType, constType, span),
+      ValueCannotBeAssignedError(valueType, valueKind, constType, span),
     );
   }
 

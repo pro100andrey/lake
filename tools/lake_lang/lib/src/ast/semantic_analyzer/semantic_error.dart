@@ -22,10 +22,11 @@ final class DuplicateDeclarationError extends SemanticError {
 final class ValueCannotBeAssignedError extends SemanticError {
   ValueCannotBeAssignedError(
     String valueType,
+    String valueKind,
     String constType,
     SourceSpan span,
   ) : super(
-        "A value '${span.text}' of type '$valueType' "
+        "The $valueKind '${span.text}' of type '$valueType' "
         "cannot be assigned to a constant of type '$constType'.",
         span,
       );

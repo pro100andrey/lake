@@ -274,15 +274,6 @@ final class FunctionNode extends AstNode {
 // Types
 sealed class TypeNode extends AstNode {
   const TypeNode({required super.span});
-
-  bool get isVoid => this is VoidTypeNode;
-  bool get isBase => this is BaseTypeNode;
-  bool get isCustom => this is CustomTypeNode;
-  bool get isContainer => this is ContainerTypeNode;
-  bool get isMap => this is MapTypeNode;
-  bool get isSet => this is SetTypeNode;
-  bool get isList => this is ListTypeNode;
-  bool get isStream => this is StreamTypeNode;
 }
 
 final class BaseTypeNode extends TypeNode {
@@ -379,19 +370,28 @@ class VoidTypeNode extends TypeNode {
 sealed class ConstValueNode extends AstNode {
   const ConstValueNode({required super.span});
 
-  bool get isInt => this is IntConstantNode;
-  bool get isDouble => this is DoubleConstantNode;
-  bool get isLiteral => this is LiteralNode;
-  bool get isList => this is ConstListNode;
-  bool get isMap => this is ConstMapNode;
-  bool get isIdentifier => this is IdentifierNode;
-  bool get isBool => this is BoolConstantNode;
+  // bool get isInt => this is IntConstantNode;
+  // bool get isDouble => this is DoubleConstantNode;
+  // bool get isLiteral => this is LiteralNode;
+  // bool get isList => this is ConstListNode;
+  // bool get isMap => this is ConstMapNode;
+  // bool get isIdentifier => this is IdentifierNode;
+  // bool get isBool => this is BoolConstantNode;
+
+  String get valueKind;
+  String get valueType;
 }
 
 final class IntConstantNode extends ConstValueNode {
   const IntConstantNode({required this.value, required super.span});
 
   final String value;
+
+  @override
+  String get valueKind => 'literal';
+
+  @override
+  String get valueType => 'int';
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitIntConstantNode(this);
@@ -406,6 +406,12 @@ final class DoubleConstantNode extends ConstValueNode {
   final String value;
 
   @override
+  String get valueKind => 'literal';
+
+  @override
+  String get valueType => 'double';
+
+  @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitDoubleConstantNode(this);
 
   @override
@@ -416,6 +422,12 @@ final class BoolConstantNode extends ConstValueNode {
   const BoolConstantNode({required this.value, required super.span});
 
   final bool value;
+
+  @override
+  String get valueKind => 'literal';
+
+  @override
+  String get valueType => 'bool';
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitBoolConstantNode(this);
@@ -430,6 +442,12 @@ final class LiteralNode extends ConstValueNode {
   final String value;
 
   @override
+  String get valueKind => 'literal';
+
+  @override
+  String get valueType => 'string';
+
+  @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitLiteralNode(this);
 
   @override
@@ -440,6 +458,12 @@ final class ConstListNode extends ConstValueNode {
   const ConstListNode({required this.elements, required super.span});
 
   final List<ConstValueNode> elements;
+
+  @override
+  String get valueKind => 'list';
+
+  @override
+  String get valueType => 'list';
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitConstListNode(this);
@@ -454,6 +478,12 @@ final class ConstMapNode extends ConstValueNode {
   final List<MapEntry<ConstValueNode, ConstValueNode>> entries;
 
   @override
+  String get valueKind => 'map';
+
+  @override
+  String get valueType => 'map';
+
+  @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitConstMapNode(this);
 
   @override
@@ -464,6 +494,12 @@ final class IdentifierNode extends ConstValueNode {
   const IdentifierNode({required this.value, required super.span});
 
   final String value;
+
+  @override
+  String get valueKind => 'identifier';
+
+  @override
+  String get valueType => 'identifier';
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitIdentifierNode(this);
