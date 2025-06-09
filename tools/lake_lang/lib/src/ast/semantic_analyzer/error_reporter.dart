@@ -25,6 +25,16 @@ final class ErrorReporter {
     report(GenericSemanticError(message, span));
   }
 
+  void reportValueCannotBeAssigned(
+    String valueType,
+    String constType,
+    SourceSpan span,
+  ) {
+    report(
+      ValueCannotBeAssignedError(valueType, constType, span),
+    );
+  }
+
   /// Reports a [DuplicateDeclarationError].
   void reportDuplicateDeclaration(String name, SourceSpan span) {
     report(DuplicateDeclarationError(name, span));
@@ -44,7 +54,7 @@ final class ErrorReporter {
     print('Semantic Errors:');
     for (final error in _errors) {
       print(
-        '${error.span.start.line}:${error.span.start.column} - '
+        '${error.span.start.line + 1}:${error.span.start.column + 1} - '
         '${error.message}',
       );
     }

@@ -19,6 +19,18 @@ final class DuplicateDeclarationError extends SemanticError {
   List<Object?> get props => [message, span];
 }
 
+final class ValueCannotBeAssignedError extends SemanticError {
+  ValueCannotBeAssignedError(
+    String valueType,
+    String constType,
+    SourceSpan span,
+  ) : super(
+        "A value '${span.text}' of type '$valueType' "
+        "cannot be assigned to a constant of type '$constType'.",
+        span,
+      );
+}
+
 final class GenericSemanticError extends SemanticError {
   const GenericSemanticError(super.message, super.span);
 }

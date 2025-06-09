@@ -185,12 +185,13 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref1(token, '>');
 
   // [27] ConstValue ::= ConstList | ConstMap | DoubleConstant | IntConstant |
-  // EnumConstant | Literal | Identifier
+  // BooleanConstant | EnumConstant | Literal | Identifier
   Parser constValue() =>
       ref0(constList) |
       ref0(constMap) |
       ref0(intConstant) |
       ref0(doubleConstant) |
+      ref0(boolConstant) |
       ref0(identifier) |
       ref0(literal);
 
@@ -225,6 +226,9 @@ class LakeGrammarDefinition extends GrammarDefinition {
 
     return ref1(token, combinedParts);
   }
+
+  // [29.1] BooleanConstant ::= 'true' | 'false'
+  Parser boolConstant() => ref1(token, 'true') | ref1(token, 'false');
 
   // [30] ConstList ::= '[' (ConstValue ListSeparator?)* ']'
   Parser constList() =>

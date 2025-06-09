@@ -274,6 +274,11 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   }
 
   @override
+  void visitBoolConstantNode(BoolConstantNode node) {
+    _printNode(node, {'value': node.value});
+  }
+
+  @override
   void visitLiteralNode(LiteralNode node) {
     _printNode(node, {'value': node.value});
   }

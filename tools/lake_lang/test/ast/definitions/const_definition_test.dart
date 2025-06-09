@@ -80,7 +80,7 @@ void main() {
       expect(def.identifier.span.start.offset, 11);
       expect(def.identifier.span.end.offset, 17);
 
-      expect((def.value as IdentifierNode).value, 'true');
+      expect((def.value as BoolConstantNode).value, isTrue);
       expect(def.value.span.text, 'true');
       expect(def.value.span.start.offset, 20);
       expect(def.value.span.end.offset, 24);

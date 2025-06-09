@@ -351,6 +351,15 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   });
 
   @override
+  Parser boolConstant() => super.boolConstant().map((t) {
+    final Token token = t;
+
+    final span = _getSpan(token, token);
+
+    return BoolConstantNode(value: token.value == 'true', span: span);
+  });
+
+  @override
   Parser constList() => super.constList().map((t) {
     final [Token ld, List<List> values, Token rd] = t as List;
 

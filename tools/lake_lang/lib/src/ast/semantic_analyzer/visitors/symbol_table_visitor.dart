@@ -3,15 +3,33 @@
 import '../../ast_visitor.dart';
 import '../../nodes/ast_nodes.dart';
 import '../error_reporter.dart';
+import '../rules/declaration_rule.dart';
 import '../semantic_types.dart';
 import '../symbol_entry.dart';
 import '../symbol_table.dart';
 
 class SymbolTableVisitor extends AstVisitor<void> {
-  SymbolTableVisitor(this._symbolTable, this._reporter);
+  SymbolTableVisitor(this._symbolTable, this._reporter) {
+    _addRule<ConstDefinitionNode>(ConstValueBasicTypeRule(_reporter));
+  }
 
   final SymbolTable _symbolTable;
   final ErrorReporter _reporter;
+
+  final Map<Type, List<DeclarationRule>> _ruleMap = {};
+
+  void _addRule<T extends AstNode>(DeclarationRule rule) {
+    _ruleMap.putIfAbsent(T, () => []).add(rule);
+  }
+
+  void _applyRules(AstNode node) {
+    final rulesForNode = _ruleMap[node.runtimeType];
+    if (rulesForNode != null) {
+      for (final rule in rulesForNode) {
+        rule.check(node);
+      }
+    }
+  }
 
   // --- Visit Methods ---
   // Each visit method:
@@ -53,6 +71,8 @@ class SymbolTableVisitor extends AstVisitor<void> {
 
   @override
   void visitConstDefinitionNode(ConstDefinitionNode node) {
+    _applyRules(node);
+
     // Add the constant identifier to the current scope.
     // The `resolvedType` can be null for now; TypeCheckingVisitor will set it.
     _symbolTable.addSymbol(
@@ -205,11 +225,12 @@ class SymbolTableVisitor extends AstVisitor<void> {
   }
 
   @override
-  void visitFieldRequirementNode(FieldRequirementNode node) {}
+  void visitFieldRequirementNode(FieldRequirementNode node) {
+    // FieldRequirementNode itself doesn't introduce a new symbols or scopes.
+  }
 
   @override
   void visitFieldNode(FieldNode node) {
-
     // Add the field to the current (struct/exception/service) scope.
 
     _symbolTable.addSymbol(
@@ -228,37 +249,50 @@ class SymbolTableVisitor extends AstVisitor<void> {
 
   @override
   void visitFunctionNode(FunctionNode node) {
+    // Add the function to the current (service) scope.
     _symbolTable
       ..addSymbol(
         name: node.identifier.value,
         kind: SymbolKind.function,
         declaration: node,
         span: node.span,
-        resolvedType: null,
+        resolvedType: null, // A FunctionType will be set by TypeCheckingVisitor
       )
+      // Functions introduce a new scope for their parameters and throws.
       ..pushScope();
 
+    // Visit the return type.
     node.returnType.accept(this);
 
     for (final param in node.parameters) {
+      // Parameters are FiledNodes, but in function context, they are
+      // parameters.
       _symbolTable.addSymbol(
         name: param.identifier.value,
         kind: SymbolKind.parameter,
         declaration: param,
         span: param.span,
+        // Parameter type will be resolved by TypeCheckingVisitor
         resolvedType: null,
       );
+
+      // Visit parameter types
       param.type.accept(this);
     }
 
-    for (final th in node.throws) {
-      th.type.accept(this);
+    // Visit throw exception types (which are TypeNodes).
+    for (final throwType in node.throws) {
+      throwType.accept(this);
     }
 
+    // Visit the function body, which may contain further declarations.
     _symbolTable.popScope();
   }
 
-  // Type nodes
+  // --- Type Nodes ---
+  // These nodes define types but don't introduce new symbols *themselves*
+  // into the current scope; rather, they are parts of declarations or usages.
+  // Their inner structure might contain types that need to be visited.
 
   @override
   void visitBaseTypeNode(BaseTypeNode node) {}
@@ -285,12 +319,20 @@ class SymbolTableVisitor extends AstVisitor<void> {
   }
 
   @override
-  void visitCustomTypeNode(CustomTypeNode node) {}
+  void visitCustomTypeNode(CustomTypeNode node) {
+    // This node represents a *usage* of a type, not its definition.
+    // Resolution (lookup in symbol table) happens in TypeCheckingVisitor.
+  }
 
   @override
-  void visitVoidTypeNode(VoidTypeNode node) {}
+  void visitVoidTypeNode(VoidTypeNode node) {
+    // No symbols to add for void type.
+  }
 
-  // Constant value nodes
+  // --- Constant Value Nodes ---
+  // These nodes represent literal values or constant expressions.
+  // They don't introduce new symbols, but their components (e.g., identifiers
+  // within a constant expression) might need to be visited.
 
   @override
   void visitIntConstantNode(IntConstantNode node) {}
@@ -299,10 +341,17 @@ class SymbolTableVisitor extends AstVisitor<void> {
   void visitDoubleConstantNode(DoubleConstantNode node) {}
 
   @override
+  void visitBoolConstantNode(BoolConstantNode node) {}
+
+  @override
   void visitLiteralNode(LiteralNode node) {}
 
   @override
-  void visitIdentifierNode(IdentifierNode node) {}
+  void visitIdentifierNode(IdentifierNode node) {
+    // This node represents a *usage* of an identifier.
+    // SymbolTableVisitor's job is primarily to *define* symbols.
+    // Looking up uses of symbols is typically done in TypeCheckingVisitor
+  }
 
   @override
   void visitConstListNode(ConstListNode node) {

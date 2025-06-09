@@ -7,10 +7,14 @@ namespace dart com.example.api.gen
 namespace js example
 
 // i32 constant example
-const i32 DEFAULT_PAGE_SIZE = 20;
+const i32 DEFAULT_PAGE_SIZE = 20.2;
+
+const bool IS_PRODUCTION = 12.4;
+
+const string API_VERSION = test;
 
 // i32 constant with a negative value example
-const double PI = 3.14159;
+const double PI = 3;
 
 // i32 constant with a exponent example
 const double DOUBLE_WITH_EXPONENT = 1.23456789e-10;

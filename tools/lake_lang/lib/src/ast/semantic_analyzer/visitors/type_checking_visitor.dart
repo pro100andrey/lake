@@ -171,6 +171,9 @@ class TypeCheckingVisitor implements AstVisitor<void> {
   void visitDoubleConstantNode(DoubleConstantNode node) {}
 
   @override
+  void visitBoolConstantNode(BoolConstantNode node) {}
+
+  @override
   void visitLiteralNode(LiteralNode node) {}
 
   @override

@@ -274,6 +274,15 @@ final class FunctionNode extends AstNode {
 // Types
 sealed class TypeNode extends AstNode {
   const TypeNode({required super.span});
+
+  bool get isVoid => this is VoidTypeNode;
+  bool get isBase => this is BaseTypeNode;
+  bool get isCustom => this is CustomTypeNode;
+  bool get isContainer => this is ContainerTypeNode;
+  bool get isMap => this is MapTypeNode;
+  bool get isSet => this is SetTypeNode;
+  bool get isList => this is ListTypeNode;
+  bool get isStream => this is StreamTypeNode;
 }
 
 final class BaseTypeNode extends TypeNode {
@@ -369,6 +378,14 @@ class VoidTypeNode extends TypeNode {
 // Constants
 sealed class ConstValueNode extends AstNode {
   const ConstValueNode({required super.span});
+
+  bool get isInt => this is IntConstantNode;
+  bool get isDouble => this is DoubleConstantNode;
+  bool get isLiteral => this is LiteralNode;
+  bool get isList => this is ConstListNode;
+  bool get isMap => this is ConstMapNode;
+  bool get isIdentifier => this is IdentifierNode;
+  bool get isBool => this is BoolConstantNode;
 }
 
 final class IntConstantNode extends ConstValueNode {
@@ -390,6 +407,18 @@ final class DoubleConstantNode extends ConstValueNode {
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitDoubleConstantNode(this);
+
+  @override
+  List<Object?> get props => [value, span];
+}
+
+final class BoolConstantNode extends ConstValueNode {
+  const BoolConstantNode({required this.value, required super.span});
+
+  final bool value;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitBoolConstantNode(this);
 
   @override
   List<Object?> get props => [value, span];
