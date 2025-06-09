@@ -116,21 +116,10 @@ service Greeter {
   // Unary RPC
   string sayHello(
     1: string name
+    2: string question
   ) throws (
     1: InvalidArgumentsException invalidArgs
   )
-}
-
-exception UserNotFoundException {
-  1: UUID userId
-}
-
-exception UserNotFoundException {
-  1: UUID userId
-}
-
-exception ProductNotFoundException {
-  1: UUID productId
 }
 
 service UserService {

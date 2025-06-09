@@ -2,14 +2,7 @@ import 'package:source_span/source_span.dart';
 
 import '../../../lake_lang.dart';
 import 'semantic_types.dart';
-
-class SymbolEntry {
-  const SymbolEntry(this.name, this.declaration, [this.resolvedType]);
-
-  final String name;
-  final AstNode declaration;
-  final SemanticType? resolvedType;
-}
+import 'symbol_entry.dart';
 
 class Scope {
   Scope({this.parent});
@@ -17,19 +10,26 @@ class Scope {
   final Map<String, SymbolEntry> _symbols = {};
   final Scope? parent;
 
-  void addSymbol(
-    String name,
-    AstNode declaration,
+  void addSymbol({
+    required String name,
+    required SymbolKind kind,
+    required AstNode declaration,
+    required SourceSpan span,
+    required ErrorReporter reporter,
     SemanticType? resolvedType,
-    SourceSpan span,
-    ErrorReporter reporter,
-  ) {
+  }) {
     if (_symbols.containsKey(name)) {
       reporter.reportDuplicateDeclaration(name, span);
       return;
     }
 
-    _symbols[name] = SymbolEntry(name, declaration, resolvedType);
+    _symbols[name] = SymbolEntry(
+      name: name,
+      kind: kind,
+      declaration: declaration,
+      resolvedType: resolvedType,
+      span: span,
+    );
   }
 
   SymbolEntry? lookup(String name) {
@@ -72,12 +72,13 @@ class SymbolTable {
     _currentScope = _currentScope!.parent;
   }
 
-  void addSymbol(
-    String name,
-    AstNode declaration,
-    SourceSpan span, [
-    SemanticType? resolvedType,
-  ]) {
+  void addSymbol({
+    required String name,
+    required SymbolKind kind,
+    required AstNode declaration,
+    required SourceSpan span,
+    required SemanticType? resolvedType,
+  }) {
     if (_currentScope == null) {
       _errorReporter.reportError(
         'Cannot add symbol "$name": no active scope. '
@@ -88,11 +89,12 @@ class SymbolTable {
     }
 
     _currentScope!.addSymbol(
-      name,
-      declaration,
-      resolvedType,
-      span,
-      _errorReporter,
+      name: name,
+      kind: kind,
+      declaration: declaration,
+      span: span,
+      reporter: _errorReporter,
+      resolvedType: resolvedType,
     );
   }
 

@@ -26,7 +26,6 @@ final class BaseType extends SemanticType {
   static const stringT = BaseType('string');
   static const binaryT = BaseType('binary');
   static const uuidT = BaseType('uuid');
-  static const voidT = BaseType('void');
 
   static const values = [
     boolT,
@@ -39,7 +38,6 @@ final class BaseType extends SemanticType {
     stringT,
     binaryT,
     uuidT,
-    voidT,
   ];
 
   static Map<String, BaseType> byName = {
@@ -52,22 +50,44 @@ final class BaseType extends SemanticType {
       return true;
     }
 
+    // A void type can only be assigned to void.
+    if (this is VoidType) {
+      return other is VoidType;
+    }
+
     if (other is! BaseType) {
       return false;
     }
 
+    const intTypes = [
+      BaseType.i8T,
+      BaseType.i16T,
+      BaseType.i32T,
+      BaseType.i64T,
+    ];
+
+    final thisIndex = intTypes.indexOf(this);
+    final otherIndex = intTypes.indexOf(other);
+
+    // If both are integer types, allow assignment from smaller to larger.
+    if (thisIndex != -1 && otherIndex != -1) {
+      return thisIndex <= otherIndex;
+    }
+
+    // Specific rules for other primitive types:
+
     if (this == BaseType.boolT && other == BaseType.byteT) {
-      // bool can be assigned to byte
+      //  boolean (1 byte) can be assigned to byte (1 byte)
       return true;
     }
 
     if (this == BaseType.byteT && other == BaseType.i8T) {
-      // byte can be assigned to i8
+      // byte (unsigned) can be assigned to i8 (signed)
       return true;
     }
 
-    if (this == BaseType.i32T && other == BaseType.i64T) {
-      // i32 can be assigned to i64
+    if (this == BaseType.i64T && other == BaseType.doubleT) {
+      // i64 can be assigned to double (implicit conversion)
       return true;
     }
 
@@ -79,6 +99,9 @@ final class ListType extends SemanticType {
   ListType(this.elementType) : super('List<${elementType.name}>');
 
   final SemanticType elementType;
+
+  @override
+  List<Object?> get props => [...super.props, elementType];
 
   @override
   bool isAssignableTo(SemanticType other) {
@@ -102,6 +125,9 @@ final class MapType extends SemanticType {
   final SemanticType valueType;
 
   @override
+  List<Object?> get props => [...super.props, keyType, valueType];
+
+  @override
   bool isAssignableTo(SemanticType other) {
     if (identical(this, other)) {
       return true;
@@ -122,6 +148,9 @@ final class SetType extends SemanticType {
   final SemanticType elementType;
 
   @override
+  List<Object?> get props => [...super.props, elementType];
+
+  @override
   bool isAssignableTo(SemanticType other) {
     if (identical(this, other)) {
       return true;
@@ -135,10 +164,43 @@ final class SetType extends SemanticType {
   }
 }
 
+final class StreamType extends SemanticType {
+  StreamType(this.elementType) : super('Stream<${elementType.name}>');
+
+  final SemanticType elementType;
+
+  @override
+  List<Object?> get props => [...super.props, elementType];
+
+  @override
+  bool isAssignableTo(SemanticType other) {
+    if (identical(this, other)) {
+      return true;
+    }
+
+    if (other is! StreamType) {
+      return false;
+    }
+
+    return elementType.isAssignableTo(other.elementType);
+  }
+}
+
+final class VoidType extends SemanticType {
+  const VoidType() : super('void');
+
+  @override
+  bool isAssignableTo(SemanticType other) =>
+      other is VoidType || other is BaseType;
+}
+
 final class StructType extends SemanticType {
   StructType(this.declaration) : super(declaration.identifier.value);
 
   final StructDefinitionNode declaration;
+
+  @override
+  List<Object?> get props => [...super.props, declaration];
 
   @override
   bool isAssignableTo(SemanticType other) {
@@ -156,29 +218,13 @@ final class StructType extends SemanticType {
   }
 }
 
-final class StreamType extends SemanticType {
-  StreamType(this.innerType) : super('Stream<${innerType.name}>');
-
-  final SemanticType innerType;
-
-  @override
-  bool isAssignableTo(SemanticType other) {
-    if (identical(this, other)) {
-      return true;
-    }
-
-    if (other is! StreamType) {
-      return false;
-    }
-
-    return innerType.isAssignableTo(other.innerType);
-  }
-}
-
 final class EnumType extends SemanticType {
   EnumType(this.declaration) : super(declaration.identifier.value);
 
   final EnumDefinitionNode declaration;
+
+  @override
+  List<Object?> get props => [...super.props, declaration];
 
   @override
   bool isAssignableTo(SemanticType other) {
@@ -201,32 +247,32 @@ final class TypedefType extends SemanticType {
 
   final TypedefDefinitionNode declaration;
 
+  late final SemanticType? _targetType;
+
+  SemanticType get targetType => _targetType!;
+
+  @override
+  List<Object?> get props => [...super.props, declaration];
+
   void setTargetType(SemanticType targetType) {
-    // This method can be used to set the target type of the typedef.
-    // It can be extended later to handle more complex scenarios.
-    // declaration.targetType = targetType;
+    if (_targetType != null) {
+      throw StateError('Target type is already set for $name');
+    }
+
+    _targetType = targetType;
   }
 
   @override
-  bool isAssignableTo(SemanticType other) {
-    if (identical(this, other)) {
-      return true;
-    }
-
-    if (other is! TypedefType) {
-      return false;
-    }
-
-    // For now, we assume typedef types are not assignable to each other
-    // unless they are the same type.
-    return declaration.identifier.value == other.declaration.identifier.value;
-  }
+  bool isAssignableTo(SemanticType other) => _targetType!.isAssignableTo(other);
 }
 
 final class ServiceType extends SemanticType {
   ServiceType(this.declaration) : super(declaration.identifier.value);
 
   final ServiceDefinitionNode declaration;
+
+  @override
+  List<Object?> get props => [...super.props, declaration];
 
   @override
   bool isAssignableTo(SemanticType other) {
@@ -248,6 +294,9 @@ final class ExceptionType extends SemanticType {
   ExceptionType(this.declaration) : super(declaration.identifier.value);
 
   final ExceptionDefinitionNode declaration;
+
+  @override
+  List<Object?> get props => [...super.props, declaration];
 
   @override
   bool isAssignableTo(SemanticType other) {

@@ -62,13 +62,10 @@ void main(List<String> args) {
     final reporter = ErrorReporter();
     SemanticAnalyzer(reporter).analyze(ast);
 
-    if (reporter.hasErrors) {
-      reporter.printErrors();
-      return;
-    }
+    reporter.hasErrors
+        ? reporter.printErrors()
+        : print('No semantic errors found.');
   }
-
-  return;
 }
 
 String loadLakeFile(String filePath) {

@@ -127,7 +127,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     return EnumDefinitionNode(
       identifier: identifier,
-      values: enumValues,
+      members: enumValues,
       span: span,
     );
   });

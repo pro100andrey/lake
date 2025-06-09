@@ -6,103 +6,42 @@ import '../error_reporter.dart';
 import '../rules/semantic_rule.dart';
 import '../semantic_types.dart';
 import '../symbol_table.dart';
+import '../utils.dart';
 
 class TypeCheckingVisitor implements AstVisitor<void> {
-  TypeCheckingVisitor(this._symbolTable, this._reporter)
-    : _rules = [
-        NoDuplicateDeclarationsRule(_reporter, _symbolTable),
-        NoUndefinedSymbolsRule(_reporter, _symbolTable),
-      ];
+  TypeCheckingVisitor(this._symbolTable, this._reporter) {
+    _addRule<ConstDefinitionNode>(
+      ConstDefinitionNode,
+      ConstTypeCheckRule(_reporter, _symbolTable),
+    );
+
+    _addRule<EnumValueNode>(
+      EnumValueNode,
+      EnumValueTypeRule(_reporter, _symbolTable),
+    );
+
+    _addRule<ServiceDefinitionNode>(
+      ServiceDefinitionNode,
+      ServiceInheritanceRule(_reporter, _symbolTable),
+    );
+  }
+
+  final Map<Type, List<SemanticRule>> _ruleMap = {};
 
   final SymbolTable _symbolTable;
   final ErrorReporter _reporter;
-  final List<SemanticRule> _rules;
 
-  void _applyRules(AstNode node) {
-    for (final rule in _rules) {
-      rule.check(node);
-    }
+  void _addRule<T extends AstNode>(Type nodeType, SemanticRule rule) {
+    _ruleMap.putIfAbsent(nodeType, () => []).add(rule);
   }
 
-  SemanticType? _getSemanticType(TypeNode astTypeNode) {
-    switch (astTypeNode) {
-      case BaseTypeNode(:final value):
-        final type = BaseType.byName[value];
-
-        if (type == null) {
-          _reporter.reportError(
-            'Unknown base type: $value',
-            astTypeNode.span,
-          );
-          return null;
-        }
-
-        return type;
-      case CustomTypeNode(:final value):
-        final _ = _symbolTable.lookup(value, astTypeNode.span);
-
-      case _:
-        // For custom types, lists, maps, sets, streams, and void,
-        // we will handle them in their respective visit methods.
-        break;
-    }
-
-    if (astTypeNode is BaseTypeNode) {
-      return BaseType.values.firstWhere(
-        (t) => t.name == astTypeNode.value,
-        orElse: () {
-          _reporter.reportError(
-            'Unknown base type: ${astTypeNode.value}',
-            astTypeNode.span,
-          );
-          throw ArgumentError('Unknown base type: ${astTypeNode.value}');
-        },
-      );
-    } else if (astTypeNode is CustomTypeNode) {
-      final entry = _symbolTable.lookup(astTypeNode.value, astTypeNode.span);
-      // lookup will report an error if not found.
-      // If found, ensure it's a type definition (struct, enum, typedef).
-      if (entry != null) {
-        if (entry.resolvedType != null) {
-          return entry.resolvedType;
-        } else {
-          _reporter.reportError(
-            'Internal error: Semantic type not resolved for '
-            '"${astTypeNode.value}"',
-            astTypeNode.span,
-          );
-        }
+  void _applyRules(AstNode node) {
+    final rulesForNode = _ruleMap[node.runtimeType];
+    if (rulesForNode != null) {
+      for (final rule in rulesForNode) {
+        rule.check(node);
       }
-      return null;
-    } else if (astTypeNode is ListTypeNode) {
-      final elementType = _getSemanticType(astTypeNode.elementType);
-
-      return elementType != null ? ListType(elementType) : null;
-    } else if (astTypeNode is MapTypeNode) {
-      final keyType = _getSemanticType(astTypeNode.keyType);
-      final valueType = _getSemanticType(astTypeNode.valueType);
-
-      return (keyType != null && valueType != null)
-          ? MapType(keyType, valueType)
-          : null;
-    } else if (astTypeNode is SetTypeNode) {
-      final elementType = _getSemanticType(astTypeNode.elementType);
-
-      return elementType != null ? SetType(elementType) : null;
-    } else if (astTypeNode is StreamTypeNode) {
-      final innerType = _getSemanticType(astTypeNode.elementType);
-
-      return innerType != null ? StreamType(innerType) : null;
-    } else if (astTypeNode is VoidTypeNode) {
-      return BaseType.voidT;
     }
-
-    _reporter.reportError(
-      'Unknown type node kind: ${astTypeNode.runtimeType}',
-      astTypeNode.span,
-    );
-
-    return null;
   }
 
   /// Visits the root node of the AST.
@@ -145,11 +84,10 @@ class TypeCheckingVisitor implements AstVisitor<void> {
 
     final entry = _symbolTable.lookup(node.identifier.value, node.span);
     if (entry != null && entry.resolvedType is TypedefType) {
-      final typedefType = entry.resolvedType! as TypedefType;
-      final targetType = _getSemanticType(node.type);
+      final targetType = getSemanticType(node.type, _reporter, _symbolTable);
 
       if (targetType != null) {
-        typedefType.setTargetType(targetType);
+        // entry.resolvedType.setTargetType(targetType);
       }
     }
   }

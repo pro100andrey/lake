@@ -1,6 +1,10 @@
+// ignore_for_file: avoid_print
+
 import '../../ast_visitor.dart';
 import '../../nodes/ast_nodes.dart';
 import '../error_reporter.dart';
+import '../semantic_types.dart';
+import '../symbol_entry.dart';
 import '../symbol_table.dart';
 
 class SymbolTableVisitor extends AstVisitor<void> {
@@ -9,8 +13,18 @@ class SymbolTableVisitor extends AstVisitor<void> {
   final SymbolTable _symbolTable;
   final ErrorReporter _reporter;
 
+  // --- Visit Methods ---
+  // Each visit method:
+  // 1. Adds declarations to the symbol table using the appropriate SymbolKind.
+  // 2. Manages scope changes (push/pop scope) for nodes that introduce new
+  // scopes.
+  // 3. Recursively calls .accept(this) on child nodes to continue traversal.
+
   @override
   void visitDocumentNode(DocumentNode node) {
+    // The top-level document usually represents the global scope.
+    // The SymbolTable is typically initialized with a global scope.
+    // So, no push/pop scope here for the document itself.
     for (final header in node.headers) {
       header.accept(this);
     }
@@ -21,85 +35,172 @@ class SymbolTableVisitor extends AstVisitor<void> {
   }
 
   @override
-  void visitImportNode(ImportNode node) {}
+  void visitImportNode(ImportNode node) {
+    // Imports themselves don't introduce symbols into the current scope.
+    // Their resolution happens outside the SymbolTableVisitor's primary role.
+  }
 
   @override
-  void visitNamespaceNode(NamespaceNode node) {}
+  void visitNamespaceNode(NamespaceNode node) {
+    // For Lake, assuming namespaces are more for organization and don't
+    // introduce distinct symbol table scopes by default, or that they are
+    // handled by a higher-level module resolution. If they DO introduce
+    // scopes, manage them here.
+    // _symbolTable.pushScope(name: node.identifier.value);
+    // node.identifier.accept(this); // Visit identifier if needed
+    // _symbolTable.popScope();
+  }
 
   @override
   void visitConstDefinitionNode(ConstDefinitionNode node) {
-    _symbolTable.addSymbol(node.identifier.value, node, node.span);
+    // Add the constant identifier to the current scope.
+    // The `resolvedType` can be null for now; TypeCheckingVisitor will set it.
+    _symbolTable.addSymbol(
+      name: node.identifier.value,
+      kind: SymbolKind.constant,
+      span: node.span,
+      declaration: node,
+      resolvedType: null, // Initial type can be null or a placeholder
+    );
 
+    // Continue visiting children to ensure all parts of the AST are covered
     node.type.accept(this);
     node.value.accept(this);
   }
 
   @override
   void visitTypedefDefinitionNode(TypedefDefinitionNode node) {
-    _symbolTable.addSymbol(node.identifier.value, node, node.span);
+    // Add the typedef identifier to the current scope.
+    // Create the semantic type for the typedef itself.
+    final typedefSemanticType = TypedefType(node);
 
+    _symbolTable.addSymbol(
+      name: node.identifier.value,
+      kind: SymbolKind.type,
+      declaration: node,
+      span: node.span,
+      resolvedType: typedefSemanticType,
+    );
+
+    // Visit the aliased type. Its resolution will happen in the
+    // TypeCheckingVisitor.
     node.type.accept(this);
   }
 
   @override
   void visitEnumDefinitionNode(EnumDefinitionNode node) {
+    // Create the semantic type for the enum itself.
+    final enumSemanticType = EnumType(node);
+    // Add the enum definition to the current scope.
     _symbolTable
-      ..addSymbol(node.identifier.value, node, node.span)
+      ..addSymbol(
+        name: node.identifier.value,
+        kind: SymbolKind.type,
+        declaration: node,
+        span: node.span,
+        resolvedType: enumSemanticType, // Set the enum's own semantic type
+      )
+      // Enums introduce a new scope for their members.
       ..pushScope();
 
-    for (final value in node.values) {
+    for (final value in node.members) {
       value.accept(this);
     }
 
+    // Pop the scope after processing all enum members.
     _symbolTable.popScope();
   }
 
   @override
   void visitEnumValueNode(EnumValueNode node) {
-    _symbolTable.addSymbol(node.identifier.value, node, node.span);
+    // Add each enum value as an enum member within the enum's scope.
+    _symbolTable.addSymbol(
+      name: node.identifier.value,
+      kind: SymbolKind.enumMember,
+      declaration: node,
+      span: node.span,
+      //Type (parent EnumType) will be resolved by TypeCheckingVisitor
+      resolvedType: null,
+    );
+
+    // Visit the optional constant value assigned to the enum member.
     node.value?.accept(this);
   }
 
   @override
   void visitStructDefinitionNode(StructDefinitionNode node) {
+    // Create the semantic type for the struct itself.
+    final structSemanticType = StructType(node);
+    // Add the struct definition to the current scope.
     _symbolTable
-      ..addSymbol(node.identifier.value, node, node.span)
+      ..addSymbol(
+        name: node.identifier.value,
+        kind: SymbolKind.type,
+        declaration: node,
+        span: node.span,
+        resolvedType: structSemanticType, // Set the struct's own semantic type
+      )
+      // Structs introduce a new scope for their fields.
       ..pushScope();
 
     for (final field in node.fields) {
       field.accept(this);
     }
 
+    // Pop the scope after processing all struct fields.
     _symbolTable.popScope();
   }
 
   @override
   void visitExceptionDefinitionNode(ExceptionDefinitionNode node) {
+    // Create the semantic type for the exception itself.
+    final exceptionSemanticType = ExceptionType(node);
+    // Add the exception definition to the current scope.
     _symbolTable
-      ..addSymbol(node.identifier.value, node, node.span)
+      ..addSymbol(
+        name: node.identifier.value,
+        kind: SymbolKind.type,
+        declaration: node,
+        span: node.span,
+        // Set the exception's own semantic type
+        resolvedType: exceptionSemanticType,
+      )
+      // Exceptions introduce a new scope for their fields.
       ..pushScope();
 
     for (final field in node.fields) {
       field.accept(this);
     }
 
+    // Pop the scope after processing all exception fields.
     _symbolTable.popScope();
   }
 
   @override
   void visitServiceDefinitionNode(ServiceDefinitionNode node) {
+    // Create the semantic type for the service itself.
+    final serviceSemanticType = ServiceType(node);
+    // Add the service definition to the current scope.
     _symbolTable
-      ..addSymbol(node.identifier.value, node, node.span)
+      ..addSymbol(
+        name: node.identifier.value,
+        kind: SymbolKind.service,
+        declaration: node,
+        span: node.span,
+        resolvedType: serviceSemanticType,
+      )
+      // Services introduce a new scope for their methods.
       ..pushScope();
 
-    if (node.extendsService != null) {
-      node.extendsService!.accept(this);
-    }
+    // Visit the extended service identifier (if any)
+    // This is an IdentifierNode, no symbol added for it here.
+    node.extendsService?.accept(this);
 
     for (final method in node.functions) {
       method.accept(this);
     }
 
+    // Pop the scope after processing all service methods.
     _symbolTable.popScope();
   }
 
@@ -108,6 +209,18 @@ class SymbolTableVisitor extends AstVisitor<void> {
 
   @override
   void visitFieldNode(FieldNode node) {
+
+    // Add the field to the current (struct/exception/service) scope.
+
+    _symbolTable.addSymbol(
+      name: node.identifier.value,
+      kind: SymbolKind.field,
+      declaration: node,
+      span: node.span,
+      resolvedType: null, // Type will be resolved by TypeCheckingVisitor
+    );
+
+    // Visit the field's type, default value, and requirement (if any).
     node.type.accept(this);
     node.defaultValue?.accept(this);
     node.requirement?.accept(this);
@@ -116,13 +229,25 @@ class SymbolTableVisitor extends AstVisitor<void> {
   @override
   void visitFunctionNode(FunctionNode node) {
     _symbolTable
-      ..addSymbol(node.identifier.value, node, node.span)
+      ..addSymbol(
+        name: node.identifier.value,
+        kind: SymbolKind.function,
+        declaration: node,
+        span: node.span,
+        resolvedType: null,
+      )
       ..pushScope();
 
     node.returnType.accept(this);
 
     for (final param in node.parameters) {
-      _symbolTable.addSymbol(param.identifier.value, param, param.span);
+      _symbolTable.addSymbol(
+        name: param.identifier.value,
+        kind: SymbolKind.parameter,
+        declaration: param,
+        span: param.span,
+        resolvedType: null,
+      );
       param.type.accept(this);
     }
 

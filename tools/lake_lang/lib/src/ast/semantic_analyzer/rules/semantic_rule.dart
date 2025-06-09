@@ -11,11 +11,15 @@ sealed class SemanticRule {
   void check(AstNode node);
 }
 
-class NoDuplicateDeclarationsRule extends SemanticRule {
+final class NoDuplicateDeclarationsRule extends SemanticRule {
   const NoDuplicateDeclarationsRule(super.reporter, super.table);
 
   @override
-  void check(AstNode node) {}
+  void check(AstNode node) {
+    throw UnimplementedError(
+      'NoDuplicateDeclarationsRule is not implemented yet.',
+    );
+  }
 }
 
 class NoUndefinedSymbolsRule extends SemanticRule {
@@ -23,11 +27,48 @@ class NoUndefinedSymbolsRule extends SemanticRule {
 
   @override
   void check(AstNode node) {
-    switch (node) {
-      case CustomTypeNode(:final value):
-        final _ = table.lookup(value, node.span);
-      case _:
-        break;
+    throw UnimplementedError(
+      'NoUndefinedSymbolsRule is not implemented yet.',
+    );
+  }
+}
+
+final class ConstTypeCheckRule extends SemanticRule {
+  ConstTypeCheckRule(super.reporter, super.table);
+
+  @override
+  void check(AstNode node) {
+    if (node case ConstDefinitionNode(
+      :final type,
+      :final identifier,
+      :final value,
+      :final span,
+    )) {
+      // final declaratedSemanticType =
     }
+  }
+}
+
+
+
+class EnumValueTypeRule extends SemanticRule {
+  EnumValueTypeRule(super.reporter, super.table);
+
+  @override
+  void check(AstNode node) {
+    throw UnimplementedError(
+      'EnumValueTypeRule is not implemented yet.',
+    );
+  }
+}
+
+class ServiceInheritanceRule extends SemanticRule {
+  ServiceInheritanceRule(super.reporter, super.table);
+
+  @override
+  void check(AstNode node) {
+    throw UnimplementedError(
+      'ServiceInheritanceRule is not implemented yet.',
+    );
   }
 }

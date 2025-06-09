@@ -122,18 +122,18 @@ final class TypedefDefinitionNode extends DefinitionNode {
 final class EnumDefinitionNode extends DefinitionNode {
   const EnumDefinitionNode({
     required this.identifier,
-    required this.values,
+    required this.members,
     required super.span,
   });
 
   final IdentifierNode identifier;
-  final List<EnumValueNode> values;
+  final List<EnumValueNode> members;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitEnumDefinitionNode(this);
 
   @override
-  List<Object?> get props => [identifier, values, span];
+  List<Object?> get props => [identifier, members, span];
 }
 
 final class EnumValueNode extends AstNode {
