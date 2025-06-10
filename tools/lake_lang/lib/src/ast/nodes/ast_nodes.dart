@@ -381,10 +381,10 @@ final class IntConstantNode extends ConstValueNode {
   final String value;
 
   @override
-  String get valueKind => 'literal';
+  String get valueKind => 'literal integer';
 
   @override
-  String get valueType => 'int';
+  String get valueType => 'integer';
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitIntConstantNode(this);
@@ -399,7 +399,7 @@ final class DoubleConstantNode extends ConstValueNode {
   final String value;
 
   @override
-  String get valueKind => 'literal';
+  String get valueKind => 'literal double';
 
   @override
   String get valueType => 'double';
@@ -417,7 +417,7 @@ final class BoolConstantNode extends ConstValueNode {
   final bool value;
 
   @override
-  String get valueKind => 'literal';
+  String get valueKind => 'literal boolean';
 
   @override
   String get valueType => 'bool';
@@ -435,7 +435,7 @@ final class LiteralNode extends ConstValueNode {
   final String value;
 
   @override
-  String get valueKind => 'literal';
+  String get valueKind => 'literal string';
 
   @override
   String get valueType => 'string';
@@ -453,7 +453,7 @@ final class ConstListNode extends ConstValueNode {
   final List<ConstValueNode> elements;
 
   @override
-  String get valueKind => 'list';
+  String get valueKind => 'literal list';
 
   @override
   String get valueType => 'list';
@@ -471,7 +471,7 @@ final class ConstMapNode extends ConstValueNode {
   final List<MapEntry<ConstValueNode, ConstValueNode>> entries;
 
   @override
-  String get valueKind => 'map';
+  String get valueKind => 'literal map';
 
   @override
   String get valueType => 'map';

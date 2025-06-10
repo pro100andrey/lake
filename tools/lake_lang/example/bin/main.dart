@@ -57,8 +57,6 @@ void main(List<String> args) {
   }
 
   if (isRunningSemantic) {
-    print('Semantic analysis is enabled.');
-
     final reporter = ErrorReporter();
 
     SemanticAnalyzer(reporter).analyze(ast);

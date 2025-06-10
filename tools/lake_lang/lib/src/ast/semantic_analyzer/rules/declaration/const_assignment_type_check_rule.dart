@@ -9,6 +9,13 @@ final class ConstAssignmentTypeCheckRule extends BaseRule<ConstDefinitionNode> {
 
   @override
   void check(ConstDefinitionNode node) {
+    // If the node is an identifier, skip type checking.
+    // This is because identifiers are resolved separately and do not
+    // have a value at this point in the analysis.
+    if (node.value is IdentifierNode) {
+      return;
+    }
+
     if (node.type case BaseTypeNode(:final value)) {
       final check = _expectedCheck[value];
 

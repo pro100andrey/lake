@@ -39,13 +39,14 @@ class ErrorReporter {
         '${diag.primarySpan.start.line + 1}:'
         '${diag.primarySpan.start.column + 1} '
         '${diag.severity.displayName}$codeText: ${diag.message}\n'
-        '${diag.primarySpan.highlight()}\n',
+        '${diag.primarySpan.highlight(color: true)}\n',
       );
 
       for (final (:span, :message) in diag.labels) {
         print(
-          '  --> ${span.start.line + 1}:${span.start.column + 1}: $message\n'
-          '${span.highlight()}\n',
+          '  --> ${span.start.line + 1}:'
+          '${span.start.column + 1}: $message\n'
+          '${span.highlight(color: true)}\n',
         );
       }
 
