@@ -1,5 +1,6 @@
 import '../nodes/ast_nodes.dart';
 import 'error_reporter.dart';
+import 'semantic_error.dart';
 import 'semantic_types.dart';
 import 'symbol_table.dart';
 
@@ -12,7 +13,9 @@ SemanticType? getSemanticType(
     final type = BaseType.byName[value];
 
     if (type == null) {
-      reporter.reportError('Unknown base type: $value', span);
+      reporter.report(
+        GenericSemanticError('Unknown base type: $value', span),
+      );
     }
 
     return type;
@@ -24,7 +27,9 @@ SemanticType? getSemanticType(
     if (entry?.declaration != null) {
       return entry!.resolvedType;
     } else {
-      reporter.reportError('Unknown custom type: $value', span);
+      reporter.report(
+        GenericSemanticError('Unknown custom type: $value', span),
+      );
     }
 
     return entry?.resolvedType;
@@ -38,7 +43,9 @@ SemanticType? getSemanticType(
     );
 
     if (elementSemanticType == null) {
-      reporter.reportError('Invalid element type in list', span);
+      reporter.report(
+        GenericSemanticError('Invalid element type in list', span),
+      );
       return null;
     }
 
@@ -63,11 +70,15 @@ SemanticType? getSemanticType(
     );
 
     if (keySemanticType == null) {
-      reporter.reportError('Invalid key type in map', span);
+      reporter.report(
+        GenericSemanticError('Invalid key type in map', span),
+      );
     }
 
     if (valueSemanticType == null) {
-      reporter.reportError('Invalid value type in map', span);
+      reporter.report(
+        GenericSemanticError('Invalid value type in map', span),
+      );
     }
 
     if (keySemanticType == null || valueSemanticType == null) {
@@ -85,7 +96,9 @@ SemanticType? getSemanticType(
     );
 
     if (elementSemanticType == null) {
-      reporter.reportError('Invalid element type in set', span);
+      reporter.report(
+        GenericSemanticError('Invalid element type in set', span),
+      );
 
       return null;
     }
@@ -101,7 +114,9 @@ SemanticType? getSemanticType(
     );
 
     if (elementSemanticType == null) {
-      reporter.reportError('Invalid element type in stream', span);
+      reporter.report(
+        GenericSemanticError('Invalid element type in stream', span),
+      );
 
       return null;
     }
@@ -113,9 +128,12 @@ SemanticType? getSemanticType(
     return const VoidType();
   }
 
-  reporter.reportError(
-    'Cannot resolve semantic type for AST node of type ${typeNode.runtimeType}',
-    typeNode.span,
+  reporter.report(
+    GenericSemanticError(
+      'Cannot resolve semantic type for AST node of type '
+      '${typeNode.runtimeType}',
+      typeNode.span,
+    ),
   );
 
   return null;

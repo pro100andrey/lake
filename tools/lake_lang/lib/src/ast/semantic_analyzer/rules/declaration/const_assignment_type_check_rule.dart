@@ -1,4 +1,5 @@
 import '../../../nodes/ast_nodes.dart';
+import '../../semantic_error.dart';
 import '../base_rule.dart';
 
 /// A semantic rule that checks whether constant values are assignable
@@ -13,11 +14,12 @@ final class ConstAssignmentTypeCheckRule extends BaseRule<ConstDefinitionNode> {
       final check = _expectedCheck[value];
 
       if (check != null && !check(node.value)) {
-        reporter.reportValueCannotBeAssigned(
-          node.value.valueType,
-          node.value.valueKind,
-          value,
-          node.value.span,
+        final valueType = node.value.valueType;
+        final valueKind = node.value.valueKind;
+        final span = node.value.span;
+
+        reporter.report(
+          ValueCannotBeAssignedError(valueType, valueKind, value, span),
         );
       }
     }

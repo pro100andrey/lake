@@ -1,6 +1,7 @@
 import 'package:source_span/source_span.dart';
 
 import '../../../lake_lang.dart';
+import 'semantic_error.dart';
 import 'semantic_types.dart';
 import 'symbol_entry.dart';
 
@@ -19,7 +20,7 @@ class Scope {
     SemanticType? resolvedType,
   }) {
     if (_symbols.containsKey(name)) {
-      reporter.reportDuplicateDeclaration(name, span);
+      reporter.report(DuplicateDeclarationError(name, span));
       return;
     }
 
@@ -62,9 +63,11 @@ class SymbolTable {
 
   void popScope() {
     if (_currentScope?.parent == null) {
-      _errorReporter.reportError(
-        'Cannot pop the global scope.',
-        SourceSpan(SourceLocation(0), SourceLocation(0), ''),
+      _errorReporter.report(
+        GenericSemanticError(
+          'Cannot pop the global scope.',
+          SourceSpan(SourceLocation(0), SourceLocation(0), ''),
+        ),
       );
       return;
     }
@@ -80,10 +83,12 @@ class SymbolTable {
     required SemanticType? resolvedType,
   }) {
     if (_currentScope == null) {
-      _errorReporter.reportError(
-        'Cannot add symbol "$name": no active scope. '
-        'This is an internal error.',
-        span,
+      _errorReporter.report(
+        GenericSemanticError(
+          'Cannot add symbol "$name": no active scope. '
+          'This is an internal error.',
+          span,
+        ),
       );
       return;
     }
@@ -100,10 +105,12 @@ class SymbolTable {
 
   SymbolEntry? lookup(String name, SourceSpan span) {
     if (_currentScope == null) {
-      _errorReporter.reportError(
-        'Cannot lookup symbol "$name": no active scope. '
-        'This is an internal error.',
-        span,
+      _errorReporter.report(
+        GenericSemanticError(
+          'Cannot lookup symbol "$name": no active scope. '
+          'This is an internal error.',
+          span,
+        ),
       );
       return null;
     }
@@ -111,7 +118,7 @@ class SymbolTable {
     final symbol = _currentScope!.lookup(name);
 
     if (symbol == null) {
-      _errorReporter.reportUndefinedSymbol(name, span);
+      _errorReporter.report(UndefinedSymbolError(name, span));
       return null;
     }
 
