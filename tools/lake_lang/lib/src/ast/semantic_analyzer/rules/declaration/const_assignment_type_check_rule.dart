@@ -3,12 +3,12 @@ import '../base_rule.dart';
 
 /// A semantic rule that checks whether constant values are assignable
 /// to their declared primitive types (e.g., `i32`, `bool`, `string`, etc.).
-final class ConstAssignmentTypeCheckRule extends BaseRule {
+final class ConstAssignmentTypeCheckRule extends BaseRule<ConstDefinitionNode> {
   /// Creates a rule that checks constant values against base types.
   const ConstAssignmentTypeCheckRule(super.reporter);
 
   @override
-  void check(covariant ConstDefinitionNode node) {
+  void check(ConstDefinitionNode node) {
     if (node.type case BaseTypeNode(:final value)) {
       final check = _expectedCheck[value];
 

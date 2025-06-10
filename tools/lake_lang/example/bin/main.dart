@@ -60,6 +60,7 @@ void main(List<String> args) {
     print('Semantic analysis is enabled.');
 
     final reporter = ErrorReporter();
+
     SemanticAnalyzer(reporter).analyze(ast);
 
     reporter.hasErrors

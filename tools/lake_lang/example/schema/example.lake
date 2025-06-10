@@ -11,7 +11,7 @@ const i32 DEFAULT_PAGE_SIZE = 20.2;
 
 const bool IS_PRODUCTION = 12.4;
 
-const string API_VERSION = test;
+const string API_VERSION = void;
 
 // i32 constant with a negative value example
 const double PI = 3;
@@ -34,6 +34,16 @@ const list<string> SUPPORTED_LOCALES = [
   "es_ES", 
   "fr_FR"
 ];
+
+const list<string> SUPPORTED_LANGUAGES = [
+  "English", 
+  1, 
+  "French"
+];
+
+enum EmptyEnum {}
+
+struct EmptyStruct {}
 
 // map<string, i32> constant example
 const map<i32, string> STATUS_DESCRIPTIONS = {

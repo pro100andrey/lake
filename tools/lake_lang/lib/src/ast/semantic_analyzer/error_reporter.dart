@@ -46,6 +46,16 @@ final class ErrorReporter {
     report(UndefinedSymbolError(name, span));
   }
 
+  /// Reports an [EmptyEnumDefinitionError].
+  void reportEmptyEnumDefinition(SourceSpan span) {
+    report(EmptyEnumDefinitionError(span));
+  }
+
+  /// Reports an [EmptyStructDefinitionError].
+  void reportEmptyStructDefinition(SourceSpan span) {
+    report(EmptyStructDefinitionError(span));
+  }
+
   void printErrors() {
     if (_errors.isEmpty) {
       print('No semantic errors found.');
@@ -56,7 +66,8 @@ final class ErrorReporter {
     for (final error in _errors) {
       print(
         '${error.span.start.line + 1}:${error.span.start.column + 1} - '
-        '${error.message}',
+        '${error.message} \n'
+        '${error.span.highlight()}\n',
       );
     }
   }

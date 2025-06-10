@@ -12,11 +12,23 @@ sealed class SemanticError extends Equatable {
 }
 
 final class DuplicateDeclarationError extends SemanticError {
-  const DuplicateDeclarationError(String name, SourceSpan span)
+  const DuplicateDeclarationError(this.name, SourceSpan span)
     : super('Duplicate declaration of "$name"', span);
 
+  final String name;
+
   @override
-  List<Object?> get props => [message, span];
+  List<Object?> get props => [message, span, name];
+}
+
+final class EmptyEnumDefinitionError extends SemanticError {
+  const EmptyEnumDefinitionError(SourceSpan span)
+    : super('Empty enum definition', span);
+}
+
+final class EmptyStructDefinitionError extends SemanticError {
+  const EmptyStructDefinitionError(SourceSpan span)
+    : super('Empty struct definition', span);
 }
 
 final class ValueCannotBeAssignedError extends SemanticError {

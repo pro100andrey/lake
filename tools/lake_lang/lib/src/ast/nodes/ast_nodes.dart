@@ -335,6 +335,7 @@ final class ListTypeNode extends ContainerTypeNode {
 
 final class StreamTypeNode extends TypeNode {
   const StreamTypeNode({required this.elementType, required super.span});
+
   final TypeNode elementType;
 
   @override
@@ -369,14 +370,6 @@ class VoidTypeNode extends TypeNode {
 // Constants
 sealed class ConstValueNode extends AstNode {
   const ConstValueNode({required super.span});
-
-  // bool get isInt => this is IntConstantNode;
-  // bool get isDouble => this is DoubleConstantNode;
-  // bool get isLiteral => this is LiteralNode;
-  // bool get isList => this is ConstListNode;
-  // bool get isMap => this is ConstMapNode;
-  // bool get isIdentifier => this is IdentifierNode;
-  // bool get isBool => this is BoolConstantNode;
 
   String get valueKind;
   String get valueType;

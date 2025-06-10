@@ -1,10 +1,11 @@
-// ignore_for_file: avoid_print
-
 import '../../ast_visitor.dart';
 import '../../nodes/ast_nodes.dart';
 import '../error_reporter.dart';
 import '../rules/base_rule.dart';
 import '../rules/declaration/const_assignment_type_check_rule.dart';
+import '../rules/declaration/invalid_identifier_name_rule.dart';
+import '../rules/declaration/non_empty_enum_definition_rule.dart';
+import '../rules/declaration/non_empty_struct_definaition_rule.dart';
 import '../semantic_types.dart';
 import '../symbol_entry.dart';
 import '../symbol_table.dart';
@@ -12,9 +13,11 @@ import '../symbol_table.dart';
 class SymbolTableVisitor extends AstVisitor<void> {
   SymbolTableVisitor(this._symbolTable, this._reporter)
     : _ruleDispatcher = RuleDispatcher() {
-    _ruleDispatcher.addRule<ConstDefinitionNode>(
-      ConstAssignmentTypeCheckRule(_reporter),
-    );
+    _ruleDispatcher
+      ..addRule<ConstDefinitionNode>(ConstAssignmentTypeCheckRule(_reporter))
+      ..addRule<EnumDefinitionNode>(NonEmptyEnumDefinitionRule(_reporter))
+      ..addRule<StructDefinitionNode>(NonEmptyStructDefinitionRule(_reporter))
+      ..addRule<IdentifierNode>(InvalidIdentifierNameRule(_reporter));
   }
 
   final SymbolTable _symbolTable;
@@ -99,6 +102,9 @@ class SymbolTableVisitor extends AstVisitor<void> {
 
   @override
   void visitEnumDefinitionNode(EnumDefinitionNode node) {
+    // Apply rules for enum definitions, e.g., non-empty enum check.
+    _ruleDispatcher.applyRules(node);
+
     // Create the semantic type for the enum itself.
     final enumSemanticType = EnumType(node);
     // Add the enum definition to the current scope.
@@ -139,6 +145,8 @@ class SymbolTableVisitor extends AstVisitor<void> {
 
   @override
   void visitStructDefinitionNode(StructDefinitionNode node) {
+    // Apply rules for struct definitions, e.g., non-empty struct check.
+    _ruleDispatcher.applyRules(node);
     // Create the semantic type for the struct itself.
     final structSemanticType = StructType(node);
     // Add the struct definition to the current scope.
@@ -338,6 +346,8 @@ class SymbolTableVisitor extends AstVisitor<void> {
 
   @override
   void visitIdentifierNode(IdentifierNode node) {
+    // Apply rules for identifier usage, e.g., invalid identifier names.
+    _ruleDispatcher.applyRules(node);
     // This node represents a *usage* of an identifier.
     // SymbolTableVisitor's job is primarily to *define* symbols.
     // Looking up uses of symbols is typically done in TypeCheckingVisitor

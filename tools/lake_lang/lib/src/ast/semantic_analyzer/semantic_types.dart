@@ -50,11 +50,6 @@ final class BaseType extends SemanticType {
       return true;
     }
 
-    // A void type can only be assigned to void.
-    if (this is VoidType) {
-      return other is VoidType;
-    }
-
     if (other is! BaseType) {
       return false;
     }
@@ -191,7 +186,7 @@ final class VoidType extends SemanticType {
 
   @override
   bool isAssignableTo(SemanticType other) =>
-      other is VoidType || other is BaseType;
+      other is VoidType || other.name == 'void';
 }
 
 final class StructType extends SemanticType {

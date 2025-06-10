@@ -22,8 +22,9 @@
                 "schema/base.lake",
                 "-i",
                 "schema/types.lake",
+                "-i",
+                "schema/service.lake",
                 "-s",
-                "schema/service.lake"
             ]
         }
     ]

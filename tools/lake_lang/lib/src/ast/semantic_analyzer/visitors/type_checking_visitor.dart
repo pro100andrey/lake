@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import '../../ast_visitor.dart';
 import '../../nodes/ast_nodes.dart';
 import '../error_reporter.dart';
@@ -44,7 +42,7 @@ class TypeCheckingVisitor implements AstVisitor<void> {
   void visitConstDefinitionNode(ConstDefinitionNode node) {
     _ruleDispatcher.applyRules(node);
 
-    node.value.accept(this);
+    node.type.accept(this);
     node.value.accept(this);
   }
 

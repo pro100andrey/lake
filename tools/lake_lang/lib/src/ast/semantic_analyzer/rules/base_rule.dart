@@ -1,7 +1,7 @@
 import '../../nodes/ast_nodes.dart';
 import '../error_reporter.dart';
 
-abstract class BaseRule {
+abstract class BaseRule<T extends AstNode> {
   /// Creates a new rule with the given [reporter] for error reporting.
   const BaseRule(this.reporter);
 
@@ -9,7 +9,7 @@ abstract class BaseRule {
   final ErrorReporter reporter;
 
   /// Validates the provided [node] against the rule's logic.
-  void check(AstNode node);
+  void check(T node);
 }
 
 final class RuleDispatcher {
@@ -26,7 +26,7 @@ final class RuleDispatcher {
   /// ```dart
   /// dispatcher.addRule<VariableDeclaration>(MyVariableRule());
   /// ```
-  void addRule<T extends AstNode>(BaseRule rule) {
+  void addRule<T extends AstNode>(BaseRule<T> rule) {
     _ruleMap.putIfAbsent(T, () => []).add(rule);
   }
 
