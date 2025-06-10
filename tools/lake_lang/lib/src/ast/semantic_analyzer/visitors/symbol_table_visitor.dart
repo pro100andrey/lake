@@ -1,14 +1,14 @@
 import '../../ast_visitor.dart';
 import '../../nodes/ast_nodes.dart';
-import '../error_reporter.dart';
+import '../errors/error_reporter.dart';
 import '../rules/base_rule.dart';
 import '../rules/declaration/const_assignment_type_check_rule.dart';
 import '../rules/declaration/invalid_identifier_name_rule.dart';
 import '../rules/declaration/non_empty_enum_definition_rule.dart';
 import '../rules/declaration/non_empty_struct_definaition_rule.dart';
 import '../semantic_types.dart';
-import '../symbol_entry.dart';
-import '../symbol_table.dart';
+import '../symbols/symbol_entry.dart';
+import '../symbols/symbol_table.dart';
 
 class SymbolTableVisitor extends AstVisitor<void> {
   SymbolTableVisitor(this._symbolTable, this._reporter)

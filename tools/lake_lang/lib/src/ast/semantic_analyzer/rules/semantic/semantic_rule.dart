@@ -1,5 +1,5 @@
 import '../../../nodes/ast_nodes.dart';
-import '../../symbol_table.dart';
+import '../../symbols/symbol_table.dart';
 import '../base_rule.dart';
 
 abstract class SemanticRule extends BaseRule {

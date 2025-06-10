@@ -1,5 +1,5 @@
 import '../../nodes/ast_nodes.dart';
-import '../error_reporter.dart';
+import '../errors/error_reporter.dart';
 
 abstract class BaseRule<T extends AstNode> {
   /// Creates a new rule with the given [reporter] for error reporting.

@@ -1,5 +1,4 @@
-import '../../../nodes/ast_nodes.dart';
-import '../../semantic_error.dart';
+import '../../../../../lake_lang.dart';
 import '../base_rule.dart';
 
 /// A semantic rule that checks whether constant values are assignable
@@ -18,8 +17,12 @@ final class ConstAssignmentTypeCheckRule extends BaseRule<ConstDefinitionNode> {
         final valueKind = node.value.valueKind;
         final span = node.value.span;
 
-        reporter.report(
-          ValueCannotBeAssignedError(valueType, valueKind, value, span),
+        reporter.reportValueCannotBeAssigned(
+          constTypeName: value,
+          valueKindName: valueKind,
+          valueSpan: span,
+          valueTypeName: valueType,
+          constTypeSpan: node.type.span,
         );
       }
     }

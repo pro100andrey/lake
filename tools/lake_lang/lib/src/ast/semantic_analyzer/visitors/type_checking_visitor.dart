@@ -1,9 +1,9 @@
 import '../../ast_visitor.dart';
 import '../../nodes/ast_nodes.dart';
-import '../error_reporter.dart';
+import '../errors/error_reporter.dart';
 import '../rules/base_rule.dart';
 import '../semantic_types.dart';
-import '../symbol_table.dart';
+import '../symbols/symbol_table.dart';
 import '../utils.dart';
 
 class TypeCheckingVisitor implements AstVisitor<void> {

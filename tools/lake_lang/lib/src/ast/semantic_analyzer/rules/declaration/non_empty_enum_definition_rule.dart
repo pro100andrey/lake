@@ -1,5 +1,5 @@
 import '../../../nodes/ast_nodes.dart';
-import '../../semantic_error.dart';
+import '../../errors/error_reporter.dart';
 import '../base_rule.dart';
 
 final class NonEmptyEnumDefinitionRule extends BaseRule<EnumDefinitionNode> {
@@ -9,7 +9,7 @@ final class NonEmptyEnumDefinitionRule extends BaseRule<EnumDefinitionNode> {
   @override
   void check(EnumDefinitionNode node) {
     if (node.members.isEmpty) {
-      reporter.report(EmptyEnumDefinitionError(node.span));
+      reporter.reportEmptyEnumDefinition(node.span);
     }
   }
 }

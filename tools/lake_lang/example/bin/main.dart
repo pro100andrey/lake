@@ -64,7 +64,7 @@ void main(List<String> args) {
     SemanticAnalyzer(reporter).analyze(ast);
 
     reporter.hasErrors
-        ? reporter.printErrors()
+        ? reporter.printDiagnostics()
         : print('No semantic errors found.');
   }
 }

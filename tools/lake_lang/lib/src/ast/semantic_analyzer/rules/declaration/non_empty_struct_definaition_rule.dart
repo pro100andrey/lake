@@ -1,5 +1,5 @@
 import '../../../nodes/ast_nodes.dart';
-import '../../semantic_error.dart';
+import '../../errors/error_reporter.dart';
 import '../base_rule.dart';
 
 final class NonEmptyStructDefinitionRule
@@ -10,7 +10,7 @@ final class NonEmptyStructDefinitionRule
   @override
   void check(StructDefinitionNode node) {
     if (node.fields.isEmpty) {
-      reporter.report(EmptyStructDefinitionError(node.span));
+      reporter.reportEmptyStructDefinition(node.span);
     }
   }
 }

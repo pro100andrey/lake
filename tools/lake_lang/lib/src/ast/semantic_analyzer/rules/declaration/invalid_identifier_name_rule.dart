@@ -1,5 +1,5 @@
 import '../../../nodes/ast_nodes.dart';
-import '../../semantic_error.dart';
+import '../../errors/error_reporter.dart';
 import '../base_rule.dart';
 
 /// A rule that checks if an identifier is a reserved keyword.
@@ -16,12 +16,7 @@ final class InvalidIdentifierNameRule extends BaseRule<IdentifierNode> {
   @override
   void check(IdentifierNode node) {
     if (_reservedKeywords.contains(node.value)) {
-      reporter.report(
-        GenericSemanticError(
-          'Invalid identifier name: "${node.value}" is a reserved keyword.',
-          node.span,
-        ),
-      );
+      reporter.reportInvalidIdentifierName(node.value, node.span);
     }
   }
 }

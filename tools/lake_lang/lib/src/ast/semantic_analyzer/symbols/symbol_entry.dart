@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:source_span/source_span.dart';
 
-import '../../../lake_lang.dart';
-import 'semantic_types.dart';
+import '../../../../lake_lang.dart';
+import '../semantic_types.dart';
 
 enum SymbolKind {
   constant,

@@ -1,6 +1,6 @@
 import '../nodes/ast_nodes.dart';
-import 'error_reporter.dart';
-import 'symbol_table.dart';
+import 'errors/error_reporter.dart';
+import 'symbols/symbol_table.dart';
 import 'visitors/symbol_table_visitor.dart';
 import 'visitors/type_checking_visitor.dart';
 
