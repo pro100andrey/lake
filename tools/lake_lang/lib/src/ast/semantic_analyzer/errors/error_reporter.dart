@@ -137,7 +137,19 @@ extension ErrorReporterExtension on ErrorReporter {
     );
   }
 
+  void reportListElementTypeMismatch({
+    required String expectedType,
+    required String actualType,
+    required SourceSpan span,
+  }) {
+    report(ListElementTypeMismatchDiagnostic(expectedType, actualType, span));
+  }
+
   void reportInvalidIdentifierName(String identifier, SourceSpan span) {
     report(InvalidIdentifierNameDiagnostic(identifier, span));
+  }
+
+  void reportUnsupportedListElementType(String elementType, SourceSpan span) {
+    report(UnsupportedListElementTypeDiagnostic(elementType, span));
   }
 }

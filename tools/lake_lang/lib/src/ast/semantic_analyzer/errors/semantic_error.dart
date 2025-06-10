@@ -181,6 +181,41 @@ final class EmptyStructDefinitionDiagnostic extends Diagnostic {
       );
 }
 
+final class ListElementTypeMismatchDiagnostic extends Diagnostic {
+  const ListElementTypeMismatchDiagnostic(
+    String expectedType,
+    String actualType,
+    SourceSpan span,
+  ) : super(
+        primarySpan: span,
+        message:
+            'List element type mismatch: expected "$expectedType", '
+            'but found "$actualType".',
+        code: 'E1007',
+        suggestions: const [
+          'Ensure all list elements are of the same type.',
+          'Check the type of each element in the list.',
+        ],
+        helpLink: 'https://lakelang.org/docs/errors/E1007',
+      );
+}
+
+final class UnsupportedListElementTypeDiagnostic extends Diagnostic {
+  const UnsupportedListElementTypeDiagnostic(
+    String elementType,
+    SourceSpan span,
+  ) : super(
+        primarySpan: span,
+        message:
+            'Unsupported list element type: "$elementType". '
+            'Only primitive types like i32, bool, and string are supported.',
+        code: 'E1010',
+        suggestions: const [
+          'Use a supported type like i32, bool, or string.',
+        ],
+      );
+}
+
 /// Diagnostic for using a deprecated feature.
 final class DeprecatedFeatureDiagnostic extends Diagnostic {
   const DeprecatedFeatureDiagnostic(

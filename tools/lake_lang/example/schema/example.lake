@@ -23,7 +23,7 @@ const double DOUBLE_WITH_EXPONENT = 1.23456789e-10;
 const i64 MAX_FILE_SIZE = 10485760; // 10 MB in bytes
 
 // list<i32> constant example
-const list<i32> PRIME_NUMBERS = [2, 3, 5, 7, 11];
+const list<i32> PRIME_NUMBERS = [2, 3, 5, 7, 11, "test", 13, 17, 19, 23, 29];
 
 // string constant example
 const string ADMIN_EMAIL = "admin@example.com";
@@ -35,11 +35,7 @@ const list<string> SUPPORTED_LOCALES = [
   "fr_FR"
 ];
 
-const list<string> SUPPORTED_LANGUAGES = [
-  "English", 
-  1, 
-  "French"
-];
+const list<string> SUPPORTED_LANGUAGES = [ "English", 1, "French", "Spanish" ];
 
 enum EmptyEnum {}
 
