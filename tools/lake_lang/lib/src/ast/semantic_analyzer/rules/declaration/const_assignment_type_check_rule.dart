@@ -2,28 +2,17 @@ import '../../../nodes/ast_nodes.dart';
 import '../../errors/error_reporter.dart';
 import '../base_rule.dart';
 
-abstract class _TypeCheckRule extends BaseRule<ConstDefinitionNode> {
-  const _TypeCheckRule(super.reporter);
-
-  @override
-  void check(ConstDefinitionNode node) {
-    // Skip identifiers (resolved elsewhere).
-    if (node.value case IdentifierNode()) {
-      return;
-    }
-
-    checkType(node);
-  }
-
-  void checkType(ConstDefinitionNode node);
-}
-
-final class _BaseTypeCheckRule extends _TypeCheckRule {
+/// A private base rule that checks if a constant's value is compatible
+/// with its declared **base (primitive) type**.
+///
+/// This rule handles types like `i32`, `bool`, `string`, `double`, etc.
+/// It uses the `_expectedCheck` map to determine type compatibility.
+final class _BaseTypeCheckRule extends BaseRule<ConstDefinitionNode> {
   /// Creates a rule that checks constant values against base types.
   const _BaseTypeCheckRule(super.reporter);
 
   @override
-  void checkType(ConstDefinitionNode node) {
+  void check(ConstDefinitionNode node) {
     if ((node.type, node.value) case (
       BaseTypeNode(value: final value),
       ConstValueNode(:final valueKind, :final valueType, :final span),
@@ -43,12 +32,17 @@ final class _BaseTypeCheckRule extends _TypeCheckRule {
   }
 }
 
-/// Checks constant values against list types (e.g., list<i32>).
-final class _ListTypeCheckRule extends _TypeCheckRule {
+/// A private rule that checks constant values against **list types**
+/// (e.g., `list<i32>`).
+///
+/// It ensures that all elements within a constant list literal are compatible
+/// with the list's declared element type. It also checks if the list's element
+/// type is supported (e.g., only primitive types are allowed for now).
+final class _ListTypeCheckRule extends BaseRule<ConstDefinitionNode> {
   const _ListTypeCheckRule(super.reporter);
 
   @override
-  void checkType(ConstDefinitionNode node) {
+  void check(ConstDefinitionNode node) {
     if ((node.type, node.value) case (
       ListTypeNode(:final elementType),
       ConstListNode(:final elements),
@@ -83,7 +77,10 @@ final class _ListTypeCheckRule extends _TypeCheckRule {
 }
 
 /// A semantic rule that checks whether constant values are assignable
-/// to their declared primitive types (e.g., `i32`, `bool`, `string`, etc.).
+/// to their declared types (e.g., `i32`, `bool`, `string`, `list<i32>`, etc.).
+///
+/// This rule dispatches to specialized sub-rules (`_BaseTypeCheckRule` and
+/// `_ListTypeCheckRule`) to handle different constant type definitions.
 final class ConstAssignmentTypeCheckRule extends BaseRule<ConstDefinitionNode> {
   /// Creates a rule that checks constant values against base types.
   ConstAssignmentTypeCheckRule(super.reporter);
@@ -105,6 +102,9 @@ final class ConstAssignmentTypeCheckRule extends BaseRule<ConstDefinitionNode> {
   }
 }
 
+/// Helper function to get a string representation of a [TypeNode].
+///
+/// This is used to generate human-readable type names for error messages.
 String _typeName(TypeNode type) => switch (type) {
   BaseTypeNode(:final value) => value,
   ListTypeNode(:final elementType) => 'list<${_typeName(elementType)}>',
@@ -112,9 +112,11 @@ String _typeName(TypeNode type) => switch (type) {
 };
 
 /// A mapping from base type names (e.g., `i32`, `bool`) to validation
-/// functions that determine whether a [ConstValueNode] is compatible.
+/// functions that determine whether a [ConstValueNode] is compatible with that
+/// type.
 ///
-/// These functions are used to verify type correctness of constant values.
+/// These functions are used by [_BaseTypeCheckRule] and [_ListTypeCheckRule]
+/// to verify the type correctness of constant values during semantic analysis.
 final Map<String, bool Function(ConstValueNode)> _expectedCheck = {
   'bool': (v) => v is BoolConstantNode,
   'string': (v) => v is LiteralNode,

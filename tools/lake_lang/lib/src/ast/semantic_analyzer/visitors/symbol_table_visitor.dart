@@ -17,7 +17,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
       ..addRule<ConstDefinitionNode>(ConstAssignmentTypeCheckRule(_reporter))
       ..addRule<EnumDefinitionNode>(NonEmptyEnumDefinitionRule(_reporter))
       ..addRule<StructDefinitionNode>(NonEmptyStructDefinitionRule(_reporter))
-      ..addRule<IdentifierNode>(InvalidIdentifierNameRule(_reporter));
+      ..addRule<IdentifierNode>(KeywordAsIdentifierRule(_reporter));
   }
 
   final SymbolTable _symbolTable;

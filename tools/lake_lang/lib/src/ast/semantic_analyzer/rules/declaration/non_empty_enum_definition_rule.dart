@@ -2,8 +2,13 @@ import '../../../nodes/ast_nodes.dart';
 import '../../errors/error_reporter.dart';
 import '../base_rule.dart';
 
+// A rule that checks if an enum definition is non-empty.
+///
+/// This rule ensures that all [EnumDefinitionNode]s contain at least one
+/// member, preventing the declaration of empty enums which are typically
+/// invalid or semantically meaningless.
 final class NonEmptyEnumDefinitionRule extends BaseRule<EnumDefinitionNode> {
-  /// Creates a rule that checks if an enum definition is non-empty.
+  /// Creates a [NonEmptyEnumDefinitionRule] with the given error [reporter].
   const NonEmptyEnumDefinitionRule(super.reporter);
 
   @override
