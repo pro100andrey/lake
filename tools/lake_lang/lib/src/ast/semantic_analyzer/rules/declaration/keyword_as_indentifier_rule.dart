@@ -24,7 +24,10 @@ final class KeywordAsIdentifierRule extends BaseRule<IdentifierNode> {
   @override
   void check(IdentifierNode node) {
     if (_reservedKeywords.contains(node.value)) {
-      reporter.reportKeywordAsIdentifier(node.value, node.span);
+      reporter.reportKeywordAsIdentifier(
+        identifier: node.value,
+        span: node.span,
+      );
     }
   }
 }

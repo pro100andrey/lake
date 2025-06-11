@@ -22,8 +22,8 @@ class Scope {
     if (_symbols.containsKey(name)) {
       final existingEntry = _symbols[name]!;
       reporter.reportDuplicateDeclaration(
-        name,
-        span,
+        name: name,
+        span: span,
         previousDeclarationSpan: existingEntry.span,
       );
 
@@ -70,8 +70,8 @@ class SymbolTable {
   void popScope() {
     if (_currentScope?.parent == null) {
       _errorReporter.reportGeneric(
-        'Cannot pop the global scope.',
-        SourceSpan(SourceLocation(0), SourceLocation(0), ''),
+        message: 'Cannot pop the global scope.',
+        span: SourceSpan(SourceLocation(0), SourceLocation(0), ''),
       );
       return;
     }
@@ -88,9 +88,10 @@ class SymbolTable {
   }) {
     if (_currentScope == null) {
       _errorReporter.reportGeneric(
-        'Cannot add symbol "$name": no active scope. '
-        'This is an internal error.',
-        span,
+        message:
+            'Cannot add symbol "$name": no active scope. '
+            'This is an internal error.',
+        span: span,
       );
       return;
     }
@@ -108,9 +109,10 @@ class SymbolTable {
   SymbolEntry? lookup(String name, SourceSpan span) {
     if (_currentScope == null) {
       _errorReporter.reportGeneric(
-        'Cannot lookup symbol "$name": no active scope. '
-        'This is an internal error.',
-        span,
+        message:
+            'Cannot lookup symbol "$name": no active scope. '
+            'This is an internal error.',
+        span: span,
       );
       return null;
     }
@@ -118,7 +120,7 @@ class SymbolTable {
     final symbol = _currentScope!.lookup(name);
 
     if (symbol == null) {
-      _errorReporter.reportUndefinedSymbol(name, span);
+      _errorReporter.reportUndefinedSymbol(name: name, span: span);
       return null;
     }
 

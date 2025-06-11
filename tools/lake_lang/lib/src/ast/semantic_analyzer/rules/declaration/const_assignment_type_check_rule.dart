@@ -1,6 +1,7 @@
 import '../../../nodes/ast_nodes.dart';
 import '../../errors/error_reporter.dart';
 import '../base_rule.dart';
+import '../utils.dart';
 
 /// A private base rule that checks if a constant's value is compatible
 /// with its declared **base (primitive) type**.
@@ -14,14 +15,12 @@ final class _BaseTypeCheckRule extends BaseRule<ConstDefinitionNode> {
   @override
   void check(ConstDefinitionNode node) {
     if ((node.type, node.value) case (
-      BaseTypeNode(value: final value),
+      BaseTypeNode(value: final constTypeName),
       ConstValueNode(:final valueKind, :final valueType, :final span),
     )) {
-      final check = _expectedCheck[value];
-
-      if (check != null && !check(node.value)) {
+      if (!isConstValueCompatibleWithBaseType(constTypeName, node.value)) {
         reporter.reportConstValueCannotBeAssigned(
-          constTypeName: value,
+          constTypeName: constTypeName,
           valueKindName: valueKind,
           valueSpan: span,
           valueTypeName: valueType,
@@ -47,7 +46,7 @@ final class _ListTypeCheckRule extends BaseRule<ConstDefinitionNode> {
       ListTypeNode(:final elementType),
       ConstListNode(:final elements),
     )) {
-      if (elementType case BaseTypeNode(:final value)) {
+      if (elementType case BaseTypeNode(value: final expectedType)) {
         for (final element in elements) {
           if (element is IdentifierNode) {
             // Skip identifiers in constant list elements for now.
@@ -55,11 +54,10 @@ final class _ListTypeCheckRule extends BaseRule<ConstDefinitionNode> {
             continue;
           }
 
-          final check = _expectedCheck[value];
-          if (check != null && !check(element)) {
+          if (!isConstValueCompatibleWithBaseType(expectedType, element)) {
             reporter.reportListElementTypeMismatch(
               // (e.g., 'i32')
-              expectedType: value,
+              expectedType: expectedType,
               // (e.g., 'integer', 'string', etc.)
               actualType: element.valueType,
               span: element.span,
@@ -68,9 +66,45 @@ final class _ListTypeCheckRule extends BaseRule<ConstDefinitionNode> {
         }
       } else {
         reporter.reportUnsupportedListElementType(
-          _typeName(elementType),
-          node.type.span,
+          elementType: getTypeName(elementType),
+          span: node.type.span,
         );
+      }
+    }
+  }
+}
+
+final class _MapTypeCheckRule extends BaseRule<ConstDefinitionNode> {
+  const _MapTypeCheckRule(super.reporter);
+
+  @override
+  void check(ConstDefinitionNode node) {
+    if ((node.type, node.value) case (
+      MapTypeNode(:final keyType, :final valueType),
+      ConstMapNode(:final entries),
+    )) {
+      for (final entry in entries) {
+        if (!isConstValueCompatibleWithBaseType(
+          getTypeName(keyType),
+          entry.key,
+        )) {
+          reporter.reportMapValueTypeMismatch(
+            expectedType: getTypeName(keyType),
+            actualType: entry.key.valueType,
+            span: entry.key.span,
+          );
+        }
+
+        if (!isConstValueCompatibleWithBaseType(
+          getTypeName(valueType),
+          entry.value,
+        )) {
+          reporter.reportMapValueTypeMismatch(
+            expectedType: getTypeName(valueType),
+            actualType: entry.value.valueType,
+            span: entry.value.span,
+          );
+        }
       }
     }
   }
@@ -85,8 +119,9 @@ final class ConstAssignmentTypeCheckRule extends BaseRule<ConstDefinitionNode> {
   /// Creates a rule that checks constant values against base types.
   ConstAssignmentTypeCheckRule(super.reporter);
 
-  late final _baseTypeCheckRule = _BaseTypeCheckRule(reporter);
-  late final _listTypeCheckRule = _ListTypeCheckRule(reporter);
+  late final baseTypeCheckRule = _BaseTypeCheckRule(reporter);
+  late final listTypeCheckRule = _ListTypeCheckRule(reporter);
+  late final mapTypeCheckRule = _MapTypeCheckRule(reporter);
 
   @override
   void check(ConstDefinitionNode node) {
@@ -97,33 +132,8 @@ final class ConstAssignmentTypeCheckRule extends BaseRule<ConstDefinitionNode> {
       return;
     }
 
-    _baseTypeCheckRule.check(node);
-    _listTypeCheckRule.check(node);
+    baseTypeCheckRule.check(node);
+    listTypeCheckRule.check(node);
+    mapTypeCheckRule.check(node);
   }
 }
-
-/// Helper function to get a string representation of a [TypeNode].
-///
-/// This is used to generate human-readable type names for error messages.
-String _typeName(TypeNode type) => switch (type) {
-  BaseTypeNode(:final value) => value,
-  ListTypeNode(:final elementType) => 'list<${_typeName(elementType)}>',
-  _ => 'unknown',
-};
-
-/// A mapping from base type names (e.g., `i32`, `bool`) to validation
-/// functions that determine whether a [ConstValueNode] is compatible with that
-/// type.
-///
-/// These functions are used by [_BaseTypeCheckRule] and [_ListTypeCheckRule]
-/// to verify the type correctness of constant values during semantic analysis.
-final Map<String, bool Function(ConstValueNode)> _expectedCheck = {
-  'bool': (v) => v is BoolConstantNode,
-  'string': (v) => v is LiteralNode,
-  'double': (v) => v is DoubleConstantNode,
-  'byte': (v) => v is IntConstantNode,
-  'i8': (v) => v is IntConstantNode,
-  'i16': (v) => v is IntConstantNode,
-  'i32': (v) => v is IntConstantNode,
-  'i64': (v) => v is IntConstantNode,
-};

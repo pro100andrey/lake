@@ -59,10 +59,10 @@ final class ErrorReporter {
     for (final diag in _diagnostics) {
       final codeText = diag.code != null ? ' [${diag.code!.id}]' : '';
       print(
-        '${diag.primarySpan.start.line + 1}:'
-        '${diag.primarySpan.start.column + 1} '
+        '${diag.span.start.line + 1}:'
+        '${diag.span.start.column + 1} '
         '${diag.severity.displayName}$codeText: ${diag.message}\n'
-        '${diag.primarySpan.highlight(color: true)}\n',
+        '${diag.span.highlight(color: true)}\n',
       );
 
       for (final (:span, :message) in diag.labels) {
@@ -109,9 +109,9 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   ///   - [labels]: Additional contextual labels.
   ///   - [suggestions]: *Deprecated*. Suggestions are now handled by
   /// [DiagnosticCode].
-  void reportGeneric(
-    String message,
-    SourceSpan span, {
+  void reportGeneric({
+    required String message,
+    required SourceSpan span,
     DiagnosticSeverity severity = DiagnosticSeverity.error,
     DiagnosticCode? code,
     List<DiagnosticLabel> labels = const [],
@@ -119,8 +119,8 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   }) {
     report(
       GenericDiagnostic(
-        message,
-        span,
+        message: message,
+        span: span,
         severity: severity,
         labels: labels,
       ),
@@ -136,8 +136,8 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// - Parameters:
   ///   - [name]: The name of the undefined symbol.
   ///   - [span]: The [SourceSpan] where the undefined symbol was encountered.
-  void reportUndefinedSymbol(String name, SourceSpan span) {
-    report(UndefinedSymbolDiagnostic(name, span));
+  void reportUndefinedSymbol({required String name, required SourceSpan span}) {
+    report(UndefinedSymbolDiagnostic(name: name, span: span));
   }
 
   /// Reports a [DuplicateDeclarationDiagnostic].
@@ -150,13 +150,17 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   ///   - [span]: The [SourceSpan] of the current, duplicate declaration.
   ///   - [previousDeclarationSpan]: An optional [SourceSpan] pointing to the
   /// location of the original declaration, providing helpful context.
-  void reportDuplicateDeclaration(
-    String name,
-    SourceSpan span, {
-    SourceSpan? previousDeclarationSpan,
+  void reportDuplicateDeclaration({
+    required String name,
+    required SourceSpan span,
+    required SourceSpan previousDeclarationSpan,
   }) {
     report(
-      DuplicateDeclarationDiagnostic(name, span, previousDeclarationSpan),
+      DuplicateDeclarationDiagnostic(
+        name: name,
+        span: span,
+        previousDeclarationSpan: previousDeclarationSpan,
+      ),
     );
   }
 
@@ -166,8 +170,8 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// members.
   ///
   /// - Parameter [span]: The [SourceSpan] of the empty enum definition.
-  void reportEmptyEnumDefinition(SourceSpan span) {
-    report(EmptyEnumDefinitionDiagnostic(span));
+  void reportEmptyEnumDefinition({required SourceSpan span}) {
+    report(EmptyEnumDefinitionDiagnostic(span: span));
   }
 
   /// Reports an [EmptyStructDefinitionDiagnostic].
@@ -176,8 +180,8 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// fields.
   ///
   /// - Parameter [span]: The [SourceSpan] of the empty struct definition.
-  void reportEmptyStructDefinition(SourceSpan span) {
-    report(EmptyStructDefinitionDiagnostic(span));
+  void reportEmptyStructDefinition({required SourceSpan span}) {
+    report(EmptyStructDefinitionDiagnostic(span: span));
   }
 
   /// Reports a [ConstValueCannotBeAssignedDiagnostic].
@@ -225,7 +229,13 @@ extension ErrorReporterGenericExtension on ErrorReporter {
     required String actualType,
     required SourceSpan span,
   }) {
-    report(ListElementTypeMismatchDiagnostic(expectedType, actualType, span));
+    report(
+      ListElementTypeMismatchDiagnostic(
+        expectedType: expectedType,
+        actualType: actualType,
+        span: span,
+      ),
+    );
   }
 
   /// Reports a [KeywordAsIdentifierDiagnostic].
@@ -236,8 +246,11 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// - Parameters:
   ///   - [identifier]: The reserved keyword that was used as an identifier.
   ///   - [span]: The [SourceSpan] where the keyword was used as an identifier.
-  void reportKeywordAsIdentifier(String identifier, SourceSpan span) {
-    report(KeywordAsIdentifierDiagnostic(identifier, span));
+  void reportKeywordAsIdentifier({
+    required String identifier,
+    required SourceSpan span,
+  }) {
+    report(KeywordAsIdentifierDiagnostic(identifier: identifier, span: span));
   }
 
   /// Reports an [UnsupportedListElementTypeDiagnostic].
@@ -250,7 +263,83 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   ///   - [elementType]: The name of the unsupported element type.
   ///   - [span]: The [SourceSpan] where the unsupported list element type was
   ///     encountered.
-  void reportUnsupportedListElementType(String elementType, SourceSpan span) {
-    report(UnsupportedListElementTypeDiagnostic(elementType, span));
+  void reportUnsupportedListElementType({
+    required String elementType,
+    required SourceSpan span,
+  }) {
+    report(
+      UnsupportedListElementTypeDiagnostic(
+        elementType: elementType,
+        span: span,
+      ),
+    );
+  }
+
+  /// Reports a [MapKeyTypeMismatchDiagnostic].
+  ///
+  /// This diagnostic is triggered when a key of one type cannot be assigned
+  /// to a map entry declared with a different type.
+  ///
+  /// - Parameters:
+  ///   - [expectedType]: The name of the type expected for the map key.
+  ///   - [actualType]: The name of the type found for the map key.
+  ///   - [span]: The [SourceSpan] of the map entry with the type mismatch.
+  void reportMapKeyTypeMismatch({
+    required String expectedType,
+    required String actualType,
+    required SourceSpan span,
+  }) {
+    report(
+      MapKeyTypeMismatchDiagnostic(
+        expectedType: expectedType,
+        actualType: actualType,
+        span: span,
+      ),
+    );
+  }
+
+  /// Reports a [MapValueTypeMismatchDiagnostic].
+  ///
+  /// This diagnostic is triggered when a value of one type cannot be assigned
+  /// to a map entry declared with a different type.
+  ///
+  /// - Parameters:
+  ///   - [expectedType]: The name of the type expected for the map entry.
+  ///   - [actualType]: The name of the type found for the map entry.
+  ///   - [span]: The [SourceSpan] of the map entry with the type mismatch.
+  void reportMapValueTypeMismatch({
+    required String expectedType,
+    required String actualType,
+    required SourceSpan span,
+  }) {
+    report(
+      MapValueTypeMismatchDiagnostic(
+        expectedType: expectedType,
+        actualType: actualType,
+        span: span,
+      ),
+    );
+  }
+
+  /// Reports a [RequiredFieldCannotHaveDefaultValueDiagnostic].
+  ///
+  /// This diagnostic is triggered when a field marked as `required` also
+  /// has a default value, which is a contradiction in the language's
+  /// semantics.
+  ///
+  /// - Parameters:
+  ///   - [fieldName]: The name of the field that is required but has a default
+  /// value.
+  ///   - [span]: The [SourceSpan] where the error was detected.
+  void reportRequiredFieldCannotHaveDefaultValue({
+    required String fieldName,
+    required SourceSpan span,
+  }) {
+    report(
+      RequiredFieldCannotHaveDefaultValueDiagnostic(
+        fieldName: fieldName,
+        span: span,
+      ),
+    );
   }
 }

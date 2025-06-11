@@ -12,7 +12,7 @@ SemanticType? getSemanticType(
     final type = BaseType.byName[value];
 
     if (type == null) {
-      reporter.reportGeneric('Unknown base type: $value', span);
+      reporter.reportGeneric(message: 'Unknown base type: $value', span: span);
     }
 
     return type;
@@ -24,7 +24,10 @@ SemanticType? getSemanticType(
     if (entry?.declaration != null) {
       return entry!.resolvedType;
     } else {
-      reporter.reportGeneric('Unknown custom type: $value', span);
+      reporter.reportGeneric(
+        message: 'Unknown custom type: $value',
+        span: span,
+      );
     }
 
     return entry?.resolvedType;
@@ -38,7 +41,10 @@ SemanticType? getSemanticType(
     );
 
     if (elementSemanticType == null) {
-      reporter.reportGeneric('Invalid element type in list', span);
+      reporter.reportGeneric(
+        message: 'Invalid element type in list',
+        span: span,
+      );
 
       return null;
     }
@@ -64,11 +70,11 @@ SemanticType? getSemanticType(
     );
 
     if (keySemanticType == null) {
-      reporter.reportGeneric('Invalid key type in map', span);
+      reporter.reportGeneric(message: 'Invalid key type in map', span: span);
     }
 
     if (valueSemanticType == null) {
-      reporter.reportGeneric('Invalid value type in map', span);
+      reporter.reportGeneric(message: 'Invalid value type in map', span: span);
     }
 
     if (keySemanticType == null || valueSemanticType == null) {
@@ -86,7 +92,10 @@ SemanticType? getSemanticType(
     );
 
     if (elementSemanticType == null) {
-      reporter.reportGeneric('Invalid element type in set', span);
+      reporter.reportGeneric(
+        message: 'Invalid element type in set',
+        span: span,
+      );
 
       return null;
     }
@@ -102,7 +111,10 @@ SemanticType? getSemanticType(
     );
 
     if (elementSemanticType == null) {
-      reporter.reportGeneric('Invalid element type in stream', span);
+      reporter.reportGeneric(
+        message: 'Invalid element type in stream',
+        span: span,
+      );
 
       return null;
     }
@@ -115,8 +127,8 @@ SemanticType? getSemanticType(
   }
 
   reporter.reportGeneric(
-    'Unsupported type node: ${typeNode.runtimeType}',
-    typeNode.span,
+    message: 'Unsupported type node: ${typeNode.runtimeType}',
+    span: typeNode.span,
   );
 
   return null;

@@ -39,6 +39,8 @@ const list<string> SUPPORTED_LANGUAGES = [ "English", 1, "French", "Spanish" ];
 
 enum EmptyEnum {}
 
+
+
 struct EmptyStruct {}
 
 // map<string, i32> constant example
@@ -92,7 +94,7 @@ struct UserProfile {
 
 // struct with required and optional fields example
 struct Product {
-  1: required UUID productId,
+  1: required UUID productId = '00000000-0000-0000-0000-000000000000',
   2: required string name,
   3: required double price,
   4: optional string description,

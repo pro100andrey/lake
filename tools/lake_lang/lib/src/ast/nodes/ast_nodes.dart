@@ -3,20 +3,26 @@ import 'package:source_span/source_span.dart';
 
 import '../ast_visitor.dart';
 
+/// This file defines the complete AST (Abstract Syntax Tree) node structure for
+///  the Lake language. All nodes are immutable and implement the [Equatable]
+/// interface for equality checks. Each node also carries a [SourceSpan] for
+/// source location tracking.
+
 /// Base sealed class for all AST nodes.
-/// All concrete AST nodes must be defined in this file (or library).
+///
+/// Each AST node includes a [SourceSpan] for precise location tracking in the
+/// source file. All nodes must implement [accept] for the Visitor pattern.
+/// Subclasses must implement [props] for value equality.
 sealed class AstNode extends Equatable {
+  /// Constructs an AST node with the given [span].
   const AstNode({required this.span});
 
-  /// Optional span for source location information.
+  /// The source location of the node in the original text.
   final SourceSpan span;
 
-  /// Add an accept method for the Visitor pattern
+  /// Accepts a visitor to perform operations over this AST node.
   T accept<T>(AstVisitor<T> visitor);
 
-  // Equatable requires props, but the base AstNode itself has no specific
-  // properties that define its equality beyond its type and children, which
-  // are handled by concrete implementations.
   @override
   List<Object?> get props => throw UnimplementedError(
     'props should be implemented in subclasses of AstNode',
@@ -26,16 +32,24 @@ sealed class AstNode extends Equatable {
   bool get stringify => false;
 }
 
-// --- Concrete AST Node Classes ---
-
+/// The root node of a parsed document.
+///
+/// Represents the entire Lake document, containing all header nodes
+/// (such as imports and namespaces) and all top-level definitions
+/// (constants, typedefs, enums, structs, exceptions, and services).
 final class DocumentNode extends AstNode {
+  /// Creates a [DocumentNode] with the given [headers], [definitions], and
+  /// [span].
   const DocumentNode({
     required this.headers,
     required this.definitions,
     required super.span,
   });
 
+  /// List of header nodes such as imports and namespaces.
   final List<HeaderNode> headers;
+
+  /// List of top-level definition nodes in the document.
   final List<DefinitionNode> definitions;
 
   @override
@@ -45,13 +59,18 @@ final class DocumentNode extends AstNode {
   List<Object?> get props => [headers, definitions, span];
 }
 
+/// Base class for all header nodes (e.g., imports, namespaces).
 sealed class HeaderNode extends AstNode {
+  /// Constructs a [HeaderNode] with the given [span].
   const HeaderNode({required super.span});
 }
 
+/// Represents an import statement in the Lake language.
 final class ImportNode extends HeaderNode {
+  /// Creates an [ImportNode] with the given [path] and [span].
   const ImportNode({required this.path, required super.span});
 
+  /// The path being imported, as a string literal node.
   final LiteralNode path;
 
   @override
@@ -61,14 +80,20 @@ final class ImportNode extends HeaderNode {
   List<Object?> get props => [path, span];
 }
 
+/// Represents a namespace declaration in the Lake language.
 final class NamespaceNode extends HeaderNode {
+  /// Creates a [NamespaceNode] with the given [scope], [identifier], and
+  /// [span].
   const NamespaceNode({
     required this.scope,
     required this.identifier,
     required super.span,
   });
 
+  /// The scope of the namespace, as a string literal node.
   final LiteralNode scope;
+
+  /// The identifier for the namespace.
   final IdentifierNode identifier;
 
   @override
@@ -78,11 +103,16 @@ final class NamespaceNode extends HeaderNode {
   List<Object?> get props => [scope, identifier, span];
 }
 
+/// Base class for all top-level definition nodes.
 sealed class DefinitionNode extends AstNode {
+  /// Constructs a [DefinitionNode] with the given [span].
   const DefinitionNode({required super.span});
 }
 
+/// Represents a constant definition in the Lake language.
 final class ConstDefinitionNode extends DefinitionNode {
+  /// Creates a [ConstDefinitionNode] with the given [type], [identifier],
+  /// [value], and [span].
   const ConstDefinitionNode({
     required this.type,
     required this.identifier,
@@ -90,8 +120,13 @@ final class ConstDefinitionNode extends DefinitionNode {
     required super.span,
   });
 
+  /// The type of the constant.
   final TypeNode type;
+
+  /// The identifier for the constant.
   final IdentifierNode identifier;
+
+  /// The value assigned to the constant.
   final ConstValueNode value;
 
   @override
@@ -101,14 +136,20 @@ final class ConstDefinitionNode extends DefinitionNode {
   List<Object?> get props => [type, identifier, value, span];
 }
 
+/// Represents a typedef definition in the Lake language.
 final class TypedefDefinitionNode extends DefinitionNode {
+  /// Creates a [TypedefDefinitionNode] with the given [type], [identifier], and
+  /// [span].
   const TypedefDefinitionNode({
     required this.type,
     required this.identifier,
     required super.span,
   });
 
+  /// The type being aliased.
   final TypeNode type;
+
+  /// The identifier for the typedef.
   final IdentifierNode identifier;
 
   @override
@@ -119,14 +160,20 @@ final class TypedefDefinitionNode extends DefinitionNode {
   List<Object?> get props => [type, identifier, span];
 }
 
+/// Represents an enum definition in the Lake language.
 final class EnumDefinitionNode extends DefinitionNode {
+  /// Creates an [EnumDefinitionNode] with the given [identifier], [members],
+  /// and [span].
   const EnumDefinitionNode({
     required this.identifier,
     required this.members,
     required super.span,
   });
 
+  /// The identifier for the enum.
   final IdentifierNode identifier;
+
+  /// The list of enum value nodes.
   final List<EnumValueNode> members;
 
   @override
@@ -136,14 +183,20 @@ final class EnumDefinitionNode extends DefinitionNode {
   List<Object?> get props => [identifier, members, span];
 }
 
+/// Represents a single value/member of an enum.
 final class EnumValueNode extends AstNode {
+  /// Creates an [EnumValueNode] with the given [identifier], optional [value],
+  /// and [span].
   const EnumValueNode({
     required this.identifier,
     required super.span,
     this.value,
   });
 
+  /// The identifier for the enum value.
   final IdentifierNode identifier;
+
+  /// The optional integer value assigned to the enum member.
   final IntConstantNode? value;
 
   @override
@@ -153,14 +206,20 @@ final class EnumValueNode extends AstNode {
   List<Object?> get props => [identifier, value, span];
 }
 
+/// Represents a struct definition in the Lake language.
 final class StructDefinitionNode extends DefinitionNode {
+  /// Creates a [StructDefinitionNode] with the given [identifier], [fields],
+  /// and [span].
   const StructDefinitionNode({
     required this.identifier,
     required this.fields,
     required super.span,
   });
 
+  /// The identifier for the struct.
   final IdentifierNode identifier;
+
+  /// The list of fields in the struct.
   final List<FieldNode> fields;
 
   @override
@@ -170,14 +229,20 @@ final class StructDefinitionNode extends DefinitionNode {
   List<Object?> get props => [identifier, fields, span];
 }
 
+/// Represents an exception definition in the Lake language.
 final class ExceptionDefinitionNode extends DefinitionNode {
+  /// Creates an [ExceptionDefinitionNode] with the given [identifier],
+  /// [fields], and [span].
   const ExceptionDefinitionNode({
     required this.identifier,
     required this.fields,
     required super.span,
   });
 
+  /// The identifier for the exception.
   final IdentifierNode identifier;
+
+  /// The list of fields in the exception.
   final List<FieldNode> fields;
 
   @override
@@ -188,7 +253,10 @@ final class ExceptionDefinitionNode extends DefinitionNode {
   List<Object?> get props => [identifier, fields, span];
 }
 
+/// Represents a service definition in the Lake language.
 final class ServiceDefinitionNode extends DefinitionNode {
+  /// Creates a [ServiceDefinitionNode] with the given [identifier], optional
+  /// [extendsService], [functions], and [span].
   const ServiceDefinitionNode({
     required this.identifier,
     required this.extendsService,
@@ -196,8 +264,13 @@ final class ServiceDefinitionNode extends DefinitionNode {
     required super.span,
   });
 
+  /// The identifier for the service.
   final IdentifierNode identifier;
+
+  /// The optional identifier of the service being extended.
   final IdentifierNode? extendsService;
+
+  /// The list of function nodes defined in the service.
   final List<FunctionNode> functions;
 
   @override
@@ -208,10 +281,15 @@ final class ServiceDefinitionNode extends DefinitionNode {
   List<Object?> get props => [identifier, extendsService, functions, span];
 }
 
+/// Represents the requirement (e.g., required/optional) of a field.
 final class FieldRequirementNode extends AstNode {
+  /// Creates a [FieldRequirementNode] with the given [value] and [span].
   const FieldRequirementNode({required this.value, required super.span});
 
+  /// The requirement value (e.g., "required", "optional").
   final String value;
+
+  bool get isRequired => value == 'required';
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitFieldRequirementNode(this);
@@ -220,7 +298,10 @@ final class FieldRequirementNode extends AstNode {
   List<Object?> get props => [value, span];
 }
 
+/// Represents a field in a struct, exception, or function parameter list.
 final class FieldNode extends AstNode {
+  /// Creates a [FieldNode] with the given [fieldId], [requirement], [type],
+  /// [identifier], [defaultValue], and [span].
   const FieldNode({
     required this.fieldId,
     required this.requirement,
@@ -230,10 +311,19 @@ final class FieldNode extends AstNode {
     required super.span,
   });
 
+  /// The optional field ID (for explicit field numbering).
   final IntConstantNode? fieldId;
+
+  /// The optional requirement node (e.g., required/optional).
   final FieldRequirementNode? requirement;
+
+  /// The type of the field.
   final TypeNode type;
+
+  /// The identifier for the field.
   final IdentifierNode identifier;
+
+  /// The optional default value for the field.
   final ConstValueNode? defaultValue;
 
   @override
@@ -250,7 +340,10 @@ final class FieldNode extends AstNode {
   ];
 }
 
+/// Represents a function (method) in a service definition.
 final class FunctionNode extends AstNode {
+  /// Creates a [FunctionNode] with the given [returnType], [identifier],
+  /// [parameters], [throws], and [span].
   const FunctionNode({
     required this.returnType,
     required this.identifier,
@@ -259,9 +352,16 @@ final class FunctionNode extends AstNode {
     required super.span,
   });
 
+  /// The return type of the function.
   final TypeNode returnType;
+
+  /// The identifier for the function.
   final IdentifierNode identifier;
+
+  /// The list of parameter fields for the function.
   final List<FieldNode> parameters;
+
+  /// The list of fields representing exceptions that the function may throw.
   final List<FieldNode> throws;
 
   @override
@@ -272,13 +372,19 @@ final class FunctionNode extends AstNode {
 }
 
 // Types
+
+/// Base class for all type nodes in the Lake language.
 sealed class TypeNode extends AstNode {
+  /// Constructs a [TypeNode] with the given [span].
   const TypeNode({required super.span});
 }
 
+/// Represents a built-in base type (e.g., "i32", "string").
 final class BaseTypeNode extends TypeNode {
+  /// Creates a [BaseTypeNode] with the given [value] and [span].
   const BaseTypeNode({required this.value, required super.span});
 
+  /// The name of the base type.
   final String value;
 
   @override
@@ -288,18 +394,25 @@ final class BaseTypeNode extends TypeNode {
   List<Object?> get props => [value, span];
 }
 
+/// Base class for container type nodes (e.g., map, set, list).
 sealed class ContainerTypeNode extends TypeNode {
+  /// Constructs a [ContainerTypeNode] with the given [span].
   const ContainerTypeNode({required super.span});
 }
 
+/// Represents a map type (e.g., map<string, i32>).
 final class MapTypeNode extends ContainerTypeNode {
+  /// Creates a [MapTypeNode] with the given [keyType], [valueType], and [span].
   const MapTypeNode({
     required this.keyType,
     required this.valueType,
     required super.span,
   });
 
+  /// The type of the map keys.
   final TypeNode keyType;
+
+  /// The type of the map values.
   final TypeNode valueType;
 
   @override
@@ -309,9 +422,12 @@ final class MapTypeNode extends ContainerTypeNode {
   List<Object?> get props => [keyType, valueType, span];
 }
 
+/// Represents a set type (e.g., set<i32>).
 final class SetTypeNode extends ContainerTypeNode {
+  /// Creates a [SetTypeNode] with the given [elementType] and [span].
   const SetTypeNode({required this.elementType, required super.span});
 
+  /// The type of the set elements.
   final TypeNode elementType;
 
   @override
@@ -321,9 +437,12 @@ final class SetTypeNode extends ContainerTypeNode {
   List<Object?> get props => [elementType, span];
 }
 
+/// Represents a list type (e.g., list<string>).
 final class ListTypeNode extends ContainerTypeNode {
+  /// Creates a [ListTypeNode] with the given [elementType] and [span].
   const ListTypeNode({required this.elementType, required super.span});
 
+  /// The type of the list elements.
   final TypeNode elementType;
 
   @override
@@ -333,9 +452,12 @@ final class ListTypeNode extends ContainerTypeNode {
   List<Object?> get props => [elementType, span];
 }
 
+/// Represents a stream type (e.g., stream<i32>).
 final class StreamTypeNode extends TypeNode {
+  /// Creates a [StreamTypeNode] with the given [elementType] and [span].
   const StreamTypeNode({required this.elementType, required super.span});
 
+  /// The type of the stream elements.
   final TypeNode elementType;
 
   @override
@@ -345,9 +467,12 @@ final class StreamTypeNode extends TypeNode {
   List<Object?> get props => [elementType, span];
 }
 
+/// Represents a user-defined or custom type.
 final class CustomTypeNode extends TypeNode {
+  /// Creates a [CustomTypeNode] with the given [value] and [span].
   const CustomTypeNode({required this.value, required super.span});
 
+  /// The name of the custom type.
   final String value;
 
   @override
@@ -357,7 +482,9 @@ final class CustomTypeNode extends TypeNode {
   List<Object?> get props => [value, span];
 }
 
+/// Represents the void type.
 class VoidTypeNode extends TypeNode {
+  /// Creates a [VoidTypeNode] with the given [span].
   const VoidTypeNode({required super.span});
 
   @override
@@ -368,16 +495,25 @@ class VoidTypeNode extends TypeNode {
 }
 
 // Constants
+
+/// Base class for all constant value nodes.
 sealed class ConstValueNode extends AstNode {
+  /// Constructs a [ConstValueNode] with the given [span].
   const ConstValueNode({required super.span});
 
+  /// The kind of value (e.g., "literal integer", "identifier").
   String get valueKind;
+
+  /// The type of value (e.g., "integer", "string").
   String get valueType;
 }
 
+/// Represents an integer constant value.
 final class IntConstantNode extends ConstValueNode {
+  /// Creates an [IntConstantNode] with the given [value] and [span].
   const IntConstantNode({required this.value, required super.span});
 
+  /// The integer value as a string.
   final String value;
 
   @override
@@ -393,9 +529,12 @@ final class IntConstantNode extends ConstValueNode {
   List<Object?> get props => [value, span];
 }
 
+/// Represents a double constant value.
 final class DoubleConstantNode extends ConstValueNode {
+  /// Creates a [DoubleConstantNode] with the given [value] and [span].
   const DoubleConstantNode({required this.value, required super.span});
 
+  /// The double value as a string.
   final String value;
 
   @override
@@ -411,9 +550,12 @@ final class DoubleConstantNode extends ConstValueNode {
   List<Object?> get props => [value, span];
 }
 
+/// Represents a boolean constant value.
 final class BoolConstantNode extends ConstValueNode {
+  /// Creates a [BoolConstantNode] with the given [value] and [span].
   const BoolConstantNode({required this.value, required super.span});
 
+  /// The boolean value.
   final bool value;
 
   @override
@@ -429,9 +571,12 @@ final class BoolConstantNode extends ConstValueNode {
   List<Object?> get props => [value, span];
 }
 
+/// Represents a string literal constant value.
 final class LiteralNode extends ConstValueNode {
+  /// Creates a [LiteralNode] with the given [value] and [span].
   const LiteralNode({required this.value, required super.span});
 
+  /// The string literal value.
   final String value;
 
   @override
@@ -447,9 +592,12 @@ final class LiteralNode extends ConstValueNode {
   List<Object?> get props => [value, span];
 }
 
+/// Represents a list constant value.
 final class ConstListNode extends ConstValueNode {
+  /// Creates a [ConstListNode] with the given [elements] and [span].
   const ConstListNode({required this.elements, required super.span});
 
+  /// The list of constant value elements.
   final List<ConstValueNode> elements;
 
   @override
@@ -465,9 +613,12 @@ final class ConstListNode extends ConstValueNode {
   List<Object?> get props => [elements, span];
 }
 
+/// Represents a map constant value.
 final class ConstMapNode extends ConstValueNode {
+  /// Creates a [ConstMapNode] with the given [entries] and [span].
   const ConstMapNode({required this.entries, required super.span});
 
+  /// The list of map entries, each as a key-value pair of constant values.
   final List<MapEntry<ConstValueNode, ConstValueNode>> entries;
 
   @override
@@ -483,9 +634,12 @@ final class ConstMapNode extends ConstValueNode {
   List<Object?> get props => [entries, span];
 }
 
+/// Represents an identifier (reference to a named value).
 final class IdentifierNode extends ConstValueNode {
+  /// Creates an [IdentifierNode] with the given [value] and [span].
   const IdentifierNode({required this.value, required super.span});
 
+  /// The identifier name.
   final String value;
 
   @override
