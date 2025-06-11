@@ -13,6 +13,13 @@ import 'package:petitparser/petitparser.dart';
 class LakeGrammarDefinition extends GrammarDefinition {
   /// Returns the starting parser for the Lake language, which parses an entire
   /// document and ensures no input remains.
+  ///
+  /// Example:
+  /// ```
+  /// import "my_lib";
+  /// namespace js my_app;
+  /// struct MyData {}
+  /// ```
   @override
   Parser start() => ref0(document).end();
 
@@ -32,18 +39,29 @@ class LakeGrammarDefinition extends GrammarDefinition {
   ///
   /// Parses an import statement, consisting of the keyword 'import' followed
   /// by a string literal.
+  ///
+  /// Example:
+  /// ```
+  /// import "path/to/my_file";
+  /// ```
   Parser import() => ref1(token, 'import') & ref0(literal);
 
-  /// Namespace ::= ( 'namespace' ( NamespaceScope Identifier ) )
+  /// Namespace ::= 'namespace' NamespaceScope Identifier
   ///
   /// Parses a namespace declaration, consisting of the keyword 'namespace'
   /// followed by a scope and an identifier.
+  ///
+  /// Example:
+  /// ```
+  /// namespace js my_app;
+  /// ```
   Parser namespace() =>
       ref1(token, 'namespace') & (ref0(namespaceScope) & ref0(identifier));
 
   /// NamespaceScope ::= '*' | 'js' | 'dart'
   ///
-  /// Parses a namespace scope, which can be '*' (all), 'js', or 'dart'.
+  /// Parses a namespace scope, which defines the target language for the
+  /// namespace: '*' (all), 'js' (JavaScript), or 'dart'.
   Parser namespaceScope() =>
       ref1(token, '*') | ref1(token, 'js') | ref1(token, 'dart');
 
@@ -64,6 +82,11 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// Parses a constant definition, consisting of the keyword 'const', a field
   /// type, an identifier, an equals sign, a constant value, and an optional
   /// list separator.
+  ///
+  /// Example:
+  /// ```
+  /// const string appName = "MyApplication";
+  /// ```
   Parser constDefinition() =>
       ref1(token, 'const') &
       ref0(fieldType) &
@@ -76,6 +99,11 @@ class LakeGrammarDefinition extends GrammarDefinition {
   ///
   /// Parses a typedef definition, consisting of the keyword 'typedef', a
   /// definition type, an identifier, and an optional list separator.
+  ///
+  /// Example:
+  /// ```
+  /// typedef list<string> StringList;
+  /// ```
   Parser typedefDefinition() =>
       ref1(token, 'typedef') &
       ref0(definitionType) &
@@ -86,6 +114,15 @@ class LakeGrammarDefinition extends GrammarDefinition {
   ///
   /// Parses an enum definition, consisting of the keyword 'enum', an
   /// identifier, and a brace-enclosed list of enum values.
+  ///
+  /// Example:
+  /// ```
+  /// enum Status {
+  ///   ACTIVE = 1,
+  ///   INACTIVE,
+  ///   PENDING = 3;
+  /// }
+  /// ```
   Parser enumDefinition() =>
       ref1(token, 'enum') &
       ref0(identifier) &
@@ -97,6 +134,15 @@ class LakeGrammarDefinition extends GrammarDefinition {
   ///
   /// Parses an enum value, consisting of an identifier, an optional integer
   /// assignment, and an optional list separator.
+  ///
+  /// Example:
+  /// ```
+  /// ACTIVE = 1,
+  /// ```
+  /// or
+  /// ```
+  /// INACTIVE
+  /// ```
   Parser enumValue() =>
       ref0(identifier) &
       (ref1(token, '=') & ref0(intConstant)).optional() &
@@ -106,6 +152,14 @@ class LakeGrammarDefinition extends GrammarDefinition {
   ///
   /// Parses a struct definition, consisting of the keyword 'struct', an
   /// identifier, and a brace-enclosed list of fields.
+  ///
+  /// Example:
+  /// ```
+  /// struct User {
+  ///   1: required string name;
+  ///   2: optional i32 age = 30;
+  /// }
+  /// ```
   Parser structDefinition() =>
       ref1(token, 'struct') &
       ref0(identifier) &
@@ -117,6 +171,13 @@ class LakeGrammarDefinition extends GrammarDefinition {
   ///
   /// Parses an exception definition, consisting of the keyword 'exception', an
   /// identifier, and a brace-enclosed list of fields.
+  ///
+  /// Example:
+  /// ```
+  /// exception UserNotFoundException {
+  ///   1: string message;
+  /// }
+  /// ```
   Parser exceptionDefinition() =>
       ref1(token, 'exception') &
       ref0(identifier) &
@@ -130,6 +191,14 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// Parses a service definition, consisting of the keyword 'service', an
   /// identifier, an optional 'extends' clause, and a brace-enclosed list of
   /// functions.
+  ///
+  /// Example:
+  /// ```lake
+  /// service UserService extends BaseService {
+  ///   string getUserById(1: i32 id) throws (1: UserNotFoundException);
+  ///   void createUser(1: User newUser);
+  /// }
+  /// ```
   Parser serviceDefinition() =>
       ref1(token, 'service') &
       ref0(identifier) &
@@ -142,8 +211,17 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// ListSeparator?
   ///
   /// Parses a field, consisting of an optional field ID, an optional
-  /// requirement specifier, a field type, an identifier, an optional default
-  /// value, and an optional list separator.
+  /// requirement specifier ('required' or 'optional'), a field type, an
+  /// identifier, an optional default value, and an optional list separator.
+  ///
+  /// Example:
+  /// ```
+  /// 1: required string name;
+  /// ```
+  /// or
+  /// ```
+  /// optional i32 age = 30
+  /// ```
   Parser field() =>
       ref0(fieldID).optional() &
       ref0(fieldReq).optional() &
@@ -155,6 +233,11 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// FieldID ::= IntConstant ':'
   ///
   /// Parses a field ID, consisting of an integer constant followed by a colon.
+  ///
+  /// Example:
+  /// ```
+  /// 1:
+  /// ```
   Parser fieldID() => ref0(intConstant) & ref1(token, ':');
 
   /// FieldReq ::= 'required' | 'optional'
@@ -165,8 +248,13 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// Function ::= FunctionType Identifier '(' Field* ')' Throws? ListSeparator?
   ///
   /// Parses a function definition, consisting of a function type, an
-  /// identifier, a parenthesized list of fields, an optional throws clause,
-  /// and an optional list separator.
+  /// identifier, a parenthesized list of fields (arguments), an optional
+  /// throws clause, and an optional list separator.
+  ///
+  /// Example:
+  /// ```
+  /// string getUserById(1: i32 id) throws (1: UserNotFoundException);
+  /// ```
   Parser function() =>
       ref0(functionType) &
       ref0(identifier) &
@@ -178,13 +266,18 @@ class LakeGrammarDefinition extends GrammarDefinition {
 
   /// FunctionType ::= FieldType | 'void'
   ///
-  /// Parses a function return type, which can be a field type or 'void'.
+  /// Parses a function return type, which can be any field type or 'void'.
   Parser functionType() => ref0(fieldType) | ref1(token, 'void');
 
   /// Throws ::= 'throws' '(' Field* ')'
   ///
   /// Parses a throws clause, consisting of the keyword 'throws' followed by a
-  /// parenthesized list of fields.
+  /// parenthesized list of fields (exceptions).
+  ///
+  /// Example:
+  /// ```
+  /// throws (1: UserNotFoundException)
+  /// ```
   Parser throws() =>
       ref1(token, 'throws') &
       ref1(token, '(') &
@@ -193,8 +286,8 @@ class LakeGrammarDefinition extends GrammarDefinition {
 
   /// FieldType ::= StreamType | ContainerType | BaseType | Identifier
   ///
-  /// Parses a field type, which can be a stream type, container type, base
-  /// type, or an identifier (for custom types).
+  /// Parses a field type, which can be a stream type, container type, a base
+  /// type, or an identifier (referencing a custom type like a struct or enum).
   Parser fieldType() =>
       ref0(streamType) |
       ref0(containerType) |
@@ -203,7 +296,8 @@ class LakeGrammarDefinition extends GrammarDefinition {
 
   /// DefinitionType ::= ContainerType | BaseType
   ///
-  /// Parses a definition type, which can be a container type or a base type.
+  /// Parses a type used in a `typedef` definition, which can be a container
+  /// type or a base type. Custom types (identifiers) are not allowed here.
   Parser definitionType() => ref0(containerType) | ref0(baseType);
 
   /// BaseType ::= 'bool' | 'byte' | 'i8' | 'i16' | 'i32' | 'i64' |
@@ -233,6 +327,11 @@ class LakeGrammarDefinition extends GrammarDefinition {
   ///
   /// Parses a map type, consisting of the keyword 'map' followed by two field
   /// types (key and value) in angle brackets.
+  ///
+  /// Example:
+  /// ```
+  /// map<string, i32>
+  /// ```
   Parser mapType() =>
       ref1(token, 'map') &
       ref1(token, '<') &
@@ -243,8 +342,13 @@ class LakeGrammarDefinition extends GrammarDefinition {
 
   /// SetType ::= 'set' '<' FieldType '>'
   ///
-  /// Parses a set type, consisting of the keyword 'set' followed by a field
-  /// type in angle brackets.
+  /// Parses a set type, consisting of the keyword 'set' followed by a single
+  /// field type in angle brackets.
+  ///
+  /// Example:
+  /// ```
+  /// set<string>
+  /// ```
   Parser setType() =>
       ref1(token, 'set') &
       ref1(token, '<') &
@@ -253,8 +357,13 @@ class LakeGrammarDefinition extends GrammarDefinition {
 
   /// ListType ::= 'list' '<' FieldType '>'
   ///
-  /// Parses a list type, consisting of the keyword 'list' followed by a field
-  /// type in angle brackets.
+  /// Parses a list type, consisting of the keyword 'list' followed by a single
+  /// field type in angle brackets.
+  ///
+  /// Example:
+  /// ```
+  /// list<i32>
+  /// ```
   Parser listType() =>
       ref1(token, 'list') &
       ref1(token, '<') &
@@ -265,6 +374,11 @@ class LakeGrammarDefinition extends GrammarDefinition {
   ///
   /// Parses a stream type, consisting of the keyword 'stream' followed by a
   /// field type in angle brackets.
+  ///
+  /// Example:
+  /// ```
+  /// stream<string>
+  /// ```
   Parser streamType() =>
       ref1(token, 'stream') &
       ref1(token, '<') &
@@ -272,28 +386,32 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref1(token, '>');
 
   /// ConstValue ::= ConstList | ConstMap | DoubleConstant | IntConstant |
-  /// BooleanConstant | EnumConstant | Literal | Identifier
+  /// BooleanConstant | Identifier | Literal
   ///
-  /// Parses a constant value, which can be a list, map, number, boolean,
-  /// identifier, or string literal.
+  /// Parses a constant value, which can be a list, map, double, integer,
+  /// boolean, identifier (referencing another const), or string literal.
   Parser constValue() =>
       ref0(constList) |
       ref0(constMap) |
       ref0(intConstant) |
       ref0(doubleConstant) |
       ref0(boolConstant) |
-      ref0(identifier) |
+      ref0(identifier) | // EnumConstant removed as it's typically an Identifier
       ref0(literal);
 
   /// IntConstant ::= ('+' | '-')? Digit+
   ///
   /// Parses an integer constant, consisting of an optional sign and one or more
-  /// digits, ensuring no decimal or exponent is present.
+  /// digits, ensuring no decimal point or exponent is present.
+  ///
+  /// Example: `123`, `-45`, `+9`
   Parser intConstant() {
     final sign = (char('+') | char('-')).optional();
     final integerPart = sign & digit().plus();
 
     final noDecimalOrExponent = (char('.') | char('E') | char('e')).not();
+    // The .not() combined with the integerPart ensures that it matches only
+    // integers without decimal points or exponents.
     final combined = integerPart & noDecimalOrExponent;
 
     return ref1(
@@ -305,8 +423,10 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// DoubleConstant ::= ('+' | '-')? ( Digit* '.' Digit+ ( ('E' | 'e')
   /// ('+' | '-')? Digit+ )? | Digit+ ( ('E' | 'e') ('+' | '-')? Digit+ )? )
   ///
-  /// Parses a double constant, consisting of an optional sign, a decimal number
-  /// or an integer with an exponent.
+  /// Parses a double constant, consisting of an optional sign, a decimal
+  /// number, or an integer with an exponent.
+  ///
+  /// Example: `3.14`, `-0.5`, `1e-3`, `2.5E+2`
   Parser doubleConstant() {
     final sign = (char('+') | char('-')).optional();
     final exponent = (char('E') | char('e')) & (sign & digit().plus());
@@ -331,6 +451,8 @@ class LakeGrammarDefinition extends GrammarDefinition {
   ///
   /// Parses a constant list, consisting of square-bracketed constant values
   /// with optional separators.
+  ///
+  /// Example: `[1, 2, 3]` or `["a"; "b";]`
   Parser constList() =>
       ref1(token, '[') &
       (ref0(constValue) & ref0(listSeparator).optional()).star() &
@@ -340,6 +462,8 @@ class LakeGrammarDefinition extends GrammarDefinition {
   ///
   /// Parses a constant map, consisting of brace-enclosed key-value pairs with
   /// optional separators.
+  ///
+  /// Example: `{"key1": "value1", "key2": 123}`
   Parser constMap() =>
       ref1(token, '{') &
       (ref0(constValue) &
@@ -352,6 +476,8 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// Literal ::= ('"' [^"]* '"') | ("'" [^']* "'")
   ///
   /// Parses a string literal, enclosed in either single or double quotes.
+  ///
+  /// Example: `"Hello, World!"` or `'Another string'`
   Parser literal() => ref1(
     token,
     (char('"') & pattern('^"').star() & char('"') |
@@ -363,7 +489,10 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// ( '.' ( Letter | Digit | '_' )+ )* )
   ///
   /// Parses an identifier, starting with a letter or underscore, followed by
-  /// letters, digits, underscores, or dot-separated segments.
+  /// letters, digits, underscores, or dot-separated segments for qualified
+  /// names.
+  ///
+  /// Example: `myVariable`, `_internalName`, `Namespace.Type`
   Parser identifier() => ref1(
     token,
     ((ref0(letter) | char('_')).flatten() &
@@ -377,7 +506,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
 
   /// ListSeparator ::= ',' | ';'
   ///
-  /// Parses a list separator, either a comma or semicolon.
+  /// Parses a list separator, either a comma (`,`) or a semicolon (`;`).
   Parser listSeparator() => ref1(token, ',') | ref1(token, ';');
 
   /// Parses one or more hidden whitespace characters or comments, used to
@@ -396,16 +525,26 @@ class LakeGrammarDefinition extends GrammarDefinition {
 
   /// SingleLineComment ::= '//' [^\n]* [\n]?
   ///
-  /// Parses a single-line comment, starting with '//' and ending at the newline
-  /// (if any)
+  /// Parses a single-line comment, starting with '//' and extending to the
+  /// end of the line (including the newline character if present).
+  ///
+  /// Example: `// This is a single-line comment`
   Parser singleLineComment() =>
       (string('//') & ref0(newline).neg().star() & ref0(newline).optional())
           .flatten();
 
   /// MultiLineComment ::= '/*' ( MultiLineComment | [^*] )* '*/'
   ///
-  /// Parses a multi-line comment, enclosed in '/*' with and '*/', allowing
+  /// Parses a multi-line comment, enclosed in '/*' and '*/', allowing for
   /// nested comments.
+  ///
+  /// Example:
+  /// ```
+  /// /* This is a
+  ///    multi-line comment.
+  ///    /* Nested comment */
+  /// */
+  /// ```
   Parser multiLineComment() =>
       (string('/*') &
               (ref0(multiLineComment) | string('*/').neg()).star() &
@@ -414,18 +553,23 @@ class LakeGrammarDefinition extends GrammarDefinition {
 
   /// VisibleWhitespace ::= ' ' | '\t' | '\n' | '\r' | '\f'
   ///
-  /// Parses visible whitespace characters (space, tab, newline, etc.).
+  /// Parses visible whitespace characters (space, tab, newline, carriage
+  /// return, form feed).
   Parser visibleWhitespace() => whitespace();
 
   /// Creates a token parser for the given input, trimming whitespace and
-  /// comments.
+  /// comments around it.
+  ///
+  /// This helper method simplifies grammar definitions by automatically
+  /// handling the skipping of `hiddenStuffWhitespace` (whitespace and comments)
+  /// before and after the actual token.
   ///
   /// - Args:
-  ///   input: The input parser or string to tokenize.
+  ///   input: The raw parser or string literal to be tokenized.
   /// - Returns:
   ///   A parser that produces a token with trimmed whitespace and comments.
   /// - Throws:
-  ///   ArgumentError: If the input is neither a parser nor a string.
+  ///   ArgumentError: If the input is neither a Parser nor a String.
   Parser token(Object input) => switch (input) {
     Parser() => input.token().trim(ref0(hiddenStuffWhitespace)),
     String() => token(input.toParser()),
