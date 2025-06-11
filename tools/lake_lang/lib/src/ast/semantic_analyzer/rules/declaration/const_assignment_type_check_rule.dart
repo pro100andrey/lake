@@ -31,7 +31,7 @@ final class _BaseTypeCheckRule extends _TypeCheckRule {
       final check = _expectedCheck[value];
 
       if (check != null && !check(node.value)) {
-        reporter.reportValueCannotBeAssigned(
+        reporter.reportConstValueCannotBeAssigned(
           constTypeName: value,
           valueKindName: valueKind,
           valueSpan: span,

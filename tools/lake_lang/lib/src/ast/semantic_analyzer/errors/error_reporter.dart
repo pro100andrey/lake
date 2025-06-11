@@ -34,7 +34,7 @@ class ErrorReporter {
 
     print('--- Diagnostics ---');
     for (final diag in _diagnostics) {
-      final codeText = diag.code != null ? ' [${diag.code}]' : '';
+      final codeText = diag.code != null ? ' [${diag.code!.id}]' : '';
       print(
         '${diag.primarySpan.start.line + 1}:'
         '${diag.primarySpan.start.column + 1} '
@@ -51,12 +51,12 @@ class ErrorReporter {
       }
 
       print('  Suggestions:');
-      for (final suggestion in diag.suggestions) {
+      for (final suggestion in diag.code?.suggestions ?? []) {
         print('    - $suggestion');
       }
       print('');
 
-      if (diag.helpLink case final String link) {
+      if (diag.code?.helpLink case final String link) {
         print('  More info: $link\n');
       }
 
@@ -75,20 +75,16 @@ extension ErrorReporterGenericExtension on ErrorReporter {
     String message,
     SourceSpan span, {
     DiagnosticSeverity severity = DiagnosticSeverity.error,
-    String? code,
+    DiagnosticCode? code,
     List<DiagnosticLabel> labels = const [],
     List<String> suggestions = const [],
-    String? helpLink,
   }) {
     report(
       GenericDiagnostic(
         message,
         span,
         severity: severity,
-        code: code,
         labels: labels,
-        suggestions: suggestions,
-        helpLink: helpLink,
       ),
     );
   }
@@ -106,7 +102,9 @@ extension ErrorReporterExtension on ErrorReporter {
     SourceSpan span, {
     SourceSpan? previousDeclarationSpan,
   }) {
-    report(DuplicateDeclarationDiagnostic(name, span, previousDeclarationSpan));
+    report(
+      DuplicateDeclarationDiagnostic(name, span, previousDeclarationSpan),
+    );
   }
 
   /// Reports an [EmptyEnumDefinitionDiagnostic].
@@ -119,7 +117,7 @@ extension ErrorReporterExtension on ErrorReporter {
     report(EmptyStructDefinitionDiagnostic(span));
   }
 
-  void reportValueCannotBeAssigned({
+  void reportConstValueCannotBeAssigned({
     required String valueTypeName,
     required String valueKindName,
     required String constTypeName,
@@ -127,7 +125,7 @@ extension ErrorReporterExtension on ErrorReporter {
     SourceSpan? constTypeSpan,
   }) {
     report(
-      ValueCannotBeAssignedDiagnostic(
+      ConstValueCannotBeAssignedDiagnostic(
         valueTypeName: valueTypeName,
         valueKindName: valueKindName,
         constTypeName: constTypeName,
@@ -145,8 +143,8 @@ extension ErrorReporterExtension on ErrorReporter {
     report(ListElementTypeMismatchDiagnostic(expectedType, actualType, span));
   }
 
-  void reportInvalidIdentifierName(String identifier, SourceSpan span) {
-    report(InvalidIdentifierNameDiagnostic(identifier, span));
+  void reportKeywordAsIdentifier(String identifier, SourceSpan span) {
+    report(KeywordAsIdentifierDiagnostic(identifier, span));
   }
 
   void reportUnsupportedListElementType(String elementType, SourceSpan span) {

@@ -16,7 +16,7 @@ final class InvalidIdentifierNameRule extends BaseRule<IdentifierNode> {
   @override
   void check(IdentifierNode node) {
     if (_reservedKeywords.contains(node.value)) {
-      reporter.reportInvalidIdentifierName(node.value, node.span);
+      reporter.reportKeywordAsIdentifier(node.value, node.span);
     }
   }
 }
