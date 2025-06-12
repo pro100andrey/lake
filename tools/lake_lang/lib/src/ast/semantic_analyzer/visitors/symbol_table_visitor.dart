@@ -2,7 +2,7 @@ import '../../ast_visitor.dart';
 import '../../nodes/ast_nodes.dart';
 import '../errors/error_reporter.dart';
 import '../rules/base_rule.dart';
-import '../rules/declaration/const_assignment_type_check_rule.dart';
+import '../rules/declaration/const_assignment_type_rule.dart';
 import '../rules/declaration/keyword_as_indentifier_rule.dart';
 import '../rules/declaration/non_empty_enum_definition_rule.dart';
 import '../rules/declaration/non_empty_struct_definaition_rule.dart';
@@ -16,13 +16,13 @@ class SymbolTableVisitor extends AstVisitor<void> {
   SymbolTableVisitor(this._symbolTable, this._reporter)
     : _ruleDispatcher = RuleDispatcher() {
     _ruleDispatcher
-      ..addRule<ConstDefinitionNode>(ConstAssignmentTypeCheckRule(_reporter))
+      ..addRule<ConstDefinitionNode>(ConstAssignmentTypeRule(_reporter))
       ..addRule<EnumDefinitionNode>(NonEmptyEnumDefinitionRule(_reporter))
       ..addRule<StructDefinitionNode>(NonEmptyStructDefinitionRule(_reporter))
       ..addRule<IdentifierNode>(KeywordAsIdentifierRule(_reporter))
       // Rules for field declarations
-      ..addRule<FieldNode>(RequiredFiledCheckRule(_reporter))
-      ..addRule<FieldNode>(OptionalFiledCheckRule(_reporter));
+      ..addRule<FieldNode>(RequiredFiledRule(_reporter))
+      ..addRule<FieldNode>(OptionalFieldRule(_reporter));
   }
 
   final SymbolTable _symbolTable;

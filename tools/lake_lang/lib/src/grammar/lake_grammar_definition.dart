@@ -416,7 +416,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(intConstant) |
       ref0(doubleConstant) |
       ref0(boolConstant) |
-      ref0(identifier) | // EnumConstant removed as it's typically an Identifier
+      ref0(identifier) |
       ref0(literal);
 
   /// IntConstant ::= ('+' | '-')? Digit+

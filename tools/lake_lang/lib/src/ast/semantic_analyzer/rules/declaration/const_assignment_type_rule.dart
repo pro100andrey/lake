@@ -8,9 +8,9 @@ import '../utils.dart';
 ///
 /// This rule handles types like `i32`, `bool`, `string`, `double`, etc.
 /// It uses the `_expectedCheck` map to determine type compatibility.
-final class _BaseTypeCheckRule extends BaseRule<ConstDefinitionNode> {
+final class _BaseTypeRule extends BaseRule<ConstDefinitionNode> {
   /// Creates a rule that checks constant values against base types.
-  const _BaseTypeCheckRule(super.reporter);
+  const _BaseTypeRule(super.reporter);
 
   @override
   void check(ConstDefinitionNode node) {
@@ -37,8 +37,8 @@ final class _BaseTypeCheckRule extends BaseRule<ConstDefinitionNode> {
 /// It ensures that all elements within a constant list literal are compatible
 /// with the list's declared element type. It also checks if the list's element
 /// type is supported (e.g., only primitive types are allowed for now).
-final class _ListTypeCheckRule extends BaseRule<ConstDefinitionNode> {
-  const _ListTypeCheckRule(super.reporter);
+final class _ListTypeRule extends BaseRule<ConstDefinitionNode> {
+  const _ListTypeRule(super.reporter);
 
   @override
   void check(ConstDefinitionNode node) {
@@ -74,8 +74,8 @@ final class _ListTypeCheckRule extends BaseRule<ConstDefinitionNode> {
   }
 }
 
-final class _MapTypeCheckRule extends BaseRule<ConstDefinitionNode> {
-  const _MapTypeCheckRule(super.reporter);
+final class _MapTypeRule extends BaseRule<ConstDefinitionNode> {
+  const _MapTypeRule(super.reporter);
 
   @override
   void check(ConstDefinitionNode node) {
@@ -115,13 +115,13 @@ final class _MapTypeCheckRule extends BaseRule<ConstDefinitionNode> {
 ///
 /// This rule dispatches to specialized sub-rules (`_BaseTypeCheckRule` and
 /// `_ListTypeCheckRule`) to handle different constant type definitions.
-final class ConstAssignmentTypeCheckRule extends BaseRule<ConstDefinitionNode> {
+final class ConstAssignmentTypeRule extends BaseRule<ConstDefinitionNode> {
   /// Creates a rule that checks constant values against base types.
-  ConstAssignmentTypeCheckRule(super.reporter);
+  ConstAssignmentTypeRule(super.reporter);
 
-  late final baseTypeCheckRule = _BaseTypeCheckRule(reporter);
-  late final listTypeCheckRule = _ListTypeCheckRule(reporter);
-  late final mapTypeCheckRule = _MapTypeCheckRule(reporter);
+  late final _baseTypeRule = _BaseTypeRule(reporter);
+  late final _listTypeRule = _ListTypeRule(reporter);
+  late final _mapTypeRule = _MapTypeRule(reporter);
 
   @override
   void check(ConstDefinitionNode node) {
@@ -132,8 +132,8 @@ final class ConstAssignmentTypeCheckRule extends BaseRule<ConstDefinitionNode> {
       return;
     }
 
-    baseTypeCheckRule.check(node);
-    listTypeCheckRule.check(node);
-    mapTypeCheckRule.check(node);
+    _baseTypeRule.check(node);
+    _listTypeRule.check(node);
+    _mapTypeRule.check(node);
   }
 }

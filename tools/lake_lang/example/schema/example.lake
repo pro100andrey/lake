@@ -39,8 +39,6 @@ const list<string> SUPPORTED_LANGUAGES = [ "English", 1, "French", "Spanish" ];
 
 enum EmptyEnum {}
 
-
-
 struct EmptyStruct {}
 
 // map<string, i32> constant example

@@ -3,9 +3,9 @@ import '../../errors/error_reporter.dart';
 import '../base_rule.dart';
 import '../utils.dart';
 
-final class _BaseTypeCheckRule extends BaseRule<FieldNode> {
+final class _BaseTypeRule extends BaseRule<FieldNode> {
   /// Creates a rule that checks constant values against base types.
-  const _BaseTypeCheckRule(super.reporter);
+  const _BaseTypeRule(super.reporter);
 
   @override
   void check(FieldNode node) {
@@ -29,11 +29,11 @@ final class _BaseTypeCheckRule extends BaseRule<FieldNode> {
   }
 }
 
-final class OptionalFiledCheckRule extends BaseRule<FieldNode> {
-  /// Creates a [OptionalFiledCheckRule] with the given error [reporter].
-  OptionalFiledCheckRule(super.reporter);
+final class OptionalFieldRule extends BaseRule<FieldNode> {
+  /// Creates a [OptionalFieldRule] with the given error [reporter].
+  OptionalFieldRule(super.reporter);
 
-  late final _baseTypeCheckRule = _BaseTypeCheckRule(reporter);
+  late final _baseTypeCheckRule = _BaseTypeRule(reporter);
 
   @override
   void check(FieldNode node) {
