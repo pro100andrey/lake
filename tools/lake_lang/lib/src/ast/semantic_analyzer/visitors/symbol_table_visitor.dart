@@ -175,6 +175,30 @@ class SymbolTableVisitor extends AstVisitor<void> {
   }
 
   @override
+  void visitUnionDefinitionNode(UnionDefinitionNode node) {
+    // Create the semantic type for the union itself.
+    final unionSemanticType = UnionType(node);
+    // Add the union definition to the current scope.
+    _symbolTable
+      ..addSymbol(
+        name: node.identifier.value,
+        kind: SymbolKind.type,
+        declaration: node,
+        span: node.span,
+        resolvedType: unionSemanticType,
+      )
+      // Unions introduce a new scope for their fields.
+      ..pushScope();
+
+    for (final field in node.fields) {
+      field.accept(this);
+    }
+
+    // Pop the scope after processing all union fields.
+    _symbolTable.popScope();
+  }
+
+  @override
   void visitExceptionDefinitionNode(ExceptionDefinitionNode node) {
     // Create the semantic type for the exception itself.
     final exceptionSemanticType = ExceptionType(node);

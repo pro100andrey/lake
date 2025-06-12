@@ -310,7 +310,6 @@ void main() {
     });
 
     test('should parse function with stream parameter', () {
-      return;
       const source = 'void streamFunc(stream<i32> s)';
       final doc = parseAst('service S { $source }');
       final service = doc.definitions.first as ServiceDefinitionNode;

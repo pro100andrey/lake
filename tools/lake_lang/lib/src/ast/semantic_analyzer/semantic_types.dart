@@ -213,6 +213,30 @@ final class StructType extends SemanticType {
   }
 }
 
+final class UnionType extends SemanticType {
+  UnionType(this.declaration) : super(declaration.identifier.value);
+
+  final UnionDefinitionNode declaration;
+
+  @override
+  List<Object?> get props => [...super.props, declaration];
+
+  @override
+  bool isAssignableTo(SemanticType other) {
+    if (identical(this, other)) {
+      return true;
+    }
+
+    if (other is! UnionType) {
+      return false;
+    }
+
+    // For now, we assume union types are not assignable to each other
+    // unless they are the same type.
+    return declaration.identifier.value == other.declaration.identifier.value;
+  }
+}
+
 final class EnumType extends SemanticType {
   EnumType(this.declaration) : super(declaration.identifier.value);
 

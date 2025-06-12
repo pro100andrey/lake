@@ -160,3 +160,11 @@ service ChatService {
     2: UserNotFoundException userNotFound
   )
 }
+
+service RealtimeService {
+  // Function that returns a stream of temperature readings
+  stream<double> subscribeToTemperature(1: required string sensorId);
+
+  // Function that takes a stream of commands and returns a stream of responses
+  stream<CommandResponse> processCommands(1: stream<Command> commands);
+}

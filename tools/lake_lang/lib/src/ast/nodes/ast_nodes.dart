@@ -229,6 +229,28 @@ final class StructDefinitionNode extends DefinitionNode {
   List<Object?> get props => [identifier, fields, span];
 }
 
+final class UnionDefinitionNode extends DefinitionNode {
+  /// Creates a [UnionDefinitionNode] with the given [identifier], [fields],
+  /// and [span].
+  const UnionDefinitionNode({
+    required this.identifier,
+    required this.fields,
+    required super.span,
+  });
+
+  /// The identifier for the union.
+  final IdentifierNode identifier;
+
+  /// The list of fields in the union.
+  final List<FieldNode> fields;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitUnionDefinitionNode(this);
+
+  @override
+  List<Object?> get props => [identifier, fields, span];
+}
+
 /// Represents an exception definition in the Lake language.
 final class ExceptionDefinitionNode extends DefinitionNode {
   /// Creates an [ExceptionDefinitionNode] with the given [identifier],

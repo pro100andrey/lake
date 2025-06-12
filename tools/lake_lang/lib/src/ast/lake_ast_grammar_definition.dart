@@ -253,6 +253,32 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     );
   });
 
+  /// Overrides the [unionDefinition] parser to return an
+  /// [UnionDefinitionNode].
+  ///
+  /// Similar to struct definitions, it parses the 'union' keyword,
+  /// identifier, and its fields to form an [UnionDefinitionNode].
+  @override
+  Parser unionDefinition() => super.unionDefinition().map((t) {
+    final [
+      Token keyword,
+      IdentifierNode identifier,
+      Token ld,
+      List fields,
+      Token rd,
+    ] = t as List;
+
+    final span = _getSpan(keyword, rd);
+
+    final fieldNodes = fields.cast<FieldNode>();
+
+    return UnionDefinitionNode(
+      identifier: identifier,
+      fields: fieldNodes,
+      span: span,
+    );
+  });
+
   /// Overrides the [exceptionDefinition] parser to return an
   /// [ExceptionDefinitionNode].
   ///
@@ -314,6 +340,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
       BaseTypeNode() => type,
       IdentifierNode() => CustomTypeNode(value: type.value, span: type.span),
       ContainerTypeNode() => type,
+      StreamTypeNode() => type,
 
       _ => throw StateError('Unexpected type in field: $type'),
     };

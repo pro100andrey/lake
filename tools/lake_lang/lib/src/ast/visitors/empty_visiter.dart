@@ -30,6 +30,9 @@ class EmptyVisitor implements AstVisitor<void> {
   void visitStructDefinitionNode(StructDefinitionNode node) {}
 
   @override
+  void visitUnionDefinitionNode(UnionDefinitionNode node) {}
+
+  @override
   void visitExceptionDefinitionNode(ExceptionDefinitionNode node) {}
 
   @override

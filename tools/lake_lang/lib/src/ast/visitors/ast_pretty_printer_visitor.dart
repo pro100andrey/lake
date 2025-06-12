@@ -157,6 +157,13 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   }
 
   @override
+  void visitUnionDefinitionNode(UnionDefinitionNode node) {
+    _printNode(node);
+    _visit(node.identifier);
+    _visitList('Fields', node.fields, isLast: true);
+  }
+
+  @override
   void visitExceptionDefinitionNode(ExceptionDefinitionNode node) {
     _printNode(node);
     _visit(node.identifier);

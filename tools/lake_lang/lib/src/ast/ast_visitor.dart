@@ -12,6 +12,7 @@ abstract class AstVisitor<T> {
   T visitEnumDefinitionNode(EnumDefinitionNode node);
   T visitEnumValueNode(EnumValueNode node);
   T visitStructDefinitionNode(StructDefinitionNode node);
+  T visitUnionDefinitionNode(UnionDefinitionNode node);
   T visitExceptionDefinitionNode(ExceptionDefinitionNode node);
   T visitServiceDefinitionNode(ServiceDefinitionNode node);
   T visitFieldRequirementNode(FieldRequirementNode node);

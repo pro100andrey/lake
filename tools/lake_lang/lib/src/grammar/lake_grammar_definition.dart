@@ -68,12 +68,13 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// Definition ::= Const | Typedef | Enum | Struct | Exception | Service
   ///
   /// Parses a definition, which can be a constant, typedef, enum, struct,
-  /// exception, or service.
+  /// union, exception, or service.
   Parser definition() =>
       ref0(constDefinition) |
       ref0(typedefDefinition) |
       ref0(enumDefinition) |
       ref0(structDefinition) |
+      ref0(unionDefinition) |
       ref0(exceptionDefinition) |
       ref0(serviceDefinition);
 
@@ -162,6 +163,25 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// ```
   Parser structDefinition() =>
       ref1(token, 'struct') &
+      ref0(identifier) &
+      ref1(token, '{') &
+      ref0(field).star() &
+      ref1(token, '}');
+
+  /// Union ::= 'union' Identifier '{' Field* '}'
+  ///
+  /// Parses a union definition, consisting of the keyword 'union', an
+  /// identifier, and a brace-enclosed list of fields.
+  ///
+  /// Example:
+  /// ```
+  /// union UserData {
+  ///   1: string name;
+  ///   2: i32 age;
+  /// }
+  /// ```
+  Parser unionDefinition() =>
+      ref1(token, 'union') &
       ref0(identifier) &
       ref1(token, '{') &
       ref0(field).star() &
