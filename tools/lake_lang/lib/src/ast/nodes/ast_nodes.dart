@@ -326,6 +326,9 @@ final class FieldNode extends AstNode {
   /// The optional default value for the field.
   final ConstValueNode? defaultValue;
 
+  /// Whether the field is required based on its requirement node.
+  bool get isRequired => requirement?.isRequired ?? false;
+
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitFieldNode(this);
 
