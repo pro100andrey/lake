@@ -54,8 +54,8 @@ final class ErrorReporter {
       print('No issues found.');
       return;
     }
+    final separator = '-' * 120;
 
-    print('--- Diagnostics ---');
     for (final diag in _diagnostics) {
       final codeText = diag.code != null ? ' [${diag.code!.id}]' : '';
       print(
@@ -83,7 +83,7 @@ final class ErrorReporter {
         print('  More info: $link\n');
       }
 
-      print('--------------------');
+      print(separator);
     }
   }
 }

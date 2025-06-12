@@ -8,8 +8,18 @@ import 'package:source_span/source_span.dart';
 
 void main(List<String> args) {
   final argParser = ArgParser()
-    ..addFlag('help', abbr: 'h', help: 'Show help', negatable: false)
-    ..addFlag('ast', abbr: 'a', help: 'Print the AST', negatable: false)
+    ..addFlag(
+      'help',
+      abbr: 'h',
+      help: 'Show help',
+      negatable: false,
+    )
+    ..addFlag(
+      'ast',
+      abbr: 'a',
+      help: 'Print the AST',
+      negatable: false,
+    )
     ..addFlag(
       'semantic',
       abbr: 's',
@@ -38,8 +48,6 @@ void main(List<String> args) {
     return;
   }
 
-  print(inputs);
-
   final isPrintingAst = argResults['ast'] as bool;
   final isRunningSemantic = argResults['semantic'] as bool;
 
@@ -52,15 +60,21 @@ void main(List<String> args) {
   final result = parser.parse(sourceCode);
   final ast = result.value as DocumentNode;
 
+  print('Source File: ${sourceFile.url} \n');
+
   if (isPrintingAst) {
-    print('AST printing is enabled.');
+    final astVisiter = AstPrettyPrinterVisitor();
+    ast.accept(astVisiter);
+
+    print('Abstract Syntax Tree:');
+    print(astVisiter.output);
   }
 
   if (isRunningSemantic) {
     final reporter = ErrorReporter();
 
     SemanticAnalyzer(reporter).analyze(ast);
-
+    print('Semantic Analysis:');
     reporter.hasErrors
         ? reporter.printDiagnostics()
         : print('No semantic errors found.');
