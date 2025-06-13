@@ -102,7 +102,8 @@ void main() {
       final field1 = fn.parameters[0];
 
       expect(field1.fieldId, isNotNull);
-      expect(field1.fieldId!.value, '1');
+      expect(field1.fieldId!.rawValue, '1');
+      expect(field1.fieldId!.value, 1);
       expect(field1.fieldId!.span.text, '1');
       expect(field1.fieldId!.span.start.offset, 42);
       expect(field1.fieldId!.span.end.offset, 43);
@@ -123,7 +124,8 @@ void main() {
       final field2 = fn.parameters[1];
 
       expect(field2.fieldId, isNotNull);
-      expect(field2.fieldId!.value, '2');
+      expect(field2.fieldId!.rawValue, '2');
+      expect(field2.fieldId!.value, 2);
       expect(field2.fieldId!.span.text, '2');
       expect(field2.fieldId!.span.start.offset, 51);
       expect(field2.fieldId!.span.end.offset, 52);
@@ -209,7 +211,8 @@ void main() {
 
       final throwField = fn.throws.first;
       expect(throwField.fieldId, isNotNull);
-      expect(throwField.fieldId!.value, '1');
+      expect(throwField.fieldId!.rawValue, '1');
+      expect(throwField.fieldId!.value, 1);
       expect(throwField.fieldId!.span.text, '1');
       expect(throwField.fieldId!.span.start.offset, 31);
 
@@ -252,7 +255,8 @@ void main() {
       expect(fn.parameters, hasLength(2));
       final param1 = fn.parameters[0];
       expect(param1.fieldId, isNotNull);
-      expect(param1.fieldId!.value, '1');
+      expect(param1.fieldId!.rawValue, '1');
+      expect(param1.fieldId!.value, 1);
       expect(param1.fieldId!.span.text, '1');
       expect(param1.fieldId!.span.start.offset, 20);
       expect(param1.fieldId!.span.end.offset, 21);
@@ -269,7 +273,8 @@ void main() {
 
       final param2 = fn.parameters[1];
       expect(param2.fieldId, isNotNull);
-      expect(param2.fieldId!.value, '2');
+      expect(param2.fieldId!.rawValue, '2');
+      expect(param2.fieldId!.value, 2);
       expect(param2.fieldId!.span.text, '2');
       expect(param2.fieldId!.span.start.offset, 30);
       expect(param2.fieldId!.span.end.offset, 31);
@@ -290,7 +295,8 @@ void main() {
       expect(fn.throws, hasLength(1));
       final throwField = fn.throws.first;
       expect(throwField.fieldId, isNotNull);
-      expect(throwField.fieldId!.value, '1');
+      expect(throwField.fieldId!.rawValue, '1');
+      expect(throwField.fieldId!.value, 1);
       expect(throwField.fieldId!.span.text, '1');
       expect(throwField.fieldId!.span.start.offset, 48);
       expect(throwField.fieldId!.span.end.offset, 49);
@@ -385,7 +391,8 @@ void main() {
       final param = fn.parameters.first;
 
       expect(param.fieldId, isNotNull);
-      expect(param.fieldId!.value, '1');
+      expect(param.fieldId!.rawValue, '1');
+      expect(param.fieldId!.value, 1);
       expect(param.fieldId!.span.text, '1');
       expect(param.fieldId!.span.start.offset, 43);
       expect(param.fieldId!.span.end.offset, 44);

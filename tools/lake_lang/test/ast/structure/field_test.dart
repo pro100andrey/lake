@@ -41,7 +41,8 @@ void main() {
       expect(field.span.end.offset, 24);
 
       expect(field.fieldId, isNotNull);
-      expect(field.fieldId!.value, '1');
+      expect(field.fieldId!.rawValue, '1');
+      expect(field.fieldId!.value, 1);
       expect(field.fieldId!.span.text, '1');
       expect(field.fieldId!.span.start.offset, 11);
       expect(field.fieldId!.span.end.offset, 12);
@@ -72,7 +73,8 @@ void main() {
       expect(field.span.end.offset, 35);
 
       expect(field.fieldId, isNotNull);
-      expect(field.fieldId!.value, '2');
+      expect(field.fieldId!.rawValue, '2');
+      expect(field.fieldId!.value, 2);
       expect(field.fieldId!.span.text, '2');
       expect(field.fieldId!.span.start.offset, 11);
       expect(field.fieldId!.span.end.offset, 12);
@@ -108,7 +110,8 @@ void main() {
       expect(field.span.end.offset, 33);
 
       expect(field.fieldId, isNotNull);
-      expect(field.fieldId!.value, '3');
+      expect(field.fieldId!.rawValue, '3');
+      expect(field.fieldId!.value, 3);
       expect(field.fieldId!.span.text, '3');
       expect(field.fieldId!.span.start.offset, 11);
       expect(field.fieldId!.span.end.offset, 12);
@@ -144,7 +147,8 @@ void main() {
       expect(field.span.end.offset, 37);
 
       expect(field.fieldId, isNotNull);
-      expect(field.fieldId!.value, '1');
+      expect(field.fieldId!.rawValue, '1');
+      expect(field.fieldId!.value, 1);
       expect(field.fieldId!.span.text, '1');
       expect(field.fieldId!.span.start.offset, 11);
       expect(field.fieldId!.span.end.offset, 12);
@@ -167,11 +171,12 @@ void main() {
       expect(field.identifier.span.start.offset, 27);
       expect(field.identifier.span.end.offset, 32);
 
-      expect(field.defaultValue, isNotNull);
-      expect((field.defaultValue! as IntConstantNode).value, '0');
-      expect(field.defaultValue!.span.text, '0');
-      expect(field.defaultValue!.span.start.offset, 35);
-      expect(field.defaultValue!.span.end.offset, 36);
+      final defaultValue = field.defaultValue! as IntConstantNode;
+      expect(defaultValue.rawValue, '0');
+      expect(defaultValue.value, 0);
+      expect(defaultValue.span.text, '0');
+      expect(defaultValue.span.start.offset, 35);
+      expect(defaultValue.span.end.offset, 36);
     });
 
     test('should parse field with list type', () {
@@ -335,7 +340,8 @@ void main() {
       expect(field.span.end.offset, 38);
 
       expect(field.fieldId, isNotNull);
-      expect(field.fieldId!.value, '4');
+      expect(field.fieldId!.rawValue, '4');
+      expect(field.fieldId!.value, 4);
       expect(field.fieldId!.span.text, '4');
       expect(field.fieldId!.span.start.offset, 11);
       expect(field.fieldId!.span.end.offset, 12);
@@ -358,11 +364,12 @@ void main() {
       expect(field.identifier.span.start.offset, 27);
       expect(field.identifier.span.end.offset, 32);
 
-      expect(field.defaultValue, isNotNull);
-      expect((field.defaultValue! as IntConstantNode).value, '10');
-      expect(field.defaultValue!.span.text, '10');
-      expect(field.defaultValue!.span.start.offset, 35);
-      expect(field.defaultValue!.span.end.offset, 37);
+      final defaultValue = field.defaultValue! as IntConstantNode;
+      expect(defaultValue.rawValue, '10');
+      expect(defaultValue.value, 10);
+      expect(defaultValue.span.text, '10');
+      expect(defaultValue.span.start.offset, 35);
+      expect(defaultValue.span.end.offset, 37);
     });
   });
 }

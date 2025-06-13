@@ -103,7 +103,8 @@ void main() {
       final [FieldNode field] = def.fields;
 
       expect(field.fieldId, isNotNull);
-      expect(field.fieldId!.value, '1');
+      expect(field.fieldId!.rawValue, '1');
+      expect(field.fieldId!.value, 1);
       expect(field.fieldId!.span.text, '1');
       expect(field.fieldId!.span.start.offset, 10);
       expect(field.fieldId!.span.end.offset, 11);
@@ -118,10 +119,13 @@ void main() {
       expect(field.identifier.span.start.offset, 17);
       expect(field.identifier.span.end.offset, 18);
 
-      expect((field.defaultValue! as IntConstantNode).value, '42');
-      expect(field.defaultValue!.span.text, '42');
-      expect(field.defaultValue!.span.start.offset, 21);
-      expect(field.defaultValue!.span.end.offset, 23);
+      final defaultValue = field.defaultValue! as IntConstantNode;
+
+      expect(defaultValue.rawValue, '42');
+      expect(defaultValue.value, 42);
+      expect(defaultValue.span.text, '42');
+      expect(defaultValue.span.start.offset, 21);
+      expect(defaultValue.span.end.offset, 23);
     });
 
     test('should parse union with required fields', () {
@@ -302,7 +306,7 @@ void main() {
       expect(field3.identifier.span.text, 'uniqueIds');
       expect(field3.identifier.span.start.offset, 67);
       expect(field3.identifier.span.end.offset, 76);
-      
+
       expect(field3.defaultValue, isNull);
     });
   });

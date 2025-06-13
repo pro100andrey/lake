@@ -85,7 +85,8 @@ void main() {
       expect(member1.identifier.span.text, 'RED');
       expect(member1.identifier.span.start.offset, 13);
       expect(member1.identifier.span.end.offset, 16);
-      expect(member1.value!.value, '1');
+      expect(member1.value!.rawValue, '1');
+      expect(member1.value!.value, 1);
       expect(member1.value!.span.text, '1');
       expect(member1.value!.span.start.offset, 19);
       expect(member1.value!.span.end.offset, 20);
@@ -94,7 +95,8 @@ void main() {
       expect(member2.identifier.span.text, 'GREEN');
       expect(member2.identifier.span.start.offset, 22);
       expect(member2.identifier.span.end.offset, 27);
-      expect(member2.value!.value, '2');
+      expect(member2.value!.rawValue, '2');
+      expect(member2.value!.value, 2);
       expect(member2.value!.span.text, '2');
       expect(member2.value!.span.start.offset, 30);
       expect(member2.value!.span.end.offset, 31);
@@ -103,7 +105,8 @@ void main() {
       expect(member3.identifier.span.text, 'BLUE');
       expect(member3.identifier.span.start.offset, 33);
       expect(member3.identifier.span.end.offset, 37);
-      expect(member3.value!.value, '3');
+      expect(member3.value!.rawValue, '3');
+      expect(member3.value!.value, 3);
       expect(member3.value!.span.text, '3');
       expect(member3.value!.span.start.offset, 40);
       expect(member3.value!.span.end.offset, 41);
@@ -182,7 +185,8 @@ void main() {
       expect(member1.identifier.span.start.offset, 14);
       expect(member1.identifier.span.end.offset, 21);
 
-      expect(member1.value!.value, '1');
+      expect(member1.value!.rawValue, '1');
+      expect(member1.value!.value, 1);
       expect(member1.value!.span.text, '1');
       expect(member1.value!.span.start.offset, 24);
       expect(member1.value!.span.end.offset, 25);
@@ -197,7 +201,8 @@ void main() {
       expect(member3.identifier.span.text, 'COMPLETED');
       expect(member3.identifier.span.start.offset, 39);
       expect(member3.identifier.span.end.offset, 48);
-      expect(member3.value!.value, '5');
+      expect(member3.value!.rawValue, '5');
+      expect(member3.value!.value, 5);
       expect(member3.value!.span.text, '5');
       expect(member3.value!.span.start.offset, 51);
       expect(member3.value!.span.end.offset, 52);

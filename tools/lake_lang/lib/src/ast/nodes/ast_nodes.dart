@@ -91,7 +91,7 @@ final class NamespaceNode extends HeaderNode {
   });
 
   /// The scope of the namespace, as a string literal node.
-  final LiteralNode scope;
+  final IdentifierNode scope;
 
   /// The identifier for the namespace.
   final IdentifierNode identifier;
@@ -535,11 +535,14 @@ sealed class ConstValueNode extends AstNode {
 
 /// Represents an integer constant value.
 final class IntConstantNode extends ConstValueNode {
-  /// Creates an [IntConstantNode] with the given [value] and [span].
-  const IntConstantNode({required this.value, required super.span});
+  /// Creates an [IntConstantNode] with the given [rawValue] and [span].
+  IntConstantNode({required this.rawValue, required super.span});
 
   /// The integer value as a string.
-  final String value;
+  final String rawValue;
+
+  /// The parsed integer value.
+  late final int value = int.parse(rawValue);
 
   @override
   String get valueKind => 'literal integer';
@@ -551,16 +554,19 @@ final class IntConstantNode extends ConstValueNode {
   T accept<T>(AstVisitor<T> visitor) => visitor.visitIntConstantNode(this);
 
   @override
-  List<Object?> get props => [value, span];
+  List<Object?> get props => [rawValue, span];
 }
 
 /// Represents a double constant value.
 final class DoubleConstantNode extends ConstValueNode {
-  /// Creates a [DoubleConstantNode] with the given [value] and [span].
-  const DoubleConstantNode({required this.value, required super.span});
+  /// Creates a [DoubleConstantNode] with the given [rawValue] and [span].
+  DoubleConstantNode({required this.rawValue, required super.span});
 
   /// The double value as a string.
-  final String value;
+  final String rawValue;
+
+  /// The parsed double value.
+  late final double value = double.parse(rawValue);
 
   @override
   String get valueKind => 'literal double';
@@ -572,16 +578,19 @@ final class DoubleConstantNode extends ConstValueNode {
   T accept<T>(AstVisitor<T> visitor) => visitor.visitDoubleConstantNode(this);
 
   @override
-  List<Object?> get props => [value, span];
+  List<Object?> get props => [rawValue, span];
 }
 
 /// Represents a boolean constant value.
 final class BoolConstantNode extends ConstValueNode {
-  /// Creates a [BoolConstantNode] with the given [value] and [span].
-  const BoolConstantNode({required this.value, required super.span});
+  /// Creates a [BoolConstantNode] with the given [rawValue] and [span].
+  BoolConstantNode({required this.rawValue, required super.span});
 
   /// The boolean value.
-  final bool value;
+  final String rawValue;
+
+  /// The parsed boolean value.
+  late final bool value = rawValue == 'true';
 
   @override
   String get valueKind => 'literal boolean';
@@ -593,16 +602,18 @@ final class BoolConstantNode extends ConstValueNode {
   T accept<T>(AstVisitor<T> visitor) => visitor.visitBoolConstantNode(this);
 
   @override
-  List<Object?> get props => [value, span];
+  List<Object?> get props => [rawValue, span];
 }
 
 /// Represents a string literal constant value.
 final class LiteralNode extends ConstValueNode {
-  /// Creates a [LiteralNode] with the given [value] and [span].
-  const LiteralNode({required this.value, required super.span});
+  /// Creates a [LiteralNode] with the given [rawValue] and [span].
+  LiteralNode({required this.rawValue, required super.span});
 
   /// The string literal value.
-  final String value;
+  final String rawValue;
+
+  late final String value = rawValue.substring(1, rawValue.length - 1);
 
   @override
   String get valueKind => 'literal string';
@@ -614,7 +625,7 @@ final class LiteralNode extends ConstValueNode {
   T accept<T>(AstVisitor<T> visitor) => visitor.visitLiteralNode(this);
 
   @override
-  List<Object?> get props => [value, span];
+  List<Object?> get props => [rawValue, span];
 }
 
 /// Represents a list constant value.

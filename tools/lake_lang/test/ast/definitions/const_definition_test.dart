@@ -26,10 +26,12 @@ void main() {
       expect(def.identifier.span.start.offset, 10);
       expect(def.identifier.span.end.offset, 15);
 
-      expect((def.value as IntConstantNode).value, '42');
-      expect(def.value.span.text, '42');
-      expect(def.value.span.start.offset, 18);
-      expect(def.value.span.end.offset, 20);
+      final intConst = def.value as IntConstantNode;
+      expect(intConst.rawValue, '42');
+      expect(intConst.value, 42);
+      expect(intConst.span.text, '42');
+      expect(intConst.span.start.offset, 18);
+      expect(intConst.span.end.offset, 20);
     });
 
     test('should parse string constant', () {
@@ -53,10 +55,12 @@ void main() {
       expect(def.identifier.span.start.offset, 13);
       expect(def.identifier.span.end.offset, 21);
 
-      expect((def.value as LiteralNode).value, '"Hello, World!"');
-      expect(def.value.span.text, '"Hello, World!"');
-      expect(def.value.span.start.offset, 24);
-      expect(def.value.span.end.offset, 39);
+      final literal = def.value as LiteralNode;
+      expect(literal.rawValue, '"Hello, World!"');
+      expect(literal.value, 'Hello, World!');
+      expect(literal.span.text, '"Hello, World!"');
+      expect(literal.span.start.offset, 24);
+      expect(literal.span.end.offset, 39);
     });
 
     test('should parse boolean constant', () {
@@ -80,10 +84,12 @@ void main() {
       expect(def.identifier.span.start.offset, 11);
       expect(def.identifier.span.end.offset, 17);
 
-      expect((def.value as BoolConstantNode).value, isTrue);
-      expect(def.value.span.text, 'true');
-      expect(def.value.span.start.offset, 20);
-      expect(def.value.span.end.offset, 24);
+      final boolConst = def.value as BoolConstantNode;
+      expect(boolConst.value, isTrue);
+      expect(boolConst.rawValue, 'true');
+      expect(boolConst.span.text, 'true');
+      expect(boolConst.span.start.offset, 20);
+      expect(boolConst.span.end.offset, 24);
     });
 
     test('should parse double constant', () {
@@ -107,10 +113,12 @@ void main() {
       expect(def.identifier.span.start.offset, 13);
       expect(def.identifier.span.end.offset, 21);
 
-      expect((def.value as DoubleConstantNode).value, '3.14');
-      expect(def.value.span.text, '3.14');
-      expect(def.value.span.start.offset, 24);
-      expect(def.value.span.end.offset, 28);
+      final doubleConst = def.value as DoubleConstantNode;
+      expect(doubleConst.value, 3.14);
+      expect(doubleConst.rawValue, '3.14');
+      expect(doubleConst.span.text, '3.14');
+      expect(doubleConst.span.start.offset, 24);
+      expect(doubleConst.span.end.offset, 28);
     });
 
     test('should parse array constant', () {
@@ -144,22 +152,31 @@ void main() {
       expect(def.value.span.start.offset, 26);
       expect(def.value.span.end.offset, 35);
 
-      final elements = (def.value as ConstListNode).elements
-          .cast<IntConstantNode>();
-      expect(elements[0].value, '1');
-      expect(elements[0].span.text, '1');
-      expect(elements[0].span.start.offset, 27);
-      expect(elements[0].span.end.offset, 28);
+      final constList = def.value as ConstListNode;
+      final elements = constList.elements;
 
-      expect(elements[1].value, '2');
-      expect(elements[1].span.text, '2');
-      expect(elements[1].span.start.offset, 30);
-      expect(elements[1].span.end.offset, 31);
+      final e1 = elements[0] as IntConstantNode;
 
-      expect(elements[2].value, '3');
-      expect(elements[2].span.text, '3');
-      expect(elements[2].span.start.offset, 33);
-      expect(elements[2].span.end.offset, 34);
+      expect(e1.rawValue, '1');
+      expect(e1.value, 1);
+      expect(e1.span.text, '1');
+      expect(e1.span.start.offset, 27);
+      expect(e1.span.end.offset, 28);
+
+      final e2 = elements[1] as IntConstantNode;
+
+      expect(e2.rawValue, '2');
+      expect(e2.value, 2);
+      expect(e2.span.text, '2');
+      expect(e2.span.start.offset, 30);
+      expect(e2.span.end.offset, 31);
+
+      final e3 = elements[2] as IntConstantNode;
+      expect(e3.rawValue, '3');
+      expect(e3.value, 3);
+      expect(e3.span.text, '3');
+      expect(e3.span.start.offset, 33);
+      expect(e3.span.end.offset, 34);
     });
 
     test('should parse empty array constant', () {
@@ -236,25 +253,28 @@ void main() {
       final entries = (def.value as ConstMapNode).entries.cast<MapEntry>();
 
       final k1 = entries[0].key as LiteralNode;
-      expect(k1.value, '"a"');
+      expect(k1.rawValue, '"a"');
       expect(k1.span.text, '"a"');
       expect(k1.span.start.offset, 32);
       expect(k1.span.end.offset, 35);
 
       final v1 = entries[0].value as IntConstantNode;
-      expect(v1.value, '1');
+      expect(v1.rawValue, '1');
+      expect(v1.value, 1);
       expect(v1.span.text, '1');
       expect(v1.span.start.offset, 37);
       expect(v1.span.end.offset, 38);
 
       final k2 = entries[1].key as LiteralNode;
-      expect(k2.value, '"b"');
+      expect(k2.rawValue, '"b"');
+      expect(k2.value, 'b');
       expect(k2.span.text, '"b"');
       expect(k2.span.start.offset, 40);
       expect(k2.span.end.offset, 43);
 
       final v2 = entries[1].value as IntConstantNode;
-      expect(v2.value, '2');
+      expect(v2.rawValue, '2');
+      expect(v2.value, 2);
       expect(v2.span.text, '2');
       expect(v2.span.start.offset, 45);
       expect(v2.span.end.offset, 46);
@@ -309,10 +329,12 @@ void main() {
       expect(def.identifier.span.start.offset, 11);
       expect(def.identifier.span.end.offset, 17);
 
-      expect((def.value as IntConstantNode).value, '255');
-      expect(def.value.span.text, '255');
-      expect(def.value.span.start.offset, 20);
-      expect(def.value.span.end.offset, 23);
+      final byteConst = def.value as IntConstantNode;
+      expect(byteConst.rawValue, '255');
+      expect(byteConst.value, 255);
+      expect(byteConst.span.text, '255');
+      expect(byteConst.span.start.offset, 20);
+      expect(byteConst.span.end.offset, 23);
     });
 
     test('should parse i8 constant', () {
@@ -336,10 +358,12 @@ void main() {
       expect(def.identifier.span.start.offset, 9);
       expect(def.identifier.span.end.offset, 13);
 
-      expect((def.value as IntConstantNode).value, '127');
-      expect(def.value.span.text, '127');
-      expect(def.value.span.start.offset, 16);
-      expect(def.value.span.end.offset, 19);
+      final intConst = def.value as IntConstantNode;
+      expect(intConst.rawValue, '127');
+      expect(intConst.value, 127);
+      expect(intConst.span.text, '127');
+      expect(intConst.span.start.offset, 16);
+      expect(intConst.span.end.offset, 19);
     });
 
     test('should parse i16 constant', () {
@@ -363,7 +387,7 @@ void main() {
       expect(def.identifier.span.start.offset, 10);
       expect(def.identifier.span.end.offset, 15);
 
-      expect((def.value as IntConstantNode).value, '32767');
+      expect((def.value as IntConstantNode).rawValue, '32767');
       expect(def.value.span.text, '32767');
       expect(def.value.span.start.offset, 18);
       expect(def.value.span.end.offset, 23);
@@ -390,10 +414,12 @@ void main() {
       expect(def.identifier.span.start.offset, 10);
       expect(def.identifier.span.end.offset, 15);
 
-      expect((def.value as IntConstantNode).value, '9223372036854775807');
-      expect(def.value.span.text, '9223372036854775807');
-      expect(def.value.span.start.offset, 18);
-      expect(def.value.span.end.offset, 37);
+      final intConst = def.value as IntConstantNode;
+      expect(intConst.rawValue, '9223372036854775807');
+      expect(intConst.value, 9223372036854775807);
+      expect(intConst.span.text, '9223372036854775807');
+      expect(intConst.span.start.offset, 18);
+      expect(intConst.span.end.offset, 37);
     });
 
     test('should parse binary constant', () {
@@ -417,10 +443,11 @@ void main() {
       expect(def.identifier.span.start.offset, 13);
       expect(def.identifier.span.end.offset, 21);
 
-      expect((def.value as LiteralNode).value, '"01010101"');
-      expect(def.value.span.text, '"01010101"');
-      expect(def.value.span.start.offset, 24);
-      expect(def.value.span.end.offset, 34);
+      final literal = def.value as LiteralNode;
+      expect(literal.rawValue, '"01010101"');
+      expect(literal.span.text, '"01010101"');
+      expect(literal.span.start.offset, 24);
+      expect(literal.span.end.offset, 34);
     });
 
     test('should parse uuid constant', () {
@@ -446,7 +473,7 @@ void main() {
       expect(def.identifier.span.end.offset, 17);
 
       expect(
-        (def.value as LiteralNode).value,
+        (def.value as LiteralNode).rawValue,
         '"123e4567-e89b-12d3-a456-426614174000"',
       );
       expect(def.value.span.text, '"123e4567-e89b-12d3-a456-426614174000"');

@@ -102,13 +102,13 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
   /// Overrides the [namespace] parser to return a [NamespaceNode].
   ///
-  /// It captures the 'namespace' keyword, the scope literal, and the
+  /// It captures the 'namespace' keyword, the scope and the
   /// identifier, creating a [NamespaceNode].
   @override
   Parser namespace() => super.namespace().map((t) {
     final [
       Token keyword,
-      [LiteralNode lang, IdentifierNode identifier],
+      [IdentifierNode lang, IdentifierNode identifier],
     ] = t as List;
 
     final span = _getSpan(keyword, identifier);
@@ -125,7 +125,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     final token = t as Token;
 
     final span = _getSpan(token, token);
-    return LiteralNode(value: token.value, span: span);
+    return IdentifierNode(value: token.value, span: span);
   });
 
   /// Overrides the [constDefinition] parser to return a [ConstDefinitionNode].
@@ -477,7 +477,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final span = _getSpan(token, token);
 
-    return IntConstantNode(value: token.value, span: span);
+    return IntConstantNode(rawValue: token.value, span: span);
   });
 
   /// Overrides the [doubleConstant] parser to return a [DoubleConstantNode].
@@ -489,7 +489,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final span = _getSpan(token, token);
 
-    return DoubleConstantNode(value: token.value, span: span);
+    return DoubleConstantNode(rawValue: token.value, span: span);
   });
 
   /// Overrides the [boolConstant] parser to return a [BoolConstantNode].
@@ -501,7 +501,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final span = _getSpan(token, token);
 
-    return BoolConstantNode(value: token.value == 'true', span: span);
+    return BoolConstantNode(rawValue: token.value, span: span);
   });
 
   /// Overrides the [constList] parser to return a [ConstListNode].
@@ -547,7 +547,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final span = _getSpan(token, token);
 
-    return LiteralNode(value: token.value, span: span);
+    return LiteralNode(rawValue: token.value, span: span);
   });
 
   /// Overrides the [identifier] parser to return an [IdentifierNode].

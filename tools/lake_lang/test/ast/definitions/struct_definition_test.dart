@@ -109,9 +109,11 @@ void main() {
 
       expect(def.fields, hasLength(1));
 
-      final field = def.fields[0];
+      final [FieldNode field] = def.fields;
+
       expect(field.fieldId, isNotNull);
-      expect(field.fieldId!.value, '1');
+      expect(field.fieldId!.rawValue, '1');
+      expect(field.fieldId!.value, 1);
       expect(field.fieldId!.span.text, '1');
       expect(field.fieldId!.span.start.offset, 11);
       expect(field.fieldId!.span.end.offset, 12);
@@ -126,10 +128,13 @@ void main() {
       expect(field.identifier.span.start.offset, 18);
       expect(field.identifier.span.end.offset, 19);
 
-      expect((field.defaultValue! as IntConstantNode).value, '42');
-      expect(field.defaultValue!.span.text, '42');
-      expect(field.defaultValue!.span.start.offset, 22);
-      expect(field.defaultValue!.span.end.offset, 24);
+      final defaultValue = field.defaultValue! as IntConstantNode;
+
+      expect(defaultValue.rawValue, '42');
+      expect(defaultValue.value, 42);
+      expect(defaultValue.span.text, '42');
+      expect(defaultValue.span.start.offset, 22);
+      expect(defaultValue.span.end.offset, 24);
     });
 
     test('should parse struct with required fields', () {

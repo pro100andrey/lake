@@ -14,7 +14,8 @@ void main() {
       expect(import.span.start.offset, 0);
       expect(import.span.end.offset, 17);
 
-      expect(import.path.value, '"foo.lake"');
+      expect(import.path.rawValue, '"foo.lake"');
+      expect(import.path.value, 'foo.lake');
       expect(import.path.span.text, '"foo.lake"');
       expect(import.path.span.start.offset, 7);
       expect(import.path.span.end.offset, 17);
@@ -29,7 +30,8 @@ void main() {
       expect(import.span.start.offset, 0);
       expect(import.span.end.offset, 17);
 
-      expect(import.path.value, "'bar.lake'");
+      expect(import.path.rawValue, "'bar.lake'");
+      expect(import.path.value, 'bar.lake');
       expect(import.path.span.text, "'bar.lake'");
       expect(import.path.span.start.offset, 7);
       expect(import.path.span.end.offset, 17);
@@ -44,7 +46,8 @@ void main() {
       expect(import.span.start.offset, 2);
       expect(import.span.end.offset, 21);
 
-      expect(import.path.value, '"baz.lake"');
+      expect(import.path.rawValue, '"baz.lake"');
+      expect(import.path.value, 'baz.lake');
       expect(import.path.span.text, '"baz.lake"');
       expect(import.path.span.start.offset, 11);
       expect(import.path.span.end.offset, 21);
@@ -61,7 +64,8 @@ void main() {
       expect(import1.span.start.offset, 0);
       expect(import1.span.end.offset, 15);
 
-      expect(import1.path.value, '"a.lake"');
+      expect(import1.path.rawValue, '"a.lake"');
+      expect(import1.path.value, 'a.lake');
       expect(import1.path.span.text, '"a.lake"');
       expect(import1.path.span.start.offset, 7);
       expect(import1.path.span.end.offset, 15);
@@ -71,7 +75,8 @@ void main() {
       expect(import2.span.start.offset, 16);
       expect(import2.span.end.offset, 31);
 
-      expect(import2.path.value, '"b.lake"');
+      expect(import2.path.rawValue, '"b.lake"');
+      expect(import2.path.value, 'b.lake');
       expect(import2.path.span.text, '"b.lake"');
       expect(import2.path.span.start.offset, 23);
       expect(import2.path.span.end.offset, 31);
@@ -88,7 +93,8 @@ void main() {
       expect(import.span.start.offset, 0);
       expect(import.span.end.offset, 35);
 
-      expect(import.path.value, '"../common/types/enums.lake"');
+      expect(import.path.rawValue, '"../common/types/enums.lake"');
+      expect(import.path.value, '../common/types/enums.lake');
       expect(import.path.span.text, '"../common/types/enums.lake"');
       expect(import.path.span.start.offset, 7);
       expect(import.path.span.end.offset, 35);

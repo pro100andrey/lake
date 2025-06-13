@@ -88,7 +88,8 @@ void main() {
       final fieldType = field.type as BaseTypeNode;
 
       expect(field.fieldId, isNotNull);
-      expect(field.fieldId!.value, '1');
+      expect(field.fieldId!.rawValue, '1');
+      expect(field.fieldId!.value, 1);
       expect(field.fieldId!.span.text, '1');
       expect(field.fieldId!.span.start.offset, 23);
       expect(field.fieldId!.span.end.offset, 24);
@@ -106,7 +107,8 @@ void main() {
       final field1Type = field1.type as BaseTypeNode;
 
       expect(field1.fieldId, isNotNull);
-      expect(field1.fieldId!.value, '2');
+      expect(field1.fieldId!.rawValue, '2');
+      expect(field1.fieldId!.value, 2);
       expect(field1.fieldId!.span.text, '2');
       expect(field1.fieldId!.span.start.offset, 42);
       expect(field1.fieldId!.span.end.offset, 43);

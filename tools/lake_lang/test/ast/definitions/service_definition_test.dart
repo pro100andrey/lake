@@ -153,37 +153,41 @@ void main() {
 
       expect(fn.parameters, hasLength(2));
 
-      expect(fn.parameters[0].fieldId, isNotNull);
-      expect(fn.parameters[0].fieldId!.value, '1');
-      expect(fn.parameters[0].fieldId!.span.text, '1');
-      expect(fn.parameters[0].fieldId!.span.start.offset, 21);
-      expect(fn.parameters[0].fieldId!.span.end.offset, 22);
+      final [FieldNode parameter, FieldNode parameter1] = fn.parameters;
 
-      expect((fn.parameters[0].type as BaseTypeNode).value, 'i32');
-      expect(fn.parameters[0].type.span.text, 'i32');
-      expect(fn.parameters[0].type.span.start.offset, 24);
-      expect(fn.parameters[0].type.span.end.offset, 27);
+      expect(parameter.fieldId, isNotNull);
+      expect(parameter.fieldId!.rawValue, '1');
+      expect(parameter.fieldId!.value, 1);
+      expect(parameter.fieldId!.span.text, '1');
+      expect(parameter.fieldId!.span.start.offset, 21);
+      expect(parameter.fieldId!.span.end.offset, 22);
 
-      expect(fn.parameters[0].identifier.value, 'x');
-      expect(fn.parameters[0].identifier.span.text, 'x');
-      expect(fn.parameters[0].identifier.span.start.offset, 28);
-      expect(fn.parameters[0].identifier.span.end.offset, 29);
+      expect((parameter.type as BaseTypeNode).value, 'i32');
+      expect(parameter.type.span.text, 'i32');
+      expect(parameter.type.span.start.offset, 24);
+      expect(parameter.type.span.end.offset, 27);
 
-      expect(fn.parameters[1].fieldId, isNotNull);
-      expect(fn.parameters[1].fieldId!.value, '2');
-      expect(fn.parameters[1].fieldId!.span.text, '2');
-      expect(fn.parameters[1].fieldId!.span.start.offset, 31);
-      expect(fn.parameters[1].fieldId!.span.end.offset, 32);
+      expect(parameter.identifier.value, 'x');
+      expect(parameter.identifier.span.text, 'x');
+      expect(parameter.identifier.span.start.offset, 28);
+      expect(parameter.identifier.span.end.offset, 29);
 
-      expect((fn.parameters[1].type as BaseTypeNode).value, 'i32');
-      expect(fn.parameters[1].type.span.text, 'i32');
-      expect(fn.parameters[1].type.span.start.offset, 34);
-      expect(fn.parameters[1].type.span.end.offset, 37);
+      expect(parameter1.fieldId, isNotNull);
+      expect(parameter1.fieldId!.rawValue, '2');
+      expect(parameter1.fieldId!.value, 2);
+      expect(parameter1.fieldId!.span.text, '2');
+      expect(parameter1.fieldId!.span.start.offset, 31);
+      expect(parameter1.fieldId!.span.end.offset, 32);
 
-      expect(fn.parameters[1].identifier.value, 'y');
-      expect(fn.parameters[1].identifier.span.text, 'y');
-      expect(fn.parameters[1].identifier.span.start.offset, 38);
-      expect(fn.parameters[1].identifier.span.end.offset, 39);
+      expect((parameter1.type as BaseTypeNode).value, 'i32');
+      expect(parameter1.type.span.text, 'i32');
+      expect(parameter1.type.span.start.offset, 34);
+      expect(parameter1.type.span.end.offset, 37);
+
+      expect(parameter1.identifier.value, 'y');
+      expect(parameter1.identifier.span.text, 'y');
+      expect(parameter1.identifier.span.start.offset, 38);
+      expect(parameter1.identifier.span.end.offset, 39);
     });
 
     test('should parse service with extends', () {
@@ -244,9 +248,8 @@ void main() {
 
         expect(def.extendsService, isNull);
 
-        expect(def.functions, hasLength(1));
+        final [FunctionNode fn] = def.functions;
 
-        final fn = def.functions[0];
         expect((fn.returnType as BaseTypeNode).value, 'i32');
         expect(fn.returnType.span.text, 'i32');
         expect(fn.returnType.span.start.offset, 12);
@@ -257,52 +260,56 @@ void main() {
         expect(fn.identifier.span.start.offset, 16);
         expect(fn.identifier.span.end.offset, 19);
 
-        expect(fn.parameters, hasLength(2));
+        final [FieldNode parameter, FieldNode parameter1] = fn.parameters;
 
-        expect(fn.parameters[0].fieldId!.value, '1');
-        expect(fn.parameters[0].fieldId!.span.text, '1');
-        expect(fn.parameters[0].fieldId!.span.start.offset, 20);
-        expect(fn.parameters[0].fieldId!.span.end.offset, 21);
+        expect(parameter.fieldId!.rawValue, '1');
+        expect(parameter.fieldId!.value, 1);
+        expect(parameter.fieldId!.span.text, '1');
+        expect(parameter.fieldId!.span.start.offset, 20);
+        expect(parameter.fieldId!.span.end.offset, 21);
 
-        expect((fn.parameters[0].type as BaseTypeNode).value, 'i32');
-        expect(fn.parameters[0].type.span.text, 'i32');
-        expect(fn.parameters[0].type.span.start.offset, 23);
-        expect(fn.parameters[0].type.span.end.offset, 26);
+        expect((parameter.type as BaseTypeNode).value, 'i32');
+        expect(parameter.type.span.text, 'i32');
+        expect(parameter.type.span.start.offset, 23);
+        expect(parameter.type.span.end.offset, 26);
 
-        expect(fn.parameters[0].identifier.value, 'x');
-        expect(fn.parameters[0].identifier.span.text, 'x');
-        expect(fn.parameters[0].identifier.span.start.offset, 27);
-        expect(fn.parameters[0].identifier.span.end.offset, 28);
+        expect(parameter.identifier.value, 'x');
+        expect(parameter.identifier.span.text, 'x');
+        expect(parameter.identifier.span.start.offset, 27);
+        expect(parameter.identifier.span.end.offset, 28);
 
-        expect(fn.parameters[1].fieldId!.value, '3');
-        expect(fn.parameters[1].fieldId!.span.text, '3');
-        expect(fn.parameters[1].fieldId!.span.start.offset, 30);
-        expect(fn.parameters[1].fieldId!.span.end.offset, 31);
+        expect(parameter1.fieldId!.rawValue, '3');
+        expect(parameter1.fieldId!.value, 3);
+        expect(parameter1.fieldId!.span.text, '3');
+        expect(parameter1.fieldId!.span.start.offset, 30);
+        expect(parameter1.fieldId!.span.end.offset, 31);
 
-        expect((fn.parameters[1].type as BaseTypeNode).value, 'string');
-        expect(fn.parameters[1].type.span.text, 'string');
-        expect(fn.parameters[1].type.span.start.offset, 33);
-        expect(fn.parameters[1].type.span.end.offset, 39);
+        expect((parameter1.type as BaseTypeNode).value, 'string');
+        expect(parameter1.type.span.text, 'string');
+        expect(parameter1.type.span.start.offset, 33);
+        expect(parameter1.type.span.end.offset, 39);
 
-        expect(fn.parameters[1].identifier.value, 'y');
-        expect(fn.parameters[1].identifier.span.text, 'y');
-        expect(fn.parameters[1].identifier.span.start.offset, 40);
-        expect(fn.parameters[1].identifier.span.end.offset, 41);
+        expect(parameter1.identifier.value, 'y');
+        expect(parameter1.identifier.span.text, 'y');
+        expect(parameter1.identifier.span.start.offset, 40);
+        expect(parameter1.identifier.span.end.offset, 41);
 
-        expect((fn.throws[0].type as BaseTypeNode).value, 'i32');
-        expect(fn.throws[0].type.span.text, 'i32');
-        expect(fn.throws[0].type.span.start.offset, 51);
-        expect(fn.throws[0].type.span.end.offset, 54);
+        final [FieldNode throw0] = fn.throws;
 
-        expect(fn.throws[0].identifier, isNotNull);
-        expect(fn.throws[0].identifier.value, 'err');
-        expect(fn.throws[0].identifier.span.text, 'err');
-        expect(fn.throws[0].identifier.span.start.offset, 55);
-        expect(fn.throws[0].identifier.span.end.offset, 58);
+        expect(throw0.span.text, 'i32 err');
+        expect(throw0.span.start.offset, 51);
+        expect(throw0.span.end.offset, 58);
 
-        expect(fn.throws[0].span.text, 'i32 err');
-        expect(fn.throws[0].span.start.offset, 51);
-        expect(fn.throws[0].span.end.offset, 58);
+        expect((throw0.type as BaseTypeNode).value, 'i32');
+        expect(throw0.type.span.text, 'i32');
+        expect(throw0.type.span.start.offset, 51);
+        expect(throw0.type.span.end.offset, 54);
+
+        expect(throw0.identifier, isNotNull);
+        expect(throw0.identifier.value, 'err');
+        expect(throw0.identifier.span.text, 'err');
+        expect(throw0.identifier.span.start.offset, 55);
+        expect(throw0.identifier.span.end.offset, 58);
       },
     );
 
@@ -326,9 +333,8 @@ void main() {
 
         expect(def.extendsService, isNull);
 
-        expect(def.functions, hasLength(1));
+        final [FunctionNode fn] = def.functions;
 
-        final fn = def.functions[0];
         expect((fn.returnType as BaseTypeNode).value, 'i32');
         expect(fn.returnType.span.text, 'i32');
         expect(fn.returnType.span.start.offset, 12);
@@ -341,7 +347,8 @@ void main() {
 
         final [FieldNode p1, FieldNode p2] = fn.parameters;
 
-        expect(p1.fieldId!.value, '1');
+        expect(p1.fieldId!.rawValue, '1');
+        expect(p1.fieldId!.value, 1);
         expect(p1.fieldId!.span.text, '1');
         expect(p1.fieldId!.span.start.offset, 20);
         expect(p1.fieldId!.span.end.offset, 21);
@@ -356,7 +363,8 @@ void main() {
         expect(p1.identifier.span.start.offset, 27);
         expect(p1.identifier.span.end.offset, 28);
 
-        expect(p2.fieldId!.value, '3');
+        expect(p2.fieldId!.rawValue, '3');
+        expect(p2.fieldId!.value, 3);
         expect(p2.fieldId!.span.text, '3');
         expect(p2.fieldId!.span.start.offset, 30);
         expect(p2.fieldId!.span.end.offset, 31);
@@ -373,7 +381,12 @@ void main() {
 
         final [FieldNode throwField] = fn.throws;
 
-        expect(throwField.fieldId!.value, '1');
+        expect(throwField.span.text, '1: i32 err');
+        expect(throwField.span.start.offset, 51);
+        expect(throwField.span.end.offset, 61);
+
+        expect(throwField.fieldId!.rawValue, '1');
+        expect(throwField.fieldId!.value, 1);
         expect(throwField.fieldId!.span.text, '1');
         expect(throwField.fieldId!.span.start.offset, 51);
         expect(throwField.fieldId!.span.end.offset, 52);
@@ -387,10 +400,6 @@ void main() {
         expect(throwField.identifier.span.text, 'err');
         expect(throwField.identifier.span.start.offset, 58);
         expect(throwField.identifier.span.end.offset, 61);
-
-        expect(throwField.span.text, '1: i32 err');
-        expect(throwField.span.start.offset, 51);
-        expect(throwField.span.end.offset, 61);
       },
     );
 
@@ -416,7 +425,9 @@ void main() {
         expect(def.extendsService, isNull);
         expect(def.functions, hasLength(3));
 
-        final func1 = def.functions[0];
+        final [FunctionNode func1, FunctionNode func2, FunctionNode func3] =
+            def.functions;
+
         expect(func1.returnType, isA<VoidTypeNode>());
         expect(func1.returnType.span.text, 'void');
         expect(func1.returnType.span.start.offset, 12);
@@ -427,7 +438,6 @@ void main() {
         expect(func1.identifier.span.start.offset, 17);
         expect(func1.identifier.span.end.offset, 22);
 
-        final func2 = def.functions[1];
         expect((func2.returnType as BaseTypeNode).value, 'string');
         expect(func2.returnType.span.text, 'string');
         expect(func2.returnType.span.start.offset, 26);
@@ -438,7 +448,6 @@ void main() {
         expect(func2.identifier.span.start.offset, 33);
         expect(func2.identifier.span.end.offset, 38);
 
-        final func3 = def.functions[2];
         expect((func3.returnType as BaseTypeNode).value, 'i32');
         expect(func3.returnType.span.text, 'i32');
         expect(func3.returnType.span.start.offset, 42);
