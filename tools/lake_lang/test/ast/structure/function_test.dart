@@ -317,7 +317,7 @@ void main() {
 
       expect(fn.span.text, source);
       expect(fn.span.start.offset, 12);
-      expect(fn.span.end.offset, 40);
+      expect(fn.span.end.offset, 42);
 
       expect(fn.returnType, isA<VoidTypeNode>());
       expect(fn.returnType.span.text, 'void');
@@ -328,6 +328,87 @@ void main() {
       expect(fn.identifier.span.text, 'streamFunc');
       expect(fn.identifier.span.start.offset, 17);
       expect(fn.identifier.span.end.offset, 27);
+
+      expect(fn.parameters, hasLength(1));
+      final param = fn.parameters.first;
+      expect(param.fieldId, isNull);
+
+      expect(param.type is StreamTypeNode, isTrue);
+      expect(param.type.span.text, 'stream<i32>');
+      expect(param.type.span.start.offset, 28);
+      expect(param.type.span.end.offset, 39);
+
+      final streamType = param.type as StreamTypeNode;
+      final elementType = streamType.elementType as BaseTypeNode;
+      expect(elementType.value, 'i32');
+      expect(elementType.span.text, 'i32');
+      expect(elementType.span.start.offset, 35);
+      expect(elementType.span.end.offset, 38);
+
+      expect(param.identifier.value, 's');
+      expect(param.identifier.span.text, 's');
+      expect(param.identifier.span.start.offset, 40);
+      expect(param.identifier.span.end.offset, 41);
+
+      expect(param.defaultValue, isNull);
+      expect(param.requirement, isNull);
+    });
+
+    test('should parse unidirectional function', () {
+      const source = 'stream<ChatMessage> streamFunc(1: stream<ChatMessage> s)';
+      final doc = parseAst('service S { $source }');
+      final service = doc.definitions.first as ServiceDefinitionNode;
+      final fn = service.functions.first;
+
+      expect(fn.span.text, source);
+      expect(fn.span.start.offset, 12);
+      expect(fn.span.end.offset, 68);
+
+      expect(fn.returnType is StreamTypeNode, isTrue);
+      expect(fn.returnType.span.text, 'stream<ChatMessage>');
+      expect(fn.returnType.span.start.offset, 12);
+      expect(fn.returnType.span.end.offset, 31);
+
+      final returnStreamType = fn.returnType as StreamTypeNode;
+      final returnElementType = returnStreamType.elementType as CustomTypeNode;
+      expect(returnElementType.value, 'ChatMessage');
+      expect(returnElementType.span.text, 'ChatMessage');
+      expect(returnElementType.span.start.offset, 19);
+      expect(returnElementType.span.end.offset, 30);
+
+      expect(fn.identifier.value, 'streamFunc');
+      expect(fn.identifier.span.text, 'streamFunc');
+      expect(fn.identifier.span.start.offset, 32);
+      expect(fn.identifier.span.end.offset, 42);
+
+      expect(fn.parameters, hasLength(1));
+      final param = fn.parameters.first;
+
+      expect(param.fieldId, isNotNull);
+      expect(param.fieldId!.value, '1');
+      expect(param.fieldId!.span.text, '1');
+      expect(param.fieldId!.span.start.offset, 43);
+      expect(param.fieldId!.span.end.offset, 44);
+
+      expect(param.type is StreamTypeNode, isTrue);
+      expect(param.type.span.text, 'stream<ChatMessage>');
+      expect(param.type.span.start.offset, 46);
+      expect(param.type.span.end.offset, 65);
+
+      final paramStreamType = param.type as StreamTypeNode;
+      final paramElementType = paramStreamType.elementType as CustomTypeNode;
+      expect(paramElementType.value, 'ChatMessage');
+      expect(paramElementType.span.text, 'ChatMessage');
+      expect(paramElementType.span.start.offset, 53);
+      expect(paramElementType.span.end.offset, 64);
+
+      expect(param.identifier.value, 's');
+      expect(param.identifier.span.text, 's');
+      expect(param.identifier.span.start.offset, 66);
+      expect(param.identifier.span.end.offset, 67);
+
+      expect(param.defaultValue, isNull);
+      expect(param.requirement, isNull);
     });
   });
 }
