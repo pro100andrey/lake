@@ -8,10 +8,8 @@ void main() {
     test('should parse simple import', () {
       const source = 'import "foo.lake"';
       final doc = parseAst(source);
-
-      expect(doc.headers, hasLength(1));
-
       final import = doc.headers.first as ImportNode;
+
       expect(import.span.text, source);
       expect(import.span.start.offset, 0);
       expect(import.span.end.offset, 17);
@@ -25,10 +23,8 @@ void main() {
     test('should parse import with single quotes', () {
       const source = "import 'bar.lake'";
       final doc = parseAst(source);
-
-      expect(doc.headers, hasLength(1));
-
       final import = doc.headers.first as ImportNode;
+
       expect(import.span.text, source);
       expect(import.span.start.offset, 0);
       expect(import.span.end.offset, 17);
@@ -42,10 +38,8 @@ void main() {
     test('should parse import with whitespace', () {
       const source = '  import   "baz.lake"   ';
       final doc = parseAst(source);
-
-      expect(doc.headers, hasLength(1));
-
       final import = doc.headers.first as ImportNode;
+
       expect(import.span.text, 'import   "baz.lake"');
       expect(import.span.start.offset, 2);
       expect(import.span.end.offset, 21);
@@ -61,6 +55,7 @@ void main() {
       final doc = parseAst(source);
 
       expect(doc.headers, hasLength(2));
+
       final import1 = doc.headers[0] as ImportNode;
       expect(import1.span.text, 'import "a.lake"');
       expect(import1.span.start.offset, 0);

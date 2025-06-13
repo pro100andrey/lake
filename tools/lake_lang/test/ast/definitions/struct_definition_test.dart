@@ -72,7 +72,8 @@ void main() {
 
       expect(def.fields, hasLength(2));
 
-      final field1 = def.fields[0];
+      final [FieldNode field1, FieldNode field2] = def.fields;
+
       expect((field1.type as BaseTypeNode).value, 'i32');
       expect(field1.type.span.text, 'i32');
       expect(field1.type.span.start.offset, 11);
@@ -84,7 +85,6 @@ void main() {
       expect(field1.identifier.span.end.offset, 16);
       expect(field1.defaultValue, isNull);
 
-      final field2 = def.fields[1];
       expect((field2.type as BaseTypeNode).value, 'string');
       expect(field2.type.span.text, 'string');
       expect(field2.identifier.value, 'y');
@@ -147,9 +147,8 @@ void main() {
       expect(def.identifier.span.start.offset, 7);
       expect(def.identifier.span.end.offset, 11);
 
-      expect(def.fields, hasLength(2));
+      final [FieldNode field1, FieldNode field2] = def.fields;
 
-      final field1 = def.fields[0];
       expect(field1.requirement!.value, 'required');
       expect(field1.requirement!.span.text, 'required');
       expect(field1.requirement!.span.start.offset, 14);
@@ -167,7 +166,6 @@ void main() {
 
       expect(field1.defaultValue, isNull);
 
-      final field2 = def.fields[1];
       expect(field2.requirement!.value, 'required');
       expect(field2.requirement!.span.text, 'required');
       expect(field2.requirement!.span.start.offset, 31);
@@ -202,9 +200,8 @@ void main() {
       expect(def.identifier.span.start.offset, 7);
       expect(def.identifier.span.end.offset, 13);
 
-      expect(def.fields, hasLength(2));
+      final [FieldNode field1, FieldNode field2] = def.fields;
 
-      final field1 = def.fields[0];
       expect(field1.requirement!.value, 'optional');
       expect(field1.requirement!.span.text, 'optional');
       expect(field1.requirement!.span.start.offset, 16);
@@ -220,7 +217,6 @@ void main() {
       expect(field1.identifier.span.start.offset, 32);
       expect(field1.identifier.span.end.offset, 36);
 
-      final field2 = def.fields[1];
       expect(field2.requirement!.value, 'optional');
       expect(field2.requirement!.span.text, 'optional');
       expect(field2.requirement!.span.start.offset, 38);
@@ -243,7 +239,8 @@ void main() {
       const source =
           'struct Data '
           '{ '
-          'list<string> tags; map<string, i32> scores; set<uuid> uniqueIds; '
+          'list<string> tags; map<string, i32> scores; '
+          'set<uuid> uniqueIds; '
           '}';
 
       final doc = parseAst(source);
@@ -260,9 +257,7 @@ void main() {
       expect(def.identifier.span.start.offset, 7);
       expect(def.identifier.span.end.offset, 11);
 
-      expect(def.fields, hasLength(3));
-
-      final field1 = def.fields[0];
+      final [FieldNode field1, FieldNode field2, FieldNode field3] = def.fields;
 
       expect(field1.type.span.text, 'list<string>');
       expect(field1.type.span.start.offset, 14);
@@ -280,7 +275,6 @@ void main() {
       expect(field1.identifier.span.end.offset, 31);
       expect(field1.defaultValue, isNull);
 
-      final field2 = def.fields[1];
       expect(field2.type.span.text, 'map<string, i32>');
       expect(field2.type.span.start.offset, 33);
       expect(field2.type.span.end.offset, 49);

@@ -438,6 +438,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final itemType = switch (type) {
       BaseTypeNode() => type,
+      ContainerTypeNode() => type,
       IdentifierNode() => CustomTypeNode(value: type.value, span: type.span),
       _ => throw StateError('Unexpected type in set: $type'),
     };

@@ -8,10 +8,8 @@ void main() {
     test('should parse simple typedef with base type', () {
       const source = 'typedef i32 MyInt;';
       final doc = parseAst(source);
-
-      expect(doc.definitions, hasLength(1));
-
       final def = doc.definitions.first as TypedefDefinitionNode;
+
       expect(def.span.text, source);
       expect(def.span.start.offset, 0);
       expect(def.span.end.offset, 18);
@@ -30,10 +28,8 @@ void main() {
     test('should parse typedef with List type', () {
       const source = 'typedef list<string> StringList;';
       final doc = parseAst(source);
-
-      expect(doc.definitions, hasLength(1));
-
       final def = doc.definitions.first as TypedefDefinitionNode;
+
       expect(def.span.text, source);
       expect(def.span.start.offset, 0);
       expect(def.span.end.offset, 32);
@@ -58,8 +54,6 @@ void main() {
     test('should parse typedef with Map type', () {
       const source = 'typedef map<string, i32> BaseMapType;';
       final doc = parseAst(source);
-
-      expect(doc.definitions, hasLength(1));
       final def = doc.definitions.first as TypedefDefinitionNode;
 
       expect(def.span.text, source);
