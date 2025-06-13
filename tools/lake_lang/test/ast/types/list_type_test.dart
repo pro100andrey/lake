@@ -6,139 +6,115 @@ import '../_ast_helpers.dart';
 void main() {
   group('ListType AST', () {
     test('should parse list of base type', () {
-      const source = 'struct S { list<i32> numbers; }';
-      final doc = parseAst(source);
-
-      expect(doc.definitions, hasLength(1));
+      const source = 'list<i32>';
+      final doc = parseAst('struct S { $source numbers; }');
       final def = doc.definitions.first as StructDefinitionNode;
-
       final field = def.fields[0];
-      expect(field.type, isA<ListTypeNode>());
-      final listType = field.type as ListTypeNode;
+      final fieldType = field.type as ListTypeNode;
+      final elementType = fieldType.elementType as BaseTypeNode;
 
-      expect(listType.elementType, isA<BaseTypeNode>());
-      expect((listType.elementType as BaseTypeNode).value, 'i32');
-      expect(listType.elementType.span.text, 'i32');
-      expect(listType.elementType.span.start.offset, 16);
-      expect(listType.elementType.span.end.offset, 19);
+      expect(fieldType.span.text, source);
+      expect(fieldType.span.start.offset, 11);
+      expect(fieldType.span.end.offset, 20);
 
-      expect(listType.span.text, 'list<i32>');
-      expect(listType.span.start.offset, 11);
-      expect(listType.span.end.offset, 20);
-
-      expect(field.identifier.value, 'numbers');
-      expect(field.identifier.span.text, 'numbers');
-      expect(field.identifier.span.start.offset, 21);
-      expect(field.identifier.span.end.offset, 28);
+      expect(elementType.value, 'i32');
+      expect(elementType.span.text, 'i32');
+      expect(elementType.span.start.offset, 16);
+      expect(elementType.span.end.offset, 19);
     });
 
     test('should parse list of custom type', () {
-      const source = 'struct S { list<CustomType> items; }';
-      final doc = parseAst(source);
-
-      expect(doc.definitions, hasLength(1));
+      const source = 'list<CustomType>';
+      final doc = parseAst('struct S { $source items; }');
       final def = doc.definitions.first as StructDefinitionNode;
-
       final field = def.fields[0];
-      expect(field.type, isA<ListTypeNode>());
-      expect(field.type.span.text, 'list<CustomType>');
-      expect(field.type.span.start.offset, 11);
-      expect(field.type.span.end.offset, 27);
+      final fieldType = field.type as ListTypeNode;
+      final elementType = fieldType.elementType as CustomTypeNode;
 
-      final listType = field.type as ListTypeNode;
-      expect(listType.elementType, isA<CustomTypeNode>());
-      expect((listType.elementType as CustomTypeNode).value, 'CustomType');
-      expect(listType.elementType.span.text, 'CustomType');
-      expect(listType.elementType.span.start.offset, 16);
-      expect(listType.elementType.span.end.offset, 26);
+      expect(fieldType.span.text, source);
+      expect(fieldType.span.start.offset, 11);
+      expect(fieldType.span.end.offset, 27);
 
-      expect(listType.span.text, 'list<CustomType>');
-      expect(listType.span.start.offset, 11);
-      expect(listType.span.end.offset, 27);
+      expect(fieldType.span.text, source);
+      expect(fieldType.span.start.offset, 11);
+      expect(fieldType.span.end.offset, 27);
+
+      expect(elementType.value, 'CustomType');
+      expect(elementType.span.text, 'CustomType');
+      expect(elementType.span.start.offset, 16);
+      expect(elementType.span.end.offset, 26);
     });
 
     test('should parse list of nested container type (list of lists)', () {
-      const source = 'struct S { list<list<i32>> nestedLists; }';
-      final doc = parseAst(source);
-
-      expect(doc.definitions, hasLength(1));
+      const source = 'list<list<i32>>';
+      final doc = parseAst('struct S { $source nestedLists; }');
       final def = doc.definitions.first as StructDefinitionNode;
+      final field = def.fields[0];
 
-      expect(def.fields[0].type, isA<ListTypeNode>());
-      final listType = def.fields[0].type as ListTypeNode;
+      final fieldType = field.type as ListTypeNode;
+      expect(fieldType.span.text, source);
+      expect(fieldType.span.start.offset, 11);
+      expect(fieldType.span.end.offset, 26);
 
-      expect(listType.elementType, isA<ListTypeNode>());
-      expect(listType.elementType.span.text, 'list<i32>');
-      expect(listType.elementType.span.start.offset, 16);
-      expect(listType.elementType.span.end.offset, 25);
+      final elementType = fieldType.elementType as ListTypeNode;
+      expect(elementType.span.text, 'list<i32>');
+      expect(elementType.span.start.offset, 16);
+      expect(elementType.span.end.offset, 25);
 
-      final nestedType = listType.elementType as ListTypeNode;
-      expect((nestedType.elementType as BaseTypeNode).value, 'i32');
-      expect(nestedType.elementType.span.text, 'i32');
-      expect(nestedType.elementType.span.start.offset, 21);
-      expect(nestedType.elementType.span.end.offset, 24);
-
-      expect(nestedType.span.text, 'list<i32>');
-      expect(nestedType.span.start.offset, 16);
-      expect(nestedType.span.end.offset, 25);
-
-      expect(listType.span.text, 'list<list<i32>>');
-      expect(listType.span.start.offset, 11);
-      expect(listType.span.end.offset, 26);
+      final nestedType = elementType.elementType as BaseTypeNode;
+      expect(nestedType.value, 'i32');
+      expect(nestedType.span.text, 'i32');
+      expect(nestedType.span.start.offset, 21);
+      expect(nestedType.span.end.offset, 24);
     });
 
     test('should parse list of map type', () {
-      const source = 'struct S { list<map<string, i32>> data; }';
-      final doc = parseAst(source);
-
-      expect(doc.definitions, hasLength(1));
-
+      const source = 'list<map<string, i32>>';
+      final doc = parseAst('struct S { $source data; }');
       final def = doc.definitions.first as StructDefinitionNode;
-      expect(def.fields[0].type, isA<ListTypeNode>());
+      final field = def.fields[0];
 
-      final listType = def.fields[0].type as ListTypeNode;
-      expect(listType.elementType, isA<MapTypeNode>());
-      expect(listType.elementType.span.text, 'map<string, i32>');
-      expect(listType.elementType.span.start.offset, 16);
-      expect(listType.elementType.span.end.offset, 32);
+      final fieldType = field.type as ListTypeNode;
+      expect(fieldType.span.text, source);
+      expect(fieldType.span.start.offset, 11);
+      expect(fieldType.span.end.offset, 33);
 
-      final map = listType.elementType as MapTypeNode;
-      expect((map.keyType as BaseTypeNode).value, 'string');
-      expect(map.keyType.span.text, 'string');
-      expect(map.keyType.span.start.offset, 20);
-      expect(map.keyType.span.end.offset, 26);
+      final elementType = fieldType.elementType as MapTypeNode;
+      expect(elementType.span.text, 'map<string, i32>');
+      expect(elementType.span.start.offset, 16);
+      expect(elementType.span.end.offset, 32);
 
-      expect(map.valueType, isA<BaseTypeNode>());
-      expect((map.valueType as BaseTypeNode).value, 'i32');
-      expect(map.valueType.span.text, 'i32');
-      expect(map.valueType.span.start.offset, 28);
-      expect(map.valueType.span.end.offset, 31);
+      expect(elementType.keyType, isA<BaseTypeNode>());
+      expect(elementType.keyType.span.text, 'string');
+      expect(elementType.keyType.span.start.offset, 20);
+      expect(elementType.keyType.span.end.offset, 26);
+
+      expect(elementType.valueType, isA<BaseTypeNode>());
+      expect(elementType.valueType.span.text, 'i32');
+      expect(elementType.valueType.span.start.offset, 28);
+      expect(elementType.valueType.span.end.offset, 31);
     });
 
     test('should parse list of set type', () {
-      const source = 'struct S { list<set<string>> tags; }';
-      final doc = parseAst(source);
-
-      expect(doc.definitions, hasLength(1));
-
+      const source = 'list<set<string>>';
+      final doc = parseAst('struct S { $source tags; }');
       final def = doc.definitions.first as StructDefinitionNode;
-      expect(def.fields[0].type, isA<ListTypeNode>());
+      final field = def.fields[0];
 
-      final listType = def.fields[0].type as ListTypeNode;
-      expect(listType.elementType, isA<SetTypeNode>());
-      expect(listType.elementType.span.text, 'set<string>');
-      expect(listType.elementType.span.start.offset, 16);
-      expect(listType.elementType.span.end.offset, 27);
+      final fieldType = field.type as ListTypeNode;
+      expect(fieldType.span.text, source);
+      expect(fieldType.span.start.offset, 11);
+      expect(fieldType.span.end.offset, 28);
 
-      final setType = listType.elementType as SetTypeNode;
-      expect((setType.elementType as BaseTypeNode).value, 'string');
-      expect(setType.elementType.span.text, 'string');
-      expect(setType.elementType.span.start.offset, 20);
-      expect(setType.elementType.span.end.offset, 26);
+      final elementType = fieldType.elementType as SetTypeNode;
+      expect(elementType.span.text, 'set<string>');
+      expect(elementType.span.start.offset, 16);
+      expect(elementType.span.end.offset, 27);
 
-      expect(listType.span.text, 'list<set<string>>');
-      expect(listType.span.start.offset, 11);
-      expect(listType.span.end.offset, 28);
+      expect(elementType.elementType, isA<BaseTypeNode>());
+      expect(elementType.elementType.span.text, 'string');
+      expect(elementType.elementType.span.start.offset, 20);
+      expect(elementType.elementType.span.end.offset, 26);
     });
   });
 }

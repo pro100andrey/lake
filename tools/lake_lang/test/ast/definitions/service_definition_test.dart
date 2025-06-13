@@ -339,57 +339,58 @@ void main() {
         expect(fn.identifier.span.start.offset, 16);
         expect(fn.identifier.span.end.offset, 19);
 
-        expect(fn.parameters, hasLength(2));
+        final [FieldNode p1, FieldNode p2] = fn.parameters;
 
-        expect(fn.parameters[0].fieldId!.value, '1');
-        expect(fn.parameters[0].fieldId!.span.text, '1');
-        expect(fn.parameters[0].fieldId!.span.start.offset, 20);
-        expect(fn.parameters[0].fieldId!.span.end.offset, 21);
+        expect(p1.fieldId!.value, '1');
+        expect(p1.fieldId!.span.text, '1');
+        expect(p1.fieldId!.span.start.offset, 20);
+        expect(p1.fieldId!.span.end.offset, 21);
 
-        expect((fn.parameters[0].type as BaseTypeNode).value, 'i32');
-        expect(fn.parameters[0].type.span.text, 'i32');
-        expect(fn.parameters[0].type.span.start.offset, 23);
-        expect(fn.parameters[0].type.span.end.offset, 26);
+        expect((p1.type as BaseTypeNode).value, 'i32');
+        expect(p1.type.span.text, 'i32');
+        expect(p1.type.span.start.offset, 23);
+        expect(p1.type.span.end.offset, 26);
 
-        expect(fn.parameters[0].identifier.value, 'x');
-        expect(fn.parameters[0].identifier.span.text, 'x');
-        expect(fn.parameters[0].identifier.span.start.offset, 27);
-        expect(fn.parameters[0].identifier.span.end.offset, 28);
+        expect(p1.identifier.value, 'x');
+        expect(p1.identifier.span.text, 'x');
+        expect(p1.identifier.span.start.offset, 27);
+        expect(p1.identifier.span.end.offset, 28);
 
-        expect(fn.parameters[1].fieldId!.value, '3');
-        expect(fn.parameters[1].fieldId!.span.text, '3');
-        expect(fn.parameters[1].fieldId!.span.start.offset, 30);
-        expect(fn.parameters[1].fieldId!.span.end.offset, 31);
+        expect(p2.fieldId!.value, '3');
+        expect(p2.fieldId!.span.text, '3');
+        expect(p2.fieldId!.span.start.offset, 30);
+        expect(p2.fieldId!.span.end.offset, 31);
 
-        expect((fn.parameters[1].type as BaseTypeNode).value, 'string');
-        expect(fn.parameters[1].type.span.text, 'string');
-        expect(fn.parameters[1].type.span.start.offset, 33);
-        expect(fn.parameters[1].type.span.end.offset, 39);
+        expect((p2.type as BaseTypeNode).value, 'string');
+        expect(p2.type.span.text, 'string');
+        expect(p2.type.span.start.offset, 33);
+        expect(p2.type.span.end.offset, 39);
 
-        expect(fn.parameters[1].identifier.value, 'y');
-        expect(fn.parameters[1].identifier.span.text, 'y');
-        expect(fn.parameters[1].identifier.span.start.offset, 40);
-        expect(fn.parameters[1].identifier.span.end.offset, 41);
+        expect(p2.identifier.value, 'y');
+        expect(p2.identifier.span.text, 'y');
+        expect(p2.identifier.span.start.offset, 40);
+        expect(p2.identifier.span.end.offset, 41);
 
-        expect(fn.throws, hasLength(1));
-        expect(fn.throws[0].fieldId!.value, '1');
-        expect(fn.throws[0].fieldId!.span.text, '1');
-        expect(fn.throws[0].fieldId!.span.start.offset, 51);
-        expect(fn.throws[0].fieldId!.span.end.offset, 52);
+        final [FieldNode throwField] = fn.throws;
 
-        expect((fn.throws[0].type as BaseTypeNode).value, 'i32');
-        expect(fn.throws[0].type.span.text, 'i32');
-        expect(fn.throws[0].type.span.start.offset, 54);
-        expect(fn.throws[0].type.span.end.offset, 57);
+        expect(throwField.fieldId!.value, '1');
+        expect(throwField.fieldId!.span.text, '1');
+        expect(throwField.fieldId!.span.start.offset, 51);
+        expect(throwField.fieldId!.span.end.offset, 52);
 
-        expect(fn.throws[0].identifier.value, 'err');
-        expect(fn.throws[0].identifier.span.text, 'err');
-        expect(fn.throws[0].identifier.span.start.offset, 58);
-        expect(fn.throws[0].identifier.span.end.offset, 61);
+        expect((throwField.type as BaseTypeNode).value, 'i32');
+        expect(throwField.type.span.text, 'i32');
+        expect(throwField.type.span.start.offset, 54);
+        expect(throwField.type.span.end.offset, 57);
 
-        expect(fn.throws[0].span.text, '1: i32 err');
-        expect(fn.throws[0].span.start.offset, 51);
-        expect(fn.throws[0].span.end.offset, 61);
+        expect(throwField.identifier.value, 'err');
+        expect(throwField.identifier.span.text, 'err');
+        expect(throwField.identifier.span.start.offset, 58);
+        expect(throwField.identifier.span.end.offset, 61);
+
+        expect(throwField.span.text, '1: i32 err');
+        expect(throwField.span.start.offset, 51);
+        expect(throwField.span.end.offset, 61);
       },
     );
 
