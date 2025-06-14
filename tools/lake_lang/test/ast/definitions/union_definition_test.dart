@@ -310,4 +310,60 @@ void main() {
       expect(field3.defaultValue, isNull);
     });
   });
+
+  group('UnionDefinition AST (equable):', () {
+    test('should be equal for identical definitions', () {
+      const source =
+          'union Data '
+          '{'
+          'list<string> tags; '
+          'map<string, i32> scores; '
+          'set<uuid> uniqueIds; '
+          '}';
+
+      const source2 =
+          'union Data '
+          '{'
+          'list<string> tags; '
+          'map<string, i32> scores; '
+          'set<uuid> uniqueIds; '
+          '}';
+      final doc1 = parseAst(source);
+      final doc2 = parseAst(source2);
+
+      expect(doc1, equals(doc2));
+
+      final def1 = doc1.definitions.first as UnionDefinitionNode;
+      final def2 = doc2.definitions.first as UnionDefinitionNode;
+      expect(def1, equals(def2));
+      expect(def1.fields, equals(def2.fields));
+    });
+
+    test('should not be equal for different definitions', () {
+      const source1 =
+          'union Data '
+          '{ '
+          'list<string> tags; '
+          'map<string, i32> scores; '
+          'set<uuid> uniqueIds; '
+          '}';
+      const source2 =
+          'union Data '
+          '{ '
+          'list<string> tags; '
+          'map<string, i32> scores; '
+          'set<string> uniqueIds; '
+          '}';
+      final doc1 = parseAst(source1);
+      final doc2 = parseAst(source2);
+
+      expect(doc1, isNot(equals(doc2)));
+
+      final def1 = doc1.definitions.first as UnionDefinitionNode;
+      final def2 = doc2.definitions.first as UnionDefinitionNode;
+
+      expect(def1, isNot(equals(def2)));
+      expect(def1.fields, isNot(equals(def2.fields)));
+    });
+  });
 }

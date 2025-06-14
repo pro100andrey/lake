@@ -130,4 +130,40 @@ void main() {
       expect(ns.identifier.span.end.offset, 22);
     });
   });
+
+  group('Namespace AST (equivalence)', () {
+    test('should be equivalent to another namespace', () {
+      const source1 = 'namespace js foo';
+      const source2 = 'namespace js foo';
+      final doc1 = parseAst(source1);
+      final doc2 = parseAst(source2);
+
+      expect(doc1.headers, hasLength(1));
+      expect(doc2.headers, hasLength(1));
+
+      final ns1 = doc1.headers.first as NamespaceNode;
+      final ns2 = doc2.headers.first as NamespaceNode;
+
+      expect(ns1, equals(ns2));
+      expect(ns1.scope, equals(ns2.scope));
+      expect(ns1.identifier, equals(ns2.identifier));
+    });
+
+    test('should not be equivalent to different namespace', () {
+      const source1 = 'namespace js foo';
+      const source2 = 'namespace dart bar';
+      final doc1 = parseAst(source1);
+      final doc2 = parseAst(source2);
+
+      expect(doc1.headers, hasLength(1));
+      expect(doc2.headers, hasLength(1));
+
+      final ns1 = doc1.headers.first as NamespaceNode;
+      final ns2 = doc2.headers.first as NamespaceNode;
+
+      expect(ns1, isNot(equals(ns2)));
+      expect(ns1.scope, isNot(equals(ns2.scope)));
+      expect(ns1.identifier, isNot(equals(ns2.identifier)));
+    });
+  });
 }

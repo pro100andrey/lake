@@ -29,4 +29,39 @@ void main() {
       expect(function1.returnType.span.end.offset, 30);
     });
   });
+
+  group('CustomType AST (equality)', () {
+    test('should be equal for same type', () {
+      const source = 'CustomType';
+      final doc1 = parseAst('struct S { $source x; }');
+      final doc2 = parseAst('struct S { $source x; }');
+
+      expect(doc1, equals(doc2));
+
+      final struct1 = doc1.definitions.first as StructDefinitionNode;
+      final struct2 = doc2.definitions.first as StructDefinitionNode;
+
+      expect(struct1, equals(struct2));
+
+      final field1 = struct1.fields[0];
+      final field2 = struct2.fields[0];
+
+      expect(field1.type, equals(field2.type));
+    });
+
+    test('should not be equal for different types', () {
+      final doc1 = parseAst('struct S { CustomType x; }');
+      final doc2 = parseAst('struct S { AnotherType x; }');
+
+      final def1 = doc1.definitions.first as StructDefinitionNode;
+      final def2 = doc2.definitions.first as StructDefinitionNode;
+
+      expect(def1, isNot(equals(def2)));
+
+      final field1 = def1.fields[0];
+      final field2 = def2.fields[0];
+
+      expect(field1.type, isNot(equals(field2.type)));
+    });
+  });
 }

@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 import '../_ast_helpers.dart';
 
 void main() {
-  group('ExceptionDefinition AST', () {
+  group('ExceptionDefinition AST (positive):', () {
     test('should parse simple exception', () {
       const source = 'exception MyException {}';
       final doc = parseAst(source);
@@ -230,6 +230,45 @@ void main() {
       expect(field1.identifier.span.text, 'code');
       expect(field1.identifier.span.start.offset, 61);
       expect(field1.identifier.span.end.offset, 65);
+    });
+  });
+
+  group('ExceptionDefinition AST (equable):', () {
+    test('should be equal for identical definitions', () {
+      const source =
+          'exception AuthError '
+          '{ required string username; required i32 code; }';
+
+      const source2 =
+          'exception AuthError '
+          '{ required string username; required i32 code; }';
+      final doc1 = parseAst(source);
+      final doc2 = parseAst(source2);
+
+      final exception1 = doc1.definitions.first as ExceptionDefinitionNode;
+      final exception2 = doc2.definitions.first as ExceptionDefinitionNode;
+
+      expect(exception1, equals(exception2));
+      expect(exception1.fields, equals(exception2.fields));
+    });
+
+    test('should not be equal for different definitions', () {
+      const source1 =
+          'exception AuthError '
+          '{ required string username; required i32 code; }';
+      const source2 =
+          'exception AuthError '
+          '{ required string email; required i32 code; }';
+      final doc1 = parseAst(source1);
+      final doc2 = parseAst(source2);
+
+      expect(doc1, isNot(equals(doc2)));
+
+      final exception1 = doc1.definitions.first as ExceptionDefinitionNode;
+      final exception2 = doc2.definitions.first as ExceptionDefinitionNode;
+
+      expect(exception1, isNot(equals(exception2)));
+      expect(exception1.fields, isNot(equals(exception2.fields)));
     });
   });
 }

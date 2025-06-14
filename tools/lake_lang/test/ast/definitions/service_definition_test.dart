@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 import '../_ast_helpers.dart';
 
 void main() {
-  group('ServiceDefinition AST', () {
+  group('ServiceDefinition AST (positive):', () {
     test('should parse empty service', () {
       const source = 'service MyService {}';
       final doc = parseAst(source);
@@ -460,5 +460,37 @@ void main() {
         expect(func3.parameters, isEmpty);
       },
     );
+  });
+
+  group('ServiceDefinition AST (equable):', () {
+    test('should be equal for identical definitions', () {
+      const source = 'service AuthService { void login(); }';
+      const source2 = 'service AuthService { void login(); }';
+      final doc1 = parseAst(source);
+      final doc2 = parseAst(source2);
+
+      expect(doc1, equals(doc2));
+
+      final service1 = doc1.definitions.first as ServiceDefinitionNode;
+      final service2 = doc2.definitions.first as ServiceDefinitionNode;
+
+      expect(service1, equals(service2));
+      expect(service1.functions, equals(service2.functions));
+    });
+
+    test('should not be equal for different definitions', () {
+      const source1 = 'service AuthService { void login(); }';
+      const source2 = 'service AuthService { void logout(); }';
+      final doc1 = parseAst(source1);
+      final doc2 = parseAst(source2);
+
+      expect(doc1, isNot(equals(doc2)));
+
+      final service1 = doc1.definitions.first as ServiceDefinitionNode;
+      final service2 = doc2.definitions.first as ServiceDefinitionNode;
+
+      expect(service1, isNot(equals(service2)));
+      expect(service1.functions, isNot(equals(service2.functions)));
+    });
   });
 }

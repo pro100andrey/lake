@@ -36,4 +36,39 @@ void main() {
       },
     );
   });
+
+  group('VoidType AST (equality)', () {
+    test('should be equal for same type', () {
+      const source = 'void';
+      final doc1 = parseAst('service MyService { $source doSomething(); }');
+      final doc2 = parseAst('service MyService { $source doSomething(); }');
+
+      expect(doc1, equals(doc2));
+
+      final service1 = doc1.definitions.first as ServiceDefinitionNode;
+      final service2 = doc2.definitions.first as ServiceDefinitionNode;
+
+      expect(service1, equals(service2));
+
+      final fn1 = service1.functions.first;
+      final fn2 = service2.functions.first;
+
+      expect(fn1.returnType, equals(fn2.returnType));
+    });
+
+    test('should not be equal for different types', () {
+      final doc1 = parseAst('service MyService { void doSomething(); }');
+      final doc2 = parseAst('service MyService { int doSomething(); }');
+
+      final def1 = doc1.definitions.first as ServiceDefinitionNode;
+      final def2 = doc2.definitions.first as ServiceDefinitionNode;
+
+      expect(def1, isNot(equals(def2)));
+
+      final fn1 = def1.functions.first;
+      final fn2 = def2.functions.first;
+
+      expect(fn1.returnType, isNot(equals(fn2.returnType)));
+    });
+  });
 }

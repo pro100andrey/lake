@@ -111,4 +111,34 @@ void main() {
       expect(def.identifier.span.end.offset, 29);
     });
   });
+
+  group('TypedefDefinition AST (equable):', () {
+    test('should be equal for identical definitions', () {
+      const source = 'typedef i32 MyInt;';
+      const source2 = 'typedef i32 MyInt;';
+      final doc1 = parseAst(source);
+      final doc2 = parseAst(source2);
+
+      expect(doc1, equals(doc2));
+
+      final def1 = doc1.definitions.first as TypedefDefinitionNode;
+      final def2 = doc2.definitions.first as TypedefDefinitionNode;
+
+      expect(def1, equals(def2));
+    });
+
+    test('should not be equal for different definitions', () {
+      const source1 = 'typedef i32 MyInt;';
+      const source2 = 'typedef i32 MyString;';
+      final doc1 = parseAst(source1);
+      final doc2 = parseAst(source2);
+
+      expect(doc1, isNot(equals(doc2)));
+
+      final def1 = doc1.definitions.first as TypedefDefinitionNode;
+      final def2 = doc2.definitions.first as TypedefDefinitionNode;
+
+      expect(def1, isNot(equals(def2)));
+    });
+  });
 }

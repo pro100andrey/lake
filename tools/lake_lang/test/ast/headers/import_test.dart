@@ -100,4 +100,36 @@ void main() {
       expect(import.path.span.end.offset, 35);
     });
   });
+
+  group('Import AST (equivalence)', () {
+    test('should be equivalent to another import', () {
+      const source1 = 'import "foo.lake"';
+      const source2 = 'import "foo.lake"';
+      final doc1 = parseAst(source1);
+      final doc2 = parseAst(source2);
+
+      expect(doc1.headers, hasLength(1));
+      expect(doc2.headers, hasLength(1));
+
+      final import1 = doc1.headers.first as ImportNode;
+      final import2 = doc2.headers.first as ImportNode;
+
+      expect(import1, import2);
+    });
+
+    test('should not be equivalent to different import', () {
+      const source1 = 'import "foo.lake"';
+      const source2 = 'import "bar.lake"';
+      final doc1 = parseAst(source1);
+      final doc2 = parseAst(source2);
+
+      expect(doc1.headers, hasLength(1));
+      expect(doc2.headers, hasLength(1));
+
+      final import1 = doc1.headers.first as ImportNode;
+      final import2 = doc2.headers.first as ImportNode;
+
+      expect(import1, isNot(equals(import2)));
+    });
+  });
 }

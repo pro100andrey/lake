@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 import '../_ast_helpers.dart';
 
 void main() {
-  group('StructDefinition AST', () {
+  group('StructDefinition AST (positive):', () {
     test('should parse empty struct', () {
       const source = 'struct S {}';
       final doc = parseAst(source);
@@ -300,6 +300,38 @@ void main() {
       expect(field2.identifier.span.start.offset, 50);
       expect(field2.identifier.span.end.offset, 56);
       expect(field2.defaultValue, isNull);
+    });
+  });
+
+  group('StructDefinition AST (equable):', () {
+    test('should be equal for identical definitions', () {
+      const source = 'struct User { string name; i32 age; }';
+      const source2 = 'struct User { string name; i32 age; }';
+      final doc1 = parseAst(source);
+      final doc2 = parseAst(source2);
+
+      expect(doc1, equals(doc2));
+
+      final struct1 = doc1.definitions.first as StructDefinitionNode;
+      final struct2 = doc2.definitions.first as StructDefinitionNode;
+
+      expect(struct1, equals(struct2));
+      expect(struct1.fields, equals(struct2.fields));
+    });
+
+    test('should not be equal for different definitions', () {
+      const source1 = 'struct User { string name; i32 age; }';
+      const source2 = 'struct User { string email; i32 age; }';
+      final doc1 = parseAst(source1);
+      final doc2 = parseAst(source2);
+
+      expect(doc1, isNot(equals(doc2)));
+
+      final struct1 = doc1.definitions.first as StructDefinitionNode;
+      final struct2 = doc2.definitions.first as StructDefinitionNode;
+
+      expect(struct1, isNot(equals(struct2)));
+      expect(struct1.fields, isNot(equals(struct2.fields)));
     });
   });
 }

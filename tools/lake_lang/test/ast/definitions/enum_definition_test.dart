@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 import '../_ast_helpers.dart';
 
 void main() {
-  group('EnumDefinition AST', () {
+  group('EnumDefinition AST (positive):', () {
     test('should parse empty enum', () {
       const source = 'enum Color {}';
       final doc = parseAst(source);
@@ -221,8 +221,14 @@ void main() {
       const source2 = 'enum Color { RED, GREEN, BLUE }';
       final doc1 = parseAst(source);
       final doc2 = parseAst(source2);
+
       expect(doc1, equals(doc2));
-      expect(doc1.definitions.first, equals(doc2.definitions.first));
+
+      final enum1 = doc1.definitions.first as EnumDefinitionNode;
+      final enum2 = doc2.definitions.first as EnumDefinitionNode;
+
+      expect(enum1, equals(enum2));
+      expect(enum1.members, equals(enum2.members));
     });
 
     test('should not be equable for different definitions', () {
@@ -232,7 +238,12 @@ void main() {
       final doc2 = parseAst(source2);
 
       expect(doc1, isNot(equals(doc2)));
-      expect(doc1.definitions.first, isNot(equals(doc2.definitions.first)));
+
+      final enum1 = doc1.definitions.first as EnumDefinitionNode;
+      final enum2 = doc2.definitions.first as EnumDefinitionNode;
+
+      expect(enum1, isNot(equals(enum2)));
+      expect(enum1.members, isNot(equals(enum2.members)));
     });
   });
 }

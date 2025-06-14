@@ -372,4 +372,36 @@ void main() {
       expect(defaultValue.span.end.offset, 37);
     });
   });
+
+  group('Field AST (equivalence)', () {
+    test('should be equivalent to another field', () {
+      const source1 = '4: required i32 count = 10;';
+      const source2 = '4: required i32 count = 10;';
+      final doc1 = parseAst('struct S { $source1 }');
+      final doc2 = parseAst('struct S { $source2 }');
+
+      expect(doc1, equals(doc2));
+
+      final struct1 = doc1.definitions.first as StructDefinitionNode;
+      final struct2 = doc2.definitions.first as StructDefinitionNode;
+
+      expect(struct1, equals(struct2));
+      expect(struct1.fields, equals(struct2.fields));
+    });
+
+    test('should not be equivalent to different field', () {
+      const source1 = '4: required i32 count = 10;';
+      const source2 = '5: optional i32 count = 20;';
+      final doc1 = parseAst('struct S { $source1 }');
+      final doc2 = parseAst('struct S { $source2 }');
+
+      expect(doc1, isNot(equals(doc2)));
+
+      final struct1 = doc1.definitions.first as StructDefinitionNode;
+      final struct2 = doc2.definitions.first as StructDefinitionNode;
+
+      expect(struct1, isNot(equals(struct2)));
+      expect(struct1.fields, isNot(equals(struct2.fields)));
+    });
+  });
 }

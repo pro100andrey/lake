@@ -418,4 +418,42 @@ void main() {
       expect(param.requirement, isNull);
     });
   });
+
+  group('Function AST (equality)', () {
+    test('should equal if they have the same name and parameters', () {
+      const source1 =
+          'stream<ChatMessage> streamFunc(1: stream<ChatMessage> s)';
+      const source2 =
+          'stream<ChatMessage> streamFunc(1: stream<ChatMessage> s)';
+      final doc1 = parseAst('service S { $source1 }');
+      final doc2 = parseAst('service S { $source2 }');
+      final service1 = doc1.definitions.first as ServiceDefinitionNode;
+      final service2 = doc2.definitions.first as ServiceDefinitionNode;
+
+      expect(service1.functions, equals(service2.functions));
+
+      final parameters1 = service1.functions.first.parameters;
+      final parameters2 = service2.functions.first.parameters;
+
+      expect(parameters1, equals(parameters2));
+    });
+
+    test('should consider functions unequal if they have different names', () {
+      const source1 =
+          'stream<ChatMessage> streamFunc(1: stream<ChatMessage> s)';
+      const source2 =
+          'stream<ChatMessage> streamFunc2(1: stream<ChatMessage> s)';
+      final doc1 = parseAst('service S { $source1 }');
+      final doc2 = parseAst('service S { $source2 }');
+      final service1 = doc1.definitions.first as ServiceDefinitionNode;
+      final service2 = doc2.definitions.first as ServiceDefinitionNode;
+
+      expect(service1.functions, isNot(equals(service2.functions)));
+
+      final parameters1 = service1.functions.first.parameters;
+      final parameters2 = service2.functions.first.parameters;
+
+      expect(parameters1, isNot(equals(parameters2)));
+    });
+  });
 }
