@@ -5,7 +5,7 @@ import 'package:test/test.dart';
 void main() {
   const grammar = LakeGrammarDefinition();
   final parser = resolve(grammar.constList().end());
-  
+
   group('ConstList grammar (positive):', () {
     test('should parse an empty list', () {
       final result = parser.parse('[]');
