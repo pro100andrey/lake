@@ -212,7 +212,7 @@ void main() {
       const source = '{"count": 5, 100: "score", true: false}';
       final doc = parseAst(
         'struct S { map<any, any> mixedData = $source; }',
-      ); // Assuming 'any'
+      );
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
       final constMap = field.defaultValue! as ConstMapNode;
@@ -257,6 +257,44 @@ void main() {
       expect(entry3.value.span.text, 'false');
       expect(entry3.value.span.start.offset, 70);
       expect(entry3.value.span.end.offset, 75);
+    });
+  });
+
+  group('ConstMap AST (equable)', () {
+    test('should be equal for identical constant maps', () {
+      const source = '{"key": "value"}';
+      const source2 = '{"key": "value"}';
+      final doc1 = parseAst('struct S { map<string, string> m = $source; }');
+      final doc2 = parseAst('struct S { map<string, string> m = $source2; }');
+
+      expect(doc1, equals(doc2));
+
+      final struct1 = doc1.definitions.first as StructDefinitionNode;
+      final struct2 = doc2.definitions.first as StructDefinitionNode;
+
+      final map1 = struct1.fields.first.defaultValue! as ConstMapNode;
+      final map2 = struct2.fields.first.defaultValue! as ConstMapNode;
+
+      expect(map1, equals(map2));
+    });
+
+    test('should not be equal for different constant maps', () {
+      const source1 = '{"key1": "value1"}';
+      const source2 = '{"key2": "value2"}';
+      final doc1 = parseAst('struct S { map<string, string> m = $source1; }');
+      final doc2 = parseAst('struct S { map<string, string> m = $source2; }');
+
+      expect(doc1, isNot(equals(doc2)));
+      
+      final struct1 = doc1.definitions.first as StructDefinitionNode;
+      final struct2 = doc2.definitions.first as StructDefinitionNode;
+
+      expect(struct1, isNot(equals(struct2)));
+
+      final map1 = struct1.fields.first.defaultValue! as ConstMapNode;
+      final map2 = struct2.fields.first.defaultValue! as ConstMapNode;
+
+      expect(map1, isNot(equals(map2)));
     });
   });
 }

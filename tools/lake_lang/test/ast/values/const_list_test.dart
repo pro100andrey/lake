@@ -226,4 +226,40 @@ void main() {
       expect(entry2.key.span.end.offset, 60);
     });
   });
+
+  group('ConstList AST (equality)', () {
+    test('should be equal for same constant list', () {
+      const source = '[1, 2, 3]';
+      const source1 = '[1, 2, 3]';
+      final doc1 = parseAst('struct S { list<i32> numbers = $source; }');
+      final doc2 = parseAst('struct S { list<i32> numbers = $source1; }');
+
+      expect(doc1, equals(doc2));
+
+      final struct1 = doc1.definitions.first as StructDefinitionNode;
+      final struct2 = doc2.definitions.first as StructDefinitionNode;
+
+      final field1 = struct1.fields.first;
+      final field2 = struct2.fields.first;
+
+      expect(field1.defaultValue, equals(field2.defaultValue));
+    });
+
+    test('should not be equal for different constant lists', () {
+      const source1 = '[1, 2, 3]';
+      const source2 = '[4, 5, 6]';
+      final doc1 = parseAst('struct S { list<i32> numbers = $source1; }');
+      final doc2 = parseAst('struct S { list<i32> numbers = $source2; }');
+
+      expect(doc1, isNot(equals(doc2)));
+
+      final struct1 = doc1.definitions.first as StructDefinitionNode;
+      final struct2 = doc2.definitions.first as StructDefinitionNode;
+
+      final field1 = struct1.fields.first;
+      final field2 = struct2.fields.first;
+
+      expect(field1.defaultValue, isNot(equals(field2.defaultValue)));
+    });
+  });
 }

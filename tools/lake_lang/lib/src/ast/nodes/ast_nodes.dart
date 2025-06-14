@@ -649,13 +649,17 @@ final class ConstListNode extends ConstValueNode {
   List<Object?> get props => [elements, span];
 }
 
+/// Represents a pair of constant values used in map entries.
+/// This is a tuple-like structure for key-value pairs in a constant map.
+typedef ConstMapNodePair = ({ConstValueNode key, ConstValueNode value});
+
 /// Represents a map constant value.
 final class ConstMapNode extends ConstValueNode {
   /// Creates a [ConstMapNode] with the given [entries] and [span].
   const ConstMapNode({required this.entries, required super.span});
 
   /// The list of map entries, each as a key-value pair of constant values.
-  final List<MapEntry<ConstValueNode, ConstValueNode>> entries;
+  final List<ConstMapNodePair> entries;
 
   @override
   String get valueKind => 'literal map';

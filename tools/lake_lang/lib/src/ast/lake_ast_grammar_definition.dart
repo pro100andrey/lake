@@ -533,7 +533,12 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     final span = _getSpan(ld, rd);
 
     final entries = values
-        .map((e) => MapEntry(e[0] as ConstValueNode, e[2] as ConstValueNode))
+        .map(
+          (e) => (
+            key: e[0] as ConstValueNode,
+            value: e[2] as ConstValueNode,
+          ),
+        )
         .toList(growable: false);
 
     return ConstMapNode(entries: entries, span: span);
