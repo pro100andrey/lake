@@ -285,7 +285,7 @@ void main() {
       final doc2 = parseAst('struct S { map<string, string> m = $source2; }');
 
       expect(doc1, isNot(equals(doc2)));
-      
+
       final struct1 = doc1.definitions.first as StructDefinitionNode;
       final struct2 = doc2.definitions.first as StructDefinitionNode;
 
