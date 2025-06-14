@@ -3,14 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('BaseType Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [21] BaseType ::= 'bool' | 'byte' | 'i8' | 'i16' | 'i32' | 'i64' |
-    // 'double' | 'string' | 'binary' | 'uuid' |
-    final parser = resolve(grammar.baseType().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.baseType().end());
 
-    // Positive cases
-
+  group('BaseType grammar (positive):', () {
     test('should parse "bool"', () {
       final result = parser.parse('bool');
       final Token(:String value) = result.value;
@@ -74,9 +70,9 @@ void main() {
       expect(result, isA<Success>());
       expect(value, 'binary');
     });
+  });
 
-    // Negative cases
-
+  group('BaseType grammar (negative):', () {
     test('should fail to parse unknown type', () {
       final result = parser.parse('unknown');
 

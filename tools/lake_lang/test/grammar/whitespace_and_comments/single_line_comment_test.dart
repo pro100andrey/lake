@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('SingleLineComment Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // SingleLineComment ::= '//' [^\n]* [\n]?
-    final parser = resolve(grammar.singleLineComment().trim().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.singleLineComment().trim().end());
 
-    // Positive cases
-
+  group('SingleLineComment grammar (positive):', () {
     test('should parse a simple single-line comment', () {
       final result = parser.parse('// this is a comment\n');
       final comment = result.value as String;
@@ -49,9 +46,9 @@ void main() {
       expect(result, isA<Success>());
       expect(comment, '/////\n');
     });
+  });
 
-    // Negative cases
-
+  group('SingleLineComment grammar (negative):', () {
     test('should fail to parse if not starting with //', () {
       final result = parser.parse('not a comment');
 

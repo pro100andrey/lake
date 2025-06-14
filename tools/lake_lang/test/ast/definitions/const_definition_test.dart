@@ -481,4 +481,25 @@ void main() {
       expect(def.value.span.end.offset, 58);
     });
   });
+
+  group('ConstDefinition AST (equable)', () {
+    test('should be equal for same values', () {
+      const source = 'const i32 myInt = 42;';
+      final doc1 = parseAst(source);
+      final doc2 = parseAst(source);
+
+      expect(doc1, equals(doc2));
+      expect(doc1.definitions.first, equals(doc2.definitions.first));
+    });
+
+    test('should not be equal for different values', () {
+      const source1 = 'const i32 myInt = 42;';
+      const source2 = 'const i32 myInt = 43;';
+      final doc1 = parseAst(source1);
+      final doc2 = parseAst(source2);
+
+      expect(doc1, isNot(equals(doc2)));
+      expect(doc1.definitions.first, isNot(equals(doc2.definitions.first)));
+    });
+  });
 }

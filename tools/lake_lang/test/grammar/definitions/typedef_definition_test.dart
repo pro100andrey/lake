@@ -3,12 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('Typedef Definition Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    final parser = resolve(grammar.typedefDefinition().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.typedefDefinition().end());
 
-    // Positive Test Cases
-
+  group('TypedefDefinition grammar (positive):', () {
     test('should parse simple typedef with base type', () {
       final result = parser.parse('typedef i32 MyInt;');
       final [Token keyword, Token t, Token id, Token sep] =
@@ -63,9 +61,9 @@ void main() {
       expect(id.value, 'Flag');
       expect(sep?.value, isNull);
     });
+  });
 
-    // Negative Test Cases
-
+  group('TypedefDefinition grammar (negative):', () {
     test('should fail to parse typedef missing type', () {
       final result = parser.parse('typedef MyAlias;');
 

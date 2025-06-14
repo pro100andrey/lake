@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('FieldType Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [19] FieldType ::= ContainerType | BaseType | Identifier
-    final parser = resolve(grammar.fieldType().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.fieldType().end());
 
-    // Positive cases
-
+  group('FieldType grammar (positive):', () {
     test('should parse base type: bool', () {
       final result = parser.parse('bool');
       final Token(:String value) = result.value;
@@ -142,9 +139,9 @@ void main() {
       expect(result, isA<Success>());
       expect(value, 'i64');
     });
+  });
 
-    // Negative cases
-
+  group('FieldType grammar (negative):', () {
     test('should fail to parse incomplete container type', () {
       final result = parser.parse('list<');
 

@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('MultiLineComment Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // MultiLineComment ::= '/*' ( MultiLineComment | [^*] )* '*/'
-    final parser = resolve(grammar.multiLineComment().trim().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.multiLineComment().trim().end());
 
-    // Positive cases
-
+  group('MultiLineComment grammar (positive):', () {
     test('should parse a simple multi-line comment', () {
       final result = parser.parse('/* this is a comment */');
       final String value = result.value;
@@ -57,9 +54,9 @@ void main() {
       expect(result, isA<Success>());
       expect(value, '/**/');
     });
+  });
 
-    // Negative cases
-
+  group('MultiLineComment grammar (negative):', () {
     test('should fail to parse if not starting with /*', () {
       final result = parser.parse('not a comment');
 

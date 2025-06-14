@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('SetType Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [24] SetType ::= 'set' '<' FieldType '>'
-    final parser = resolve(grammar.setType().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.setType().end());
 
-    // Positive cases
-
+  group('SetType grammar (positive):', () {
     test('should parse "set<bool>"', () {
       final result = parser.parse('set<bool>');
       final [Token t, Token ld, Token t1, Token rd] = result.value as List;
@@ -72,9 +69,9 @@ void main() {
       expect(rd1.value, '>');
       expect(rd.value, '>');
     });
+  });
 
-    // Negative cases
-
+  group('SetType grammar (negative):', () {
     test('should fail to parse set with missing type', () {
       final result = parser.parse('set<>');
 

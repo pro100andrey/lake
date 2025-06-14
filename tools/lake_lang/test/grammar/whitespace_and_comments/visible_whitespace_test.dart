@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('VisibleWhitespace Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // VisibleWhitespace ::= ' ' | '\t' | '\n' | '\r' | '\f'
-    final parser = resolve(grammar.visibleWhitespace().plus().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.visibleWhitespace().plus().end());
 
-    // Positive cases
-
+  group('VisibleWhitespace grammar (positive):', () {
     test('should parse a single space', () {
       final result = parser.parse(' ');
       final [String value] = result.value;
@@ -97,9 +94,9 @@ void main() {
       expect(v11, '\r');
       expect(v12, '\r');
     });
+  });
 
-    // Negative cases
-
+  group('VisibleWhitespace grammar (negative):', () {
     test('should fail to parse non-whitespace character', () {
       final result = parser.parse('a');
 

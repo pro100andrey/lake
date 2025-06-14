@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('ConstMap Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [31] ConstMap ::= '{' (ConstValue ':' ConstValue ListSeparator?)* '}'
-    final parser = resolve(grammar.constMap().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.constMap().end());
 
-    // Positive cases
-
+  group('ConstMap grammar (positive):', () {
     test('should parse an empty map', () {
       final result = parser.parse('{}');
       final [
@@ -189,9 +186,9 @@ void main() {
       expect(v2.value, '2');
       expect(rb.value, '}');
     });
+  });
 
-    // Negative cases
-
+  group('ConstMap grammar (negative):', () {
     test('should fail to parse missing closing brace', () {
       final result = parser.parse('{"a": 1');
 

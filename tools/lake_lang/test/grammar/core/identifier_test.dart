@@ -3,14 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('Identifier Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [33] Identifier ::= ( Letter | '_' ) ( ( Letter | Digit | '_' )*
-    // ( '.' ( Letter | Digit | '_' )+ )* )
-    final parser = resolve(grammar.identifier().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.identifier().end());
 
-    // Positive Test Cases
-
+  group('Identifier grammar (positive):', () {
     test('should parse a simple identifier', () {
       final result = parser.parse('foo');
       final Token(:String value) = result.value;
@@ -90,9 +86,9 @@ void main() {
       expect(result, isA<Success>());
       expect(value, 'FOO_BAR');
     });
+  });
 
-    // Negative Test Cases
-
+  group('Identifier grammar (negative):', () {
     test('should fail to parse identifier starting with digit', () {
       final result = parser.parse('1foo');
 

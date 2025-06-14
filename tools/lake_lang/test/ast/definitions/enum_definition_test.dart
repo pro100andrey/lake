@@ -214,4 +214,25 @@ void main() {
       expect(member4.value, isNull);
     });
   });
+
+  group('EnumDefinition AST (equable)', () {
+    test('should be equable for identical definitions', () {
+      const source = 'enum Color { RED, GREEN, BLUE }';
+      const source2 = 'enum Color { RED, GREEN, BLUE }';
+      final doc1 = parseAst(source);
+      final doc2 = parseAst(source2);
+      expect(doc1, equals(doc2));
+      expect(doc1.definitions.first, equals(doc2.definitions.first));
+    });
+
+    test('should not be equable for different definitions', () {
+      const source1 = 'enum Color { RED, GREEN, BLUE }';
+      const source2 = 'enum Color { YELLOW, ORANGE }';
+      final doc1 = parseAst(source1);
+      final doc2 = parseAst(source2);
+
+      expect(doc1, isNot(equals(doc2)));
+      expect(doc1.definitions.first, isNot(equals(doc2.definitions.first)));
+    });
+  });
 }

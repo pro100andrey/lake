@@ -3,14 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('ConstValue Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [27] ConstValue ::= ConstList | ConstMap | DoubleConstant | IntConstant |
-    // EnumConstant | Literal | Identifier
-    final parser = resolve(grammar.constValue().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.constValue().end());
 
-    // Positive cases
-
+  group('ConstValue grammar (positive):', () {
     test('should parse a double constant', () {
       final result = parser.parse('1.23');
       final Token(:String value) = result.value;
@@ -196,9 +192,9 @@ void main() {
       expect(intValue.value, '3');
       expect(rb.value, ']');
     });
+  });
 
-    // Negative cases
-
+  group('ConstValue grammar (negative):', () {
     test('should fail to parse invalid literal', () {
       final result = parser.parse('"unterminated');
 

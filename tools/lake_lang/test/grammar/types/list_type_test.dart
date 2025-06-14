@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('ListType Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [25] ListType ::= 'list' '<' FieldType '>'
-    final parser = resolve(grammar.listType().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.listType().end());
 
-    // Positive cases
-
+  group('ListType grammar (positive):', () {
     test('should parse "list<bool>"', () {
       final result = parser.parse('list<bool>');
       final [Token t, Token ld, Token t1, Token rd] = result.value as List;
@@ -72,9 +69,9 @@ void main() {
       expect(rd1.value, '>');
       expect(rd.value, '>');
     });
+  });
 
-    // Negative cases
-
+  group('ListType grammar (negative):', () {
     test('should fail to parse list with missing type', () {
       final result = parser.parse('list<>');
 

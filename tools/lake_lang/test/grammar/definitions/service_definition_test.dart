@@ -3,14 +3,9 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('ServiceDefinition Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [12] Service ::= 'service' Identifier ( 'extends' Identifier )?
-    // '{' Function* '}'
-    final parser = resolve(grammar.serviceDefinition().end());
-
-    // Positive cases
-
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.serviceDefinition().end());
+  group('ServiceDefinition grammar (positive):', () {
     test('should parse empty service', () {
       final result = parser.parse('service MyService {}');
       final [
@@ -161,9 +156,9 @@ void main() {
       expect(rd1.value, ')');
       expect(rd.value, '}');
     });
+  });
 
-    // Negative cases
-
+  group('ServiceDefinition grammar (negative):', () {
     test('should fail to parse missing service keyword', () {
       final result = parser.parse('S { void foo() }');
 

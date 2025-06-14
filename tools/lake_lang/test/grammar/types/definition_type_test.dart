@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('DefinitionType Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [20] DefinitionType ::= ContainerType | BaseType
-    final parser = resolve(grammar.definitionType().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.definitionType().end());
 
-    // Positive cases
-
+  group('DefinitionType grammar (positive):', () {
     test('should parse "bool"', () {
       final result = parser.parse('bool');
       final Token(:String value) = result.value;
@@ -66,9 +63,9 @@ void main() {
       expect(vt.value, 'bool');
       expect(rd.value, '>');
     });
+  });
 
-    // Negative cases
-
+  group('DefinitionType grammar (negative):', () {
     test('should fail to parse identifier', () {
       final result = parser.parse('MyType');
 

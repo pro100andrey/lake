@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('FunctionType Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [17] FunctionType ::= StreamType | FieldType | 'void'
-    final parser = resolve(grammar.functionType().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.functionType().end());
 
-    // Positive cases
-
+  group('FunctionType grammar (positive):', () {
     test('should parse stream type', () {
       final result = parser.parse('stream<int>');
       final [Token t, Token ld, Token type, Token rd] = result.value as List;
@@ -96,9 +93,9 @@ void main() {
       expect(result, isA<Success>());
       expect(value, 'void');
     });
+  });
 
-    // Negative cases
-
+  group('FunctionType grammar (negative):', () {
     test('should fail to parse invalid type', () {
       final result = parser.parse('invalidType<');
 

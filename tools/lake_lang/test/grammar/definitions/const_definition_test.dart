@@ -3,17 +3,20 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('ConstDefinition Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [7] Const ::= 'const' FieldType Identifier '=' ConstValue ListSeparator?
-    final parser = resolve(grammar.constDefinition().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.constDefinition().end());
 
-    // Positive cases
-
+  group('ConstDefinition grammar (positive):', () {
     test('should parse const int', () {
       final result = parser.parse('const i32 MAX_COUNT = 10');
-      final [Token keyword, Token t, Token id, Token eq, Token v, Token? sep] =
-          result.value as List;
+      final [
+        Token keyword,
+        Token t,
+        Token id,
+        Token eq,
+        Token v,
+        Token? sep,
+      ] = result.value as List;
 
       expect(result, isA<Success>());
       expect(keyword.value, 'const');
@@ -26,8 +29,14 @@ void main() {
 
     test('should parse const double', () {
       final result = parser.parse('const double PI = 3.14');
-      final [Token keyword, Token t, Token id, Token eq, Token v, Token? sep] =
-          result.value as List;
+      final [
+        Token keyword,
+        Token t,
+        Token id,
+        Token eq,
+        Token v,
+        Token? sep,
+      ] = result.value as List;
 
       expect(result, isA<Success>());
       expect(keyword.value, 'const');
@@ -197,9 +206,9 @@ void main() {
       expect(v.value, '1');
       expect(sep, isNull);
     });
+  });
 
-    // Negative cases
-
+  group('ConstDefinition grammar (negative):', () {
     test('should fail to parse missing const keyword', () {
       final result = parser.parse('i32 X = 1');
 

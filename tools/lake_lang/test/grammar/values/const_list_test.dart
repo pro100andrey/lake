@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('ConstList Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [30] ConstList ::= '[' (ConstValue ListSeparator?)* ']'
-    final parser = resolve(grammar.constList().end());
-
-    // Positive cases
-
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.constList().end());
+  
+  group('ConstList grammar (positive):', () {
     test('should parse an empty list', () {
       final result = parser.parse('[]');
       final [Token lb, List values, Token rb] = result.value as List;
@@ -203,9 +200,9 @@ void main() {
       expect(v3.value, '3');
       expect(rb.value, ']');
     });
+  });
 
-    // Negative cases
-
+  group('ConstList grammar (negative):', () {
     test('should fail to parse missing closing bracket', () {
       final result = parser.parse('[1, 2, 3');
 

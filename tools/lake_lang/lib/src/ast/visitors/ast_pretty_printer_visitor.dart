@@ -5,9 +5,12 @@ import '../nodes/ast_nodes.dart';
 
 /// An AST visitor that pretty-prints the Lake AST.
 class AstPrettyPrinterVisitor implements AstVisitor<void> {
-  final List<bool> _isLastNodeStack = [];
+  AstPrettyPrinterVisitor()
+    : _outputBuffer = StringBuffer(),
+      _isLastNodeStack = [];
 
-  final _outputBuffer = StringBuffer();
+  final List<bool> _isLastNodeStack;
+  final StringBuffer _outputBuffer;
 
   String get output {
     final result = _outputBuffer.toString();

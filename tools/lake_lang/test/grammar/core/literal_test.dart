@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('Literal Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [32] Literal ::= ('"' [^"]* '"') | ("'" [^']* "'")
-    final parser = resolve(grammar.literal().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.literal().end());
 
-    // Positive Test Cases
-
+  group('Literal grammar (positive):', () {
     test('should parse a string literal with double quotes', () {
       final result = parser.parse('"Hello, World!"');
       final Token(:String value) = result.value;
@@ -105,9 +102,9 @@ void main() {
       expect(result, isA<Success>());
       expect(value, '"   \t  "');
     });
+  });
 
-    // Negative Test Cases
-
+  group('Literal grammar (negative):', () {
     test('should fail to parse a string literal without quotes', () {
       final result = parser.parse('unquoted_string');
 

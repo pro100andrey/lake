@@ -3,6 +3,8 @@ import 'nodes/ast_nodes.dart';
 /// Abstract base class for all AST Visitors
 // (AstVisitor interface remains mostly the same, ensuring exhaustive checking)
 abstract class AstVisitor<T> {
+  /// Creates a new instance of [AstVisitor].
+  const AstVisitor();
   // Visit methods for each specific AST node type
   T visitDocumentNode(DocumentNode node);
   T visitImportNode(ImportNode node);

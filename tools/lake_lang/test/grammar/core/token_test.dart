@@ -3,12 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('Token Rule:', () {
-    final grammar = LakeGrammarDefinition();
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(ref1(grammar.token, 'const').end());
 
-    final parser = resolve(ref1(grammar.token, 'const').end());
-    // Positive Test Cases
-
+  group('Token grammar (positive):', () {
     test('should parse a simple keyword without surrounding whitespace or '
         'comments', () {
       final result = parser.parse('const');
@@ -83,9 +81,9 @@ void main() {
       expect(result, isA<Success>());
       expect(value, 'const');
     });
+  });
 
-    // Negative Test Cases
-
+  group('Token grammar (negative):', () {
     test(
       'should fail to parse a keyword with extra characters immediately after',
       () {

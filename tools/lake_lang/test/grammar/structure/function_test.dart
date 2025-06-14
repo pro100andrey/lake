@@ -3,14 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('Function Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [16] Function ::= FunctionType Identifier
-    // '(' StreamType identifier | Field* ')' Throws? ListSeparator?
-    final parser = resolve(grammar.function().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.function().end());
 
-    // Positive cases
-
+  group('Function grammar (positive):', () {
     test('should parse function with no arguments', () {
       final result = parser.parse('void foo()');
       final [Token t, Token id, Token ld, List args, Token rd, _, _] =
@@ -214,9 +210,9 @@ void main() {
       expect(args, isEmpty);
       expect(rd.value, ')');
     });
+  });
 
-    // Negative cases
-
+  group('Function grammar (negative):', () {
     test('should fail to parse missing parentheses', () {
       final result = parser.parse('void foo');
 

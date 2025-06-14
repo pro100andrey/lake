@@ -11,6 +11,9 @@ import 'package:petitparser/petitparser.dart';
 /// structs, and constants. All parsers are designed to handle whitespace and
 /// comments appropriately using the `token` helper method.
 class LakeGrammarDefinition extends GrammarDefinition {
+  /// Creates a new instance of the Lake grammar definition.
+  const LakeGrammarDefinition();
+
   /// Returns the starting parser for the Lake language, which parses an entire
   /// document and ensures no input remains.
   ///

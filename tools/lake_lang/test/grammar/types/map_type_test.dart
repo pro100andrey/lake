@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('MapType Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [23] MapType ::= 'map' '<' FieldType ',' FieldType '>'
-    final parser = resolve(grammar.mapType().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.mapType().end());
 
-    // Positive cases
-
+  group('MapType grammar (positive):', () {
     test('should parse "map<string, bool>"', () {
       final result = parser.parse('map<string,bool>');
       final [
@@ -70,9 +67,9 @@ void main() {
       expect(rd1.value, '>');
       expect(rd.value, '>');
     });
+  });
 
-    // Negative cases
-
+  group('MapType grammar (negative):', () {
     test('should fail to parse map with missing key type', () {
       final result = parser.parse('map<,bool>');
 

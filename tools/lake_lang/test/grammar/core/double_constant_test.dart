@@ -3,15 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('DoubleConstant Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [29] DoubleConstant ::= ('+' | '-')?
-    // ( Digit* '.' Digit+ ( ('E' | 'e') ('+' | '-')? Digit+ )? |
-    // Digit+ ( ('E' | 'e') ('+' | '-')? Digit+ )? )
-    final parser = resolve(grammar.doubleConstant().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.doubleConstant().end());
 
-    // Positive Test Cases
-
+  group('DoubleConstant grammar (positive):', () {
     test('should parse a simple decimal number', () {
       final result = parser.parse('123.45');
       final Token(:String value) = result.value;
@@ -164,9 +159,9 @@ void main() {
       expect(value, '-1.23e-4');
       expect(double.parse(value), -1.23e-4);
     });
+  });
 
-    // Negative Test Cases
-
+  group('DoubleConstant grammar (negative):', () {
     test('should fail to parse a non-numeric string', () {
       final result = parser.parse('abc');
 

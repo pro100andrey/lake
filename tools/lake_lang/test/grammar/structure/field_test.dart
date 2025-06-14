@@ -3,14 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('Field Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [13] Field ::= FieldID? FieldReq? FieldType Identifier ('=' ConstValue)?
-    // ListSeparator?
-    final parser = resolve(grammar.field().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.field().end());
 
-    // Positive cases
-
+  group('Field grammar (positive):', () {
     test('should parse a simple field', () {
       final result = parser.parse('i32 count');
       final [
@@ -200,9 +196,9 @@ void main() {
       expect(t.value, 'i32');
       expect(id.value, 'count');
     });
+  });
 
-    // Negative cases
-
+  group('Field grammar (negative):', () {
     test('should fail to parse missing type', () {
       final result = parser.parse('count');
 

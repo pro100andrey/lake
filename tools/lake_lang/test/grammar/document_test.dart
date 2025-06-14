@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('Document Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [1] Document ::=  Header* Definition*
-    final parser = resolve(grammar.document().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.document().end());
 
-    // Positive cases
-
+  group('Document grammar (positive):', () {
     test('should parse empty document', () {
       final result = parser.parse('');
       final [List headers, List definitions] = result.value as List;
@@ -229,9 +226,9 @@ void main() {
       expect(importHeader, isNotEmpty);
       expect(constDef, isNotEmpty);
     });
+  });
 
-    // Negative cases
-
+  group('Document grammar (negative):', () {
     test('should fail to parse invalid header', () {
       final result = parser.parse('invalidheader "foo"');
 

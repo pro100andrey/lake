@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('StreamType Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // SingleLineComment ::= '//' [^\n]* [\n]?
-    final parser = resolve(grammar.streamType().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.streamType().end());
 
-    // Positive cases
-
+  group('StreamType grammar (positive):', () {
     test('should parse "stream<bool>"', () {
       final result = parser.parse('stream<bool>');
       final [Token t, Token ld, Token t1, Token rd] = result.value as List;
@@ -53,9 +50,9 @@ void main() {
       expect(t1.value, 'binary');
       expect(rd.value, '>');
     });
+  });
 
-    // Negative cases
-
+  group('StreamType grammar (negative):', () {
     test('should fail to parse stream with missing type', () {
       final result = parser.parse('stream<>');
 

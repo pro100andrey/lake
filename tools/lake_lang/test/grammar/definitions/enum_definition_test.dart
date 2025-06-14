@@ -3,13 +3,9 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('EnumDefinition Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [9] Enum ::= 'enum' Identifier '{' EnumValue* '}'
-    final parser = resolve(grammar.enumDefinition().end());
-
-    // Positive cases
-
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.enumDefinition().end());
+  group('EnumDefinition grammar (positive):', () {
     test('should parse empty enum', () {
       final result = parser.parse('enum Color {}');
       final [
@@ -34,7 +30,11 @@ void main() {
         Token keyword,
         Token id,
         Token lb,
-        [[Token id1, _, _], [Token id2, _, _], [Token id3, _, _]],
+        [
+          [Token id1, _, _],
+          [Token id2, _, _],
+          [Token id3, _, _],
+        ],
         Token rb,
       ] = result.value as List;
 
@@ -168,9 +168,9 @@ void main() {
       expect(sep3.value, ',');
       expect(rb.value, '}');
     });
+  });
 
-    // Negative cases
-
+  group('EnumDefinition grammar (negative):', () {
     test('should fail to parse missing enum keyword', () {
       final result = parser.parse('Color { RED, GREEN }');
 

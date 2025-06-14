@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('HiddenStuffWhitespace Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [35] HiddenStuffWhitespace ::= VisibleWhitespace | Comment
-    final parser = resolve(grammar.hiddenStuffWhitespace().plus().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.hiddenStuffWhitespace().plus().end());
 
-    // Positive cases
-
+  group('HiddenStuffWhitespace grammar (positive):', () {
     test('should parse a single space', () {
       final result = parser.parse(' ');
       final [String v] = result.value;
@@ -94,9 +91,9 @@ void main() {
       expect(v3, ' ');
       expect(v4, '/* comment */');
     });
+  });
 
-    // Negative cases
-
+  group('HiddenStuffWhitespace grammar (negative):', () {
     test('should fail to parse non-whitespace character', () {
       final result = parser.parse('a');
 

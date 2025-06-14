@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('IntConstant Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // IntConstant ::= ('+' | '-')? Digit+
-    final parser = resolve(grammar.intConstant().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.intConstant().end());
 
-    // Positive Test Cases
-
+  group('IntConstant grammar (positive):', () {
     test('should parse a simple positive integer', () {
       final result = parser.parse('123');
       final Token(:String value) = result.value;
@@ -92,9 +89,9 @@ void main() {
       expect(value, veryLargeValue);
       expect(BigInt.parse(value), bigInt);
     });
+  });
 
-    // Negative Test Cases
-
+  group('IntConstant grammar (negative):', () {
     test('should fail to parse a non-numeric string', () {
       final result = parser.parse('abc');
       expect(result, isA<Failure>());

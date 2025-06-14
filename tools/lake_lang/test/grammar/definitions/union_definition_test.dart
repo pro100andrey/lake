@@ -3,17 +3,19 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('UnionDefinition Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [10] Union ::= 'union' Identifier '{' Field* '}'
-    final parser = resolve(grammar.unionDefinition().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.unionDefinition().end());
 
-    // Positive cases
-
+  group('UnionDefinition grammar (positive):', () {
     test('should parse empty union', () {
       final result = parser.parse('union Empty {}');
-      final [Token keyword, Token id, Token ld, List fields, Token rd] =
-          result.value as List;
+      final [
+        Token keyword,
+        Token id,
+        Token ld,
+        List fields,
+        Token rd,
+      ] = result.value as List;
 
       expect(result, isA<Success>());
       expect(keyword.value, 'union');
@@ -199,9 +201,9 @@ void main() {
       expect(id2.value, 'y');
       expect(rd.value, '}');
     });
+  });
 
-    // Negative cases
-
+  group('UnionDefinition grammar (negative):', () {
     test('should fail to parse missing union keyword', () {
       final result = parser.parse('Point { i32 x }');
 

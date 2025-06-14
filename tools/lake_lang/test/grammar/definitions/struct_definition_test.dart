@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('StructDefinition Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [10] Struct ::= 'struct' Identifier '{' Field* '}'
-    final parser = resolve(grammar.structDefinition().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.structDefinition().end());
 
-    // Positive cases
-
+  group('StructDefinition grammar (positive):', () {
     test('should parse empty struct', () {
       final result = parser.parse('struct Empty {}');
       final [Token keyword, Token id, Token ld, List fields, Token rd] =
@@ -199,9 +196,9 @@ void main() {
       expect(id2.value, 'y');
       expect(rd.value, '}');
     });
+  });
 
-    // Negative cases
-
+  group('StructDefinition grammar (negative):', () {
     test('should fail to parse missing struct keyword', () {
       final result = parser.parse('Point { i32 x }');
 

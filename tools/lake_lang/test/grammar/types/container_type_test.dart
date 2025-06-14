@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('ContainerType Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [22] ContainerType ::= MapType | SetType | ListType
-    final parser = resolve(grammar.containerType().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.containerType().end());
 
-    // Positive cases
-
+  group('ContainerType grammar (positive):', () {
     test('should parse "list<bool>"', () {
       final result = parser.parse('list<bool>');
       expect(result, isA<Success>());
@@ -139,9 +136,9 @@ void main() {
       expect(vt.value, 'bool');
       expect(rd.value, '>');
     });
+  });
 
-    // Negative cases
-
+  group('ContainerType grammar (negative):', () {
     test('should fail to parse container with missing type', () {
       final result = parser.parse('list<>');
 

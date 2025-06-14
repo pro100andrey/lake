@@ -3,12 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('ListSeparator Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // [34] ListSeparator ::= ',' | ';'
-    final parser = resolve(grammar.listSeparator().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.listSeparator().end());
 
-    // Positive Test Cases
+  group('ListSeparator grammar (positive):', () {
     test('should parse a comma as a list separator', () {
       final result = parser.parse(',');
       final Token(:String value) = result.value;
@@ -40,9 +38,9 @@ void main() {
       expect(result, isA<Success>());
       expect(value, ';');
     });
+  });
 
-    // Negative Test Cases
-
+  group('ListSeparator grammar (negative):', () {
     test('should fail to parse a colon', () {
       final result = parser.parse(':');
 

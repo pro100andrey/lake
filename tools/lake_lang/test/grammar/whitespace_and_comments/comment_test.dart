@@ -3,13 +3,10 @@ import 'package:petitparser/petitparser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('Comment Rule:', () {
-    final grammar = LakeGrammarDefinition();
-    // Comment =:: SingleLineComment | MultiLineComment
-    final parser = resolve(grammar.comment().end());
+  const grammar = LakeGrammarDefinition();
+  final parser = resolve(grammar.comment().end());
 
-    // Positive cases
-
+  group('Comment grammar (positive):', () {
     test('should parse a single-line comment', () {
       final result = parser.parse('// this is a comment\n');
       final value = result.value as String;
@@ -49,9 +46,9 @@ void main() {
       expect(result, isA<Success>());
       expect(value, '/* outer /* inner */ outer */');
     });
+  });
 
-    // Negative cases
-
+  group('Comment grammar (negative):', () {
     test('should fail to parse if not a comment', () {
       final result = parser.parse('not a comment');
 

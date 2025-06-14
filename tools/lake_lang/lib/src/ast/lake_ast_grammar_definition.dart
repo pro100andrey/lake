@@ -21,7 +21,8 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   ///
   /// The [sourceFile] is essential for calculating accurate source spans
   /// for each generated AST node.
-  LakeAstGrammarDefinition(SourceFile sourceFile) : _sourceFile = sourceFile;
+  const LakeAstGrammarDefinition(SourceFile sourceFile)
+    : _sourceFile = sourceFile;
 
   /// The [SourceFile] representing the input source code being parsed.
   /// Used to determine the exact location (span) of AST nodes.
