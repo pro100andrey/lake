@@ -250,7 +250,8 @@ void main() {
       expect(valueType.span.start.offset, 18);
       expect(valueType.span.end.offset, 21);
 
-      final entries = (def.value as ConstMapNode).entries.cast<MapEntry>();
+      final entries = (def.value as ConstMapNode).entries
+          .cast<ConstMapNodePair>();
 
       final k1 = entries[0].key as LiteralNode;
       expect(k1.rawValue, '"a"');
