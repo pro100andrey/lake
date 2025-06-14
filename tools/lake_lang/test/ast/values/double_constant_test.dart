@@ -42,6 +42,7 @@ void main() {
       final doubleConst = field.defaultValue! as DoubleConstantNode;
 
       expect(doubleConst.rawValue, '6.022e23');
+      expect(doubleConst.value, 6.022e23);
       expect(doubleConst.span.text, source);
       expect(doubleConst.span.start.offset, 29);
       expect(doubleConst.span.end.offset, 37);
@@ -111,5 +112,46 @@ void main() {
         expect(doubleConst.span.end.offset, 31);
       },
     );
+  });
+
+  group('DoubleConstant AST (equality)', () {
+    test('should be equal for same value', () {
+      const source = '3.14';
+      final doc1 = parseAst('struct S { double pi = $source; }');
+      final doc2 = parseAst('struct S { double pi = $source; }');
+
+      expect(doc1, equals(doc2));
+
+      final struct1 = doc1.definitions.first as StructDefinitionNode;
+      final struct2 = doc2.definitions.first as StructDefinitionNode;
+
+      expect(struct1, equals(struct2));
+
+      final field1 = struct1.fields.first;
+      final field2 = struct2.fields.first;
+
+      expect(field1, equals(field2));
+      expect(field1.defaultValue, equals(field2.defaultValue));
+    });
+
+    test('should not be equal for different values', () {
+      const source1 = '3.14';
+      const source2 = '2.71';
+      final doc1 = parseAst('struct S { double pi = $source1; }');
+      final doc2 = parseAst('struct S { double pi = $source2; }');
+
+      expect(doc1, isNot(equals(doc2)));
+
+      final struct1 = doc1.definitions.first as StructDefinitionNode;
+      final struct2 = doc2.definitions.first as StructDefinitionNode;
+
+      expect(struct1, isNot(equals(struct2)));
+
+      final field1 = struct1.fields.first;
+      final field2 = struct2.fields.first;
+
+      expect(field1, isNot(equals(field2)));
+      expect(field1.defaultValue, isNot(equals(field2.defaultValue)));
+    });
   });
 }
