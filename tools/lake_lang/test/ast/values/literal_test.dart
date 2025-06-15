@@ -13,9 +13,8 @@ void main() {
 
       expect(literal.value, 'hello');
       expect(literal.rawValue, '"hello"');
-      expect(literal.span.text, source);
-      expect(literal.span.start.offset, 26);
-      expect(literal.span.end.offset, 33);
+      expect(literal.span.start, 26);
+      expect(literal.span.end, 33);
     });
 
     test('should parse constant map literal as ConstMapNode', () {
@@ -29,16 +28,14 @@ void main() {
       final key = map.entries.first.key as LiteralNode;
       expect(key.value, 'key');
       expect(key.rawValue, '"key"');
-      expect(key.span.text, '"key"');
-      expect(key.span.start.offset, 40);
-      expect(key.span.end.offset, 45);
+      expect(key.span.start, 40);
+      expect(key.span.end, 45);
 
       final value = map.entries.first.value as LiteralNode;
       expect(value.value, 'value');
       expect(value.rawValue, '"value"');
-      expect(value.span.text, '"value"');
-      expect(value.span.start.offset, 47);
-      expect(value.span.end.offset, 54);
+      expect(value.span.start, 47);
+      expect(value.span.end, 54);
     });
   });
 
