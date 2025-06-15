@@ -7,7 +7,7 @@ void main() {
   group('ConstDefinition AST (positive):', () {
     test('should parse int constant', () {
       const source = 'const i32 myInt = 42;';
-      final doc = parseAst(source);
+      final doc = parseAndGetAst(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -36,7 +36,7 @@ void main() {
 
     test('should parse string constant', () {
       const source = 'const string myString = "Hello, World!";';
-      final doc = parseAst(source);
+      final doc = parseAndGetAst(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -65,7 +65,7 @@ void main() {
 
     test('should parse boolean constant', () {
       const source = 'const bool myBool = true;';
-      final doc = parseAst(source);
+      final doc = parseAndGetAst(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -94,7 +94,7 @@ void main() {
 
     test('should parse double constant', () {
       const source = 'const double myDouble = 3.14';
-      final doc = parseAst(source);
+      final doc = parseAndGetAst(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -123,7 +123,7 @@ void main() {
 
     test('should parse array constant', () {
       const source = 'const list<i32> myArray = [1, 2, 3];';
-      final doc = parseAst(source);
+      final doc = parseAndGetAst(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -181,7 +181,7 @@ void main() {
 
     test('should parse empty array constant', () {
       const source = 'const list<i32> myArray = [];';
-      final doc = parseAst(source);
+      final doc = parseAndGetAst(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -215,7 +215,7 @@ void main() {
 
     test('should parse map constant', () {
       const source = 'const map<string, i32> myMap = {"a": 1, "b": 2};';
-      final doc = parseAst(source);
+      final doc = parseAndGetAst(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -283,7 +283,7 @@ void main() {
 
     test('should parse empty map constant', () {
       const source = 'const map<string, i32> myMap = {};';
-      final doc = parseAst(source);
+      final doc = parseAndGetAst(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -311,7 +311,7 @@ void main() {
 
     test('should parse byte constant', () {
       const source = 'const byte myByte = 255;';
-      final doc = parseAst(source);
+      final doc = parseAndGetAst(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -340,7 +340,7 @@ void main() {
 
     test('should parse i8 constant', () {
       const source = 'const i8 myI8 = 127;';
-      final doc = parseAst(source);
+      final doc = parseAndGetAst(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -369,7 +369,7 @@ void main() {
 
     test('should parse i16 constant', () {
       const source = 'const i16 myI16 = 32767;';
-      final doc = parseAst(source);
+      final doc = parseAndGetAst(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -396,7 +396,7 @@ void main() {
 
     test('should parse i64 constant', () {
       const source = 'const i64 myI64 = 9223372036854775807;';
-      final doc = parseAst(source);
+      final doc = parseAndGetAst(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -425,7 +425,7 @@ void main() {
 
     test('should parse binary constant', () {
       const source = 'const binary myBinary = "01010101";';
-      final doc = parseAst(source);
+      final doc = parseAndGetAst(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -454,7 +454,7 @@ void main() {
     test('should parse uuid constant', () {
       const source =
           'const uuid myUuid = "123e4567-e89b-12d3-a456-426614174000";';
-      final doc = parseAst(source);
+      final doc = parseAndGetAst(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -487,8 +487,8 @@ void main() {
     test('should be equal for same values', () {
       const source = 'const i32 myInt = 42;';
       const source2 = 'const i32 myInt = 42;';
-      final doc1 = parseAst(source);
-      final doc2 = parseAst(source2);
+      final doc1 = parseAndGetAst(source);
+      final doc2 = parseAndGetAst(source2);
 
       expect(doc1, equals(doc2));
 
@@ -501,8 +501,8 @@ void main() {
     test('should not be equal for different values', () {
       const source1 = 'const i32 myInt = 42;';
       const source2 = 'const i32 myInt = 43;';
-      final doc1 = parseAst(source1);
-      final doc2 = parseAst(source2);
+      final doc1 = parseAndGetAst(source1);
+      final doc2 = parseAndGetAst(source2);
 
       expect(doc1, isNot(equals(doc2)));
 

@@ -9,3 +9,4 @@ export 'src/ast/semantic_analyzer/semantic_analyzer.dart';
 export 'src/ast/visitors/ast_pretty_printer_visitor.dart';
 export 'src/grammar/lake_grammar_definition.dart';
 export 'src/print_result.dart';
+export 'src/utils/loader.dart';

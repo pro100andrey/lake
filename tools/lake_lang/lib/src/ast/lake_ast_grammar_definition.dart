@@ -28,6 +28,23 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   /// Used to determine the exact location (span) of AST nodes.
   final SourceFile _sourceFile;
 
+  /// Builds the grammar parser for Lake language AST.
+  ///
+  /// This method initializes the grammar and returns a parser that can
+  /// parse Lake source code into an AST.
+
+  Parser<DocumentNode> buildParser() {
+    // Call the super method to initialize the grammar.
+    final parser = super.build<DocumentNode>();
+
+    return parser;
+  }
+
+  /// Returns the [SourceFile] associated with this grammar definition.
+  ///
+  /// This is used to provide context for the source spans of AST nodes.
+  SourceFile get sourceFile => _sourceFile;
+
   /// Calculates the [SourceSpan] for an AST node based on its starting
   /// and ending elements.
   ///

@@ -7,7 +7,7 @@ void main() {
   group('DoubleConstant AST', () {
     test('should parse positive double with decimal part', () {
       const source = '3.14';
-      final doc = parseAst('struct S { double pi = $source; }');
+      final doc = parseAndGetAst('struct S { double pi = $source; }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
       final doubleConst = field.defaultValue! as DoubleConstantNode;
@@ -22,7 +22,7 @@ void main() {
 
     test('should parse negative double with decimal part', () {
       const source = '-1.234';
-      final doc = parseAst('struct S { double val = $source; }');
+      final doc = parseAndGetAst('struct S { double val = $source; }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
       final doubleConst = field.defaultValue! as DoubleConstantNode;
@@ -36,7 +36,7 @@ void main() {
 
     test('should parse double with exponential notation (lowercase e)', () {
       const source = '6.022e23';
-      final doc = parseAst('struct S { double avogadro = $source; }');
+      final doc = parseAndGetAst('struct S { double avogadro = $source; }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
       final doubleConst = field.defaultValue! as DoubleConstantNode;
@@ -52,7 +52,7 @@ void main() {
       'should parse double with exponential notation (uppercase E)',
       () {
         const source = '1.0E+5';
-        final doc = parseAst('struct S { double largeNum = $source; }');
+        final doc = parseAndGetAst('struct S { double largeNum = $source; }');
         final struct = doc.definitions.first as StructDefinitionNode;
         final field = struct.fields.first;
         final doubleConst = field.defaultValue! as DoubleConstantNode;
@@ -69,7 +69,7 @@ void main() {
       'should parse double with exponential notation (negative exponent)',
       () {
         const source = '1.23e-4';
-        final doc = parseAst('struct S { double smallNum = $source; }');
+        final doc = parseAndGetAst('struct S { double smallNum = $source; }');
         final struct = doc.definitions.first as StructDefinitionNode;
         final field = struct.fields.first;
         final doubleConst = field.defaultValue! as DoubleConstantNode;
@@ -85,7 +85,9 @@ void main() {
       'should parse double representing an integer (with decimal point)',
       () {
         const source = '5.0';
-        final doc = parseAst('struct S { double intAsDouble = $source; }');
+        final doc = parseAndGetAst(
+          'struct S { double intAsDouble = $source; }',
+        );
         final struct = doc.definitions.first as StructDefinitionNode;
         final field = struct.fields.first;
         final doubleConst = field.defaultValue! as DoubleConstantNode;
@@ -101,7 +103,7 @@ void main() {
       'should parse double starting with a decimal point (implicit zero)',
       () {
         const source = '.25';
-        final doc = parseAst('struct S { double quarter = $source; }');
+        final doc = parseAndGetAst('struct S { double quarter = $source; }');
         final struct = doc.definitions.first as StructDefinitionNode;
         final field = struct.fields.first;
         final doubleConst = field.defaultValue! as DoubleConstantNode;
@@ -117,8 +119,8 @@ void main() {
   group('DoubleConstant AST (equality)', () {
     test('should be equal for same value', () {
       const source = '3.14';
-      final doc1 = parseAst('struct S { double pi = $source; }');
-      final doc2 = parseAst('struct S { double pi = $source; }');
+      final doc1 = parseAndGetAst('struct S { double pi = $source; }');
+      final doc2 = parseAndGetAst('struct S { double pi = $source; }');
 
       expect(doc1, equals(doc2));
 
@@ -137,8 +139,8 @@ void main() {
     test('should not be equal for different values', () {
       const source1 = '3.14';
       const source2 = '2.71';
-      final doc1 = parseAst('struct S { double pi = $source1; }');
-      final doc2 = parseAst('struct S { double pi = $source2; }');
+      final doc1 = parseAndGetAst('struct S { double pi = $source1; }');
+      final doc2 = parseAndGetAst('struct S { double pi = $source2; }');
 
       expect(doc1, isNot(equals(doc2)));
 

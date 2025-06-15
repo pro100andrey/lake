@@ -1,10 +1,7 @@
 // ignore_for_file: avoid_print
 
-import 'dart:io';
-
 import 'package:args/args.dart';
 import 'package:lake_lang/lake_lang.dart';
-import 'package:source_span/source_span.dart';
 
 void main(List<String> args) {
   final argParser = ArgParser()
@@ -53,14 +50,13 @@ void main(List<String> args) {
 
   final filePath = inputs.first;
   final sourceCode = loadLakeFile(filePath);
-  final sourceFile = SourceFile.fromString(sourceCode, url: filePath);
 
-  final astGrammar = LakeAstGrammarDefinition(sourceFile);
+  final astGrammar = loadLakeAstGrammar(filePath);
   final parser = astGrammar.build();
   final result = parser.parse(sourceCode);
   final ast = result.value as DocumentNode;
 
-  print('Source File: ${sourceFile.url} \n');
+  print('Source File: $filePath \n');
 
   if (isPrintingAst) {
     final astVisiter = AstPrettyPrinterVisitor();
@@ -78,14 +74,5 @@ void main(List<String> args) {
     reporter.hasErrors
         ? reporter.printDiagnostics()
         : print('No semantic errors found.');
-  }
-}
-
-String loadLakeFile(String filePath) {
-  final file = File(filePath);
-  if (file.existsSync()) {
-    return file.readAsStringSync();
-  } else {
-    throw Exception('File not found: $filePath');
   }
 }

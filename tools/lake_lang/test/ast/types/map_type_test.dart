@@ -7,7 +7,7 @@ void main() {
   group('MapType AST', () {
     test('should parse map with base types', () {
       const source = 'map<string, i32>';
-      final doc = parseAst('struct S { $source data; }');
+      final doc = parseAndGetAst('struct S { $source data; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
       final fieldType = field.type as MapTypeNode;
@@ -31,7 +31,7 @@ void main() {
 
     test('should parse map with custom types', () {
       const source = 'map<CustomKey, CustomValue>';
-      final doc = parseAst('struct S { $source data; }');
+      final doc = parseAndGetAst('struct S { $source data; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
       final fieldType = field.type as MapTypeNode;
@@ -55,7 +55,7 @@ void main() {
 
     test('should parse map with a list as value type', () {
       const source = 'map<string, list<i32>>';
-      final doc = parseAst('struct S { $source data; }');
+      final doc = parseAndGetAst('struct S { $source data; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
       final fieldType = field.type as MapTypeNode;
@@ -84,7 +84,7 @@ void main() {
 
     test('should parse map with nested map as value type', () {
       const source = 'map<string, map<i32, bool>>';
-      final doc = parseAst('struct S { $source data; }');
+      final doc = parseAndGetAst('struct S { $source data; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
       final fieldType = field.type as MapTypeNode;
@@ -119,7 +119,7 @@ void main() {
 
     test('should parse map with a set as key type', () {
       const source = 'map<set<string>, i32>';
-      final doc = parseAst('struct S { $source data; }');
+      final doc = parseAndGetAst('struct S { $source data; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
       final fieldType = field.type as MapTypeNode;
@@ -150,8 +150,8 @@ void main() {
   group('MapType AST (equality)', () {
     test('should be equal for same type', () {
       const source = 'map<string, i32>';
-      final doc1 = parseAst('struct S { $source x; }');
-      final doc2 = parseAst('struct S { $source x; }');
+      final doc1 = parseAndGetAst('struct S { $source x; }');
+      final doc2 = parseAndGetAst('struct S { $source x; }');
 
       expect(doc1, equals(doc2));
 
@@ -167,8 +167,8 @@ void main() {
     });
 
     test('should not be equal for different types', () {
-      final doc1 = parseAst('struct S { map<string, i32> x; }');
-      final doc2 = parseAst('struct S { map<string, bool> x; }');
+      final doc1 = parseAndGetAst('struct S { map<string, i32> x; }');
+      final doc2 = parseAndGetAst('struct S { map<string, bool> x; }');
 
       final def1 = doc1.definitions.first as StructDefinitionNode;
       final def2 = doc2.definitions.first as StructDefinitionNode;

@@ -7,7 +7,7 @@ void main() {
   group('ConstMap AST', () {
     test('should parse empty constant map', () {
       const source = '{}';
-      final doc = parseAst(
+      final doc = parseAndGetAst(
         'struct S { map<string, string> settings = $source; }',
       );
       final struct = doc.definitions.first as StructDefinitionNode;
@@ -23,7 +23,9 @@ void main() {
 
     test('should parse constant map with string keys and string values', () {
       const source = '{"name": "Alice", "city": "New York"}';
-      final doc = parseAst('struct S { map<string, string> info = $source; }');
+      final doc = parseAndGetAst(
+        'struct S { map<string, string> info = $source; }',
+      );
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
       final constMap = field.defaultValue! as ConstMapNode;
@@ -64,7 +66,9 @@ void main() {
 
     test('should parse constant map with integer keys and boolean values', () {
       const source = '{1: true, 2: false}';
-      final doc = parseAst('struct S { map<i32, bool> flags = $source; }');
+      final doc = parseAndGetAst(
+        'struct S { map<i32, bool> flags = $source; }',
+      );
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
       final constMap = field.defaultValue! as ConstMapNode;
@@ -104,7 +108,7 @@ void main() {
 
     test('should parse constant map with nested constant list as value', () {
       const source = '{"numbers": [1, 2, 3]}';
-      final doc = parseAst(
+      final doc = parseAndGetAst(
         'struct S { map<string, list<i32>> data = $source; }',
       );
       final struct = doc.definitions.first as StructDefinitionNode;
@@ -155,7 +159,7 @@ void main() {
 
     test('should parse constant map with nested constant map as value', () {
       const source = '{"user": {"id": 123, "active": true}}';
-      final doc = parseAst(
+      final doc = parseAndGetAst(
         'struct S { map<string, map<string, any>> settings = $source; }',
       ); // Assuming 'any'
       final struct = doc.definitions.first as StructDefinitionNode;
@@ -210,7 +214,7 @@ void main() {
 
     test('should parse constant map with mixed keys and values', () {
       const source = '{"count": 5, 100: "score", true: false}';
-      final doc = parseAst(
+      final doc = parseAndGetAst(
         'struct S { map<any, any> mixedData = $source; }',
       );
       final struct = doc.definitions.first as StructDefinitionNode;
@@ -264,8 +268,12 @@ void main() {
     test('should be equal for identical constant maps', () {
       const source = '{"key": "value"}';
       const source2 = '{"key": "value"}';
-      final doc1 = parseAst('struct S { map<string, string> m = $source; }');
-      final doc2 = parseAst('struct S { map<string, string> m = $source2; }');
+      final doc1 = parseAndGetAst(
+        'struct S { map<string, string> m = $source; }',
+      );
+      final doc2 = parseAndGetAst(
+        'struct S { map<string, string> m = $source2; }',
+      );
 
       expect(doc1, equals(doc2));
 
@@ -281,8 +289,12 @@ void main() {
     test('should not be equal for different constant maps', () {
       const source1 = '{"key1": "value1"}';
       const source2 = '{"key2": "value2"}';
-      final doc1 = parseAst('struct S { map<string, string> m = $source1; }');
-      final doc2 = parseAst('struct S { map<string, string> m = $source2; }');
+      final doc1 = parseAndGetAst(
+        'struct S { map<string, string> m = $source1; }',
+      );
+      final doc2 = parseAndGetAst(
+        'struct S { map<string, string> m = $source2; }',
+      );
 
       expect(doc1, isNot(equals(doc2)));
 

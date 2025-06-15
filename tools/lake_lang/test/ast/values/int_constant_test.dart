@@ -7,7 +7,7 @@ void main() {
   group('IntConstant AST', () {
     test('should parse a positive integer', () {
       const source = '123';
-      final doc = parseAst('struct S { i32 num = $source; }');
+      final doc = parseAndGetAst('struct S { i32 num = $source; }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
       final intConst = field.defaultValue! as IntConstantNode;
@@ -22,7 +22,7 @@ void main() {
 
     test('should parse a negative integer', () {
       const source = '-456';
-      final doc = parseAst('struct S { i32 negNum = $source; }');
+      final doc = parseAndGetAst('struct S { i32 negNum = $source; }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
       final intConst = field.defaultValue! as IntConstantNode;
@@ -36,7 +36,7 @@ void main() {
 
     test('should parse zero', () {
       const source = '0';
-      final doc = parseAst('struct S { i32 zero = $source; }');
+      final doc = parseAndGetAst('struct S { i32 zero = $source; }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
       final intConst = field.defaultValue! as IntConstantNode;
@@ -50,7 +50,7 @@ void main() {
 
     test('should parse a large integer', () {
       const source = '9876543210';
-      final doc = parseAst('struct S { i64 bigNum = $source; }');
+      final doc = parseAndGetAst('struct S { i64 bigNum = $source; }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
       final intConst = field.defaultValue! as IntConstantNode;
@@ -67,8 +67,8 @@ void main() {
     test('should be equal for same value', () {
       const source = '123';
       const source2 = '123';
-      final doc1 = parseAst('struct S { i32 num = $source; }');
-      final doc2 = parseAst('struct S { i32 num = $source2; }');
+      final doc1 = parseAndGetAst('struct S { i32 num = $source; }');
+      final doc2 = parseAndGetAst('struct S { i32 num = $source2; }');
 
       expect(doc1, equals(doc2));
 
@@ -87,8 +87,8 @@ void main() {
     test('should not be equal for different values', () {
       const source1 = '123';
       const source2 = '456';
-      final doc1 = parseAst('struct S { i32 num = $source1; }');
-      final doc2 = parseAst('struct S { i32 num = $source2; }');
+      final doc1 = parseAndGetAst('struct S { i32 num = $source1; }');
+      final doc2 = parseAndGetAst('struct S { i32 num = $source2; }');
 
       expect(doc1, isNot(equals(doc2)));
 

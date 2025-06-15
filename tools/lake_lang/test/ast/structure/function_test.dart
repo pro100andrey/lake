@@ -7,7 +7,7 @@ void main() {
   group('Function AST', () {
     test('should parse function with no parameters', () {
       const source = 'void foo();';
-      final doc = parseAst('service Foo { $source }');
+      final doc = parseAndGetAst('service Foo { $source }');
       final service = doc.definitions.first as ServiceDefinitionNode;
       final fn = service.functions.first;
 
@@ -30,7 +30,7 @@ void main() {
 
     test('should parse function with parameters without field identifiers', () {
       const source = 'AddResponse add(i32 a, i32 b)';
-      final doc = parseAst('service Foo { $source }');
+      final doc = parseAndGetAst('service Foo { $source }');
       final service = doc.definitions.first as ServiceDefinitionNode;
       final fn = service.functions.first;
 
@@ -79,7 +79,7 @@ void main() {
 
     test('should parse function with parameters with field identifiers', () {
       const source = 'UsersListResponse usersList(1:i32 a, 2:i32 b)';
-      final doc = parseAst('service Foo { $source }');
+      final doc = parseAndGetAst('service Foo { $source }');
       final service = doc.definitions.first as ServiceDefinitionNode;
       final fn = service.functions.first;
 
@@ -146,7 +146,7 @@ void main() {
 
     test('should parse function with throws (no fieldId)', () {
       const source = 'void foo() throws (CustomException err)';
-      final doc = parseAst('service S { $source }');
+      final doc = parseAndGetAst('service S { $source }');
       final service = doc.definitions.first as ServiceDefinitionNode;
       final fn = service.functions.first;
 
@@ -187,7 +187,7 @@ void main() {
 
     test('should parse function with throws (with fieldId)', () {
       const source = 'void foo() throws (1: CustomException err)';
-      final doc = parseAst('service S { $source }');
+      final doc = parseAndGetAst('service S { $source }');
       final service = doc.definitions.first as ServiceDefinitionNode;
       final fn = service.functions.first;
 
@@ -234,7 +234,7 @@ void main() {
     test('should parse function with multiple parameters and throws', () {
       const source =
           'i32 sum(1: i32 a, 2: i32 b) throws (1: CustomException err)';
-      final doc = parseAst('service S { $source }');
+      final doc = parseAndGetAst('service S { $source }');
       final service = doc.definitions.first as ServiceDefinitionNode;
       final fn = service.functions.first;
 
@@ -317,7 +317,7 @@ void main() {
 
     test('should parse function with stream parameter', () {
       const source = 'void streamFunc(stream<i32> s)';
-      final doc = parseAst('service S { $source }');
+      final doc = parseAndGetAst('service S { $source }');
       final service = doc.definitions.first as ServiceDefinitionNode;
       final fn = service.functions.first;
 
@@ -362,7 +362,7 @@ void main() {
 
     test('should parse unidirectional function', () {
       const source = 'stream<ChatMessage> streamFunc(1: stream<ChatMessage> s)';
-      final doc = parseAst('service S { $source }');
+      final doc = parseAndGetAst('service S { $source }');
       final service = doc.definitions.first as ServiceDefinitionNode;
       final fn = service.functions.first;
 
@@ -425,8 +425,8 @@ void main() {
           'stream<ChatMessage> streamFunc(1: stream<ChatMessage> s)';
       const source2 =
           'stream<ChatMessage> streamFunc(1: stream<ChatMessage> s)';
-      final doc1 = parseAst('service S { $source1 }');
-      final doc2 = parseAst('service S { $source2 }');
+      final doc1 = parseAndGetAst('service S { $source1 }');
+      final doc2 = parseAndGetAst('service S { $source2 }');
       final service1 = doc1.definitions.first as ServiceDefinitionNode;
       final service2 = doc2.definitions.first as ServiceDefinitionNode;
 
@@ -443,8 +443,8 @@ void main() {
           'stream<ChatMessage> streamFunc(1: stream<ChatMessage> s)';
       const source2 =
           'stream<ChatMessage> streamFunc2(1: stream<ChatMessage> s)';
-      final doc1 = parseAst('service S { $source1 }');
-      final doc2 = parseAst('service S { $source2 }');
+      final doc1 = parseAndGetAst('service S { $source1 }');
+      final doc2 = parseAndGetAst('service S { $source2 }');
       final service1 = doc1.definitions.first as ServiceDefinitionNode;
       final service2 = doc2.definitions.first as ServiceDefinitionNode;
 

@@ -6,7 +6,7 @@ import 'package:test/test.dart';
 
 /// Helper function to parse a given source string and return the root
 /// [DocumentNode] of the AST.
-DocumentNode parseAst(String source) {
+DocumentNode parseAndGetAst(String source) {
   final sourceFile = SourceFile.fromString(source);
   final astGrammar = LakeAstGrammarDefinition(sourceFile);
   final parser = astGrammar.build();

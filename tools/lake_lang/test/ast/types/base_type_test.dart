@@ -7,7 +7,7 @@ void main() {
   group('BaseType AST', () {
     test('should parse "string" type', () {
       const source = 'string';
-      final doc = parseAst('struct S { $source x; }');
+      final doc = parseAndGetAst('struct S { $source x; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final fieldType = def.fields[0].type as BaseTypeNode;
 
@@ -19,7 +19,7 @@ void main() {
 
     test('should parse "bool" type', () {
       const source = 'bool';
-      final doc = parseAst('struct S { $source x; }');
+      final doc = parseAndGetAst('struct S { $source x; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final fieldType = def.fields[0].type as BaseTypeNode;
 
@@ -31,7 +31,7 @@ void main() {
 
     test('should parse "byte" type', () {
       const source = 'byte';
-      final doc = parseAst('struct S { $source x; }');
+      final doc = parseAndGetAst('struct S { $source x; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final fieldType = def.fields[0].type as BaseTypeNode;
 
@@ -43,7 +43,7 @@ void main() {
 
     test('should parse "double" type', () {
       const source = 'double';
-      final doc = parseAst('struct S { $source x; }');
+      final doc = parseAndGetAst('struct S { $source x; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final fieldType = def.fields[0].type as BaseTypeNode;
 
@@ -55,7 +55,7 @@ void main() {
 
     test('should parse "uuid" type', () {
       const source = 'uuid';
-      final doc = parseAst('struct S { $source x; }');
+      final doc = parseAndGetAst('struct S { $source x; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final fieldType = def.fields[0].type as BaseTypeNode;
 
@@ -67,7 +67,7 @@ void main() {
 
     test('should parse "i8" type', () {
       const source = 'i8';
-      final doc = parseAst('struct S { $source x; }');
+      final doc = parseAndGetAst('struct S { $source x; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final fieldType = def.fields[0].type as BaseTypeNode;
 
@@ -79,7 +79,7 @@ void main() {
 
     test('should parse "i16" type', () {
       const source = 'i16';
-      final doc = parseAst('struct S { $source x; }');
+      final doc = parseAndGetAst('struct S { $source x; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final fieldType = def.fields[0].type as BaseTypeNode;
 
@@ -91,7 +91,7 @@ void main() {
 
     test('should parse "i32" type', () {
       const source = 'i32';
-      final doc = parseAst('struct S { $source x; }');
+      final doc = parseAndGetAst('struct S { $source x; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final fieldType = def.fields[0].type as BaseTypeNode;
 
@@ -103,7 +103,7 @@ void main() {
 
     test('should parse "i64" type', () {
       const source = 'i64';
-      final doc = parseAst('struct S { $source x; }');
+      final doc = parseAndGetAst('struct S { $source x; }');
 
       final def = doc.definitions.first as StructDefinitionNode;
       final fieldType = def.fields[0].type as BaseTypeNode;
@@ -116,7 +116,7 @@ void main() {
 
     test('should parse "binary" type', () {
       const source = 'binary';
-      final doc = parseAst('struct S { $source x; }');
+      final doc = parseAndGetAst('struct S { $source x; }');
 
       final def = doc.definitions.first as StructDefinitionNode;
       final fieldType = def.fields[0].type as BaseTypeNode;
@@ -131,8 +131,8 @@ void main() {
   group('BaseType AST (equality)', () {
     test('should be equal for same type', () {
       const source = 'string';
-      final doc1 = parseAst('struct S { $source x; }');
-      final doc2 = parseAst('struct S { $source x; }');
+      final doc1 = parseAndGetAst('struct S { $source x; }');
+      final doc2 = parseAndGetAst('struct S { $source x; }');
 
       expect(doc1, equals(doc2));
 
@@ -148,8 +148,8 @@ void main() {
     });
 
     test('should not be equal for different types', () {
-      final doc1 = parseAst('struct S { string x; }');
-      final doc2 = parseAst('struct S { bool x; }');
+      final doc1 = parseAndGetAst('struct S { string x; }');
+      final doc2 = parseAndGetAst('struct S { bool x; }');
 
       final def1 = doc1.definitions.first as StructDefinitionNode;
       final def2 = doc2.definitions.first as StructDefinitionNode;
