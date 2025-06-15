@@ -1,14 +1,18 @@
 // ignore_for_file: avoid_print
 
+import 'package:source_span/source_span.dart';
+
 import '../ast_visitor.dart';
 import '../nodes/ast_nodes.dart';
 
 /// An AST visitor that pretty-prints the Lake AST.
 class AstPrettyPrinterVisitor implements AstVisitor<void> {
-  AstPrettyPrinterVisitor()
-    : _outputBuffer = StringBuffer(),
+  AstPrettyPrinterVisitor(SourceFile sourceFile)
+    : _sourceFile = sourceFile,
+      _outputBuffer = StringBuffer(),
       _isLastNodeStack = [];
 
+  final SourceFile _sourceFile;
   final List<bool> _isLastNodeStack;
   final StringBuffer _outputBuffer;
 
@@ -55,8 +59,9 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
     final propsStr = props?.entries
         .map((e) => '${e.key}: ${e.value}')
         .join(', ');
-    final location =
-        ' [${node.span.start.line + 1}:${node.span.start.column + 1}]';
+
+    final span = _sourceFile.span(node.span.start, node.span.end);
+    final location = ' [${span.start.line + 1}:${span.start.column + 1}]';
 
     _writeResult('$nodeName${propsStr != null ? '($propsStr)' : ''}$location');
   }

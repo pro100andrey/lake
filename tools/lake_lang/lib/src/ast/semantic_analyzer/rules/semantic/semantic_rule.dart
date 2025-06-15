@@ -4,7 +4,7 @@ import '../base_rule.dart';
 
 abstract class SemanticRule extends BaseRule {
   /// Creates a new semantic rule with the given [reporter] and [table].
-  const SemanticRule(super.reporter, this.table);
+  const SemanticRule({required super.reporter, required this.table});
 
   final SymbolTable table;
 
@@ -14,7 +14,10 @@ abstract class SemanticRule extends BaseRule {
 }
 
 final class NoDuplicateDeclarationsRule extends SemanticRule {
-  const NoDuplicateDeclarationsRule(super.reporter, super.table);
+  const NoDuplicateDeclarationsRule({
+    required super.reporter,
+    required super.table,
+  });
 
   @override
   void check(AstNode node) {
@@ -25,7 +28,7 @@ final class NoDuplicateDeclarationsRule extends SemanticRule {
 }
 
 class NoUndefinedSymbolsRule extends SemanticRule {
-  const NoUndefinedSymbolsRule(super.reporter, super.table);
+  const NoUndefinedSymbolsRule({required super.reporter, required super.table});
 
   @override
   void check(AstNode node) {

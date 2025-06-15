@@ -12,9 +12,8 @@ void main() {
       final fieldType = def.fields[0].type as CustomTypeNode;
 
       expect(fieldType.value, 'CustomType');
-      expect(fieldType.span.text, source);
-      expect(fieldType.span.start.offset, 14);
-      expect(fieldType.span.end.offset, 24);
+      expect(fieldType.span.start, 14);
+      expect(fieldType.span.end, 24);
     });
 
     test('should parse custom in service', () {
@@ -24,9 +23,8 @@ void main() {
       final function1 = def.functions.first;
 
       expect((function1.returnType as CustomTypeNode).value, 'CustomType');
-      expect(function1.returnType.span.text, source);
-      expect(function1.returnType.span.start.offset, 20);
-      expect(function1.returnType.span.end.offset, 30);
+      expect(function1.returnType.span.start, 20);
+      expect(function1.returnType.span.end, 30);
     });
   });
 

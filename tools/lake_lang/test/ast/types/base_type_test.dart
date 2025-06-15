@@ -12,9 +12,8 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'string');
-      expect(fieldType.span.text, source);
-      expect(fieldType.span.start.offset, 11);
-      expect(fieldType.span.end.offset, 17);
+      expect(fieldType.span.start, 11);
+      expect(fieldType.span.end, 17);
     });
 
     test('should parse "bool" type', () {
@@ -24,9 +23,8 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'bool');
-      expect(fieldType.span.text, source);
-      expect(fieldType.span.start.offset, 11);
-      expect(fieldType.span.end.offset, 15);
+      expect(fieldType.span.start, 11);
+      expect(fieldType.span.end, 15);
     });
 
     test('should parse "byte" type', () {
@@ -36,9 +34,8 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'byte');
-      expect(fieldType.span.text, source);
-      expect(fieldType.span.start.offset, 11);
-      expect(fieldType.span.end.offset, 15);
+      expect(fieldType.span.start, 11);
+      expect(fieldType.span.end, 15);
     });
 
     test('should parse "double" type', () {
@@ -48,9 +45,8 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'double');
-      expect(fieldType.span.text, source);
-      expect(fieldType.span.start.offset, 11);
-      expect(fieldType.span.end.offset, 17);
+      expect(fieldType.span.start, 11);
+      expect(fieldType.span.end, 17);
     });
 
     test('should parse "uuid" type', () {
@@ -60,9 +56,8 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'uuid');
-      expect(fieldType.span.text, source);
-      expect(fieldType.span.start.offset, 11);
-      expect(fieldType.span.end.offset, 15);
+      expect(fieldType.span.start, 11);
+      expect(fieldType.span.end, 15);
     });
 
     test('should parse "i8" type', () {
@@ -72,9 +67,8 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'i8');
-      expect(fieldType.span.text, source);
-      expect(fieldType.span.start.offset, 11);
-      expect(fieldType.span.end.offset, 13);
+      expect(fieldType.span.start, 11);
+      expect(fieldType.span.end, 13);
     });
 
     test('should parse "i16" type', () {
@@ -84,9 +78,8 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'i16');
-      expect(fieldType.span.text, source);
-      expect(fieldType.span.start.offset, 11);
-      expect(fieldType.span.end.offset, 14);
+      expect(fieldType.span.start, 11);
+      expect(fieldType.span.end, 14);
     });
 
     test('should parse "i32" type', () {
@@ -96,9 +89,8 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'i32');
-      expect(fieldType.span.text, source);
-      expect(fieldType.span.start.offset, 11);
-      expect(fieldType.span.end.offset, 14);
+      expect(fieldType.span.start, 11);
+      expect(fieldType.span.end, 14);
     });
 
     test('should parse "i64" type', () {
@@ -109,9 +101,8 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'i64');
-      expect(fieldType.span.text, source);
-      expect(fieldType.span.start.offset, 11);
-      expect(fieldType.span.end.offset, 14);
+      expect(fieldType.span.start, 11);
+      expect(fieldType.span.end, 14);
     });
 
     test('should parse "binary" type', () {
@@ -122,9 +113,8 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'binary');
-      expect(fieldType.span.text, source);
-      expect(fieldType.span.start.offset, 11);
-      expect(fieldType.span.end.offset, 17);
+      expect(fieldType.span.start, 11);
+      expect(fieldType.span.end, 17);
     });
   });
 

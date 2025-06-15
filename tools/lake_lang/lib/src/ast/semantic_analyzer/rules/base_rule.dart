@@ -12,7 +12,7 @@ abstract class BaseRule<T extends AstNode> {
   ///
   /// - Parameter [reporter]: The [ErrorReporter] instance used to emit
   ///   semantic errors, warnings, or hints.
-  const BaseRule(this.reporter);
+  const BaseRule({required this.reporter});
 
   /// Reporter used to emit semantic errors.
   final ErrorReporter reporter;

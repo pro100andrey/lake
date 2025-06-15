@@ -9,7 +9,7 @@ import '../base_rule.dart';
 /// invalid or semantically meaningless.
 final class NonEmptyEnumDefinitionRule extends BaseRule<EnumDefinitionNode> {
   /// Creates a [NonEmptyEnumDefinitionRule] with the given error [reporter].
-  const NonEmptyEnumDefinitionRule(super.reporter);
+  const NonEmptyEnumDefinitionRule({required super.reporter});
 
   @override
   void check(EnumDefinitionNode node) {

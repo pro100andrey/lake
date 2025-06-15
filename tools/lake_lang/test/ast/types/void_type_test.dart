@@ -15,9 +15,8 @@ void main() {
       final returnType = fn.returnType as VoidTypeNode;
 
       expect(returnType, isA<VoidTypeNode>());
-      expect(returnType.span.text, source);
-      expect(returnType.span.start.offset, 20);
-      expect(returnType.span.end.offset, 24);
+      expect(returnType.span.start, 20);
+      expect(returnType.span.end, 24);
     });
 
     test(
@@ -32,9 +31,8 @@ void main() {
         final returnType = fn.returnType as VoidTypeNode;
 
         expect(returnType, isA<VoidTypeNode>());
-        expect(returnType.span.text, source);
-        expect(returnType.span.start.offset, 20);
-        expect(returnType.span.end.offset, 24);
+        expect(returnType.span.start, 20);
+        expect(returnType.span.end, 24);
       },
     );
   });

@@ -15,9 +15,8 @@ void main() {
       expect(intConst, isA<IntConstantNode>());
       expect(intConst.rawValue, '123');
       expect(intConst.value, 123);
-      expect(intConst.span.text, source);
-      expect(intConst.span.start.offset, 21);
-      expect(intConst.span.end.offset, 24);
+      expect(intConst.span.start, 21);
+      expect(intConst.span.end, 24);
     });
 
     test('should parse a negative integer', () {
@@ -29,9 +28,8 @@ void main() {
 
       expect(intConst.rawValue, '-456');
       expect(intConst.value, -456);
-      expect(intConst.span.text, source);
-      expect(intConst.span.start.offset, 24);
-      expect(intConst.span.end.offset, 28);
+      expect(intConst.span.start, 24);
+      expect(intConst.span.end, 28);
     });
 
     test('should parse zero', () {
@@ -43,9 +41,8 @@ void main() {
 
       expect(intConst.rawValue, '0');
       expect(intConst.value, 0);
-      expect(intConst.span.text, source);
-      expect(intConst.span.start.offset, 22);
-      expect(intConst.span.end.offset, 23);
+      expect(intConst.span.start, 22);
+      expect(intConst.span.end, 23);
     });
 
     test('should parse a large integer', () {
@@ -57,9 +54,8 @@ void main() {
 
       expect(intConst.rawValue, '9876543210');
       expect(intConst.value, 9876543210);
-      expect(intConst.span.text, source);
-      expect(intConst.span.start.offset, 24);
-      expect(intConst.span.end.offset, 34);
+      expect(intConst.span.start, 24);
+      expect(intConst.span.end, 34);
     });
   });
 

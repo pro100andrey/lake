@@ -8,7 +8,7 @@ import '../base_rule.dart';
 /// as identifiers, preventing syntax errors and ensuring proper code structure.
 final class KeywordAsIdentifierRule extends BaseRule<IdentifierNode> {
   /// Creates a new [KeywordAsIdentifierRule] with the given error [reporter].
-  const KeywordAsIdentifierRule(super.reporter);
+  const KeywordAsIdentifierRule({required super.reporter});
 
   /// Defines a set of reserved keywords that cannot be used as identifiers.
   ///

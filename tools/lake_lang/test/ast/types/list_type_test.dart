@@ -13,14 +13,12 @@ void main() {
       final fieldType = field.type as ListTypeNode;
       final elementType = fieldType.elementType as BaseTypeNode;
 
-      expect(fieldType.span.text, source);
-      expect(fieldType.span.start.offset, 11);
-      expect(fieldType.span.end.offset, 20);
+      expect(fieldType.span.start, 11);
+      expect(fieldType.span.end, 20);
 
       expect(elementType.value, 'i32');
-      expect(elementType.span.text, 'i32');
-      expect(elementType.span.start.offset, 16);
-      expect(elementType.span.end.offset, 19);
+      expect(elementType.span.start, 16);
+      expect(elementType.span.end, 19);
     });
 
     test('should parse list of custom type', () {
@@ -31,18 +29,15 @@ void main() {
       final fieldType = field.type as ListTypeNode;
       final elementType = fieldType.elementType as CustomTypeNode;
 
-      expect(fieldType.span.text, source);
-      expect(fieldType.span.start.offset, 11);
-      expect(fieldType.span.end.offset, 27);
+      expect(fieldType.span.start, 11);
+      expect(fieldType.span.end, 27);
 
-      expect(fieldType.span.text, source);
-      expect(fieldType.span.start.offset, 11);
-      expect(fieldType.span.end.offset, 27);
+      expect(fieldType.span.start, 11);
+      expect(fieldType.span.end, 27);
 
       expect(elementType.value, 'CustomType');
-      expect(elementType.span.text, 'CustomType');
-      expect(elementType.span.start.offset, 16);
-      expect(elementType.span.end.offset, 26);
+      expect(elementType.span.start, 16);
+      expect(elementType.span.end, 26);
     });
 
     test('should parse list of nested container type (list of lists)', () {
@@ -52,20 +47,17 @@ void main() {
       final field = def.fields[0];
 
       final fieldType = field.type as ListTypeNode;
-      expect(fieldType.span.text, source);
-      expect(fieldType.span.start.offset, 11);
-      expect(fieldType.span.end.offset, 26);
+      expect(fieldType.span.start, 11);
+      expect(fieldType.span.end, 26);
 
       final elementType = fieldType.elementType as ListTypeNode;
-      expect(elementType.span.text, 'list<i32>');
-      expect(elementType.span.start.offset, 16);
-      expect(elementType.span.end.offset, 25);
+      expect(elementType.span.start, 16);
+      expect(elementType.span.end, 25);
 
       final nestedType = elementType.elementType as BaseTypeNode;
       expect(nestedType.value, 'i32');
-      expect(nestedType.span.text, 'i32');
-      expect(nestedType.span.start.offset, 21);
-      expect(nestedType.span.end.offset, 24);
+      expect(nestedType.span.start, 21);
+      expect(nestedType.span.end, 24);
     });
 
     test('should parse list of map type', () {
@@ -75,24 +67,20 @@ void main() {
       final field = def.fields[0];
 
       final fieldType = field.type as ListTypeNode;
-      expect(fieldType.span.text, source);
-      expect(fieldType.span.start.offset, 11);
-      expect(fieldType.span.end.offset, 33);
+      expect(fieldType.span.start, 11);
+      expect(fieldType.span.end, 33);
 
       final elementType = fieldType.elementType as MapTypeNode;
-      expect(elementType.span.text, 'map<string, i32>');
-      expect(elementType.span.start.offset, 16);
-      expect(elementType.span.end.offset, 32);
+      expect(elementType.span.start, 16);
+      expect(elementType.span.end, 32);
 
       expect(elementType.keyType, isA<BaseTypeNode>());
-      expect(elementType.keyType.span.text, 'string');
-      expect(elementType.keyType.span.start.offset, 20);
-      expect(elementType.keyType.span.end.offset, 26);
+      expect(elementType.keyType.span.start, 20);
+      expect(elementType.keyType.span.end, 26);
 
       expect(elementType.valueType, isA<BaseTypeNode>());
-      expect(elementType.valueType.span.text, 'i32');
-      expect(elementType.valueType.span.start.offset, 28);
-      expect(elementType.valueType.span.end.offset, 31);
+      expect(elementType.valueType.span.start, 28);
+      expect(elementType.valueType.span.end, 31);
     });
 
     test('should parse list of set type', () {
@@ -102,19 +90,16 @@ void main() {
       final field = def.fields[0];
 
       final fieldType = field.type as ListTypeNode;
-      expect(fieldType.span.text, source);
-      expect(fieldType.span.start.offset, 11);
-      expect(fieldType.span.end.offset, 28);
+      expect(fieldType.span.start, 11);
+      expect(fieldType.span.end, 28);
 
       final elementType = fieldType.elementType as SetTypeNode;
-      expect(elementType.span.text, 'set<string>');
-      expect(elementType.span.start.offset, 16);
-      expect(elementType.span.end.offset, 27);
+      expect(elementType.span.start, 16);
+      expect(elementType.span.end, 27);
 
       expect(elementType.elementType, isA<BaseTypeNode>());
-      expect(elementType.elementType.span.text, 'string');
-      expect(elementType.elementType.span.start.offset, 20);
-      expect(elementType.elementType.span.end.offset, 26);
+      expect(elementType.elementType.span.start, 20);
+      expect(elementType.elementType.span.end, 26);
     });
   });
 

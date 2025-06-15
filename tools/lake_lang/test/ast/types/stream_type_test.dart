@@ -6,7 +6,6 @@ import '../_ast_helpers.dart';
 void main() {
   group('StreamType AST', () {
     test('should parse stream of base type', () {
-      const source = 'stream<i32>';
       final doc = parseAndGetAst(
         'service S { stream<i32> processNumbers(stream<i32> input); }',
       );
@@ -15,27 +14,23 @@ void main() {
 
       // Test as return type
       final returnType = fn.returnType as StreamTypeNode;
-      expect(returnType.span.text, source);
-      expect(returnType.span.start.offset, 12);
-      expect(returnType.span.end.offset, 23);
+      expect(returnType.span.start, 12);
+      expect(returnType.span.end, 23);
 
       final returnElementType = returnType.elementType as BaseTypeNode;
       expect(returnElementType.value, 'i32');
-      expect(returnElementType.span.text, 'i32');
-      expect(returnElementType.span.start.offset, 19);
-      expect(returnElementType.span.end.offset, 22);
+      expect(returnElementType.span.start, 19);
+      expect(returnElementType.span.end, 22);
 
       // Test as parameter type
       final paramType = fn.parameters.first.type as StreamTypeNode;
-      expect(paramType.span.text, source);
-      expect(paramType.span.start.offset, 39);
-      expect(paramType.span.end.offset, 50);
+      expect(paramType.span.start, 39);
+      expect(paramType.span.end, 50);
 
       final paramElementType = paramType.elementType as BaseTypeNode;
       expect(paramElementType.value, 'i32');
-      expect(paramElementType.span.text, 'i32');
-      expect(paramElementType.span.start.offset, 46);
-      expect(paramElementType.span.end.offset, 49);
+      expect(paramElementType.span.start, 46);
+      expect(paramElementType.span.end, 49);
     });
 
     test('should parse stream of custom type', () {
@@ -45,15 +40,13 @@ void main() {
       final fn = service.functions.first;
       final streamType = fn.returnType as StreamTypeNode;
 
-      expect(streamType.span.text, source);
-      expect(streamType.span.start.offset, 12);
-      expect(streamType.span.end.offset, 28);
+      expect(streamType.span.start, 12);
+      expect(streamType.span.end, 28);
 
       final elementType = streamType.elementType as CustomTypeNode;
       expect(elementType.value, 'LogEntry');
-      expect(elementType.span.text, 'LogEntry');
-      expect(elementType.span.start.offset, 19);
-      expect(elementType.span.end.offset, 27);
+      expect(elementType.span.start, 19);
+      expect(elementType.span.end, 27);
     });
 
     test('should parse stream of nested container type (stream of lists)', () {
@@ -63,20 +56,17 @@ void main() {
       final fn = service.functions.first;
       final streamType = fn.returnType as StreamTypeNode;
 
-      expect(streamType.span.text, source);
-      expect(streamType.span.start.offset, 12);
-      expect(streamType.span.end.offset, 32);
+      expect(streamType.span.start, 12);
+      expect(streamType.span.end, 32);
 
       final elementType = streamType.elementType as ListTypeNode;
-      expect(elementType.span.text, 'list<string>');
-      expect(elementType.span.start.offset, 19);
-      expect(elementType.span.end.offset, 31);
+      expect(elementType.span.start, 19);
+      expect(elementType.span.end, 31);
 
       final nestedElementType = elementType.elementType as BaseTypeNode;
       expect(nestedElementType.value, 'string');
-      expect(nestedElementType.span.text, 'string');
-      expect(nestedElementType.span.start.offset, 24);
-      expect(nestedElementType.span.end.offset, 30);
+      expect(nestedElementType.span.start, 24);
+      expect(nestedElementType.span.end, 30);
     });
 
     test('should parse stream of map type', () {
@@ -86,24 +76,20 @@ void main() {
       final fn = service.functions.first;
       final streamType = fn.returnType as StreamTypeNode;
 
-      expect(streamType.span.text, source);
-      expect(streamType.span.start.offset, 12);
-      expect(streamType.span.end.offset, 36);
+      expect(streamType.span.start, 12);
+      expect(streamType.span.end, 36);
 
       final elementType = streamType.elementType as MapTypeNode;
-      expect(elementType.span.text, 'map<string, i32>');
-      expect(elementType.span.start.offset, 19);
-      expect(elementType.span.end.offset, 35);
+      expect(elementType.span.start, 19);
+      expect(elementType.span.end, 35);
 
       expect(elementType.keyType, isA<BaseTypeNode>());
-      expect(elementType.keyType.span.text, 'string');
-      expect(elementType.keyType.span.start.offset, 23);
-      expect(elementType.keyType.span.end.offset, 29);
+      expect(elementType.keyType.span.start, 23);
+      expect(elementType.keyType.span.end, 29);
 
       expect(elementType.valueType, isA<BaseTypeNode>());
-      expect(elementType.valueType.span.text, 'i32');
-      expect(elementType.valueType.span.start.offset, 31);
-      expect(elementType.valueType.span.end.offset, 34);
+      expect(elementType.valueType.span.start, 31);
+      expect(elementType.valueType.span.end, 34);
     });
   });
 

@@ -10,7 +10,7 @@ import '../base_rule.dart';
 final class NonEmptyStructDefinitionRule
     extends BaseRule<StructDefinitionNode> {
   /// Creates a [NonEmptyStructDefinitionRule] with the given error [reporter].
-  const NonEmptyStructDefinitionRule(super.reporter);
+  const NonEmptyStructDefinitionRule({required super.reporter});
 
   @override
   void check(StructDefinitionNode node) {

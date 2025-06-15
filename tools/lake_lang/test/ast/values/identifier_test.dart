@@ -13,9 +13,8 @@ void main() {
       final identifier = field.identifier;
 
       expect(identifier.value, 'myVariable');
-      expect(identifier.span.text, source);
-      expect(identifier.span.start.offset, 15);
-      expect(identifier.span.end.offset, 25);
+      expect(identifier.span.start, 15);
+      expect(identifier.span.end, 25);
     });
 
     test('should parse an identifier with underscores', () {
@@ -29,9 +28,8 @@ void main() {
       final identifier = parameter.identifier;
 
       expect(identifier.value, 'my_long_variable_name');
-      expect(identifier.span.text, source);
-      expect(identifier.span.start.offset, 36);
-      expect(identifier.span.end.offset, 57);
+      expect(identifier.span.start, 36);
+      expect(identifier.span.end, 57);
     });
 
     test('should parse an identifier starting with an underscore', () {
@@ -42,9 +40,8 @@ void main() {
       final identifier = field.identifier;
 
       expect(identifier.value, '_privateField');
-      expect(identifier.span.text, source);
-      expect(identifier.span.start.offset, 16);
-      expect(identifier.span.end.offset, 29);
+      expect(identifier.span.start, 16);
+      expect(identifier.span.end, 29);
     });
 
     test('should parse an identifier with numbers', () {
@@ -55,9 +52,8 @@ void main() {
       final identifier = enumField.identifier;
 
       expect(identifier.value, 'data2023');
-      expect(identifier.span.text, source);
-      expect(identifier.span.start.offset, 14);
-      expect(identifier.span.end.offset, 22);
+      expect(identifier.span.start, 14);
+      expect(identifier.span.end, 22);
     });
 
     test('should parse an identifier which is a keyword as part of a name', () {
@@ -67,9 +63,8 @@ void main() {
       final identifier = typedefDef.identifier;
 
       expect(identifier.value, 'structData');
-      expect(identifier.span.text, source);
-      expect(identifier.span.start.offset, 12);
-      expect(identifier.span.end.offset, 22);
+      expect(identifier.span.start, 12);
+      expect(identifier.span.end, 22);
     });
 
     test('should parse an identifier as a service name', () {
@@ -79,9 +74,8 @@ void main() {
       final identifier = service.identifier;
 
       expect(identifier.value, 'PaymentService');
-      expect(identifier.span.text, source);
-      expect(identifier.span.start.offset, 8);
-      expect(identifier.span.end.offset, 22);
+      expect(identifier.span.start, 8);
+      expect(identifier.span.end, 22);
     });
 
     // Test case for identifier used as enum name
@@ -92,9 +86,8 @@ void main() {
       final identifier = enumDef.identifier;
 
       expect(identifier.value, 'UserStatus');
-      expect(identifier.span.text, source);
-      expect(identifier.span.start.offset, 5);
-      expect(identifier.span.end.offset, 15);
+      expect(identifier.span.start, 5);
+      expect(identifier.span.end, 15);
     });
   });
 

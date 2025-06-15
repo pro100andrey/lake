@@ -1,7 +1,7 @@
 import 'package:petitparser/petitparser.dart';
-import 'package:source_span/source_span.dart';
 
 import '../grammar/lake_grammar_definition.dart';
+import 'base/types.dart';
 import 'nodes/ast_nodes.dart';
 
 /// Defines the grammar for the Lake language with a focus on building an
@@ -13,39 +13,14 @@ import 'nodes/ast_nodes.dart';
 /// defined in `ast_nodes.dart`. This transformation is crucial for
 /// semantic analysis, code generation, and other language processing tasks.
 ///
-/// It also calculates and attaches `SourceSpan` information to each AST node,
+/// It also calculates and attaches `span` information to each AST node,
 /// providing precise location data within the source file for error reporting
 /// and tooling.
 class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   /// Creates a new [LakeAstGrammarDefinition] instance.
-  ///
-  /// The [sourceFile] is essential for calculating accurate source spans
-  /// for each generated AST node.
-  const LakeAstGrammarDefinition(SourceFile sourceFile)
-    : _sourceFile = sourceFile;
+  const LakeAstGrammarDefinition();
 
-  /// The [SourceFile] representing the input source code being parsed.
-  /// Used to determine the exact location (span) of AST nodes.
-  final SourceFile _sourceFile;
-
-  /// Builds the grammar parser for Lake language AST.
-  ///
-  /// This method initializes the grammar and returns a parser that can
-  /// parse Lake source code into an AST.
-
-  Parser<DocumentNode> buildParser() {
-    // Call the super method to initialize the grammar.
-    final parser = super.build<DocumentNode>();
-
-    return parser;
-  }
-
-  /// Returns the [SourceFile] associated with this grammar definition.
-  ///
-  /// This is used to provide context for the source spans of AST nodes.
-  SourceFile get sourceFile => _sourceFile;
-
-  /// Calculates the [SourceSpan] for an AST node based on its starting
+  /// Calculates the [Span] for an AST node based on its starting
   /// and ending elements.
   ///
   /// This method is a crucial helper for constructing AST nodes with correct
@@ -60,25 +35,27 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   ///     that marks the end of the AST node's span.
   ///
   /// - Returns:
-  ///   A [SourceSpan] object representing the range in the source file.
+  ///   A [Span] object representing the range in the source file.
   ///
   /// - Throws:
   ///   [ArgumentError] if `startElement` or `endElement` is not a
   ///   supported type ([Token] or [AstNode]).
-  SourceSpan _getSpan(Object startElement, Object endElement) {
+  Span _getSpan(Object startElement, Object endElement) {
     final start = switch (startElement) {
-      Token(start: final start) => start,
-      AstNode(span: SourceSpan(start: final start)) => start.offset,
-      _ => throw ArgumentError('Invalid start element for span: $startElement'),
+      Token(:final start) => start,
+      AstNode(span: Span(:final start)) => start,
+      _ => throw ArgumentError(
+        'Invalid start element for span: $startElement',
+      ),
     };
 
     final end = switch (endElement) {
-      Token(stop: final stop) => stop,
-      AstNode(span: SourceSpan(end: final end)) => end.offset,
+      Token(:final stop) => stop,
+      AstNode(span: Span(:final end)) => end,
       _ => throw ArgumentError('Invalid end element for span: $endElement'),
     };
 
-    return _sourceFile.span(start, end);
+    return (start: start, end: end);
   }
 
   // Overrides the [document] parser to return a [DocumentNode].
@@ -96,7 +73,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final span = allNodes.isNotEmpty
         ? _getSpan(allNodes.first, allNodes.last)
-        : _sourceFile.span(0, 0);
+        : (start: 0, end: 0);
 
     return DocumentNode(
       headers: resultHeaders,
@@ -143,6 +120,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     final token = t as Token;
 
     final span = _getSpan(token, token);
+
     return IdentifierNode(value: token.value, span: span);
   });
 

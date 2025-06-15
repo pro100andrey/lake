@@ -1,16 +1,16 @@
 import 'package:equatable/equatable.dart';
-import 'package:source_span/source_span.dart';
 
 import '../ast_visitor.dart';
+import '../base/types.dart';
 
 /// This file defines the complete AST (Abstract Syntax Tree) node structure for
-///  the Lake language. All nodes are immutable and implement the [Equatable]
-/// interface for equality checks. Each node also carries a [SourceSpan] for
+/// the Lake language. All nodes are immutable and implement the [Equatable]
+/// interface for equality checks. Each node also carries a [Span] for
 /// source location tracking.
 
 /// Base sealed class for all AST nodes.
 ///
-/// Each AST node includes a [SourceSpan] for precise location tracking in the
+/// Each AST node includes a [Span] for precise location tracking in the
 /// source file. All nodes must implement [accept] for the Visitor pattern.
 /// Subclasses must implement [props] for value equality.
 sealed class AstNode extends Equatable {
@@ -18,7 +18,7 @@ sealed class AstNode extends Equatable {
   const AstNode({required this.span});
 
   /// The source location of the node in the original text.
-  final SourceSpan span;
+  final Span span;
 
   /// Accepts a visitor to perform operations over this AST node.
   T accept<T>(AstVisitor<T> visitor);

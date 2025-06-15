@@ -1,3 +1,5 @@
+import 'package:source_span/source_span.dart';
+
 import '../nodes/ast_nodes.dart';
 import 'errors/error_reporter.dart';
 import 'symbols/symbol_table.dart';
@@ -5,16 +7,21 @@ import 'visitors/symbol_table_visitor.dart';
 import 'visitors/type_checking_visitor.dart';
 
 class SemanticAnalyzer {
-  SemanticAnalyzer(this.reporter) : symbolTable = SymbolTable(reporter);
+  const SemanticAnalyzer();
 
-  final ErrorReporter reporter;
-  final SymbolTable symbolTable;
+  void analyze({
+    required DocumentNode document,
+    required SourceFile sourceFile,
+  }) {
+    final reporter = ErrorReporter();
+    final symbolTable = SymbolTable(reporter);
 
-  void analyze(DocumentNode ast) {
     final symbolTableVisitor = SymbolTableVisitor(symbolTable, reporter);
-    ast.accept(symbolTableVisitor);
+
+    document.accept(symbolTableVisitor);
 
     final typeCheckingVisitor = TypeCheckingVisitor(symbolTable, reporter);
-    ast.accept(typeCheckingVisitor);
+
+    document.accept(typeCheckingVisitor);
   }
 }

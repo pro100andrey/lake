@@ -1,5 +1,7 @@
 import 'package:source_span/source_span.dart';
 
+import '../../base/types.dart';
+
 /// Represents an additional label for a specific part of the code
 /// that provides context to a diagnostic message.
 ///
@@ -7,7 +9,7 @@ import 'package:source_span/source_span.dart';
 /// in the source code that are relevant to the primary diagnostic message.
 ///
 /// Fields:
-/// - `span`: The [SourceSpan] indicating the exact location in the code.
+/// - `span`: The [Span] indicating the exact location in the code.
 /// - `message`: A concise message explaining the context of this label.
 ///
 /// Example:
@@ -17,7 +19,7 @@ import 'package:source_span/source_span.dart';
 ///   message: 'This is related to the error'
 /// );
 /// ```
-typedef DiagnosticLabel = ({SourceSpan span, String message});
+typedef DiagnosticLabel = ({Span span, String message});
 
 /// Enum defining the severity level of a diagnostic message.
 ///
@@ -207,7 +209,7 @@ sealed class Diagnostic {
 
   /// The main location in the source code where the diagnostic originates.
   /// This is typically the most relevant part of the code for the issue.
-  final SourceSpan span;
+  final Span span;
 
   /// The main message describing the diagnostic.
   /// This message should be clear and concise, explaining what went wrong.
@@ -275,8 +277,8 @@ final class ConstValueCannotBeAssignedDiagnostic extends Diagnostic {
     required String valueTypeName,
     required String valueKindName,
     required String constTypeName,
-    required SourceSpan valueSpan,
-    SourceSpan? constTypeSpan,
+    required Span valueSpan,
+    Span? constTypeSpan,
   }) : super(
          span: valueSpan,
          message:
@@ -309,7 +311,7 @@ final class DuplicateDeclarationDiagnostic extends Diagnostic {
   DuplicateDeclarationDiagnostic({
     required String name,
     required super.span,
-    required SourceSpan previousDeclarationSpan,
+    required Span previousDeclarationSpan,
   }) : super(
          message: 'A symbol named "$name" is already declared in this scope.',
          code: DiagnosticCode.duplicateDeclaration,

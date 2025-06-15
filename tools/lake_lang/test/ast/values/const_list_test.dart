@@ -12,9 +12,8 @@ void main() {
       final field = struct.fields.first;
       final constList = field.defaultValue! as ConstListNode;
 
-      expect(constList.span.text, source);
-      expect(constList.span.start.offset, 31);
-      expect(constList.span.end.offset, 33);
+      expect(constList.span.start, 31);
+      expect(constList.span.end, 33);
       expect(constList.elements, isEmpty);
     });
 
@@ -25,32 +24,28 @@ void main() {
       final field = struct.fields.first;
       final constList = field.defaultValue! as ConstListNode;
 
-      expect(constList.span.text, source);
-      expect(constList.span.start.offset, 31);
-      expect(constList.span.end.offset, 40);
+      expect(constList.span.start, 31);
+      expect(constList.span.end, 40);
       expect(constList.elements, hasLength(3));
 
       final e1 = constList.elements[0] as IntConstantNode;
 
       expect(e1.rawValue, '1');
       expect(e1.value, 1);
-      expect(e1.span.text, '1');
-      expect(e1.span.start.offset, 32);
-      expect(e1.span.end.offset, 33);
+      expect(e1.span.start, 32);
+      expect(e1.span.end, 33);
 
       final e2 = constList.elements[1] as IntConstantNode;
       expect(e2.rawValue, '2');
       expect(e2.value, 2);
-      expect(e2.span.text, '2');
-      expect(e2.span.start.offset, 35);
-      expect(e2.span.end.offset, 36);
+      expect(e2.span.start, 35);
+      expect(e2.span.end, 36);
 
       final e3 = constList.elements[2] as IntConstantNode;
       expect(e3.rawValue, '3');
       expect(e3.value, 3);
-      expect(e3.span.text, '3');
-      expect(e3.span.start.offset, 38);
-      expect(e3.span.end.offset, 39);
+      expect(e3.span.start, 38);
+      expect(e3.span.end, 39);
     });
 
     test('should parse constant list with string elements', () {
@@ -62,32 +57,28 @@ void main() {
       final field = struct.fields.first;
       final constList = field.defaultValue! as ConstListNode;
 
-      expect(constList.span.text, source);
-      expect(constList.span.start.offset, 34);
-      expect(constList.span.end.offset, 49);
+      expect(constList.span.start, 34);
+      expect(constList.span.end, 49);
 
       expect(constList.elements, hasLength(3));
 
       final e1 = constList.elements[0] as LiteralNode;
       expect(e1.rawValue, '"a"');
       expect(e1.value, 'a');
-      expect(e1.span.text, '"a"');
-      expect(e1.span.start.offset, 35);
-      expect(e1.span.end.offset, 38);
+      expect(e1.span.start, 35);
+      expect(e1.span.end, 38);
 
       final e2 = constList.elements[1] as LiteralNode;
       expect(e2.rawValue, '"b"');
       expect(e2.value, 'b');
-      expect(e2.span.text, '"b"');
-      expect(e2.span.start.offset, 40);
-      expect(e2.span.end.offset, 43);
+      expect(e2.span.start, 40);
+      expect(e2.span.end, 43);
 
       final e3 = constList.elements[2] as LiteralNode;
       expect(e3.rawValue, '"c"');
       expect(e3.value, 'c');
-      expect(e3.span.text, '"c"');
-      expect(e3.span.start.offset, 45);
-      expect(e3.span.end.offset, 48);
+      expect(e3.span.start, 45);
+      expect(e3.span.end, 48);
     });
 
     test('should parse constant list with mixed primitive elements', () {
@@ -99,32 +90,28 @@ void main() {
       final field = struct.fields.first;
       final constList = field.defaultValue! as ConstListNode;
 
-      expect(constList.span.text, source);
-      expect(constList.span.start.offset, 29);
-      expect(constList.span.end.offset, 45);
+      expect(constList.span.start, 29);
+      expect(constList.span.end, 45);
 
       expect(constList.elements, hasLength(3));
 
       final e1 = constList.elements[0] as IntConstantNode;
       expect(e1.rawValue, '1');
       expect(e1.value, 1);
-      expect(e1.span.text, '1');
-      expect(e1.span.start.offset, 30);
-      expect(e1.span.end.offset, 31);
+      expect(e1.span.start, 30);
+      expect(e1.span.end, 31);
 
       final e2 = constList.elements[1] as LiteralNode;
       expect(e2.rawValue, '"two"');
       expect(e2.value, 'two');
-      expect(e2.span.text, '"two"');
-      expect(e2.span.start.offset, 33);
-      expect(e2.span.end.offset, 38);
+      expect(e2.span.start, 33);
+      expect(e2.span.end, 38);
 
       final e3 = constList.elements[2] as BoolConstantNode;
       expect(e3.rawValue, 'true');
       expect(e3.value, true);
-      expect(e3.span.text, 'true');
-      expect(e3.span.start.offset, 40);
-      expect(e3.span.end.offset, 44);
+      expect(e3.span.start, 40);
+      expect(e3.span.end, 44);
     });
 
     test('should parse constant list with nested constant list', () {
@@ -136,49 +123,42 @@ void main() {
       final field = struct.fields.first;
       final constList = field.defaultValue! as ConstListNode;
 
-      expect(constList.span.text, source);
-      expect(constList.span.start.offset, 36);
-      expect(constList.span.end.offset, 52);
+      expect(constList.span.start, 36);
+      expect(constList.span.end, 52);
 
       expect(constList.elements, hasLength(2));
 
       final e1 = constList.elements[0] as ConstListNode;
       expect(e1.elements, hasLength(2));
-      expect(e1.span.text, '[1, 2]');
-      expect(e1.span.start.offset, 37);
-      expect(e1.span.end.offset, 43);
+      expect(e1.span.start, 37);
+      expect(e1.span.end, 43);
 
       final e11 = e1.elements[0] as IntConstantNode;
       expect(e11.rawValue, '1');
       expect(e11.value, 1);
-      expect(e11.span.text, '1');
-      expect(e11.span.start.offset, 38);
-      expect(e11.span.end.offset, 39);
+      expect(e11.span.start, 38);
+      expect(e11.span.end, 39);
 
       final e12 = e1.elements[1] as IntConstantNode;
       expect(e12.rawValue, '2');
       expect(e12.value, 2);
-      expect(e12.span.text, '2');
-      expect(e12.span.start.offset, 41);
-      expect(e12.span.end.offset, 42);
+      expect(e12.span.start, 41);
+      expect(e12.span.end, 42);
 
       final e2 = constList.elements[1] as ConstListNode;
       expect(e2.elements, hasLength(2));
-      expect(e2.span.text, '[3, 4]');
-      expect(e2.span.start.offset, 45);
-      expect(e2.span.end.offset, 51);
+      expect(e2.span.start, 45);
+      expect(e2.span.end, 51);
 
       final e21 = e2.elements[0] as IntConstantNode;
       expect(e21.rawValue, '3');
-      expect(e21.span.text, '3');
-      expect(e21.span.start.offset, 46);
-      expect(e21.span.end.offset, 47);
+      expect(e21.span.start, 46);
+      expect(e21.span.end, 47);
 
       final e22 = e2.elements[1] as IntConstantNode;
       expect(e22.rawValue, '4');
-      expect(e22.span.text, '4');
-      expect(e22.span.start.offset, 49);
-      expect(e22.span.end.offset, 50);
+      expect(e22.span.start, 49);
+      expect(e22.span.end, 50);
     });
 
     test('should parse constant list with nested constant map', () {
@@ -192,42 +172,36 @@ void main() {
       final field = struct.fields.first;
 
       final constList = field.defaultValue! as ConstListNode;
-      expect(constList.span.text, source);
-      expect(constList.span.start.offset, 41);
-      expect(constList.span.end.offset, 65);
+      expect(constList.span.start, 41);
+      expect(constList.span.end, 65);
 
       expect(constList.elements, hasLength(2));
       final e1 = constList.elements[0] as ConstMapNode;
-      expect(e1.span.text, '{"key": 1}');
-      expect(e1.span.start.offset, 42);
-      expect(e1.span.end.offset, 52);
+      expect(e1.span.start, 42);
+      expect(e1.span.end, 52);
 
       expect(e1.entries, hasLength(1));
       final entry1 = e1.entries[0];
       expect((entry1.key as LiteralNode).rawValue, '"key"');
       expect((entry1.key as LiteralNode).value, 'key');
-      expect(entry1.key.span.text, '"key"');
-      expect(entry1.key.span.start.offset, 43);
-      expect(entry1.key.span.end.offset, 48);
+      expect(entry1.key.span.start, 43);
+      expect(entry1.key.span.end, 48);
 
       expect((entry1.value as IntConstantNode).rawValue, '1');
       expect((entry1.value as IntConstantNode).value, 1);
-      expect(entry1.value.span.text, '1');
-      expect(entry1.value.span.start.offset, 50);
-      expect(entry1.value.span.end.offset, 51);
+      expect(entry1.value.span.start, 50);
+      expect(entry1.value.span.end, 51);
 
       final e2 = constList.elements[1] as ConstMapNode;
-      expect(e2.span.text, '{"key": 2}');
-      expect(e2.span.start.offset, 54);
-      expect(e2.span.end.offset, 64);
+      expect(e2.span.start, 54);
+      expect(e2.span.end, 64);
 
       expect(e2.entries, hasLength(1));
       final entry2 = e2.entries[0];
       expect((entry2.key as LiteralNode).rawValue, '"key"');
       expect((entry2.key as LiteralNode).value, 'key');
-      expect(entry2.key.span.text, '"key"');
-      expect(entry2.key.span.start.offset, 55);
-      expect(entry2.key.span.end.offset, 60);
+      expect(entry2.key.span.start, 55);
+      expect(entry2.key.span.end, 60);
     });
   });
 

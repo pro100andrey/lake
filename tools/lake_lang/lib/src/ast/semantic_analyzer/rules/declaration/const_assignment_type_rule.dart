@@ -10,7 +10,7 @@ import '../utils.dart';
 /// It uses the `_expectedCheck` map to determine type compatibility.
 final class _BaseTypeRule extends BaseRule<ConstDefinitionNode> {
   /// Creates a rule that checks constant values against base types.
-  const _BaseTypeRule(super.reporter);
+  const _BaseTypeRule({required super.reporter});
 
   @override
   void check(ConstDefinitionNode node) {
@@ -38,7 +38,7 @@ final class _BaseTypeRule extends BaseRule<ConstDefinitionNode> {
 /// with the list's declared element type. It also checks if the list's element
 /// type is supported (e.g., only primitive types are allowed for now).
 final class _ListTypeRule extends BaseRule<ConstDefinitionNode> {
-  const _ListTypeRule(super.reporter);
+  const _ListTypeRule({required super.reporter});
 
   @override
   void check(ConstDefinitionNode node) {
@@ -75,7 +75,7 @@ final class _ListTypeRule extends BaseRule<ConstDefinitionNode> {
 }
 
 final class _MapTypeRule extends BaseRule<ConstDefinitionNode> {
-  const _MapTypeRule(super.reporter);
+  const _MapTypeRule({required super.reporter});
 
   @override
   void check(ConstDefinitionNode node) {
@@ -117,11 +117,11 @@ final class _MapTypeRule extends BaseRule<ConstDefinitionNode> {
 /// `_ListTypeCheckRule`) to handle different constant type definitions.
 final class ConstAssignmentTypeRule extends BaseRule<ConstDefinitionNode> {
   /// Creates a rule that checks constant values against base types.
-  ConstAssignmentTypeRule(super.reporter);
+  ConstAssignmentTypeRule({required super.reporter});
 
-  late final _baseTypeRule = _BaseTypeRule(reporter);
-  late final _listTypeRule = _ListTypeRule(reporter);
-  late final _mapTypeRule = _MapTypeRule(reporter);
+  late final _baseTypeRule = _BaseTypeRule(reporter: reporter);
+  late final _listTypeRule = _ListTypeRule(reporter: reporter);
+  late final _mapTypeRule = _MapTypeRule(reporter: reporter);
 
   @override
   void check(ConstDefinitionNode node) {

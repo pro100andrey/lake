@@ -1,6 +1,6 @@
 import 'package:lake_lang/src/ast/ast_visitor.dart';
+import 'package:lake_lang/src/ast/base/types.dart';
 import 'package:lake_lang/src/ast/nodes/ast_nodes.dart';
-import 'package:source_span/source_span.dart';
 import 'package:test/test.dart';
 
 class RecordingVisitor extends AstVisitor<void> {
@@ -107,8 +107,7 @@ class RecordingVisitor extends AstVisitor<void> {
   void visitConstMapNode(ConstMapNode node) => _record('visitConstMapNode');
 }
 
-SourceSpan _dummySpan([String text = 'x']) =>
-    SourceSpan(SourceLocation(0), SourceLocation(text.length), text);
+Span _dummySpan() => (start: 0, end: 0);
 
 void main() {
   group('AST Visitor integration', () {
@@ -257,7 +256,6 @@ void main() {
       constList.accept(visitor);
       constMap.accept(visitor);
 
-      // Проверяем, что все методы были вызваны хотя бы раз
       final expected = [
         'visitDocumentNode',
         'visitImportNode',

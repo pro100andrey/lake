@@ -2,6 +2,10 @@
 
 import 'package:args/args.dart';
 import 'package:lake_lang/lake_lang.dart';
+import 'package:source_span/source_span.dart';
+
+const analyzer = SemanticAnalyzer();
+const astGrammar = LakeAstGrammarDefinition();
 
 void main(List<String> args) {
   final argParser = ArgParser()
@@ -49,30 +53,31 @@ void main(List<String> args) {
   final isRunningSemantic = argResults['semantic'] as bool;
 
   final filePath = inputs.first;
-  final sourceCode = loadLakeFile(filePath);
 
-  final astGrammar = loadLakeAstGrammar(filePath);
+  final sourceCode = loadLakeFile(filePath);
+  final sourceFile = SourceFile.fromString(sourceCode, url: filePath);
+
   final parser = astGrammar.build();
+
   final result = parser.parse(sourceCode);
-  final ast = result.value as DocumentNode;
+  final document = result.value as DocumentNode;
 
   print('Source File: $filePath \n');
 
   if (isPrintingAst) {
-    final astVisiter = AstPrettyPrinterVisitor();
-    ast.accept(astVisiter);
+    final astVisiter = AstPrettyPrinterVisitor(sourceFile);
+    document.accept(astVisiter);
 
     print('Abstract Syntax Tree:');
     print(astVisiter.output);
   }
 
   if (isRunningSemantic) {
-    final reporter = ErrorReporter();
+    analyzer.analyze(document: document, sourceFile: sourceFile);
 
-    SemanticAnalyzer(reporter).analyze(ast);
     print('Semantic Analysis:');
-    reporter.hasErrors
-        ? reporter.printDiagnostics()
-        : print('No semantic errors found.');
+    // reporter.hasErrors
+    //     ? reporter.printDiagnostics()
+    //     : print('No semantic errors found.');
   }
 }

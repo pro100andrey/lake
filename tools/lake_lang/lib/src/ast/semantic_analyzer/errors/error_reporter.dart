@@ -2,6 +2,7 @@
 
 import 'package:source_span/source_span.dart';
 
+import '../../base/types.dart';
 import 'semantic_error.dart';
 
 /// A class responsible for collecting and reporting diagnostic messages.
@@ -49,27 +50,38 @@ final class ErrorReporter {
   /// Each diagnostic is formatted to show its location, severity, message,
   /// associated code (if any), highlighted source span, additional labels,
   /// suggestions, and a link to more information.
-  void printDiagnostics() {
+  void printDiagnostics(SourceFile sourceFile) {
     if (_diagnostics.isEmpty) {
       print('No issues found.');
       return;
     }
+
     final separator = '-' * 120;
 
     for (final diag in _diagnostics) {
+      final diagSpan = sourceFile.span(
+        diag.span.start,
+        diag.span.end,
+      );
+
       final codeText = diag.code != null ? ' [${diag.code!.id}]' : '';
       print(
-        '${diag.span.start.line + 1}:'
-        '${diag.span.start.column + 1} '
+        '${diagSpan.start.line + 1}:'
+        '${diagSpan.start.column + 1} '
         '${diag.severity.displayName}$codeText: ${diag.message}\n'
-        '${diag.span.highlight(color: true)}\n',
+        '${diagSpan.highlight(color: true)}\n',
       );
 
       for (final (:span, :message) in diag.labels) {
+        final labelSpan = sourceFile.span(
+          span.start,
+          span.end,
+        );
+
         print(
-          '  --> ${span.start.line + 1}:'
-          '${span.start.column + 1}: $message\n'
-          '${span.highlight(color: true)}\n',
+          '  --> ${labelSpan.start.line + 1}:'
+          '${labelSpan.start.column + 1}: $message\n'
+          '${labelSpan.highlight(color: true)}\n',
         );
       }
 
@@ -102,7 +114,7 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   ///
   /// - Parameters:
   ///   - [message]: The main diagnostic message.
-  ///   - [span]: The primary [SourceSpan] for this diagnostic.
+  ///   - [span]: The primary [Span] for this diagnostic.
   ///   - [severity]: The severity level. Defaults to
   /// [DiagnosticSeverity.error].
   ///   - [code]: An optional diagnostic code.
@@ -111,7 +123,7 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// [DiagnosticCode].
   void reportGeneric({
     required String message,
-    required SourceSpan span,
+    required Span span,
     DiagnosticSeverity severity = DiagnosticSeverity.error,
     DiagnosticCode? code,
     List<DiagnosticLabel> labels = const [],
@@ -135,8 +147,8 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   ///
   /// - Parameters:
   ///   - [name]: The name of the undefined symbol.
-  ///   - [span]: The [SourceSpan] where the undefined symbol was encountered.
-  void reportUndefinedSymbol({required String name, required SourceSpan span}) {
+  ///   - [span]: The [Span] where the undefined symbol was encountered.
+  void reportUndefinedSymbol({required String name, required Span span}) {
     report(UndefinedSymbolDiagnostic(name: name, span: span));
   }
 
@@ -147,13 +159,13 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   ///
   /// - Parameters:
   ///   - [name]: The name of the duplicated symbol.
-  ///   - [span]: The [SourceSpan] of the current, duplicate declaration.
-  ///   - [previousDeclarationSpan]: An optional [SourceSpan] pointing to the
+  ///   - [span]: The [Span] of the current, duplicate declaration.
+  ///   - [previousDeclarationSpan]: An optional [Span] pointing to the
   /// location of the original declaration, providing helpful context.
   void reportDuplicateDeclaration({
     required String name,
-    required SourceSpan span,
-    required SourceSpan previousDeclarationSpan,
+    required Span span,
+    required Span previousDeclarationSpan,
   }) {
     report(
       DuplicateDeclarationDiagnostic(
@@ -169,8 +181,8 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// This diagnostic is triggered when an `enum` is defined without any
   /// members.
   ///
-  /// - Parameter [span]: The [SourceSpan] of the empty enum definition.
-  void reportEmptyEnumDefinition({required SourceSpan span}) {
+  /// - Parameter [span]: The [Span] of the empty enum definition.
+  void reportEmptyEnumDefinition({required Span span}) {
     report(EmptyEnumDefinitionDiagnostic(span: span));
   }
 
@@ -179,8 +191,8 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// This diagnostic is triggered when a `struct` is defined without any
   /// fields.
   ///
-  /// - Parameter [span]: The [SourceSpan] of the empty struct definition.
-  void reportEmptyStructDefinition({required SourceSpan span}) {
+  /// - Parameter [span]: The [Span] of the empty struct definition.
+  void reportEmptyStructDefinition({required Span span}) {
     report(EmptyStructDefinitionDiagnostic(span: span));
   }
 
@@ -194,15 +206,15 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   ///   - [valueKindName]: A description of the kind of value (e.g., "literal",
   /// "expression").
   ///   - [constTypeName]: The name of the type declared for the constant.
-  ///   - [valueSpan]: The [SourceSpan] of the value causing the type mismatch.
-  ///   - [constTypeSpan]: An optional [SourceSpan] indicating the constant's
+  ///   - [valueSpan]: The [Span] of the value causing the type mismatch.
+  ///   - [constTypeSpan]: An optional [Span] indicating the constant's
   /// type declaration for additional context.
   void reportConstValueCannotBeAssigned({
     required String valueTypeName,
     required String valueKindName,
     required String constTypeName,
-    required SourceSpan valueSpan,
-    SourceSpan? constTypeSpan,
+    required Span valueSpan,
+    Span? constTypeSpan,
   }) {
     report(
       ConstValueCannotBeAssignedDiagnostic(
@@ -223,11 +235,11 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// - Parameters:
   ///   - [expectedType]: The name of the type expected for list elements.
   ///   - [actualType]: The name of the type found for the mismatched element.
-  ///   - [span]: The [SourceSpan] of the list element with the type mismatch.
+  ///   - [span]: The [Span] of the list element with the type mismatch.
   void reportListElementTypeMismatch({
     required String expectedType,
     required String actualType,
-    required SourceSpan span,
+    required Span span,
   }) {
     report(
       ListElementTypeMismatchDiagnostic(
@@ -245,10 +257,10 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   ///
   /// - Parameters:
   ///   - [identifier]: The reserved keyword that was used as an identifier.
-  ///   - [span]: The [SourceSpan] where the keyword was used as an identifier.
+  ///   - [span]: The [Span] where the keyword was used as an identifier.
   void reportKeywordAsIdentifier({
     required String identifier,
-    required SourceSpan span,
+    required Span span,
   }) {
     report(KeywordAsIdentifierDiagnostic(identifier: identifier, span: span));
   }
@@ -261,11 +273,11 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   ///
   /// - Parameters:
   ///   - [elementType]: The name of the unsupported element type.
-  ///   - [span]: The [SourceSpan] where the unsupported list element type was
+  ///   - [span]: The [Span] where the unsupported list element type was
   ///     encountered.
   void reportUnsupportedListElementType({
     required String elementType,
-    required SourceSpan span,
+    required Span span,
   }) {
     report(
       UnsupportedListElementTypeDiagnostic(
@@ -283,11 +295,11 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// - Parameters:
   ///   - [expectedType]: The name of the type expected for the map key.
   ///   - [actualType]: The name of the type found for the map key.
-  ///   - [span]: The [SourceSpan] of the map entry with the type mismatch.
+  ///   - [span]: The [Span] of the map entry with the type mismatch.
   void reportMapKeyTypeMismatch({
     required String expectedType,
     required String actualType,
-    required SourceSpan span,
+    required Span span,
   }) {
     report(
       MapKeyTypeMismatchDiagnostic(
@@ -306,11 +318,11 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// - Parameters:
   ///   - [expectedType]: The name of the type expected for the map entry.
   ///   - [actualType]: The name of the type found for the map entry.
-  ///   - [span]: The [SourceSpan] of the map entry with the type mismatch.
+  ///   - [span]: The [Span] of the map entry with the type mismatch.
   void reportMapValueTypeMismatch({
     required String expectedType,
     required String actualType,
-    required SourceSpan span,
+    required Span span,
   }) {
     report(
       MapValueTypeMismatchDiagnostic(
@@ -330,10 +342,10 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// - Parameters:
   ///   - [fieldName]: The name of the field that is required but has a default
   /// value.
-  ///   - [span]: The [SourceSpan] where the error was detected.
+  ///   - [span]: The [Span] where the error was detected.
   void reportRequiredFieldCannotHaveDefaultValue({
     required String fieldName,
-    required SourceSpan span,
+    required Span span,
   }) {
     report(
       RequiredFieldCannotHaveDefaultValueDiagnostic(

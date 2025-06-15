@@ -6,20 +6,17 @@ import '../base_rule.dart';
 // This rule is used to ensure that fields marked as `required` do not
 // also have a default value, which would contradict the semantics of
 // the language.
-final class RequiredFiledRule extends BaseRule<FieldNode> {
-  /// Creates a [RequiredFiledRule] with the given error [reporter].
-  const RequiredFiledRule(super.reporter);
+final class RequiredFieldRule extends BaseRule<FieldNode> {
+  /// Creates a [RequiredFieldRule] with the given error [reporter].
+  const RequiredFieldRule({required super.reporter});
 
   @override
   void check(FieldNode node) {
-    if (node.requirement case FieldRequirementNode(
-      isRequired: true,
-      :final span,
-    )) {
+    if (node.requirement case FieldRequirementNode(isRequired: true)) {
       if (node.defaultValue != null) {
         reporter.reportRequiredFieldCannotHaveDefaultValue(
           fieldName: node.identifier.value,
-          span: span,
+          span: node.requirement!.span,
         );
       }
     }

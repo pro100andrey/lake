@@ -3,11 +3,11 @@ import '../../nodes/ast_nodes.dart';
 import '../errors/error_reporter.dart';
 import '../rules/base_rule.dart';
 import '../rules/declaration/const_assignment_type_rule.dart';
-import '../rules/declaration/keyword_as_indentifier_rule.dart';
+import '../rules/declaration/keyword_as_identifier_rule.dart';
 import '../rules/declaration/non_empty_enum_definition_rule.dart';
-import '../rules/declaration/non_empty_struct_definaition_rule.dart';
+import '../rules/declaration/non_empty_struct_definition_rule.dart';
 import '../rules/declaration/optional_field_rule.dart';
-import '../rules/declaration/required_filed_rule.dart';
+import '../rules/declaration/required_field_rule.dart';
 import '../semantic_types.dart';
 import '../symbols/symbol_entry.dart';
 import '../symbols/symbol_table.dart';
@@ -16,13 +16,25 @@ class SymbolTableVisitor extends AstVisitor<void> {
   SymbolTableVisitor(this._symbolTable, this._reporter)
     : _ruleDispatcher = RuleDispatcher() {
     _ruleDispatcher
-      ..addRule<ConstDefinitionNode>(ConstAssignmentTypeRule(_reporter))
-      ..addRule<EnumDefinitionNode>(NonEmptyEnumDefinitionRule(_reporter))
-      ..addRule<StructDefinitionNode>(NonEmptyStructDefinitionRule(_reporter))
-      ..addRule<IdentifierNode>(KeywordAsIdentifierRule(_reporter))
+      ..addRule<ConstDefinitionNode>(
+        ConstAssignmentTypeRule(reporter: _reporter),
+      )
+      ..addRule<EnumDefinitionNode>(
+        NonEmptyEnumDefinitionRule(reporter: _reporter),
+      )
+      ..addRule<StructDefinitionNode>(
+        NonEmptyStructDefinitionRule(reporter: _reporter),
+      )
+      ..addRule<IdentifierNode>(
+        KeywordAsIdentifierRule(reporter: _reporter),
+      )
       // Rules for field declarations
-      ..addRule<FieldNode>(RequiredFiledRule(_reporter))
-      ..addRule<FieldNode>(OptionalFieldRule(_reporter));
+      ..addRule<FieldNode>(
+        RequiredFieldRule(reporter: _reporter),
+      )
+      ..addRule<FieldNode>(
+        OptionalFieldRule(reporter: _reporter),
+      );
   }
 
   final SymbolTable _symbolTable;

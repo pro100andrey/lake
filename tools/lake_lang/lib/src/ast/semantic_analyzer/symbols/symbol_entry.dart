@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:source_span/source_span.dart';
 
-import '../../../../lake_lang.dart';
+import '../../base/types.dart';
+import '../../nodes/ast_nodes.dart';
 import '../semantic_types.dart';
 
 enum SymbolKind {
@@ -40,9 +40,9 @@ final class SymbolEntry extends Equatable {
   /// directly have a single semantic type (e.g., a service itself).
   final SemanticType? resolvedType;
 
-  /// The [SourceSpan] that indicating the location of the symbol's declaration
+  /// The [Span] that indicating the location of the symbol's declaration
   /// in the source code. Useful for error reporting and debugging.
-  final SourceSpan span;
+  final Span span;
 
   @override
   List<Object?> get props => [name, kind, declaration, resolvedType, span];

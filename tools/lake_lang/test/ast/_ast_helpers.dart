@@ -8,7 +8,7 @@ import 'package:test/test.dart';
 /// [DocumentNode] of the AST.
 DocumentNode parseAndGetAst(String source) {
   final sourceFile = SourceFile.fromString(source);
-  final astGrammar = LakeAstGrammarDefinition(sourceFile);
+  const astGrammar = LakeAstGrammarDefinition();
   final parser = astGrammar.build();
 
   final result = parser.parse(source);

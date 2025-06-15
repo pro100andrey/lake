@@ -15,9 +15,8 @@ void main() {
       expect(doubleConst, isA<DoubleConstantNode>());
       expect(doubleConst.rawValue, '3.14');
       expect(doubleConst.value, 3.14);
-      expect(doubleConst.span.text, source);
-      expect(doubleConst.span.start.offset, 23);
-      expect(doubleConst.span.end.offset, 27);
+      expect(doubleConst.span.start, 23);
+      expect(doubleConst.span.end, 27);
     });
 
     test('should parse negative double with decimal part', () {
@@ -29,9 +28,8 @@ void main() {
 
       expect(doubleConst.rawValue, '-1.234');
       expect(doubleConst.value, -1.234);
-      expect(doubleConst.span.text, source);
-      expect(doubleConst.span.start.offset, 24);
-      expect(doubleConst.span.end.offset, 30);
+      expect(doubleConst.span.start, 24);
+      expect(doubleConst.span.end, 30);
     });
 
     test('should parse double with exponential notation (lowercase e)', () {
@@ -43,9 +41,8 @@ void main() {
 
       expect(doubleConst.rawValue, '6.022e23');
       expect(doubleConst.value, 6.022e23);
-      expect(doubleConst.span.text, source);
-      expect(doubleConst.span.start.offset, 29);
-      expect(doubleConst.span.end.offset, 37);
+      expect(doubleConst.span.start, 29);
+      expect(doubleConst.span.end, 37);
     });
 
     test(
@@ -59,9 +56,8 @@ void main() {
 
         expect(doubleConst.rawValue, '1.0E+5');
         expect(doubleConst.value, 100000.0);
-        expect(doubleConst.span.text, source);
-        expect(doubleConst.span.start.offset, 29);
-        expect(doubleConst.span.end.offset, 35);
+        expect(doubleConst.span.start, 29);
+        expect(doubleConst.span.end, 35);
       },
     );
 
@@ -75,9 +71,8 @@ void main() {
         final doubleConst = field.defaultValue! as DoubleConstantNode;
 
         expect(doubleConst.rawValue, '1.23e-4');
-        expect(doubleConst.span.text, source);
-        expect(doubleConst.span.start.offset, 29);
-        expect(doubleConst.span.end.offset, 36);
+        expect(doubleConst.span.start, 29);
+        expect(doubleConst.span.end, 36);
       },
     );
 
@@ -93,9 +88,8 @@ void main() {
         final doubleConst = field.defaultValue! as DoubleConstantNode;
 
         expect(doubleConst.rawValue, '5.0');
-        expect(doubleConst.span.text, source);
-        expect(doubleConst.span.start.offset, 32);
-        expect(doubleConst.span.end.offset, 35);
+        expect(doubleConst.span.start, 32);
+        expect(doubleConst.span.end, 35);
       },
     );
 
@@ -109,9 +103,8 @@ void main() {
         final doubleConst = field.defaultValue! as DoubleConstantNode;
 
         expect(doubleConst.rawValue, '.25');
-        expect(doubleConst.span.text, source);
-        expect(doubleConst.span.start.offset, 28);
-        expect(doubleConst.span.end.offset, 31);
+        expect(doubleConst.span.start, 28);
+        expect(doubleConst.span.end, 31);
       },
     );
   });
