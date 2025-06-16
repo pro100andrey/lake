@@ -199,35 +199,35 @@ void main() {
       final result = parser.parse('"unterminated');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"\\\'" expected');
+      expect(result.message, 'const literal expected');
     });
 
     test('should fail to parse invalid int', () {
       final result = parser.parse('--1');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"\\\'" expected');
+      expect(result.message, 'const literal expected');
     });
 
     test('should fail to parse invalid list', () {
       final result = parser.parse('[1, 2');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"\\\'" expected');
+      expect(result.message, 'const literal expected');
     });
 
     test('should fail to parse invalid map', () {
       final result = parser.parse('{"a": 1, "b" 2}');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"\\\'" expected');
+      expect(result.message, 'const literal expected');
     });
 
     test('should fail to parse empty string', () {
       final result = parser.parse('');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"\\\'" expected');
+      expect(result.message, 'const literal expected');
     });
   });
 }

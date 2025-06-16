@@ -241,7 +241,7 @@ void main() {
       final result = parser.parse('const i32 X =');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"\\\'" expected');
+      expect(result.message, 'const literal expected');
     });
 
     test('should fail to parse empty string', () {

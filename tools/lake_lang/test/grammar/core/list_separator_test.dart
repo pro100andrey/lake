@@ -45,21 +45,21 @@ void main() {
       final result = parser.parse(':');
 
       expect(result, isA<Failure>());
-      expect(result.message, '";" expected');
+      expect(result.message, '"," or ";" expected');
     });
 
     test('should fail to parse a dot', () {
       final result = parser.parse('.');
 
       expect(result, isA<Failure>());
-      expect(result.message, '";" expected');
+      expect(result.message, '"," or ";" expected');
     });
 
     test('should fail to parse an empty string', () {
       final result = parser.parse('');
 
       expect(result, isA<Failure>());
-      expect(result.message, '";" expected');
+      expect(result.message, '"," or ";" expected');
     });
 
     test('should fail to parse a comma with extra characters', () {

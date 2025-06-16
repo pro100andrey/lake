@@ -61,7 +61,8 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// ```
   Parser namespace() =>
       ref1(token, 'namespace') &
-      ref0(namespaceScope) & ref0(identifier) &
+      ref0(namespaceScope) &
+      ref0(identifier) &
       ref0(listSeparator).optional();
 
   /// NamespaceScope ::= '*' | 'js' | 'dart'
@@ -423,19 +424,22 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(doubleConstant) |
       ref0(boolConstant) |
       ref0(identifier) |
-      ref0(literal);
+      ref0(literal) |
+      FailureParser('const literal expected');
 
   /// IntConstant ::= ('+' | '-')? Digit+
   ///
   /// Parses an integer constant, consisting of an optional sign and one or more
-  /// digits, ensuring no decimal point or exponent is present.
+  /// digits, *without* a decimal point or exponent.
   ///
   /// Example: `123`, `-45`, `+9`
   Parser intConstant() {
     final sign = (char('+') | char('-')).optional();
     final integerPart = sign & digit().plus();
 
-    final noDecimalOrExponent = (char('.') | char('E') | char('e')).not();
+    final noDecimalOrExponent = (char('.') | char('E') | char('e')).not(
+      'invalid integer format',
+    );
     // The .not() combined with the integerPart ensures that it matches only
     // integers without decimal points or exponents.
     final combined = integerPart & noDecimalOrExponent;
@@ -533,7 +537,10 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// ListSeparator ::= ',' | ';'
   ///
   /// Parses a list separator, either a comma (`,`) or a semicolon (`;`).
-  Parser listSeparator() => ref1(token, ',') | ref1(token, ';');
+  Parser listSeparator() =>
+      ref1(token, ',') |
+      ref1(token, ';') |
+      FailureParser('"," or ";" expected');
 
   /// Parses one or more hidden whitespace characters or comments, used to
   /// ignore irrelevant content during tokenization.
