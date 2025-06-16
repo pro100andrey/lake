@@ -107,7 +107,7 @@ void main() {
       final result = parser.parse('');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"void" expected');
+      expect(result.message, 'return type expected');
     });
 
     test('should fail to parse partial stream type', () {

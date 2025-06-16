@@ -76,7 +76,9 @@ void main() {
       expect(t1.value, 'i32');
       expect(id2.value, 'bar');
       expect(ld2.value, '(');
+      expect(args1.length, 1);
       expect(rd2.value, ')');
+      expect(rd.value, '}');
     });
 
     test('should parse service with extends', () {

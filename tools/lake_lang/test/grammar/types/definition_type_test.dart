@@ -70,35 +70,35 @@ void main() {
       final result = parser.parse('MyType');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"uuid" expected');
+      expect(result.message, 'container or base type expected');
     });
 
     test('should fail to parse stream type', () {
       final result = parser.parse('stream<i32>');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"uuid" expected');
+      expect(result.message, 'container or base type expected');
     });
 
     test('should fail to parse empty string', () {
       final result = parser.parse('');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"uuid" expected');
+      expect(result.message, 'container or base type expected');
     });
 
     test('should fail to parse unknown type', () {
       final result = parser.parse('unknown');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"uuid" expected');
+      expect(result.message, 'container or base type expected');
     });
 
     test('should fail to parse container with missing type', () {
       final result = parser.parse('list<>');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"uuid" expected');
+      expect(result.message, 'container or base type expected');
     });
 
     test('should fail to parse container with extra characters', () {
@@ -112,14 +112,14 @@ void main() {
       final result = parser.parse('map<string bool>');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"uuid" expected');
+      expect(result.message, 'container or base type expected');
     });
 
     test('should fail to parse map with one type', () {
       final result = parser.parse('map<string>');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"uuid" expected');
+      expect(result.message, 'container or base type expected');
     });
   });
 }

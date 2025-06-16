@@ -1,6 +1,7 @@
 import 'package:lake_lang/lake_lang.dart';
 import 'package:test/test.dart';
 
+import '../../testing/matchers.dart';
 import '../_ast_helpers.dart';
 
 void main() {
@@ -10,16 +11,13 @@ void main() {
       final doc = parseAstFromString(source);
       final def = doc.definitions.first as TypedefDefinitionNode;
 
-      expect(def.span.start, 0);
-      expect(def.span.end, 18);
+      expect(def.span, hasSpan(0, 18));
 
       expect((def.type as BaseTypeNode).value, 'i32');
-      expect(def.type.span.start, 8);
-      expect(def.type.span.end, 11);
+      expect(def.type.span, hasSpan(8, 11));
 
       expect(def.identifier.value, 'MyInt');
-      expect(def.identifier.span.start, 12);
-      expect(def.identifier.span.end, 17);
+      expect(def.identifier.span, hasSpan(12, 17));
     });
 
     test('should parse typedef with List type', () {
@@ -27,21 +25,17 @@ void main() {
       final doc = parseAstFromString(source);
       final def = doc.definitions.first as TypedefDefinitionNode;
 
-      expect(def.span.start, 0);
-      expect(def.span.end, 32);
+      expect(def.span, hasSpan(0, 32));
 
       final type = def.type as ListTypeNode;
-      expect(type.span.start, 8);
-      expect(type.span.end, 20);
+      expect(type.span, hasSpan(8, 20));
 
       final itemType = type.elementType as BaseTypeNode;
       expect(itemType.value, 'string');
-      expect(itemType.span.start, 13);
-      expect(itemType.span.end, 19);
+      expect(itemType.span, hasSpan(13, 19));
 
       expect(def.identifier.value, 'StringList');
-      expect(def.identifier.span.start, 21);
-      expect(def.identifier.span.end, 31);
+      expect(def.identifier.span, hasSpan(21, 31));
     });
 
     test('should parse typedef with Map type', () {
@@ -49,50 +43,40 @@ void main() {
       final doc = parseAstFromString(source);
       final def = doc.definitions.first as TypedefDefinitionNode;
 
-      expect(def.span.start, 0);
-      expect(def.span.end, 37);
+      expect(def.span, hasSpan(0, 37));
 
       final type = def.type as MapTypeNode;
-      expect(type.span.start, 8);
-      expect(type.span.end, 24);
+      expect(type.span, hasSpan(8, 24));
 
       final keyType = type.keyType as BaseTypeNode;
       expect(keyType.value, 'string');
-      expect(keyType.span.start, 12);
-      expect(keyType.span.end, 18);
+      expect(keyType.span, hasSpan(12, 18));
 
       final valueType = type.valueType as BaseTypeNode;
       expect(valueType.value, 'i32');
-      expect(valueType.span.start, 20);
-      expect(valueType.span.end, 23);
+      expect(valueType.span, hasSpan(20, 23));
 
       expect(def.identifier.value, 'BaseMapType');
-      expect(def.identifier.span.start, 25);
-      expect(def.identifier.span.end, 36);
+      expect(def.identifier.span, hasSpan(25, 36));
     });
 
     test('should parse typedef with Set type', () {
       const source = 'typedef set<binary> BinarySet;';
       final doc = parseAstFromString(source);
 
-      expect(doc.definitions, hasLength(1));
       final def = doc.definitions.first as TypedefDefinitionNode;
 
-      expect(def.span.start, 0);
-      expect(def.span.end, 30);
+      expect(def.span, hasSpan(0, 30));
 
       final type = def.type as SetTypeNode;
-      expect(type.span.start, 8);
-      expect(type.span.end, 19);
+      expect(type.span, hasSpan(8, 19));
 
       final itemType = type.elementType as BaseTypeNode;
       expect(itemType.value, 'binary');
-      expect(itemType.span.start, 12);
-      expect(itemType.span.end, 18);
+      expect(itemType.span, hasSpan(12, 18));
 
       expect(def.identifier.value, 'BinarySet');
-      expect(def.identifier.span.start, 20);
-      expect(def.identifier.span.end, 29);
+      expect(def.identifier.span, hasSpan(20, 29));
     });
   });
 

@@ -68,7 +68,7 @@ void main() {
       final result = parser.parse('typedef MyAlias;');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"uuid" expected');
+      expect(result.message, 'container or base type expected');
     });
 
     test('should fail to parse typedef missing identifier', () {
@@ -82,7 +82,7 @@ void main() {
       final result = parser.parse('typedef unknownType Alias;');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"uuid" expected');
+      expect(result.message, 'container or base type expected');
     });
 
     test('should fail to parse typedef with invalid identifier', () {

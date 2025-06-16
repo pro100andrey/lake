@@ -1,6 +1,7 @@
 import 'package:lake_lang/lake_lang.dart';
 import 'package:test/test.dart';
 
+import '../../testing/matchers.dart';
 import '../_ast_helpers.dart';
 
 void main() {
@@ -10,13 +11,9 @@ void main() {
       final doc = parseAstFromString(source);
       final def = doc.definitions.first as EnumDefinitionNode;
 
-      expect(def.span.start, 0);
-      expect(def.span.end, 13);
-
+      expect(def.span, hasSpan(0, 13));
       expect(def.identifier.value, 'Color');
-      expect(def.identifier.span.start, 5);
-      expect(def.identifier.span.end, 10);
-
+      expect(def.identifier.span, hasSpan(5, 10));
       expect(def.members, isEmpty);
     });
 
@@ -25,12 +22,10 @@ void main() {
       final doc = parseAstFromString(source);
       final def = doc.definitions.first as EnumDefinitionNode;
 
-      expect(def.span.start, 0);
-      expect(def.span.end, 31);
+      expect(def.span, hasSpan(0, 31));
 
       expect(def.identifier.value, 'Color');
-      expect(def.identifier.span.start, 5);
-      expect(def.identifier.span.end, 10);
+      expect(def.identifier.span, hasSpan(5, 10));
 
       final [
         EnumValueNode member1,
@@ -39,18 +34,15 @@ void main() {
       ] = def.members;
 
       expect(member1.identifier.value, 'RED');
-      expect(member1.identifier.span.start, 13);
-      expect(member1.identifier.span.end, 16);
+      expect(member1.identifier.span, hasSpan(13, 16));
       expect(member1.value, isNull);
 
       expect(member2.identifier.value, 'GREEN');
-      expect(member2.identifier.span.start, 18);
-      expect(member2.identifier.span.end, 23);
+      expect(member2.identifier.span, hasSpan(18, 23));
       expect(member2.value, isNull);
 
       expect(member3.identifier.value, 'BLUE');
-      expect(member3.identifier.span.start, 25);
-      expect(member3.identifier.span.end, 29);
+      expect(member3.identifier.span, hasSpan(25, 29));
       expect(member3.value, isNull);
     });
 
@@ -59,12 +51,10 @@ void main() {
       final doc = parseAstFromString(source);
       final def = doc.definitions.first as EnumDefinitionNode;
 
-      expect(def.span.start, 0);
-      expect(def.span.end, 43);
+      expect(def.span, hasSpan(0, 43));
 
       expect(def.identifier.value, 'Color');
-      expect(def.identifier.span.start, 5);
-      expect(def.identifier.span.end, 10);
+      expect(def.identifier.span, hasSpan(5, 10));
 
       final [
         EnumValueNode member1,
@@ -73,28 +63,22 @@ void main() {
       ] = def.members;
 
       expect(member1.identifier.value, 'RED');
-      expect(member1.identifier.span.start, 13);
-      expect(member1.identifier.span.end, 16);
+      expect(member1.identifier.span, hasSpan(13, 16));
       expect(member1.value!.rawValue, '1');
       expect(member1.value!.value, 1);
-      expect(member1.value!.span.start, 19);
-      expect(member1.value!.span.end, 20);
+      expect(member1.value!.span, hasSpan(19, 20));
 
       expect(member2.identifier.value, 'GREEN');
-      expect(member2.identifier.span.start, 22);
-      expect(member2.identifier.span.end, 27);
+      expect(member2.identifier.span, hasSpan(22, 27));
       expect(member2.value!.rawValue, '2');
       expect(member2.value!.value, 2);
-      expect(member2.value!.span.start, 30);
-      expect(member2.value!.span.end, 31);
+      expect(member2.value!.span, hasSpan(30, 31));
 
       expect(member3.identifier.value, 'BLUE');
-      expect(member3.identifier.span.start, 33);
-      expect(member3.identifier.span.end, 37);
+      expect(member3.identifier.span, hasSpan(33, 37));
       expect(member3.value!.rawValue, '3');
       expect(member3.value!.value, 3);
-      expect(member3.value!.span.start, 40);
-      expect(member3.value!.span.end, 41);
+      expect(member3.value!.span, hasSpan(40, 41));
     });
 
     test('should parse enum with values using semicolon separators', () {
@@ -102,12 +86,10 @@ void main() {
       final doc = parseAstFromString(source);
       final def = doc.definitions.first as EnumDefinitionNode;
 
-      expect(def.span.start, 0);
-      expect(def.span.end, 44);
+      expect(def.span, hasSpan(0, 44));
 
       expect(def.identifier.value, 'Direction');
-      expect(def.identifier.span.start, 5);
-      expect(def.identifier.span.end, 14);
+      expect(def.identifier.span, hasSpan(5, 14));
 
       final [
         EnumValueNode member1,
@@ -117,23 +99,19 @@ void main() {
       ] = def.members;
 
       expect(member1.identifier.value, 'NORTH');
-      expect(member1.identifier.span.start, 17);
-      expect(member1.identifier.span.end, 22);
+      expect(member1.identifier.span, hasSpan(17, 22));
       expect(member1.value, isNull);
 
       expect(member2.identifier.value, 'SOUTH');
-      expect(member2.identifier.span.start, 24);
-      expect(member2.identifier.span.end, 29);
+      expect(member2.identifier.span, hasSpan(24, 29));
       expect(member2.value, isNull);
 
       expect(member3.identifier.value, 'EAST');
-      expect(member3.identifier.span.start, 31);
-      expect(member3.identifier.span.end, 35);
+      expect(member3.identifier.span, hasSpan(31, 35));
       expect(member3.value, isNull);
 
       expect(member4.identifier.value, 'WEST');
-      expect(member4.identifier.span.start, 37);
-      expect(member4.identifier.span.end, 41);
+      expect(member4.identifier.span, hasSpan(37, 41));
       expect(member4.value, isNull);
     });
 
@@ -143,12 +121,10 @@ void main() {
       final doc = parseAstFromString(source);
       final def = doc.definitions.first as EnumDefinitionNode;
 
-      expect(def.span.start, 0);
-      expect(def.span.end, 62);
+      expect(def.span, hasSpan(0, 62));
 
       expect(def.identifier.value, 'Status');
-      expect(def.identifier.span.start, 5);
-      expect(def.identifier.span.end, 11);
+      expect(def.identifier.span, hasSpan(5, 11));
 
       final [
         EnumValueNode member1,
@@ -158,30 +134,24 @@ void main() {
       ] = def.members;
 
       expect(member1.identifier.value, 'PENDING');
-      expect(member1.identifier.span.start, 14);
-      expect(member1.identifier.span.end, 21);
+      expect(member1.identifier.span, hasSpan(14, 21));
 
       expect(member1.value!.rawValue, '1');
       expect(member1.value!.value, 1);
-      expect(member1.value!.span.start, 24);
-      expect(member1.value!.span.end, 25);
+      expect(member1.value!.span, hasSpan(24, 25));
 
       expect(member2.identifier.value, 'PROCESSING');
-      expect(member2.identifier.span.start, 27);
-      expect(member2.identifier.span.end, 37);
+      expect(member2.identifier.span, hasSpan(27, 37));
       expect(member2.value, isNull);
 
       expect(member3.identifier.value, 'COMPLETED');
-      expect(member3.identifier.span.start, 39);
-      expect(member3.identifier.span.end, 48);
+      expect(member3.identifier.span, hasSpan(39, 48));
       expect(member3.value!.rawValue, '5');
       expect(member3.value!.value, 5);
-      expect(member3.value!.span.start, 51);
-      expect(member3.value!.span.end, 52);
+      expect(member3.value!.span, hasSpan(51, 52));
 
       expect(member4.identifier.value, 'FAILED');
-      expect(member4.identifier.span.start, 54);
-      expect(member4.identifier.span.end, 60);
+      expect(member4.identifier.span, hasSpan(54, 60));
       expect(member4.value, isNull);
     });
   });

@@ -1,6 +1,7 @@
 import 'package:lake_lang/lake_lang.dart';
 import 'package:test/test.dart';
 
+import '../../testing/matchers.dart';
 import '../_ast_helpers.dart';
 
 void main() {
@@ -11,16 +12,13 @@ void main() {
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
-      expect(field.span.start, 11);
-      expect(field.span.end, 21);
+      expect(field.span, hasSpan(11, 21));
 
       expect((field.type as BaseTypeNode).value, 'i32');
-      expect(field.type.span.start, 11);
-      expect(field.type.span.end, 14);
+      expect(field.type.span, hasSpan(11, 14));
 
       expect(field.identifier.value, 'count');
-      expect(field.identifier.span.start, 15);
-      expect(field.identifier.span.end, 20);
+      expect(field.identifier.span, hasSpan(15, 20));
 
       expect(field.defaultValue, isNull);
       expect(field.isRequired, isFalse);
@@ -33,22 +31,18 @@ void main() {
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
-      expect(field.span.start, 11);
-      expect(field.span.end, 24);
+      expect(field.span, hasSpan(11, 24));
 
       expect(field.fieldId, isNotNull);
       expect(field.fieldId!.rawValue, '1');
       expect(field.fieldId!.value, 1);
-      expect(field.fieldId!.span.start, 11);
-      expect(field.fieldId!.span.end, 12);
+      expect(field.fieldId!.span, hasSpan(11, 12));
 
       expect((field.type as BaseTypeNode).value, 'i32');
-      expect(field.type.span.start, 14);
-      expect(field.type.span.end, 17);
+      expect(field.type.span, hasSpan(14, 17));
 
       expect(field.identifier.value, 'count');
-      expect(field.identifier.span.start, 18);
-      expect(field.identifier.span.end, 23);
+      expect(field.identifier.span, hasSpan(18, 23));
 
       expect(field.defaultValue, isNull);
       expect(field.isRequired, isFalse);
@@ -61,28 +55,23 @@ void main() {
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
-      expect(field.span.start, 11);
-      expect(field.span.end, 35);
+      expect(field.span, hasSpan(11, 35));
 
       expect(field.fieldId, isNotNull);
       expect(field.fieldId!.rawValue, '2');
       expect(field.fieldId!.value, 2);
-      expect(field.fieldId!.span.start, 11);
-      expect(field.fieldId!.span.end, 12);
+      expect(field.fieldId!.span, hasSpan(11, 12));
 
       expect(field.isRequired, isTrue);
       expect(field.requirement, isNotNull);
       expect(field.requirement!.isRequired, isTrue);
       expect(field.requirement!.value, 'required');
-      expect(field.requirement!.span.start, 14);
-      expect(field.requirement!.span.end, 22);
+      expect(field.requirement!.span, hasSpan(14, 22));
 
       expect((field.type as BaseTypeNode).value, 'string');
-      expect(field.type.span.start, 23);
-      expect(field.type.span.end, 29);
+      expect(field.type.span, hasSpan(23, 29));
 
-      expect(field.identifier.span.start, 30);
-      expect(field.identifier.span.end, 34);
+      expect(field.identifier.span, hasSpan(30, 34));
 
       expect(field.defaultValue, isNull);
     });
@@ -93,28 +82,24 @@ void main() {
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
-      expect(field.span.start, 11);
-      expect(field.span.end, 33);
+      expect(field.span, hasSpan(11, 33));
 
       expect(field.fieldId, isNotNull);
       expect(field.fieldId!.rawValue, '3');
       expect(field.fieldId!.value, 3);
-      expect(field.fieldId!.span.start, 11);
-      expect(field.fieldId!.span.end, 12);
+      expect(field.fieldId!.span, hasSpan(11, 12));
 
       expect(field.isRequired, isFalse);
       expect(field.requirement, isNotNull);
       expect(field.requirement!.isRequired, isFalse);
       expect(field.requirement!.value, 'optional');
-      expect(field.requirement!.span.start, 14);
+      expect(field.requirement!.span, hasSpan(14, 22));
 
       expect(field.type is BaseTypeNode, isTrue);
-      expect(field.type.span.start, 23);
-      expect(field.type.span.end, 27);
+      expect(field.type.span, hasSpan(23, 27));
 
       expect(field.identifier.value, 'flag');
-      expect(field.identifier.span.start, 28);
-      expect(field.identifier.span.end, 32);
+      expect(field.identifier.span, hasSpan(28, 32));
 
       expect(field.defaultValue, isNull);
     });
@@ -125,35 +110,29 @@ void main() {
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
-      expect(field.span.start, 11);
-      expect(field.span.end, 37);
+      expect(field.span, hasSpan(11, 37));
 
       expect(field.fieldId, isNotNull);
       expect(field.fieldId!.rawValue, '1');
       expect(field.fieldId!.value, 1);
-      expect(field.fieldId!.span.start, 11);
-      expect(field.fieldId!.span.end, 12);
+      expect(field.fieldId!.span, hasSpan(11, 12));
 
       expect(field.isRequired, isFalse);
       expect(field.requirement, isNotNull);
       expect(field.requirement!.isRequired, isFalse);
       expect(field.requirement!.value, 'optional');
-      expect(field.requirement!.span.start, 14);
-      expect(field.requirement!.span.end, 22);
+      expect(field.requirement!.span, hasSpan(14, 22));
 
       expect((field.type as BaseTypeNode).value, 'i32');
-      expect(field.type.span.start, 23);
-      expect(field.type.span.end, 26);
+      expect(field.type.span, hasSpan(23, 26));
 
       expect(field.identifier.value, 'count');
-      expect(field.identifier.span.start, 27);
-      expect(field.identifier.span.end, 32);
+      expect(field.identifier.span, hasSpan(27, 32));
 
       final defaultValue = field.defaultValue! as IntConstantNode;
       expect(defaultValue.rawValue, '0');
       expect(defaultValue.value, 0);
-      expect(defaultValue.span.start, 35);
-      expect(defaultValue.span.end, 36);
+      expect(defaultValue.span, hasSpan(35, 36));
     });
 
     test('should parse field with list type', () {
@@ -162,23 +141,19 @@ void main() {
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
-      expect(field.span.start, 11);
-      expect(field.span.end, 29);
+      expect(field.span, hasSpan(11, 29));
 
       expect(field.type is ListTypeNode, isTrue);
-      expect(field.type.span.start, 11);
-      expect(field.type.span.end, 23);
+      expect(field.type.span, hasSpan(11, 23));
 
       final listType = field.type as ListTypeNode;
       final elementType = listType.elementType as BaseTypeNode;
 
       expect(elementType.value, 'string');
-      expect(elementType.span.start, 16);
-      expect(elementType.span.end, 22);
+      expect(elementType.span, hasSpan(16, 22));
 
       expect(field.identifier.value, 'tags');
-      expect(field.identifier.span.start, 24);
-      expect(field.identifier.span.end, 28);
+      expect(field.identifier.span, hasSpan(24, 28));
 
       expect(field.defaultValue, isNull);
       expect(field.isRequired, isFalse);
@@ -191,32 +166,26 @@ void main() {
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
-      expect(field.span.start, 11);
-      expect(field.span.end, 38);
+      expect(field.span, hasSpan(11, 38));
 
       expect(field.type is MapTypeNode, isTrue);
-      expect(field.type.span.start, 11);
-      expect(field.type.span.end, 27);
+      expect(field.type.span, hasSpan(11, 27));
 
       final mapType = field.type as MapTypeNode;
       expect(mapType.keyType is BaseTypeNode, isTrue);
       expect((mapType.keyType as BaseTypeNode).value, 'string');
-      expect(mapType.keyType.span.start, 15);
-      expect(mapType.keyType.span.end, 21);
+      expect(mapType.keyType.span, hasSpan(15, 21));
 
       expect(mapType.valueType is BaseTypeNode, isTrue);
       expect((mapType.valueType as BaseTypeNode).value, 'i32');
-      expect(mapType.valueType.span.start, 23);
-      expect(mapType.valueType.span.end, 26);
+      expect(mapType.valueType.span, hasSpan(23, 26));
 
       expect(field.identifier.value, 'dict');
-      expect(field.identifier.span.start, 28);
-      expect(field.identifier.span.end, 32);
+      expect(field.identifier.span, hasSpan(28, 32));
 
       expect(field.defaultValue is ConstMapNode, isTrue);
       final defaultValue = field.defaultValue! as ConstMapNode;
-      expect(defaultValue.span.start, 35);
-      expect(defaultValue.span.end, 37);
+      expect(defaultValue.span, hasSpan(35, 37));
       expect(defaultValue.entries, isEmpty);
 
       expect(field.isRequired, isFalse);
@@ -229,34 +198,27 @@ void main() {
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
-      expect(field.span.start, 11);
-      expect(field.span.end, 48);
+      expect(field.span, hasSpan(11, 48));
 
-      expect(field.type.span.start, 11);
-      expect(field.type.span.end, 39);
+      expect(field.type.span, hasSpan(11, 39));
 
       final listType = field.type as ListTypeNode;
       final mapType = listType.elementType as MapTypeNode;
-      expect(mapType.span.start, 16);
-      expect(mapType.span.end, 38);
+      expect(mapType.span, hasSpan(16, 38));
 
       final keyType = mapType.keyType as BaseTypeNode;
       expect(keyType.value, 'string');
-      expect(keyType.span.start, 20);
-      expect(keyType.span.end, 26);
+      expect(keyType.span, hasSpan(20, 26));
 
       final valueType = mapType.valueType as ListTypeNode;
-      expect(valueType.span.start, 28);
-      expect(valueType.span.end, 37);
+      expect(valueType.span, hasSpan(28, 37));
 
       final innerListType = valueType.elementType as BaseTypeNode;
       expect(innerListType.value, 'i32');
-      expect(innerListType.span.start, 33);
-      expect(innerListType.span.end, 36);
+      expect(innerListType.span, hasSpan(33, 36));
 
       expect(field.identifier.value, 'complex');
-      expect(field.identifier.span.start, 40);
-      expect(field.identifier.span.end, 47);
+      expect(field.identifier.span, hasSpan(40, 47));
 
       expect(field.defaultValue, isNull);
       expect(field.isRequired, isFalse);
@@ -269,17 +231,14 @@ void main() {
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
-      expect(field.span.start, 11);
-      expect(field.span.end, 22);
+      expect(field.span, hasSpan(11, 22));
 
       final typeNode = field.type as CustomTypeNode;
       expect(typeNode.value, 'MyType');
-      expect(typeNode.span.start, 11);
-      expect(typeNode.span.end, 17);
+      expect(typeNode.span, hasSpan(11, 17));
 
       expect(field.identifier.value, 'ref');
-      expect(field.identifier.span.start, 18);
-      expect(field.identifier.span.end, 21);
+      expect(field.identifier.span, hasSpan(18, 21));
 
       expect(field.defaultValue, isNull);
       expect(field.isRequired, isFalse);
@@ -292,35 +251,29 @@ void main() {
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
-      expect(field.span.start, 11);
-      expect(field.span.end, 38);
+      expect(field.span, hasSpan(11, 38));
 
       expect(field.fieldId, isNotNull);
       expect(field.fieldId!.rawValue, '4');
       expect(field.fieldId!.value, 4);
-      expect(field.fieldId!.span.start, 11);
-      expect(field.fieldId!.span.end, 12);
+      expect(field.fieldId!.span, hasSpan(11, 12));
 
       expect(field.isRequired, isTrue);
       expect(field.requirement, isNotNull);
       expect(field.requirement!.isRequired, isTrue);
       expect(field.requirement!.value, 'required');
-      expect(field.requirement!.span.start, 14);
-      expect(field.requirement!.span.end, 22);
+      expect(field.requirement!.span, hasSpan(14, 22));
 
       expect((field.type as BaseTypeNode).value, 'i32');
-      expect(field.type.span.start, 23);
-      expect(field.type.span.end, 26);
+      expect(field.type.span, hasSpan(23, 26));
 
       expect(field.identifier.value, 'count');
-      expect(field.identifier.span.start, 27);
-      expect(field.identifier.span.end, 32);
+      expect(field.identifier.span, hasSpan(27, 32));
 
       final defaultValue = field.defaultValue! as IntConstantNode;
       expect(defaultValue.rawValue, '10');
       expect(defaultValue.value, 10);
-      expect(defaultValue.span.start, 35);
-      expect(defaultValue.span.end, 37);
+      expect(defaultValue.span, hasSpan(35, 37));
     });
   });
 

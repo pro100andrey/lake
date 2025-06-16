@@ -1,6 +1,7 @@
 import 'package:lake_lang/lake_lang.dart';
 import 'package:test/test.dart';
 
+import '../../testing/matchers.dart';
 import '../_ast_helpers.dart';
 
 void main() {
@@ -10,15 +11,13 @@ void main() {
       final doc = parseAstFromString('struct S { $source numbers; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
+
       final fieldType = field.type as ListTypeNode;
+      expect(fieldType.span, hasSpan(11, 20));
+
       final elementType = fieldType.elementType as BaseTypeNode;
-
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 20);
-
       expect(elementType.value, 'i32');
-      expect(elementType.span.start, 16);
-      expect(elementType.span.end, 19);
+      expect(elementType.span, hasSpan(16, 19));
     });
 
     test('should parse list of custom type', () {
@@ -26,18 +25,13 @@ void main() {
       final doc = parseAstFromString('struct S { $source items; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
+
       final fieldType = field.type as ListTypeNode;
+      expect(fieldType.span, hasSpan(11, 27));
+
       final elementType = fieldType.elementType as CustomTypeNode;
-
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 27);
-
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 27);
-
       expect(elementType.value, 'CustomType');
-      expect(elementType.span.start, 16);
-      expect(elementType.span.end, 26);
+      expect(elementType.span, hasSpan(16, 26));
     });
 
     test('should parse list of nested container type (list of lists)', () {
@@ -47,17 +41,14 @@ void main() {
       final field = def.fields[0];
 
       final fieldType = field.type as ListTypeNode;
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 26);
+      expect(fieldType.span, hasSpan(11, 26));
 
       final elementType = fieldType.elementType as ListTypeNode;
-      expect(elementType.span.start, 16);
-      expect(elementType.span.end, 25);
+      expect(elementType.span, hasSpan(16, 25));
 
       final nestedType = elementType.elementType as BaseTypeNode;
       expect(nestedType.value, 'i32');
-      expect(nestedType.span.start, 21);
-      expect(nestedType.span.end, 24);
+      expect(nestedType.span, hasSpan(21, 24));
     });
 
     test('should parse list of map type', () {
@@ -67,20 +58,16 @@ void main() {
       final field = def.fields[0];
 
       final fieldType = field.type as ListTypeNode;
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 33);
+      expect(fieldType.span, hasSpan(11, 33));
 
       final elementType = fieldType.elementType as MapTypeNode;
-      expect(elementType.span.start, 16);
-      expect(elementType.span.end, 32);
+      expect(elementType.span, hasSpan(16, 32));
 
       expect(elementType.keyType, isA<BaseTypeNode>());
-      expect(elementType.keyType.span.start, 20);
-      expect(elementType.keyType.span.end, 26);
+      expect(elementType.keyType.span, hasSpan(20, 26));
 
       expect(elementType.valueType, isA<BaseTypeNode>());
-      expect(elementType.valueType.span.start, 28);
-      expect(elementType.valueType.span.end, 31);
+      expect(elementType.valueType.span, hasSpan(28, 31));
     });
 
     test('should parse list of set type', () {
@@ -90,16 +77,13 @@ void main() {
       final field = def.fields[0];
 
       final fieldType = field.type as ListTypeNode;
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 28);
+      expect(fieldType.span, hasSpan(11, 28));
 
       final elementType = fieldType.elementType as SetTypeNode;
-      expect(elementType.span.start, 16);
-      expect(elementType.span.end, 27);
+      expect(elementType.span, hasSpan(16, 27));
 
       expect(elementType.elementType, isA<BaseTypeNode>());
-      expect(elementType.elementType.span.start, 20);
-      expect(elementType.elementType.span.end, 26);
+      expect(elementType.elementType.span, hasSpan(20, 26));
     });
   });
 

@@ -1,6 +1,7 @@
 import 'package:lake_lang/lake_lang.dart';
 import 'package:test/test.dart';
 
+import '../../testing/matchers.dart';
 import '../_ast_helpers.dart';
 
 void main() {
@@ -10,15 +11,13 @@ void main() {
       final doc = parseAstFromString('struct S { $source tags; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
-      final fieldType = field.type as SetTypeNode;
 
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 22);
+      final fieldType = field.type as SetTypeNode;
+      expect(fieldType.span, hasSpan(11, 22));
 
       final elementType = fieldType.elementType as BaseTypeNode;
       expect(elementType.value, 'string');
-      expect(elementType.span.start, 15);
-      expect(elementType.span.end, 21);
+      expect(elementType.span, hasSpan(15, 21));
     });
 
     test('should parse set of custom type', () {
@@ -26,15 +25,13 @@ void main() {
       final doc = parseAstFromString('struct S { $source ids; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
-      final fieldType = field.type as SetTypeNode;
 
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 24);
+      final fieldType = field.type as SetTypeNode;
+      expect(fieldType.span, hasSpan(11, 24));
 
       final elementType = fieldType.elementType as CustomTypeNode;
       expect(elementType.value, 'UniqueId');
-      expect(elementType.span.start, 15);
-      expect(elementType.span.end, 23);
+      expect(elementType.span, hasSpan(15, 23));
     });
 
     test('should parse set of nested container type (set of lists)', () {
@@ -44,17 +41,14 @@ void main() {
       final field = def.fields[0];
 
       final fieldType = field.type as SetTypeNode;
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 25);
+      expect(fieldType.span, hasSpan(11, 25));
 
       final elementType = fieldType.elementType as ListTypeNode;
-      expect(elementType.span.start, 15);
-      expect(elementType.span.end, 24);
+      expect(elementType.span, hasSpan(15, 24));
 
       final nestedElementType = elementType.elementType as BaseTypeNode;
       expect(nestedElementType.value, 'i32');
-      expect(nestedElementType.span.start, 20);
-      expect(nestedElementType.span.end, 23);
+      expect(nestedElementType.span, hasSpan(20, 23));
     });
 
     test('should parse set of map type', () {
@@ -64,20 +58,16 @@ void main() {
       final field = def.fields[0];
 
       final fieldType = field.type as SetTypeNode;
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 32);
+      expect(fieldType.span, hasSpan(11, 32));
 
       final elementType = fieldType.elementType as MapTypeNode;
-      expect(elementType.span.start, 15);
-      expect(elementType.span.end, 31);
+      expect(elementType.span, hasSpan(15, 31));
 
       expect(elementType.keyType, isA<BaseTypeNode>());
-      expect(elementType.keyType.span.start, 19);
-      expect(elementType.keyType.span.end, 25);
+      expect(elementType.keyType.span, hasSpan(19, 25));
 
       expect(elementType.valueType, isA<BaseTypeNode>());
-      expect(elementType.valueType.span.start, 27);
-      expect(elementType.valueType.span.end, 30);
+      expect(elementType.valueType.span, hasSpan(27, 30));
     });
 
     test('should parse set of set type (nested sets)', () {
@@ -87,17 +77,14 @@ void main() {
       final field = def.fields[0];
 
       final fieldType = field.type as SetTypeNode;
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 25);
+      expect(fieldType.span, hasSpan(11, 25));
 
       final elementType = fieldType.elementType as SetTypeNode;
-      expect(elementType.span.start, 15);
-      expect(elementType.span.end, 24);
+      expect(elementType.span, hasSpan(15, 24));
 
       final nestedElementType = elementType.elementType as BaseTypeNode;
       expect(nestedElementType.value, 'bool');
-      expect(nestedElementType.span.start, 19);
-      expect(nestedElementType.span.end, 23);
+      expect(nestedElementType.span, hasSpan(19, 23));
     });
   });
 

@@ -1,6 +1,7 @@
 import 'package:lake_lang/lake_lang.dart';
 import 'package:test/test.dart';
 
+import '../../testing/matchers.dart';
 import '../_ast_helpers.dart';
 
 void main() {
@@ -12,8 +13,7 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'string');
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 17);
+      expect(fieldType.span, hasSpan(11, 17));
     });
 
     test('should parse "bool" type', () {
@@ -23,8 +23,7 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'bool');
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 15);
+      expect(fieldType.span, hasSpan(11, 15));
     });
 
     test('should parse "byte" type', () {
@@ -34,8 +33,7 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'byte');
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 15);
+      expect(fieldType.span, hasSpan(11, 15));
     });
 
     test('should parse "double" type', () {
@@ -45,8 +43,7 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'double');
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 17);
+      expect(fieldType.span, hasSpan(11, 17));
     });
 
     test('should parse "uuid" type', () {
@@ -56,8 +53,7 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'uuid');
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 15);
+      expect(fieldType.span, hasSpan(11, 15));
     });
 
     test('should parse "i8" type', () {
@@ -67,8 +63,7 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'i8');
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 13);
+      expect(fieldType.span, hasSpan(11, 13));
     });
 
     test('should parse "i16" type', () {
@@ -78,8 +73,7 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'i16');
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 14);
+      expect(fieldType.span, hasSpan(11, 14));
     });
 
     test('should parse "i32" type', () {
@@ -89,8 +83,7 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'i32');
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 14);
+      expect(fieldType.span, hasSpan(11, 14));
     });
 
     test('should parse "i64" type', () {
@@ -101,8 +94,7 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'i64');
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 14);
+      expect(fieldType.span, hasSpan(11, 14));
     });
 
     test('should parse "binary" type', () {
@@ -113,8 +105,7 @@ void main() {
       final fieldType = def.fields[0].type as BaseTypeNode;
 
       expect(fieldType.value, 'binary');
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 17);
+      expect(fieldType.span, hasSpan(11, 17));
     });
   });
 

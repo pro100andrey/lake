@@ -294,7 +294,10 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// FunctionType ::= FieldType | 'void'
   ///
   /// Parses a function return type, which can be any field type or 'void'.
-  Parser functionType() => ref0(fieldType) | ref1(token, 'void');
+  Parser functionType() =>
+      ref0(fieldType) |
+      ref1(token, 'void') |
+      FailureParser('return type expected');
 
   /// Throws ::= 'throws' '(' Field* ')'
   ///
@@ -325,25 +328,30 @@ class LakeGrammarDefinition extends GrammarDefinition {
   ///
   /// Parses a type used in a `typedef` definition, which can be a container
   /// type or a base type. Custom types (identifiers) are not allowed here.
-  Parser definitionType() => ref0(containerType) | ref0(baseType);
+  Parser definitionType() =>
+      ref0(containerType) |
+      ref0(baseType) |
+      FailureParser('container or base type expected');
 
   /// BaseType ::= 'bool' | 'byte' | 'i8' | 'i16' | 'i32' | 'i64' |
   /// 'double' | 'string' | 'binary' | 'uuid'
   ///
   /// Parses a base type, one of the predefined scalar types in the Lake
   /// language.
-  Parser baseType() => [
-    'bool',
-    'byte',
-    'i8',
-    'i16',
-    'i32',
-    'i64',
-    'double',
-    'string',
-    'binary',
-    'uuid',
-  ].map((type) => ref1(token, type)).toChoiceParser();
+  Parser baseType() =>
+      [
+        'bool',
+        'byte',
+        'i8',
+        'i16',
+        'i32',
+        'i64',
+        'double',
+        'string',
+        'binary',
+        'uuid',
+      ].map((type) => ref1(token, type)).toChoiceParser() |
+      FailureParser('base type expected');
 
   /// ContainerType ::= MapType | SetType | ListType
   ///

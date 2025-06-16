@@ -1,6 +1,7 @@
 import 'package:lake_lang/lake_lang.dart';
 import 'package:test/test.dart';
 
+import '../../testing/matchers.dart';
 import '../_ast_helpers.dart';
 
 void main() {
@@ -13,8 +14,7 @@ void main() {
 
       expect(literal.value, 'hello');
       expect(literal.rawValue, '"hello"');
-      expect(literal.span.start, 26);
-      expect(literal.span.end, 33);
+      expect(literal.span, hasSpan(26, 33));
     });
 
     test('should parse constant map literal as ConstMapNode', () {
@@ -28,14 +28,12 @@ void main() {
       final key = map.entries.first.key as LiteralNode;
       expect(key.value, 'key');
       expect(key.rawValue, '"key"');
-      expect(key.span.start, 40);
-      expect(key.span.end, 45);
+      expect(key.span, hasSpan(40, 45));
 
       final value = map.entries.first.value as LiteralNode;
       expect(value.value, 'value');
       expect(value.rawValue, '"value"');
-      expect(value.span.start, 47);
-      expect(value.span.end, 54);
+      expect(value.span, hasSpan(47, 54));
     });
   });
 

@@ -1,6 +1,7 @@
 import 'package:lake_lang/lake_lang.dart';
 import 'package:test/test.dart';
 
+import '../../testing/matchers.dart';
 import '../_ast_helpers.dart';
 
 void main() {
@@ -10,13 +11,12 @@ void main() {
       final doc = parseAstFromString('struct S { double pi = $source; }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
-      final doubleConst = field.defaultValue! as DoubleConstantNode;
 
+      final doubleConst = field.defaultValue! as DoubleConstantNode;
       expect(doubleConst, isA<DoubleConstantNode>());
       expect(doubleConst.rawValue, '3.14');
       expect(doubleConst.value, 3.14);
-      expect(doubleConst.span.start, 23);
-      expect(doubleConst.span.end, 27);
+      expect(doubleConst.span, hasSpan(23, 27));
     });
 
     test('should parse negative double with decimal part', () {
@@ -24,12 +24,11 @@ void main() {
       final doc = parseAstFromString('struct S { double val = $source; }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
-      final doubleConst = field.defaultValue! as DoubleConstantNode;
 
+      final doubleConst = field.defaultValue! as DoubleConstantNode;
       expect(doubleConst.rawValue, '-1.234');
       expect(doubleConst.value, -1.234);
-      expect(doubleConst.span.start, 24);
-      expect(doubleConst.span.end, 30);
+      expect(doubleConst.span, hasSpan(24, 30));
     });
 
     test('should parse double with exponential notation (lowercase e)', () {
@@ -37,12 +36,11 @@ void main() {
       final doc = parseAstFromString('struct S { double avogadro = $source; }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
-      final doubleConst = field.defaultValue! as DoubleConstantNode;
 
+      final doubleConst = field.defaultValue! as DoubleConstantNode;
       expect(doubleConst.rawValue, '6.022e23');
       expect(doubleConst.value, 6.022e23);
-      expect(doubleConst.span.start, 29);
-      expect(doubleConst.span.end, 37);
+      expect(doubleConst.span, hasSpan(29, 37));
     });
 
     test(
@@ -54,12 +52,11 @@ void main() {
         );
         final struct = doc.definitions.first as StructDefinitionNode;
         final field = struct.fields.first;
-        final doubleConst = field.defaultValue! as DoubleConstantNode;
 
+        final doubleConst = field.defaultValue! as DoubleConstantNode;
         expect(doubleConst.rawValue, '1.0E+5');
         expect(doubleConst.value, 100000.0);
-        expect(doubleConst.span.start, 29);
-        expect(doubleConst.span.end, 35);
+        expect(doubleConst.span, hasSpan(29, 35));
       },
     );
 
@@ -72,11 +69,10 @@ void main() {
         );
         final struct = doc.definitions.first as StructDefinitionNode;
         final field = struct.fields.first;
-        final doubleConst = field.defaultValue! as DoubleConstantNode;
 
+        final doubleConst = field.defaultValue! as DoubleConstantNode;
         expect(doubleConst.rawValue, '1.23e-4');
-        expect(doubleConst.span.start, 29);
-        expect(doubleConst.span.end, 36);
+        expect(doubleConst.span, hasSpan(29, 36));
       },
     );
 
@@ -89,11 +85,10 @@ void main() {
         );
         final struct = doc.definitions.first as StructDefinitionNode;
         final field = struct.fields.first;
-        final doubleConst = field.defaultValue! as DoubleConstantNode;
 
+        final doubleConst = field.defaultValue! as DoubleConstantNode;
         expect(doubleConst.rawValue, '5.0');
-        expect(doubleConst.span.start, 32);
-        expect(doubleConst.span.end, 35);
+        expect(doubleConst.span, hasSpan(32, 35));
       },
     );
 
@@ -106,11 +101,10 @@ void main() {
         );
         final struct = doc.definitions.first as StructDefinitionNode;
         final field = struct.fields.first;
-        final doubleConst = field.defaultValue! as DoubleConstantNode;
 
+        final doubleConst = field.defaultValue! as DoubleConstantNode;
         expect(doubleConst.rawValue, '.25');
-        expect(doubleConst.span.start, 28);
-        expect(doubleConst.span.end, 31);
+        expect(doubleConst.span, hasSpan(28, 31));
       },
     );
   });

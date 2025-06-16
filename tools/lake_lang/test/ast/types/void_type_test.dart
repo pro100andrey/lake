@@ -1,6 +1,7 @@
 import 'package:lake_lang/lake_lang.dart';
 import 'package:test/test.dart';
 
+import '../../testing/matchers.dart';
 import '../_ast_helpers.dart';
 
 void main() {
@@ -15,8 +16,7 @@ void main() {
       final returnType = fn.returnType as VoidTypeNode;
 
       expect(returnType, isA<VoidTypeNode>());
-      expect(returnType.span.start, 20);
-      expect(returnType.span.end, 24);
+      expect(returnType.span, hasSpan(20, 24));
     });
 
     test(
@@ -31,8 +31,7 @@ void main() {
         final returnType = fn.returnType as VoidTypeNode;
 
         expect(returnType, isA<VoidTypeNode>());
-        expect(returnType.span.start, 20);
-        expect(returnType.span.end, 24);
+        expect(returnType.span, hasSpan(20, 24));
       },
     );
   });

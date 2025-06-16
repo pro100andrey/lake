@@ -1,6 +1,7 @@
 import 'package:lake_lang/lake_lang.dart';
 import 'package:test/test.dart';
 
+import '../../testing/matchers.dart';
 import '../_ast_helpers.dart';
 
 void main() {
@@ -10,20 +11,17 @@ void main() {
       final doc = parseAstFromString('struct S { $source data; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
-      final fieldType = field.type as MapTypeNode;
 
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 27);
+      final fieldType = field.type as MapTypeNode;
+      expect(fieldType.span, hasSpan(11, 27));
 
       final keyType = fieldType.keyType as BaseTypeNode;
       expect(keyType.value, 'string');
-      expect(keyType.span.start, 15);
-      expect(keyType.span.end, 21);
+      expect(keyType.span, hasSpan(15, 21));
 
       final valueType = fieldType.valueType as BaseTypeNode;
       expect(valueType.value, 'i32');
-      expect(valueType.span.start, 23);
-      expect(valueType.span.end, 26);
+      expect(valueType.span, hasSpan(23, 26));
     });
 
     test('should parse map with custom types', () {
@@ -31,20 +29,17 @@ void main() {
       final doc = parseAstFromString('struct S { $source data; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
-      final fieldType = field.type as MapTypeNode;
 
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 38);
+      final fieldType = field.type as MapTypeNode;
+      expect(fieldType.span, hasSpan(11, 38));
 
       final keyType = fieldType.keyType as CustomTypeNode;
       expect(keyType.value, 'CustomKey');
-      expect(keyType.span.start, 15);
-      expect(keyType.span.end, 24);
+      expect(keyType.span, hasSpan(15, 24));
 
       final valueType = fieldType.valueType as CustomTypeNode;
       expect(valueType.value, 'CustomValue');
-      expect(valueType.span.start, 26);
-      expect(valueType.span.end, 37);
+      expect(valueType.span, hasSpan(26, 37));
     });
 
     test('should parse map with a list as value type', () {
@@ -52,24 +47,20 @@ void main() {
       final doc = parseAstFromString('struct S { $source data; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
-      final fieldType = field.type as MapTypeNode;
 
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 33);
+      final fieldType = field.type as MapTypeNode;
+      expect(fieldType.span, hasSpan(11, 33));
 
       final keyType = fieldType.keyType as BaseTypeNode;
       expect(keyType.value, 'string');
-      expect(keyType.span.start, 15);
-      expect(keyType.span.end, 21);
+      expect(keyType.span, hasSpan(15, 21));
 
       final valueType = fieldType.valueType as ListTypeNode;
-      expect(valueType.span.start, 23);
-      expect(valueType.span.end, 32);
+      expect(valueType.span, hasSpan(23, 32));
 
       final nestedElementType = valueType.elementType as BaseTypeNode;
       expect(nestedElementType.value, 'i32');
-      expect(nestedElementType.span.start, 28);
-      expect(nestedElementType.span.end, 31);
+      expect(nestedElementType.span, hasSpan(28, 31));
     });
 
     test('should parse map with nested map as value type', () {
@@ -77,29 +68,24 @@ void main() {
       final doc = parseAstFromString('struct S { $source data; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
-      final fieldType = field.type as MapTypeNode;
 
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 38);
+      final fieldType = field.type as MapTypeNode;
+      expect(fieldType.span, hasSpan(11, 38));
 
       final keyType = fieldType.keyType as BaseTypeNode;
       expect(keyType.value, 'string');
-      expect(keyType.span.start, 15);
-      expect(keyType.span.end, 21);
+      expect(keyType.span, hasSpan(15, 21));
 
       final valueType = fieldType.valueType as MapTypeNode;
-      expect(valueType.span.start, 23);
-      expect(valueType.span.end, 37);
+      expect(valueType.span, hasSpan(23, 37));
 
       final nestedKeyType = valueType.keyType as BaseTypeNode;
       expect(nestedKeyType.value, 'i32');
-      expect(nestedKeyType.span.start, 27);
-      expect(nestedKeyType.span.end, 30);
+      expect(nestedKeyType.span, hasSpan(27, 30));
 
       final nestedValueType = valueType.valueType as BaseTypeNode;
       expect(nestedValueType.value, 'bool');
-      expect(nestedValueType.span.start, 32);
-      expect(nestedValueType.span.end, 36);
+      expect(nestedValueType.span, hasSpan(32, 36));
     });
 
     test('should parse map with a set as key type', () {
@@ -107,24 +93,20 @@ void main() {
       final doc = parseAstFromString('struct S { $source data; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
-      final fieldType = field.type as MapTypeNode;
 
-      expect(fieldType.span.start, 11);
-      expect(fieldType.span.end, 32);
+      final fieldType = field.type as MapTypeNode;
+      expect(fieldType.span, hasSpan(11, 32));
 
       final keyType = fieldType.keyType as SetTypeNode;
-      expect(keyType.span.start, 15);
-      expect(keyType.span.end, 26);
+      expect(keyType.span, hasSpan(15, 26));
 
       final nestedElementType = keyType.elementType as BaseTypeNode;
       expect(nestedElementType.value, 'string');
-      expect(nestedElementType.span.start, 19);
-      expect(nestedElementType.span.end, 25);
+      expect(nestedElementType.span, hasSpan(19, 25));
 
       final valueType = fieldType.valueType as BaseTypeNode;
       expect(valueType.value, 'i32');
-      expect(valueType.span.start, 28);
-      expect(valueType.span.end, 31);
+      expect(valueType.span, hasSpan(28, 31));
     });
   });
 

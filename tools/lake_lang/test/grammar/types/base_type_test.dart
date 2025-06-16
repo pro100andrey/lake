@@ -77,14 +77,14 @@ void main() {
       final result = parser.parse('unknown');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"uuid" expected');
+      expect(result.message, 'base type expected');
     });
 
     test('should fail to parse empty string', () {
       final result = parser.parse('');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"uuid" expected');
+      expect(result.message, 'base type expected');
     });
 
     test('should fail to parse type with extra characters', () {
@@ -98,21 +98,21 @@ void main() {
       final result = parser.parse('Bool');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"uuid" expected');
+      expect(result.message, 'base type expected');
     });
 
     test('should fail to parse type with inner space', () {
       final result = parser.parse('b ool');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"uuid" expected');
+      expect(result.message, 'base type expected');
     });
 
     test('should fail to parse type with non-ascii character', () {
       final result = parser.parse('bóol');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"uuid" expected');
+      expect(result.message, 'base type expected');
     });
 
     test('should fail to parse type with separator', () {

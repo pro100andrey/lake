@@ -1,6 +1,7 @@
 import 'package:lake_lang/lake_lang.dart';
 import 'package:test/test.dart';
 
+import '../../testing/matchers.dart';
 import '../_ast_helpers.dart';
 
 void main() {
@@ -12,8 +13,7 @@ void main() {
       final fieldType = def.fields[0].type as CustomTypeNode;
 
       expect(fieldType.value, 'CustomType');
-      expect(fieldType.span.start, 14);
-      expect(fieldType.span.end, 24);
+      expect(fieldType.span, hasSpan(14, 24));
     });
 
     test('should parse custom in service', () {
@@ -25,8 +25,7 @@ void main() {
       final function1 = def.functions.first;
 
       expect((function1.returnType as CustomTypeNode).value, 'CustomType');
-      expect(function1.returnType.span.start, 20);
-      expect(function1.returnType.span.end, 30);
+      expect(function1.returnType.span, hasSpan(20, 30));
     });
   });
 

@@ -1,0 +1,116 @@
+// SECTION 1: Headers
+import "common/types.lake"
+
+namespace dart core_utils
+namespace js web_components
+
+// SECTION 2: Constants
+const i32 MAX_USERS = 1000;
+
+const string ADMIN_EMAIL = "admin@example.com";
+
+const bool DEBUG_MODE = true;
+
+const double PI = 3.14159;
+
+const binary EMPTY_BINARY = "";
+
+const uuid API_KEY_UUID = "a1b2c3d4-e5f6-7890-1234-567890abcdef";
+
+const list<i32> PRIME_NUMBERS = [2, 3, 5, 7, 11];
+
+const list<string> GREETINGS = ["Hello", "Hi", "Greetings"];
+
+const list<bool> BOOLEAN_FLAGS = [true, false];
+
+const list<list<i32>> NESTED_LIST = [[1, 2], [3]];
+
+const map<string, i32> HTTP_STATUS_CODES = {"OK": 200, "NOT_FOUND": 404};
+
+const map<i32, string> ERROR_MESSAGES = {
+    100: "Invalid Input",
+    200: "Service Unavailable"
+};
+
+const map<string, list<string>> USER_ROLES = {
+    "admin": ["create", "delete"],
+    "guest": ["read"]
+};
+
+// SECTION 3: Typedefs
+typedef i64 Timestamp;
+typedef map<string, string> StringMap;
+
+// SECTION 4: Enums
+enum LogLevel {
+    INFO,
+    WARNING = 1,
+    ERROR;
+}
+
+// SECTION 5: Structs
+struct Point {
+    1: i32 x;
+    2: i32 y;
+}
+
+struct UserProfile {
+    1: required string username;
+    2: optional string email = "user@example.com";
+    3: Timestamp lastLogin;
+    4: LogLevel currentLogLevel; // Using custom enum type
+    5: Point location; // Using custom struct type
+    6: list<string> interests = ["coding", "reading"];
+    7: map<string, string> metadata;
+}
+
+// SECTION 6: Unions
+union AnyValue {
+    1: i32 intValue;
+    2: string stringValue;
+    3: bool boolValue;
+}
+
+// SECTION 7: Exceptions
+exception InvalidArgumentException {
+    1: string argumentName;
+    2: string details;
+}
+
+// SECTION 8: Services
+service CalculatorService {
+    i32 add(1: i32 a, 2: i32 b);
+
+    double divide(
+        1: double numerator,
+        2: double denominator
+    ) throws (
+        1: InvalidArgumentException divideByZero
+    );
+    
+    void sendMessage(
+        1: string message, 
+        2: optional string recipient
+    );
+    
+    // Using custom enum type for parameter
+    stream<string> getLogs(1: LogLevel level); 
+
+    // Returns a custom struct
+    Point getPoint(1: i32 id);
+
+    // Returns a list of integers
+    list<i32> getPrimes(1: i32 count); 
+}
+
+service AdminService extends CalculatorService {
+    bool createUser(
+        1: UserProfile profile
+    ) throws (
+        1: InvalidArgumentException invalidProfile
+    );
+
+    void deleteUser(1: i32 userId);
+    
+    void shutdown();
+}

@@ -1,6 +1,7 @@
 import 'package:lake_lang/lake_lang.dart';
 import 'package:test/test.dart';
 
+import '../../testing/matchers.dart';
 import '../_ast_helpers.dart';
 
 void main() {
@@ -15,8 +16,7 @@ void main() {
       expect(intConst, isA<IntConstantNode>());
       expect(intConst.rawValue, '123');
       expect(intConst.value, 123);
-      expect(intConst.span.start, 21);
-      expect(intConst.span.end, 24);
+      expect(intConst.span, hasSpan(21, 24));
     });
 
     test('should parse a negative integer', () {
@@ -28,8 +28,7 @@ void main() {
 
       expect(intConst.rawValue, '-456');
       expect(intConst.value, -456);
-      expect(intConst.span.start, 24);
-      expect(intConst.span.end, 28);
+      expect(intConst.span, hasSpan(24, 28));
     });
 
     test('should parse zero', () {
@@ -41,8 +40,7 @@ void main() {
 
       expect(intConst.rawValue, '0');
       expect(intConst.value, 0);
-      expect(intConst.span.start, 22);
-      expect(intConst.span.end, 23);
+      expect(intConst.span, hasSpan(22, 23));
     });
 
     test('should parse a large integer', () {
@@ -54,8 +52,7 @@ void main() {
 
       expect(intConst.rawValue, '9876543210');
       expect(intConst.value, 9876543210);
-      expect(intConst.span.start, 24);
-      expect(intConst.span.end, 34);
+      expect(intConst.span, hasSpan(24, 34));
     });
   });
 
