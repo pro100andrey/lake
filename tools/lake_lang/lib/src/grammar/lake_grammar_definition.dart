@@ -523,16 +523,15 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// names.
   ///
   /// Example: `myVariable`, `_internalName`, `Namespace.Type`
-  Parser identifier() => ref1(
-    token,
-    ((ref0(letter) | char('_')).flatten() &
-            ((ref0(letter) | ref0(digit) | char('_')).star() &
-                    (char('.') &
-                            (ref0(letter) | ref0(digit) | char('_')).plus())
-                        .star())
-                .flatten())
-        .flatten(),
-  );
+  Parser identifier() {
+    final start = ref0(letter) | char('_');
+    final part = ref0(letter) | ref0(digit) | char('_');
+    final segment = start & part.star();
+    final qualifiedPart = char('.') & part.plus();
+    final fullIdentifier = (segment & qualifiedPart.star()).flatten();
+
+    return ref1(token, fullIdentifier);
+  }
 
   /// ListSeparator ::= ',' | ';'
   ///
