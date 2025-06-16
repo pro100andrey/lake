@@ -1,6 +1,6 @@
-import "my_lib"
+import "../visitors/data/my_lib"
 
-namespace js my_app;
+namespace js my_app
 
 enum Status {
     ACTIVE = 1,
@@ -26,9 +26,10 @@ exception UserNotFoundException {
 }
 
 service UserService extends BaseService {
-    User getUserById(1: i32 id) throws (1: UserNotFoundException);
+    User getUserById(1: i32 id) throws (1: UserNotFoundException userNotFound);
     void createUser(1: User newUser);
     stream<string> subscribeToUpdates();
 }
+
 
 const string APP_NAME = "MyLakeApp";

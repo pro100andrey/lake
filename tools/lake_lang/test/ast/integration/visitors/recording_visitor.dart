@@ -5,7 +5,7 @@ import 'package:lake_lang/src/ast/nodes/ast_nodes.dart';
 class RecordingVisitor extends AstVisitor<void> {
   const RecordingVisitor(this.visitedTypes);
 
-  final Set<Type> visitedTypes;
+  final List<Type> visitedTypes;
 
   @override
   void visitDocumentNode(DocumentNode node) {

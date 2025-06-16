@@ -7,7 +7,7 @@ void main() {
   group('ListType AST', () {
     test('should parse list of base type', () {
       const source = 'list<i32>';
-      final doc = parseAndGetAst('struct S { $source numbers; }');
+      final doc = parseAstFromString('struct S { $source numbers; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
       final fieldType = field.type as ListTypeNode;
@@ -23,7 +23,7 @@ void main() {
 
     test('should parse list of custom type', () {
       const source = 'list<CustomType>';
-      final doc = parseAndGetAst('struct S { $source items; }');
+      final doc = parseAstFromString('struct S { $source items; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
       final fieldType = field.type as ListTypeNode;
@@ -42,7 +42,7 @@ void main() {
 
     test('should parse list of nested container type (list of lists)', () {
       const source = 'list<list<i32>>';
-      final doc = parseAndGetAst('struct S { $source nestedLists; }');
+      final doc = parseAstFromString('struct S { $source nestedLists; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
 
@@ -62,7 +62,7 @@ void main() {
 
     test('should parse list of map type', () {
       const source = 'list<map<string, i32>>';
-      final doc = parseAndGetAst('struct S { $source data; }');
+      final doc = parseAstFromString('struct S { $source data; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
 
@@ -85,7 +85,7 @@ void main() {
 
     test('should parse list of set type', () {
       const source = 'list<set<string>>';
-      final doc = parseAndGetAst('struct S { $source tags; }');
+      final doc = parseAstFromString('struct S { $source tags; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
 
@@ -106,8 +106,8 @@ void main() {
   group('ListType AST (equality)', () {
     test('should be equal for same type', () {
       const source = 'list<CustomType>';
-      final doc1 = parseAndGetAst('struct S { $source x; }');
-      final doc2 = parseAndGetAst('struct S { $source x; }');
+      final doc1 = parseAstFromString('struct S { $source x; }');
+      final doc2 = parseAstFromString('struct S { $source x; }');
 
       expect(doc1, equals(doc2));
 
@@ -123,8 +123,8 @@ void main() {
     });
 
     test('should not be equal for different types', () {
-      final doc1 = parseAndGetAst('struct S { list<CustomType> x; }');
-      final doc2 = parseAndGetAst('struct S { list<AnotherType> y; }');
+      final doc1 = parseAstFromString('struct S { list<CustomType> x; }');
+      final doc2 = parseAstFromString('struct S { list<AnotherType> y; }');
 
       final def1 = doc1.definitions.first as StructDefinitionNode;
       final def2 = doc2.definitions.first as StructDefinitionNode;

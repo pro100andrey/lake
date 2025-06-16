@@ -7,7 +7,7 @@ void main() {
   group('UnionDefinition AST', () {
     test('should parse empty union', () {
       const source = 'union U {}';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
       final def = doc.definitions.first as UnionDefinitionNode;
 
       expect(def.span.start, 0);
@@ -22,7 +22,7 @@ void main() {
 
     test('should parse union with one field', () {
       const source = 'union U { i32 x }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
       final def = doc.definitions.first as UnionDefinitionNode;
 
       expect(def.span.start, 0);
@@ -45,7 +45,7 @@ void main() {
 
     test('should parse union with multiple fields', () {
       const source = 'union U { i32 x, string y }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -74,7 +74,7 @@ void main() {
 
     test('should parse union with fieldId and default value', () {
       const source = 'union U { 1: i32 x = 42 }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -112,7 +112,7 @@ void main() {
 
     test('should parse union with required fields', () {
       const source = 'union User { required i32 id; required string name; }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.definitions, hasLength(1));
       final def = doc.definitions.first as UnionDefinitionNode;
@@ -157,7 +157,7 @@ void main() {
     test('should parse union with optional fields', () {
       const source =
           'union Config { optional string host; optional i32 port; }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.definitions, hasLength(1));
       final def = doc.definitions.first as UnionDefinitionNode;
@@ -206,7 +206,7 @@ void main() {
           'set<uuid> uniqueIds; '
           '}';
 
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -282,8 +282,8 @@ void main() {
           'map<string, i32> scores; '
           'set<uuid> uniqueIds; '
           '}';
-      final doc1 = parseAndGetAst(source);
-      final doc2 = parseAndGetAst(source2);
+      final doc1 = parseAstFromString(source);
+      final doc2 = parseAstFromString(source2);
 
       expect(doc1, equals(doc2));
 
@@ -308,8 +308,8 @@ void main() {
           'map<string, i32> scores; '
           'set<string> uniqueIds; '
           '}';
-      final doc1 = parseAndGetAst(source1);
-      final doc2 = parseAndGetAst(source2);
+      final doc1 = parseAstFromString(source1);
+      final doc2 = parseAstFromString(source2);
 
       expect(doc1, isNot(equals(doc2)));
 

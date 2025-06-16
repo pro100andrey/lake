@@ -7,7 +7,7 @@ void main() {
   group('SetType AST', () {
     test('should parse set of base type', () {
       const source = 'set<string>';
-      final doc = parseAndGetAst('struct S { $source tags; }');
+      final doc = parseAstFromString('struct S { $source tags; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
       final fieldType = field.type as SetTypeNode;
@@ -23,7 +23,7 @@ void main() {
 
     test('should parse set of custom type', () {
       const source = 'set<UniqueId>';
-      final doc = parseAndGetAst('struct S { $source ids; }');
+      final doc = parseAstFromString('struct S { $source ids; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
       final fieldType = field.type as SetTypeNode;
@@ -39,7 +39,7 @@ void main() {
 
     test('should parse set of nested container type (set of lists)', () {
       const source = 'set<list<i32>>';
-      final doc = parseAndGetAst('struct S { $source dataSets; }');
+      final doc = parseAstFromString('struct S { $source dataSets; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
 
@@ -59,7 +59,7 @@ void main() {
 
     test('should parse set of map type', () {
       const source = 'set<map<string, i32>>';
-      final doc = parseAndGetAst('struct S { $source mapSets; }');
+      final doc = parseAstFromString('struct S { $source mapSets; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
 
@@ -82,7 +82,7 @@ void main() {
 
     test('should parse set of set type (nested sets)', () {
       const source = 'set<set<bool>>';
-      final doc = parseAndGetAst('struct S { $source boolSets; }');
+      final doc = parseAstFromString('struct S { $source boolSets; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final field = def.fields[0];
 
@@ -104,8 +104,8 @@ void main() {
   group('SetType AST (equality)', () {
     test('should be equal for same type', () {
       const source = 'set<CustomType>';
-      final doc1 = parseAndGetAst('struct S { $source x; }');
-      final doc2 = parseAndGetAst('struct S { $source x; }');
+      final doc1 = parseAstFromString('struct S { $source x; }');
+      final doc2 = parseAstFromString('struct S { $source x; }');
 
       expect(doc1, equals(doc2));
 
@@ -121,8 +121,8 @@ void main() {
     });
 
     test('should not be equal for different types', () {
-      final doc1 = parseAndGetAst('struct S { set<CustomType> x; }');
-      final doc2 = parseAndGetAst('struct S { set<AnotherType> x; }');
+      final doc1 = parseAstFromString('struct S { set<CustomType> x; }');
+      final doc2 = parseAstFromString('struct S { set<AnotherType> x; }');
 
       final def1 = doc1.definitions.first as StructDefinitionNode;
       final def2 = doc2.definitions.first as StructDefinitionNode;

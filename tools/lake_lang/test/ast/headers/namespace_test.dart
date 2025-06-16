@@ -7,7 +7,7 @@ void main() {
   group('Namespace AST', () {
     test('should parse simple namespace with *', () {
       const source = 'namespace * Foo';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.headers, hasLength(1));
 
@@ -26,7 +26,7 @@ void main() {
 
     test('should parse namespace with js scope', () {
       const source = 'namespace js example';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.headers, hasLength(1));
 
@@ -45,7 +45,7 @@ void main() {
 
     test('should parse namespace with dart scope and dotted identifier', () {
       const source = 'namespace dart com.example.api.gen';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.headers, hasLength(1));
 
@@ -64,7 +64,7 @@ void main() {
 
     test('should parse multiple namespaces', () {
       const source = 'namespace js foo\nnamespace dart bar';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.headers, hasLength(2));
 
@@ -95,7 +95,7 @@ void main() {
 
     test('should parse namespace with whitespace', () {
       const source = '  namespace   js   foo  ';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.headers, hasLength(1));
 
@@ -117,8 +117,8 @@ void main() {
     test('should be equivalent to another namespace', () {
       const source1 = 'namespace js foo';
       const source2 = 'namespace js foo';
-      final doc1 = parseAndGetAst(source1);
-      final doc2 = parseAndGetAst(source2);
+      final doc1 = parseAstFromString(source1);
+      final doc2 = parseAstFromString(source2);
 
       expect(doc1.headers, hasLength(1));
       expect(doc2.headers, hasLength(1));
@@ -134,8 +134,8 @@ void main() {
     test('should not be equivalent to different namespace', () {
       const source1 = 'namespace js foo';
       const source2 = 'namespace dart bar';
-      final doc1 = parseAndGetAst(source1);
-      final doc2 = parseAndGetAst(source2);
+      final doc1 = parseAstFromString(source1);
+      final doc2 = parseAstFromString(source2);
 
       expect(doc1.headers, hasLength(1));
       expect(doc2.headers, hasLength(1));

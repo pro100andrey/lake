@@ -7,7 +7,7 @@ void main() {
   group('Import AST', () {
     test('should parse simple import', () {
       const source = 'import "foo.lake"';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
       final import = doc.headers.first as ImportNode;
 
       expect(import.span.start, 0);
@@ -21,7 +21,7 @@ void main() {
 
     test('should parse import with single quotes', () {
       const source = "import 'bar.lake'";
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
       final import = doc.headers.first as ImportNode;
 
       expect(import.span.start, 0);
@@ -35,7 +35,7 @@ void main() {
 
     test('should parse import with whitespace', () {
       const source = '  import   "baz.lake"   ';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
       final import = doc.headers.first as ImportNode;
 
       expect(import.span.start, 2);
@@ -49,7 +49,7 @@ void main() {
 
     test('should parse multiple imports', () {
       const source = 'import "a.lake"\nimport "b.lake"';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.headers, hasLength(2));
 
@@ -74,7 +74,7 @@ void main() {
 
     test('should parse import with path containing directories', () {
       const source = 'import "../common/types/enums.lake"';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.headers, hasLength(1));
 
@@ -93,8 +93,8 @@ void main() {
     test('should be equivalent to another import', () {
       const source1 = 'import "foo.lake"';
       const source2 = 'import "foo.lake"';
-      final doc1 = parseAndGetAst(source1);
-      final doc2 = parseAndGetAst(source2);
+      final doc1 = parseAstFromString(source1);
+      final doc2 = parseAstFromString(source2);
 
       expect(doc1.headers, hasLength(1));
       expect(doc2.headers, hasLength(1));
@@ -108,8 +108,8 @@ void main() {
     test('should not be equivalent to different import', () {
       const source1 = 'import "foo.lake"';
       const source2 = 'import "bar.lake"';
-      final doc1 = parseAndGetAst(source1);
-      final doc2 = parseAndGetAst(source2);
+      final doc1 = parseAstFromString(source1);
+      final doc2 = parseAstFromString(source2);
 
       expect(doc1.headers, hasLength(1));
       expect(doc2.headers, hasLength(1));

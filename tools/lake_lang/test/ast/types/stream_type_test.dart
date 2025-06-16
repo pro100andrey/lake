@@ -6,7 +6,7 @@ import '../_ast_helpers.dart';
 void main() {
   group('StreamType AST', () {
     test('should parse stream of base type', () {
-      final doc = parseAndGetAst(
+      final doc = parseAstFromString(
         'service S { stream<i32> processNumbers(stream<i32> input); }',
       );
       final service = doc.definitions.first as ServiceDefinitionNode;
@@ -35,7 +35,7 @@ void main() {
 
     test('should parse stream of custom type', () {
       const source = 'stream<LogEntry>';
-      final doc = parseAndGetAst('service S { $source getLogs(); }');
+      final doc = parseAstFromString('service S { $source getLogs(); }');
       final service = doc.definitions.first as ServiceDefinitionNode;
       final fn = service.functions.first;
       final streamType = fn.returnType as StreamTypeNode;
@@ -51,7 +51,7 @@ void main() {
 
     test('should parse stream of nested container type (stream of lists)', () {
       const source = 'stream<list<string>>';
-      final doc = parseAndGetAst('service S { $source getBatches(); }');
+      final doc = parseAstFromString('service S { $source getBatches(); }');
       final service = doc.definitions.first as ServiceDefinitionNode;
       final fn = service.functions.first;
       final streamType = fn.returnType as StreamTypeNode;
@@ -71,7 +71,7 @@ void main() {
 
     test('should parse stream of map type', () {
       const source = 'stream<map<string, i32>>';
-      final doc = parseAndGetAst('service S { $source getMappings(); }');
+      final doc = parseAstFromString('service S { $source getMappings(); }');
       final service = doc.definitions.first as ServiceDefinitionNode;
       final fn = service.functions.first;
       final streamType = fn.returnType as StreamTypeNode;
@@ -96,8 +96,8 @@ void main() {
   group('StreamType AST (equality)', () {
     test('should be equal for same type', () {
       const source = 'stream<CustomType>';
-      final doc1 = parseAndGetAst('struct S { $source x; }');
-      final doc2 = parseAndGetAst('struct S { $source x; }');
+      final doc1 = parseAstFromString('struct S { $source x; }');
+      final doc2 = parseAstFromString('struct S { $source x; }');
 
       expect(doc1, equals(doc2));
 
@@ -113,8 +113,8 @@ void main() {
     });
 
     test('should not be equal for different types', () {
-      final doc1 = parseAndGetAst('struct S { stream<CustomType> x; }');
-      final doc2 = parseAndGetAst('struct S { stream<AnotherType> x; }');
+      final doc1 = parseAstFromString('struct S { stream<CustomType> x; }');
+      final doc2 = parseAstFromString('struct S { stream<AnotherType> x; }');
 
       final def1 = doc1.definitions.first as StructDefinitionNode;
       final def2 = doc2.definitions.first as StructDefinitionNode;

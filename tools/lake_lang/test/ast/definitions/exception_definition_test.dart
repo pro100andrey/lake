@@ -7,7 +7,7 @@ void main() {
   group('ExceptionDefinition AST (positive):', () {
     test('should parse simple exception', () {
       const source = 'exception MyException {}';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
       final def = doc.definitions.first as ExceptionDefinitionNode;
 
       expect(def.span.start, 0);
@@ -22,7 +22,7 @@ void main() {
 
     test('should parse exception with fields without field index', () {
       const source = 'exception MyException { string message; i32 code; }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
       final def = doc.definitions.first as ExceptionDefinitionNode;
 
       expect(def.span.start, 0);
@@ -61,7 +61,7 @@ void main() {
 
     test('should parse exception with fields with field index', () {
       const source = 'exception MyException {1: string message; 2: i32 code; }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
       final def = doc.definitions.first as ExceptionDefinitionNode;
 
       expect(def.span.start, 0);
@@ -112,7 +112,7 @@ void main() {
       const source =
           'exception AuthError '
           '{ required string username; required i32 code; }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
       final def = doc.definitions.first as ExceptionDefinitionNode;
 
       expect(def.span.start, 0);
@@ -157,7 +157,7 @@ void main() {
       const source =
           'exception AuthError '
           '{ optional string username; optional i32 code; }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
       final def = doc.definitions.first as ExceptionDefinitionNode;
 
       expect(def.span.start, 0);
@@ -210,8 +210,8 @@ void main() {
       const source2 =
           'exception AuthError '
           '{ required string username; required i32 code; }';
-      final doc1 = parseAndGetAst(source);
-      final doc2 = parseAndGetAst(source2);
+      final doc1 = parseAstFromString(source);
+      final doc2 = parseAstFromString(source2);
 
       final exception1 = doc1.definitions.first as ExceptionDefinitionNode;
       final exception2 = doc2.definitions.first as ExceptionDefinitionNode;
@@ -227,8 +227,8 @@ void main() {
       const source2 =
           'exception AuthError '
           '{ required string email; required i32 code; }';
-      final doc1 = parseAndGetAst(source1);
-      final doc2 = parseAndGetAst(source2);
+      final doc1 = parseAstFromString(source1);
+      final doc2 = parseAstFromString(source2);
 
       expect(doc1, isNot(equals(doc2)));
 

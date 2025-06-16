@@ -7,7 +7,7 @@ void main() {
   group('ServiceDefinition AST (positive):', () {
     test('should parse empty service', () {
       const source = 'service MyService {}';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -26,7 +26,7 @@ void main() {
 
     test('should parse service with one function', () {
       const source = 'service S { void foo(); }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -57,7 +57,7 @@ void main() {
       'should parse service with multiple functions without fieldID',
       () {
         const source = 'service S { void foo(); i32 bar(i32 x); }';
-        final doc = parseAndGetAst(source);
+        final doc = parseAstFromString(source);
 
         expect(doc.definitions, hasLength(1));
 
@@ -108,7 +108,7 @@ void main() {
 
     test('should parse service with function with fieldId', () {
       const source = 'service S { void foo(1: i32 x, 2: i32 y)}';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -168,7 +168,7 @@ void main() {
 
     test('should parse service with extends', () {
       const source = 'service S extends Base { void foo(); }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -204,7 +204,7 @@ void main() {
       () {
         const source =
             'service S { i32 foo(1: i32 x, 3: string y) throws (i32 err); }';
-        final doc = parseAndGetAst(source);
+        final doc = parseAstFromString(source);
 
         expect(doc.definitions, hasLength(1));
         final def = doc.definitions.first as ServiceDefinitionNode;
@@ -276,7 +276,7 @@ void main() {
       () {
         const source =
             'service S { i32 foo(1: i32 x, 3: string y) throws (1: i32 err); }';
-        final doc = parseAndGetAst(source);
+        final doc = parseAstFromString(source);
 
         expect(doc.definitions, hasLength(1));
         final def = doc.definitions.first as ServiceDefinitionNode;
@@ -352,7 +352,7 @@ void main() {
       () {
         const source =
             'service S { void func1(); string func2(); i32 func3(); }';
-        final doc = parseAndGetAst(source);
+        final doc = parseAstFromString(source);
 
         expect(doc.definitions, hasLength(1));
 
@@ -402,8 +402,8 @@ void main() {
     test('should be equal for identical definitions', () {
       const source = 'service AuthService { void login(); }';
       const source2 = 'service AuthService { void login(); }';
-      final doc1 = parseAndGetAst(source);
-      final doc2 = parseAndGetAst(source2);
+      final doc1 = parseAstFromString(source);
+      final doc2 = parseAstFromString(source2);
 
       expect(doc1, equals(doc2));
 
@@ -417,8 +417,8 @@ void main() {
     test('should not be equal for different definitions', () {
       const source1 = 'service AuthService { void login(); }';
       const source2 = 'service AuthService { void logout(); }';
-      final doc1 = parseAndGetAst(source1);
-      final doc2 = parseAndGetAst(source2);
+      final doc1 = parseAstFromString(source1);
+      final doc2 = parseAstFromString(source2);
 
       expect(doc1, isNot(equals(doc2)));
 

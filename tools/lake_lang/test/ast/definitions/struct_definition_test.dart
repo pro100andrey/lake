@@ -7,7 +7,7 @@ void main() {
   group('StructDefinition AST (positive):', () {
     test('should parse empty struct', () {
       const source = 'struct S {}';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -24,7 +24,7 @@ void main() {
 
     test('should parse struct with one field', () {
       const source = 'struct S { i32 x }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -50,7 +50,7 @@ void main() {
 
     test('should parse struct with multiple fields', () {
       const source = 'struct S { i32 x, string y }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -81,7 +81,7 @@ void main() {
 
     test('should parse struct with fieldId and default value', () {
       const source = 'struct S { 1: i32 x = 42 }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -121,7 +121,7 @@ void main() {
 
     test('should parse struct with required fields', () {
       const source = 'struct User { required i32 id; required string name; }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.definitions, hasLength(1));
       final def = doc.definitions.first as StructDefinitionNode;
@@ -166,7 +166,7 @@ void main() {
     test('should parse struct with optional fields', () {
       const source =
           'struct Config { optional string host; optional i32 port; }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.definitions, hasLength(1));
       final def = doc.definitions.first as StructDefinitionNode;
@@ -214,7 +214,7 @@ void main() {
           'set<uuid> uniqueIds; '
           '}';
 
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.definitions, hasLength(1));
 
@@ -264,8 +264,8 @@ void main() {
     test('should be equal for identical definitions', () {
       const source = 'struct User { string name; i32 age; }';
       const source2 = 'struct User { string name; i32 age; }';
-      final doc1 = parseAndGetAst(source);
-      final doc2 = parseAndGetAst(source2);
+      final doc1 = parseAstFromString(source);
+      final doc2 = parseAstFromString(source2);
 
       expect(doc1, equals(doc2));
 
@@ -279,8 +279,8 @@ void main() {
     test('should not be equal for different definitions', () {
       const source1 = 'struct User { string name; i32 age; }';
       const source2 = 'struct User { string email; i32 age; }';
-      final doc1 = parseAndGetAst(source1);
-      final doc2 = parseAndGetAst(source2);
+      final doc1 = parseAstFromString(source1);
+      final doc2 = parseAstFromString(source2);
 
       expect(doc1, isNot(equals(doc2)));
 

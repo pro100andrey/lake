@@ -7,7 +7,7 @@ void main() {
   group('VoidType AST', () {
     test('should parse void type when used as a function return type', () {
       const source = 'void';
-      final doc = parseAndGetAst(
+      final doc = parseAstFromString(
         'service MyService { $source doSomething(); }',
       );
       final service = doc.definitions.first as ServiceDefinitionNode;
@@ -23,7 +23,7 @@ void main() {
       'should parse void type as a function return type with parameters',
       () {
         const source = 'void';
-        final doc = parseAndGetAst(
+        final doc = parseAstFromString(
           'service MyService { $source doSomething(i32 id, string name); }',
         );
         final service = doc.definitions.first as ServiceDefinitionNode;
@@ -40,10 +40,10 @@ void main() {
   group('VoidType AST (equality)', () {
     test('should be equal for same type', () {
       const source = 'void';
-      final doc1 = parseAndGetAst(
+      final doc1 = parseAstFromString(
         'service MyService { $source doSomething(); }',
       );
-      final doc2 = parseAndGetAst(
+      final doc2 = parseAstFromString(
         'service MyService { $source doSomething(); }',
       );
 
@@ -61,8 +61,12 @@ void main() {
     });
 
     test('should not be equal for different types', () {
-      final doc1 = parseAndGetAst('service MyService { void doSomething(); }');
-      final doc2 = parseAndGetAst('service MyService { int doSomething(); }');
+      final doc1 = parseAstFromString(
+        'service MyService { void doSomething(); }',
+      );
+      final doc2 = parseAstFromString(
+        'service MyService { int doSomething(); }',
+      );
 
       final def1 = doc1.definitions.first as ServiceDefinitionNode;
       final def2 = doc2.definitions.first as ServiceDefinitionNode;

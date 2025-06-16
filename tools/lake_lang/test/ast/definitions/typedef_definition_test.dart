@@ -7,7 +7,7 @@ void main() {
   group('TypedefDefinition AST', () {
     test('should parse simple typedef with base type', () {
       const source = 'typedef i32 MyInt;';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
       final def = doc.definitions.first as TypedefDefinitionNode;
 
       expect(def.span.start, 0);
@@ -24,7 +24,7 @@ void main() {
 
     test('should parse typedef with List type', () {
       const source = 'typedef list<string> StringList;';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
       final def = doc.definitions.first as TypedefDefinitionNode;
 
       expect(def.span.start, 0);
@@ -46,7 +46,7 @@ void main() {
 
     test('should parse typedef with Map type', () {
       const source = 'typedef map<string, i32> BaseMapType;';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
       final def = doc.definitions.first as TypedefDefinitionNode;
 
       expect(def.span.start, 0);
@@ -73,7 +73,7 @@ void main() {
 
     test('should parse typedef with Set type', () {
       const source = 'typedef set<binary> BinarySet;';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
 
       expect(doc.definitions, hasLength(1));
       final def = doc.definitions.first as TypedefDefinitionNode;
@@ -100,8 +100,8 @@ void main() {
     test('should be equal for identical definitions', () {
       const source = 'typedef i32 MyInt;';
       const source2 = 'typedef i32 MyInt;';
-      final doc1 = parseAndGetAst(source);
-      final doc2 = parseAndGetAst(source2);
+      final doc1 = parseAstFromString(source);
+      final doc2 = parseAstFromString(source2);
 
       expect(doc1, equals(doc2));
 
@@ -114,8 +114,8 @@ void main() {
     test('should not be equal for different definitions', () {
       const source1 = 'typedef i32 MyInt;';
       const source2 = 'typedef i32 MyString;';
-      final doc1 = parseAndGetAst(source1);
-      final doc2 = parseAndGetAst(source2);
+      final doc1 = parseAstFromString(source1);
+      final doc2 = parseAstFromString(source2);
 
       expect(doc1, isNot(equals(doc2)));
 

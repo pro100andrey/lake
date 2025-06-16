@@ -7,7 +7,7 @@ void main() {
   group('CustomType AST', () {
     test('should parse custom type when used as a struct field', () {
       const source = 'CustomType';
-      final doc = parseAndGetAst('struct Data { $source x; }');
+      final doc = parseAstFromString('struct Data { $source x; }');
       final def = doc.definitions.first as StructDefinitionNode;
       final fieldType = def.fields[0].type as CustomTypeNode;
 
@@ -18,7 +18,9 @@ void main() {
 
     test('should parse custom in service', () {
       const source = 'CustomType';
-      final doc = parseAndGetAst('service MyService { $source getData(); }');
+      final doc = parseAstFromString(
+        'service MyService { $source getData(); }',
+      );
       final def = doc.definitions.first as ServiceDefinitionNode;
       final function1 = def.functions.first;
 
@@ -31,8 +33,8 @@ void main() {
   group('CustomType AST (equality)', () {
     test('should be equal for same type', () {
       const source = 'CustomType';
-      final doc1 = parseAndGetAst('struct S { $source x; }');
-      final doc2 = parseAndGetAst('struct S { $source x; }');
+      final doc1 = parseAstFromString('struct S { $source x; }');
+      final doc2 = parseAstFromString('struct S { $source x; }');
 
       expect(doc1, equals(doc2));
 
@@ -48,8 +50,8 @@ void main() {
     });
 
     test('should not be equal for different types', () {
-      final doc1 = parseAndGetAst('struct S { CustomType x; }');
-      final doc2 = parseAndGetAst('struct S { AnotherType x; }');
+      final doc1 = parseAstFromString('struct S { CustomType x; }');
+      final doc2 = parseAstFromString('struct S { AnotherType x; }');
 
       final def1 = doc1.definitions.first as StructDefinitionNode;
       final def2 = doc2.definitions.first as StructDefinitionNode;

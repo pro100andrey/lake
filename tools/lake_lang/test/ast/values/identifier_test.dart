@@ -7,7 +7,7 @@ void main() {
   group('Identifier AST', () {
     test('should parse a simple identifier', () {
       const source = 'myVariable';
-      final doc = parseAndGetAst('struct S { i32 $source; }');
+      final doc = parseAstFromString('struct S { i32 $source; }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
       final identifier = field.identifier;
@@ -19,7 +19,7 @@ void main() {
 
     test('should parse an identifier with underscores', () {
       const source = 'my_long_variable_name';
-      final doc = parseAndGetAst(
+      final doc = parseAstFromString(
         'service MyService { void foo(string $source); }',
       );
       final service = doc.definitions.first as ServiceDefinitionNode;
@@ -34,7 +34,7 @@ void main() {
 
     test('should parse an identifier starting with an underscore', () {
       const source = '_privateField';
-      final doc = parseAndGetAst('struct S { bool $source; }');
+      final doc = parseAstFromString('struct S { bool $source; }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
       final identifier = field.identifier;
@@ -46,7 +46,7 @@ void main() {
 
     test('should parse an identifier with numbers', () {
       const source = 'data2023';
-      final doc = parseAndGetAst('enum MyEnum { $source = 1; }');
+      final doc = parseAstFromString('enum MyEnum { $source = 1; }');
       final enumDef = doc.definitions.first as EnumDefinitionNode;
       final enumField = enumDef.members.first;
       final identifier = enumField.identifier;
@@ -58,7 +58,7 @@ void main() {
 
     test('should parse an identifier which is a keyword as part of a name', () {
       const source = 'structData';
-      final doc = parseAndGetAst('typedef i32 $source;');
+      final doc = parseAstFromString('typedef i32 $source;');
       final typedefDef = doc.definitions.first as TypedefDefinitionNode;
       final identifier = typedefDef.identifier;
 
@@ -69,7 +69,9 @@ void main() {
 
     test('should parse an identifier as a service name', () {
       const source = 'PaymentService';
-      final doc = parseAndGetAst('service $source { void processPayment(); }');
+      final doc = parseAstFromString(
+        'service $source { void processPayment(); }',
+      );
       final service = doc.definitions.first as ServiceDefinitionNode;
       final identifier = service.identifier;
 
@@ -81,7 +83,7 @@ void main() {
     // Test case for identifier used as enum name
     test('should parse an identifier as an enum name', () {
       const source = 'UserStatus';
-      final doc = parseAndGetAst('enum $source { ACTIVE, INACTIVE; }');
+      final doc = parseAstFromString('enum $source { ACTIVE, INACTIVE; }');
       final enumDef = doc.definitions.first as EnumDefinitionNode;
       final identifier = enumDef.identifier;
 
@@ -95,8 +97,8 @@ void main() {
     test('should be equatable for same identifiers', () {
       const source = 'myVariable';
       const source2 = 'myVariable';
-      final doc1 = parseAndGetAst('struct S { i32 $source; }');
-      final doc2 = parseAndGetAst('struct S { i32 $source2; }');
+      final doc1 = parseAstFromString('struct S { i32 $source; }');
+      final doc2 = parseAstFromString('struct S { i32 $source2; }');
 
       expect(doc1, equals(doc2));
 
@@ -114,8 +116,8 @@ void main() {
     test('should not be equatable for different identifiers', () {
       const source1 = 'varOne';
       const source2 = 'varTwo';
-      final doc1 = parseAndGetAst('struct S { i32 $source1; }');
-      final doc2 = parseAndGetAst('struct S { i32 $source2; }');
+      final doc1 = parseAstFromString('struct S { i32 $source1; }');
+      final doc2 = parseAstFromString('struct S { i32 $source2; }');
 
       expect(doc1, isNot(equals(doc2)));
 

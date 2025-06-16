@@ -7,7 +7,7 @@ void main() {
   group('EnumDefinition AST (positive):', () {
     test('should parse empty enum', () {
       const source = 'enum Color {}';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
       final def = doc.definitions.first as EnumDefinitionNode;
 
       expect(def.span.start, 0);
@@ -22,7 +22,7 @@ void main() {
 
     test('should parse enum with values', () {
       const source = 'enum Color { RED, GREEN, BLUE }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
       final def = doc.definitions.first as EnumDefinitionNode;
 
       expect(def.span.start, 0);
@@ -56,7 +56,7 @@ void main() {
 
     test('should parse enum with values and explicit values', () {
       const source = 'enum Color { RED = 1, GREEN = 2, BLUE = 3 }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
       final def = doc.definitions.first as EnumDefinitionNode;
 
       expect(def.span.start, 0);
@@ -99,7 +99,7 @@ void main() {
 
     test('should parse enum with values using semicolon separators', () {
       const source = 'enum Direction { NORTH; SOUTH; EAST; WEST; }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
       final def = doc.definitions.first as EnumDefinitionNode;
 
       expect(def.span.start, 0);
@@ -140,7 +140,7 @@ void main() {
     test('should parse enum with mixed explicit and implicit values', () {
       const source =
           'enum Status { PENDING = 1, PROCESSING, COMPLETED = 5, FAILED }';
-      final doc = parseAndGetAst(source);
+      final doc = parseAstFromString(source);
       final def = doc.definitions.first as EnumDefinitionNode;
 
       expect(def.span.start, 0);
@@ -190,8 +190,8 @@ void main() {
     test('should be equable for identical definitions', () {
       const source = 'enum Color { RED, GREEN, BLUE }';
       const source2 = 'enum Color { RED, GREEN, BLUE }';
-      final doc1 = parseAndGetAst(source);
-      final doc2 = parseAndGetAst(source2);
+      final doc1 = parseAstFromString(source);
+      final doc2 = parseAstFromString(source2);
 
       expect(doc1, equals(doc2));
 
@@ -205,8 +205,8 @@ void main() {
     test('should not be equable for different definitions', () {
       const source1 = 'enum Color { RED, GREEN, BLUE }';
       const source2 = 'enum Color { YELLOW, ORANGE }';
-      final doc1 = parseAndGetAst(source1);
-      final doc2 = parseAndGetAst(source2);
+      final doc1 = parseAstFromString(source1);
+      final doc2 = parseAstFromString(source2);
 
       expect(doc1, isNot(equals(doc2)));
 

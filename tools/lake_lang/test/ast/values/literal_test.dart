@@ -7,7 +7,7 @@ void main() {
   group('Literal AST', () {
     test('should parse string literal as StringConstantNode', () {
       const source = '"hello"';
-      final doc = parseAndGetAst('struct S { string field = $source; }');
+      final doc = parseAstFromString('struct S { string field = $source; }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final literal = struct.fields.first.defaultValue! as LiteralNode;
 
@@ -19,7 +19,7 @@ void main() {
 
     test('should parse constant map literal as ConstMapNode', () {
       const source = '{"key": "value"}';
-      final doc = parseAndGetAst(
+      final doc = parseAstFromString(
         'struct S { map<string, string> field = $source; }',
       );
       final struct = doc.definitions.first as StructDefinitionNode;
@@ -45,8 +45,12 @@ void main() {
       () {
         const source1 = '"hello"';
         const source2 = '"hello"';
-        final doc1 = parseAndGetAst('struct S { string field = $source1; }');
-        final doc2 = parseAndGetAst('struct S { string field = $source2; }');
+        final doc1 = parseAstFromString(
+          'struct S { string field = $source1; }',
+        );
+        final doc2 = parseAstFromString(
+          'struct S { string field = $source2; }',
+        );
 
         expect(doc1, equals(doc2));
 
@@ -67,8 +71,12 @@ void main() {
       () {
         const source1 = '"hello"';
         const source2 = '"world"';
-        final doc1 = parseAndGetAst('struct S { string field = $source1; }');
-        final doc2 = parseAndGetAst('struct S { string field = $source2; }');
+        final doc1 = parseAstFromString(
+          'struct S { string field = $source1; }',
+        );
+        final doc2 = parseAstFromString(
+          'struct S { string field = $source2; }',
+        );
 
         expect(doc1, isNot(equals(doc2)));
 

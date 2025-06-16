@@ -7,7 +7,7 @@ void main() {
   group('Field AST', () {
     test('should parse field without field id', () {
       const source = 'i32 count;';
-      final doc = parseAndGetAst('struct S { $source }');
+      final doc = parseAstFromString('struct S { $source }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
@@ -29,7 +29,7 @@ void main() {
 
     test('should parse field with field id', () {
       const source = '1: i32 count;';
-      final doc = parseAndGetAst('struct S { $source }');
+      final doc = parseAstFromString('struct S { $source }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
@@ -57,7 +57,7 @@ void main() {
 
     test('should parse required field', () {
       const source = '2: required string name;';
-      final doc = parseAndGetAst('struct S { $source }');
+      final doc = parseAstFromString('struct S { $source }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
@@ -89,7 +89,7 @@ void main() {
 
     test('should parse optional field', () {
       const source = '3: optional bool flag;';
-      final doc = parseAndGetAst('struct S { $source }');
+      final doc = parseAstFromString('struct S { $source }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
@@ -121,7 +121,7 @@ void main() {
 
     test('should parse field with default value', () {
       const source = '1: optional i32 count = 0;';
-      final doc = parseAndGetAst('struct S { $source }');
+      final doc = parseAstFromString('struct S { $source }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
@@ -158,7 +158,7 @@ void main() {
 
     test('should parse field with list type', () {
       const source = 'list<string> tags;';
-      final doc = parseAndGetAst('struct S { $source }');
+      final doc = parseAstFromString('struct S { $source }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
@@ -187,7 +187,7 @@ void main() {
 
     test('should parse field with map type and default value', () {
       const source = 'map<string, i32> dict = {};';
-      final doc = parseAndGetAst('struct S { $source }');
+      final doc = parseAstFromString('struct S { $source }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
@@ -225,7 +225,7 @@ void main() {
 
     test('should parse field with nested container type', () {
       const source = 'list<map<string, list<i32>>> complex;';
-      final doc = parseAndGetAst('struct S { $source }');
+      final doc = parseAstFromString('struct S { $source }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
@@ -265,7 +265,7 @@ void main() {
 
     test('should parse field with custom type', () {
       const source = 'MyType ref;';
-      final doc = parseAndGetAst('struct S { $source }');
+      final doc = parseAstFromString('struct S { $source }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
@@ -288,7 +288,7 @@ void main() {
 
     test('should parse field with field id, required, and default value', () {
       const source = '4: required i32 count = 10;';
-      final doc = parseAndGetAst('struct S { $source }');
+      final doc = parseAstFromString('struct S { $source }');
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
 
@@ -328,8 +328,8 @@ void main() {
     test('should be equivalent to another field', () {
       const source1 = '4: required i32 count = 10;';
       const source2 = '4: required i32 count = 10;';
-      final doc1 = parseAndGetAst('struct S { $source1 }');
-      final doc2 = parseAndGetAst('struct S { $source2 }');
+      final doc1 = parseAstFromString('struct S { $source1 }');
+      final doc2 = parseAstFromString('struct S { $source2 }');
 
       expect(doc1, equals(doc2));
 
@@ -343,8 +343,8 @@ void main() {
     test('should not be equivalent to different field', () {
       const source1 = '4: required i32 count = 10;';
       const source2 = '5: optional i32 count = 20;';
-      final doc1 = parseAndGetAst('struct S { $source1 }');
-      final doc2 = parseAndGetAst('struct S { $source2 }');
+      final doc1 = parseAstFromString('struct S { $source1 }');
+      final doc2 = parseAstFromString('struct S { $source2 }');
 
       expect(doc1, isNot(equals(doc2)));
 

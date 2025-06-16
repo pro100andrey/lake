@@ -7,7 +7,9 @@ void main() {
   group('ConstList AST', () {
     test('should parse empty constant list', () {
       const source = '[]';
-      final doc = parseAndGetAst('struct S { list<i32> numbers = $source; }');
+      final doc = parseAstFromString(
+        'struct S { list<i32> numbers = $source; }',
+      );
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
       final constList = field.defaultValue! as ConstListNode;
@@ -19,7 +21,9 @@ void main() {
 
     test('should parse constant list with integer elements', () {
       const source = '[1, 2, 3]';
-      final doc = parseAndGetAst('struct S { list<i32> numbers = $source; }');
+      final doc = parseAstFromString(
+        'struct S { list<i32> numbers = $source; }',
+      );
       final struct = doc.definitions.first as StructDefinitionNode;
       final field = struct.fields.first;
       final constList = field.defaultValue! as ConstListNode;
@@ -50,7 +54,7 @@ void main() {
 
     test('should parse constant list with string elements', () {
       const source = '["a", "b", "c"]';
-      final doc = parseAndGetAst(
+      final doc = parseAstFromString(
         'struct S { list<string> letters = $source; }',
       );
       final struct = doc.definitions.first as StructDefinitionNode;
@@ -83,7 +87,7 @@ void main() {
 
     test('should parse constant list with mixed primitive elements', () {
       const source = '[1, "two", true]';
-      final doc = parseAndGetAst(
+      final doc = parseAstFromString(
         'struct S { list<any> mixed = $source; }',
       ); // Assuming 'any' or similar for mixed types
       final struct = doc.definitions.first as StructDefinitionNode;
@@ -116,7 +120,7 @@ void main() {
 
     test('should parse constant list with nested constant list', () {
       const source = '[[1, 2], [3, 4]]';
-      final doc = parseAndGetAst(
+      final doc = parseAstFromString(
         'struct S { list<list<i32>> nested = $source; }',
       );
       final struct = doc.definitions.first as StructDefinitionNode;
@@ -163,7 +167,7 @@ void main() {
 
     test('should parse constant list with nested constant map', () {
       const source = '[{"key": 1}, {"key": 2}]';
-      final doc = parseAndGetAst(
+      final doc = parseAstFromString(
         'struct S { '
         'list<map<string, i32>> maps = $source; '
         '}',
@@ -209,8 +213,12 @@ void main() {
     test('should be equal for same constant list', () {
       const source = '[1, 2, 3]';
       const source1 = '[1, 2, 3]';
-      final doc1 = parseAndGetAst('struct S { list<i32> numbers = $source; }');
-      final doc2 = parseAndGetAst('struct S { list<i32> numbers = $source1; }');
+      final doc1 = parseAstFromString(
+        'struct S { list<i32> numbers = $source; }',
+      );
+      final doc2 = parseAstFromString(
+        'struct S { list<i32> numbers = $source1; }',
+      );
 
       expect(doc1, equals(doc2));
 
@@ -226,8 +234,12 @@ void main() {
     test('should not be equal for different constant lists', () {
       const source1 = '[1, 2, 3]';
       const source2 = '[4, 5, 6]';
-      final doc1 = parseAndGetAst('struct S { list<i32> numbers = $source1; }');
-      final doc2 = parseAndGetAst('struct S { list<i32> numbers = $source2; }');
+      final doc1 = parseAstFromString(
+        'struct S { list<i32> numbers = $source1; }',
+      );
+      final doc2 = parseAstFromString(
+        'struct S { list<i32> numbers = $source2; }',
+      );
 
       expect(doc1, isNot(equals(doc2)));
 
