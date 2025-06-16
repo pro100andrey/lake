@@ -88,7 +88,11 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   /// an [ImportNode] with the appropriate source span.
   @override
   Parser import() => super.import().map((t) {
-    final [Token keyword, LiteralNode literal] = t as List;
+    final [
+      Token keyword,
+      LiteralNode literal,
+      Token? listSeparator,
+    ] = t as List;
 
     final span = _getSpan(keyword, literal);
 
@@ -103,7 +107,9 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   Parser namespace() => super.namespace().map((t) {
     final [
       Token keyword,
-      [IdentifierNode lang, IdentifierNode identifier],
+      IdentifierNode lang,
+      IdentifierNode identifier,
+      Token? listSeparator,
     ] = t as List;
 
     final span = _getSpan(keyword, identifier);

@@ -38,7 +38,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// declaration.
   Parser header() => ref0(import) | ref0(namespace);
 
-  /// Import ::= 'import' Literal
+  /// Import ::= 'import' Literal ListSeparator?
   ///
   /// Parses an import statement, consisting of the keyword 'import' followed
   /// by a string literal.
@@ -47,9 +47,10 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// ```
   /// import "path/to/my_file";
   /// ```
-  Parser import() => ref1(token, 'import') & ref0(literal);
+  Parser import() =>
+      ref1(token, 'import') & ref0(literal) & ref0(listSeparator).optional();
 
-  /// Namespace ::= 'namespace' NamespaceScope Identifier
+  /// Namespace ::= 'namespace' NamespaceScope Identifier ListSeparator?
   ///
   /// Parses a namespace declaration, consisting of the keyword 'namespace'
   /// followed by a scope and an identifier.
@@ -59,7 +60,9 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// namespace js my_app;
   /// ```
   Parser namespace() =>
-      ref1(token, 'namespace') & (ref0(namespaceScope) & ref0(identifier));
+      ref1(token, 'namespace') &
+      ref0(namespaceScope) & ref0(identifier) &
+      ref0(listSeparator).optional();
 
   /// NamespaceScope ::= '*' | 'js' | 'dart'
   ///

@@ -20,7 +20,7 @@ void main() {
       final result = parser.parse('import "foo.lake"');
       final [
         [
-          [Token import, Token id],
+          [Token import, Token id, Token? sep],
         ],
         List definitions,
       ] = result.value as List;
@@ -28,6 +28,7 @@ void main() {
       expect(result, isA<Success>());
       expect(import.value, 'import');
       expect(id.value, '"foo.lake"');
+      expect(sep, isNull);
       expect(definitions, isEmpty);
     });
 
@@ -35,7 +36,7 @@ void main() {
       final result = parser.parse('namespace * Foo');
       final [
         [
-          [Token namespace, [Token star, Token id]],
+          [Token namespace, Token star, Token id, Token? sep],
         ],
         List definitions,
       ] = result.value as List;
@@ -44,6 +45,7 @@ void main() {
       expect(namespace.value, 'namespace');
       expect(star.value, '*');
       expect(id.value, 'Foo');
+      expect(sep, isNull);
       expect(definitions, isEmpty);
     });
 
@@ -51,8 +53,8 @@ void main() {
       final result = parser.parse('import "foo.lake"\nnamespace dart Bar');
       final [
         [
-          [Token import, Token importId],
-          [Token namespace, [Token scope, Token id]],
+          [Token import, Token importId, Token? importSep],
+          [Token namespace, Token scope, Token id, Token? namespaceSep],
         ],
         List definitions,
       ] = result.value as List;
@@ -60,9 +62,11 @@ void main() {
       expect(result, isA<Success>());
       expect(import.value, 'import');
       expect(importId.value, '"foo.lake"');
+      expect(importSep, isNull);
       expect(namespace.value, 'namespace');
       expect(scope.value, 'dart');
       expect(id.value, 'Bar');
+      expect(namespaceSep, isNull);
       expect(definitions, isEmpty);
     });
 
