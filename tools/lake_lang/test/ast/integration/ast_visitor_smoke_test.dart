@@ -10,8 +10,8 @@ void main() {
       final ast = parseAstFromFile(
         'test/ast/integration/test_data/ast_visitor_smoke_test.lake',
       );
-      final visitedTypes = <Type>[];
 
+      final visitedTypes = <Type>[];
       final recordingVisitor = RecordingVisitor(visitedTypes);
       ast.accept(recordingVisitor);
 
