@@ -524,7 +524,10 @@ class LakeGrammarDefinition extends GrammarDefinition {
   ///
   /// Example: `myVariable`, `_internalName`, `Namespace.Type`
   Parser identifier() {
-    final start = ref0(letter) | char('_');
+    final start =
+        ref0(letter) |
+        char('_') |
+        FailureParser('"letter" or "_" for start identifier expected');
     final part = ref0(letter) | ref0(digit) | char('_');
     final segment = start & part.star();
     final qualifiedPart = char('.') & part.plus();

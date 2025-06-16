@@ -76,7 +76,7 @@ void main() {
       final result = parser.parse('set<>');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"_" expected');
+      expect(result.message, '"letter" or "_" for start identifier expected');
     });
 
     test('should fail to parse set with extra characters', () {

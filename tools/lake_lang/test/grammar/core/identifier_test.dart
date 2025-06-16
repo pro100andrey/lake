@@ -93,21 +93,21 @@ void main() {
       final result = parser.parse('1foo');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"_" expected');
+      expect(result.message, '"letter" or "_" for start identifier expected');
     });
 
     test('should fail to parse identifier starting with dot', () {
       final result = parser.parse('.foo');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"_" expected');
+      expect(result.message, '"letter" or "_" for start identifier expected');
     });
 
     test('should fail to parse empty string', () {
       final result = parser.parse('');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"_" expected');
+      expect(result.message, '"letter" or "_" for start identifier expected');
     });
 
     test('should fail to parse identifier with invalid character', () {
@@ -149,7 +149,7 @@ void main() {
       final result = parser.parse('имя');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"_" expected');
+      expect(result.message, '"letter" or "_" for start identifier expected');
     });
 
     test('should fail to parse identifier with tab inside', () {

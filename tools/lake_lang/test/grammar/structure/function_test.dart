@@ -224,7 +224,7 @@ void main() {
       final result = parser.parse('void ()');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"_" expected');
+      expect(result.message, '"letter" or "_" for start identifier expected');
     });
 
     test('should fail to parse invalid argument', () {
@@ -245,7 +245,7 @@ void main() {
       final result = parser.parse('i32');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"_" expected');
+      expect(result.message, '"letter" or "_" for start identifier expected');
     });
   });
 }

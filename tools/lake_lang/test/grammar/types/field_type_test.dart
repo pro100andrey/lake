@@ -160,14 +160,14 @@ void main() {
       final result = parser.parse('');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"_" expected');
+      expect(result.message, '"letter" or "_" for start identifier expected');
     });
 
     test('should fail to parse invalid identifier', () {
       final result = parser.parse('1abc');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"_" expected');
+      expect(result.message, '"letter" or "_" for start identifier expected');
     });
 
     test('should fail to parse type with invalid characters', () {

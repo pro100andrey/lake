@@ -220,14 +220,14 @@ void main() {
       final result = parser.parse('const X = 1');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"_" expected');
+      expect(result.message, '"letter" or "_" for start identifier expected');
     });
 
     test('should fail to parse missing identifier', () {
       final result = parser.parse('const i32 = 1');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"_" expected');
+      expect(result.message, '"letter" or "_" for start identifier expected');
     });
 
     test('should fail to parse missing equal sign', () {

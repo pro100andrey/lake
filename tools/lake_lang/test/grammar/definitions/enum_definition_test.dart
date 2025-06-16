@@ -182,7 +182,7 @@ void main() {
       final result = parser.parse('enum { RED, GREEN }');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"_" expected');
+      expect(result.message, '"letter" or "_" for start identifier expected');
     });
 
     test('should fail to parse missing braces', () {

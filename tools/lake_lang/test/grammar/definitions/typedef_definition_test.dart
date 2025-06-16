@@ -75,7 +75,7 @@ void main() {
       final result = parser.parse('typedef i32 ;');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"_" expected');
+      expect(result.message, '"letter" or "_" for start identifier expected');
     });
 
     test('should fail to parse typedef with invalid type', () {
@@ -89,7 +89,7 @@ void main() {
       final result = parser.parse('typedef i32 1Alias;');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"_" expected');
+      expect(result.message, '"letter" or "_" for start identifier expected');
     });
   });
 }

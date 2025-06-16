@@ -74,14 +74,14 @@ void main() {
       final result = parser.parse('map<,bool>');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"_" expected');
+      expect(result.message, '"letter" or "_" for start identifier expected');
     });
 
     test('should fail to parse map with missing value type', () {
       final result = parser.parse('map<string,>');
 
       expect(result, isA<Failure>());
-      expect(result.message, '"_" expected');
+      expect(result.message, '"letter" or "_" for start identifier expected');
     });
 
     test('should fail to parse map with missing comma', () {
