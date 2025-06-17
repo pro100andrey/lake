@@ -18,7 +18,7 @@ void main() {
       expect(def.identifier.span, hasSpan(8, 17));
 
       expect(def.extendsService, isNull);
-      expect(def.functions, isEmpty);
+      expect(def.methods, isEmpty);
     });
 
     test('should parse service with one function', () {
@@ -33,13 +33,13 @@ void main() {
 
       expect(def.extendsService, isNull);
 
-      expect(def.functions[0].returnType, isA<VoidTypeNode>());
-      expect(def.functions[0].returnType.span, hasSpan(12, 16));
+      expect(def.methods[0].returnType, isA<VoidTypeNode>());
+      expect(def.methods[0].returnType.span, hasSpan(12, 16));
 
-      expect(def.functions[0].parameters, isEmpty);
+      expect(def.methods[0].parameters, isEmpty);
 
-      expect(def.functions[0].identifier.value, 'foo');
-      expect(def.functions[0].identifier.span, hasSpan(17, 20));
+      expect(def.methods[0].identifier.value, 'foo');
+      expect(def.methods[0].identifier.span, hasSpan(17, 20));
     });
 
     test(
@@ -56,9 +56,9 @@ void main() {
 
         expect(def.extendsService, isNull);
 
-        expect(def.functions, hasLength(2));
+        expect(def.methods, hasLength(2));
 
-        final fn1 = def.functions[0];
+        final fn1 = def.methods[0];
         expect(fn1.returnType, isA<VoidTypeNode>());
         expect(fn1.returnType.span, hasSpan(12, 16));
 
@@ -67,7 +67,7 @@ void main() {
         expect(fn1.identifier.value, 'foo');
         expect(fn1.identifier.span, hasSpan(17, 20));
 
-        final fn2 = def.functions[1];
+        final fn2 = def.methods[1];
         expect((fn2.returnType as BaseTypeNode).value, 'i32');
         expect(fn2.returnType.span, hasSpan(24, 27));
 
@@ -97,9 +97,9 @@ void main() {
 
       expect(def.extendsService, isNull);
 
-      expect(def.functions, hasLength(1));
+      expect(def.methods, hasLength(1));
 
-      final fn = def.functions[0];
+      final fn = def.methods[0];
       expect(fn.returnType, isA<VoidTypeNode>());
       expect(fn.returnType.span, hasSpan(12, 16));
 
@@ -147,9 +147,9 @@ void main() {
       expect(def.extendsService!.value, 'Base');
       expect(def.extendsService!.span, hasSpan(18, 22));
 
-      expect(def.functions, hasLength(1));
+      expect(def.methods, hasLength(1));
 
-      final fn = def.functions[0];
+      final fn = def.methods[0];
       expect(fn.returnType, isA<VoidTypeNode>());
       expect(fn.returnType.span, hasSpan(25, 29));
 
@@ -174,7 +174,7 @@ void main() {
 
         expect(def.extendsService, isNull);
 
-        final [FunctionNode fn] = def.functions;
+        final [FunctionNode fn] = def.methods;
 
         expect((fn.returnType as BaseTypeNode).value, 'i32');
         expect(fn.returnType.span, hasSpan(12, 15));
@@ -232,7 +232,7 @@ void main() {
 
         expect(def.extendsService, isNull);
 
-        final [FunctionNode fn] = def.functions;
+        final [FunctionNode fn] = def.methods;
 
         expect((fn.returnType as BaseTypeNode).value, 'i32');
         expect(fn.returnType.span, hasSpan(12, 15));
@@ -292,10 +292,10 @@ void main() {
         expect(def.identifier.span, hasSpan(8, 9));
 
         expect(def.extendsService, isNull);
-        expect(def.functions, hasLength(3));
+        expect(def.methods, hasLength(3));
 
         final [FunctionNode func1, FunctionNode func2, FunctionNode func3] =
-            def.functions;
+            def.methods;
 
         expect(func1.returnType, isA<VoidTypeNode>());
         expect(func1.returnType.span, hasSpan(12, 16));
@@ -332,7 +332,7 @@ void main() {
       final service2 = doc2.definitions.first as ServiceDefinitionNode;
 
       expect(service1, equals(service2));
-      expect(service1.functions, equals(service2.functions));
+      expect(service1.methods, equals(service2.methods));
     });
 
     test('should not be equal for different definitions', () {
@@ -347,7 +347,7 @@ void main() {
       final service2 = doc2.definitions.first as ServiceDefinitionNode;
 
       expect(service1, isNot(equals(service2)));
-      expect(service1.functions, isNot(equals(service2.functions)));
+      expect(service1.methods, isNot(equals(service2.methods)));
     });
   });
 }

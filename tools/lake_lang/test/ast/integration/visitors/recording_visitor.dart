@@ -94,7 +94,7 @@ class RecordingVisitor extends AstVisitor<void> {
     visitedTypes.add(node.runtimeType);
     node.identifier.accept(this);
     node.extendsService?.accept(this);
-    for (final f in node.functions) {
+    for (final f in node.methods) {
       f.accept(this);
     }
   }

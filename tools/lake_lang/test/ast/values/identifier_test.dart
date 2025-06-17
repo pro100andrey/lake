@@ -23,7 +23,7 @@ void main() {
         'service MyService { void foo(string $source); }',
       );
       final service = doc.definitions.first as ServiceDefinitionNode;
-      final fn = service.functions.first;
+      final fn = service.methods.first;
       final parameter = fn.parameters.first;
       final identifier = parameter.identifier;
 

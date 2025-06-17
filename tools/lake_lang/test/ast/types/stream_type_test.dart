@@ -11,7 +11,7 @@ void main() {
         'service S { stream<i32> processNumbers(stream<i32> input); }',
       );
       final service = doc.definitions.first as ServiceDefinitionNode;
-      final fn = service.functions.first;
+      final fn = service.methods.first;
 
       final returnType = fn.returnType as StreamTypeNode;
       expect(returnType.span, hasSpan(12, 23));
@@ -32,7 +32,7 @@ void main() {
       const source = 'stream<LogEntry>';
       final doc = parseAstFromString('service S { $source getLogs(); }');
       final service = doc.definitions.first as ServiceDefinitionNode;
-      final fn = service.functions.first;
+      final fn = service.methods.first;
 
       final streamType = fn.returnType as StreamTypeNode;
       expect(streamType.span, hasSpan(12, 28));
@@ -46,7 +46,7 @@ void main() {
       const source = 'stream<list<string>>';
       final doc = parseAstFromString('service S { $source getBatches(); }');
       final service = doc.definitions.first as ServiceDefinitionNode;
-      final fn = service.functions.first;
+      final fn = service.methods.first;
 
       final streamType = fn.returnType as StreamTypeNode;
       expect(streamType.span, hasSpan(12, 32));
@@ -63,7 +63,7 @@ void main() {
       const source = 'stream<map<string, i32>>';
       final doc = parseAstFromString('service S { $source getMappings(); }');
       final service = doc.definitions.first as ServiceDefinitionNode;
-      final fn = service.functions.first;
+      final fn = service.methods.first;
 
       final streamType = fn.returnType as StreamTypeNode;
       expect(streamType.span, hasSpan(12, 36));

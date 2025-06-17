@@ -183,7 +183,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
     _printNode(node);
 
     final hasExtends = node.extendsService != null;
-    final hasFunctions = node.functions.isNotEmpty;
+    final hasFunctions = node.methods.isNotEmpty;
 
     _visit(node.identifier, isLast: !hasExtends && !hasFunctions);
 
@@ -192,7 +192,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
     }
 
     if (hasFunctions) {
-      _visitList('Functions', node.functions, isLast: true);
+      _visitList('Methods', node.methods, isLast: true);
     }
   }
 

@@ -10,7 +10,7 @@ void main() {
       const source = 'void foo();';
       final doc = parseAstFromString('service Foo { $source }');
       final service = doc.definitions.first as ServiceDefinitionNode;
-      final fn = service.functions.first;
+      final fn = service.methods.first;
 
       expect(fn.span, hasSpan(14, 25));
 
@@ -27,7 +27,7 @@ void main() {
       const source = 'AddResponse add(i32 a, i32 b)';
       final doc = parseAstFromString('service Foo { $source }');
       final service = doc.definitions.first as ServiceDefinitionNode;
-      final fn = service.functions.first;
+      final fn = service.methods.first;
 
       expect(fn.span, hasSpan(14, 43));
 
@@ -64,7 +64,7 @@ void main() {
       const source = 'UsersListResponse usersList(1:i32 a, 2:i32 b)';
       final doc = parseAstFromString('service Foo { $source }');
       final service = doc.definitions.first as ServiceDefinitionNode;
-      final fn = service.functions.first;
+      final fn = service.methods.first;
 
       expect(fn.span, hasSpan(14, 59));
 
@@ -113,7 +113,7 @@ void main() {
       const source = 'void foo() throws (CustomException err)';
       final doc = parseAstFromString('service S { $source }');
       final service = doc.definitions.first as ServiceDefinitionNode;
-      final fn = service.functions.first;
+      final fn = service.methods.first;
 
       expect(fn.span, hasSpan(12, 51));
 
@@ -144,7 +144,7 @@ void main() {
       const source = 'void foo() throws (1: CustomException err)';
       final doc = parseAstFromString('service S { $source }');
       final service = doc.definitions.first as ServiceDefinitionNode;
-      final fn = service.functions.first;
+      final fn = service.methods.first;
 
       expect(fn.span, hasSpan(12, 54));
 
@@ -179,7 +179,7 @@ void main() {
           'i32 sum(1: i32 a, 2: i32 b) throws (1: CustomException err)';
       final doc = parseAstFromString('service S { $source }');
       final service = doc.definitions.first as ServiceDefinitionNode;
-      final fn = service.functions.first;
+      final fn = service.methods.first;
 
       expect(fn.span, hasSpan(12, 71));
 
@@ -238,7 +238,7 @@ void main() {
       const source = 'void streamFunc(stream<i32> s)';
       final doc = parseAstFromString('service S { $source }');
       final service = doc.definitions.first as ServiceDefinitionNode;
-      final fn = service.functions.first;
+      final fn = service.methods.first;
 
       expect(fn.span, hasSpan(12, 42));
 
@@ -271,7 +271,7 @@ void main() {
       const source = 'stream<ChatMessage> streamFunc(1: stream<ChatMessage> s)';
       final doc = parseAstFromString('service S { $source }');
       final service = doc.definitions.first as ServiceDefinitionNode;
-      final fn = service.functions.first;
+      final fn = service.methods.first;
 
       expect(fn.span, hasSpan(12, 68));
 
@@ -321,10 +321,10 @@ void main() {
       final service1 = doc1.definitions.first as ServiceDefinitionNode;
       final service2 = doc2.definitions.first as ServiceDefinitionNode;
 
-      expect(service1.functions, equals(service2.functions));
+      expect(service1.methods, equals(service2.methods));
 
-      final parameters1 = service1.functions.first.parameters;
-      final parameters2 = service2.functions.first.parameters;
+      final parameters1 = service1.methods.first.parameters;
+      final parameters2 = service2.methods.first.parameters;
 
       expect(parameters1, equals(parameters2));
     });
@@ -339,10 +339,10 @@ void main() {
       final service1 = doc1.definitions.first as ServiceDefinitionNode;
       final service2 = doc2.definitions.first as ServiceDefinitionNode;
 
-      expect(service1.functions, isNot(equals(service2.functions)));
+      expect(service1.methods, isNot(equals(service2.methods)));
 
-      final parameters1 = service1.functions.first.parameters;
-      final parameters2 = service2.functions.first.parameters;
+      final parameters1 = service1.methods.first.parameters;
+      final parameters2 = service2.methods.first.parameters;
 
       expect(parameters1, isNot(equals(parameters2)));
     });

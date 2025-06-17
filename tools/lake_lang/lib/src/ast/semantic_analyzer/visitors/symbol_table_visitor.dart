@@ -255,7 +255,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
     // This is an IdentifierNode, no symbol added for it here.
     node.extendsService?.accept(this);
 
-    for (final method in node.functions) {
+    for (final method in node.methods) {
       method.accept(this);
     }
 

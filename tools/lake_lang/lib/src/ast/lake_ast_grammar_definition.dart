@@ -573,7 +573,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   /// [ServiceDefinitionNode].
   ///
   /// Processes a service definition, including its optional 'extends' clause
-  /// and list of functions, creating a [ServiceDefinitionNode].
+  /// and list of methods, creating a [ServiceDefinitionNode].
   @override
   Parser serviceDefinition() => super.serviceDefinition().map((t) {
     final [
@@ -593,12 +593,12 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     };
 
     final span = _getSpan(keyword, rd);
-    final functionsList = functions.cast<FunctionNode>();
+    final methods = functions.cast<FunctionNode>();
 
     return ServiceDefinitionNode(
       identifier: identifier,
       extendsService: extendsService,
-      functions: functionsList,
+      methods: methods,
       span: span,
     );
   });

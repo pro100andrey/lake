@@ -278,11 +278,11 @@ final class ExceptionDefinitionNode extends DefinitionNode {
 /// Represents a service definition in the Lake language.
 final class ServiceDefinitionNode extends DefinitionNode {
   /// Creates a [ServiceDefinitionNode] with the given [identifier], optional
-  /// [extendsService], [functions], and [span].
+  /// [extendsService], [methods], and [span].
   const ServiceDefinitionNode({
     required this.identifier,
     required this.extendsService,
-    required this.functions,
+    required this.methods,
     required super.span,
   });
 
@@ -293,14 +293,14 @@ final class ServiceDefinitionNode extends DefinitionNode {
   final IdentifierNode? extendsService;
 
   /// The list of function nodes defined in the service.
-  final List<FunctionNode> functions;
+  final List<FunctionNode> methods;
 
   @override
   T accept<T>(AstVisitor<T> visitor) =>
       visitor.visitServiceDefinitionNode(this);
 
   @override
-  List<Object?> get props => [identifier, extendsService, functions, span];
+  List<Object?> get props => [identifier, extendsService, methods, span];
 }
 
 /// Represents the requirement (e.g., required/optional) of a field.
@@ -693,4 +693,9 @@ final class IdentifierNode extends ConstValueNode {
 
   @override
   List<Object?> get props => [value, span];
+}
+
+/// Extension methods for casting AST nodes to specific types.
+extension AstNodeCastExtension on AstNode {
+  T cast<T extends AstNode>() => this as T;
 }

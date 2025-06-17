@@ -22,7 +22,7 @@ void main() {
         'service MyService { $source getData(); }',
       );
       final def = doc.definitions.first as ServiceDefinitionNode;
-      final function1 = def.functions.first;
+      final function1 = def.methods.first;
 
       expect((function1.returnType as CustomTypeNode).value, 'CustomType');
       expect(function1.returnType.span, hasSpan(20, 30));

@@ -41,11 +41,11 @@ class HasSpan extends Matcher {
         .addDescriptionOf(item.start)
         .add(' and ending at ')
         .addDescriptionOf(item.end)
-        .add(' (expected: start ')
+        .add('\n')
+        .add('expected: start ')
         .addDescriptionOf(expectedStart)
         .add(', end ')
-        .addDescriptionOf(expectedEnd)
-        .add(')');
+        .addDescriptionOf(expectedEnd);
   }
 }
 

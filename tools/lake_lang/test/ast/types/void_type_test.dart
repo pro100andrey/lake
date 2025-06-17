@@ -12,7 +12,7 @@ void main() {
         'service MyService { $source doSomething(); }',
       );
       final service = doc.definitions.first as ServiceDefinitionNode;
-      final fn = service.functions.first;
+      final fn = service.methods.first;
       final returnType = fn.returnType as VoidTypeNode;
 
       expect(returnType, isA<VoidTypeNode>());
@@ -27,7 +27,7 @@ void main() {
           'service MyService { $source doSomething(i32 id, string name); }',
         );
         final service = doc.definitions.first as ServiceDefinitionNode;
-        final fn = service.functions.first;
+        final fn = service.methods.first;
         final returnType = fn.returnType as VoidTypeNode;
 
         expect(returnType, isA<VoidTypeNode>());
@@ -53,8 +53,8 @@ void main() {
 
       expect(service1, equals(service2));
 
-      final fn1 = service1.functions.first;
-      final fn2 = service2.functions.first;
+      final fn1 = service1.methods.first;
+      final fn2 = service2.methods.first;
 
       expect(fn1.returnType, equals(fn2.returnType));
     });
@@ -72,8 +72,8 @@ void main() {
 
       expect(def1, isNot(equals(def2)));
 
-      final fn1 = def1.functions.first;
-      final fn2 = def2.functions.first;
+      final fn1 = def1.methods.first;
+      final fn2 = def2.methods.first;
 
       expect(fn1.returnType, isNot(equals(fn2.returnType)));
     });
