@@ -2,7 +2,7 @@
 
 import 'package:source_span/source_span.dart';
 
-import '../../base/types.dart';
+import '../../ast/base/types.dart';
 import 'semantic_error.dart';
 
 /// A class responsible for collecting and reporting diagnostic messages.

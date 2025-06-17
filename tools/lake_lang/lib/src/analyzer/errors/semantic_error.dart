@@ -1,6 +1,6 @@
 import 'package:source_span/source_span.dart';
 
-import '../../base/types.dart';
+import '../../ast/base/types.dart';
 
 /// Represents an additional label for a specific part of the code
 /// that provides context to a diagnostic message.

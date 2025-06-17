@@ -1,5 +1,5 @@
-import '../../ast_visitor.dart';
-import '../../nodes/ast_nodes.dart';
+import '../../ast/ast_visitor.dart';
+import '../../ast/nodes/ast_nodes.dart';
 import '../errors/error_reporter.dart';
 import '../rules/base_rule.dart';
 import '../rules/declaration/const_assignment_type_rule.dart';

@@ -1,4 +1,4 @@
-import '../../../nodes/ast_nodes.dart';
+import '../../../ast/nodes/ast_nodes.dart';
 import '../../symbols/symbol_table.dart';
 import '../base_rule.dart';
 

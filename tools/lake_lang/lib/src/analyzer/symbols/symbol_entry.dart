@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
-import '../../base/types.dart';
-import '../../nodes/ast_nodes.dart';
+import '../../ast/base/types.dart';
+import '../../ast/nodes/ast_nodes.dart';
 import '../semantic_types.dart';
 
 enum SymbolKind {

@@ -1,5 +1,5 @@
-import '../../base/types.dart';
-import '../../nodes/ast_nodes.dart';
+import '../../ast/base/types.dart';
+import '../../ast/nodes/ast_nodes.dart';
 import '../errors/error_reporter.dart';
 import '../semantic_types.dart';
 import 'symbol_entry.dart';

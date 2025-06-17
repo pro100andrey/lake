@@ -1,4 +1,4 @@
-import '../../nodes/ast_nodes.dart';
+import '../../ast/nodes/ast_nodes.dart';
 
 /// Helper function to get a string representation of a [TypeNode].
 String getTypeName(TypeNode type) => switch (type) {

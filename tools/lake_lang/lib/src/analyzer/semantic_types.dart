@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../nodes/ast_nodes.dart';
+import '../ast/nodes/ast_nodes.dart';
 
 sealed class SemanticType extends Equatable {
   const SemanticType(this.name);
