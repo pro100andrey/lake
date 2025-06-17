@@ -13,6 +13,10 @@ sealed class SemanticType extends Equatable {
   bool isAssignableTo(SemanticType other);
 }
 
+extension SemanticTypesCastExtension on SemanticType {
+  T cast<T extends SemanticType>() => this as T;
+}
+
 final class BaseType extends SemanticType {
   const BaseType(super.name);
 
@@ -261,28 +265,49 @@ final class EnumType extends SemanticType {
   }
 }
 
+final class LazyBox<T extends SemanticType> {
+  LazyBox();
+
+  T? _value;
+
+  set value(T newValue) {
+    if (_value != null) {
+      throw StateError('Value is already set for $T');
+    }
+
+    _value = newValue;
+  }
+
+  T get value {
+    if (_value == null) {
+      throw StateError('Value is not set for $T');
+    }
+
+    return _value!;
+  }
+}
+
 final class TypedefType extends SemanticType {
-  TypedefType(this.declaration) : super(declaration.identifier.value);
+  TypedefType(this.declaration)
+    : _targetType = LazyBox(),
+      super(declaration.identifier.value);
 
   final TypedefDefinitionNode declaration;
 
-  late final SemanticType? _targetType;
+  final LazyBox<SemanticType> _targetType;
 
-  SemanticType get targetType => _targetType!;
+  SemanticType get targetType => _targetType.value;
 
   @override
   List<Object?> get props => [...super.props, declaration];
 
-  void setTargetType(SemanticType targetType) {
-    if (_targetType != null) {
-      throw StateError('Target type is already set for $name');
-    }
-
-    _targetType = targetType;
+  set targetType(SemanticType targetType) {
+    _targetType.value = targetType;
   }
 
   @override
-  bool isAssignableTo(SemanticType other) => _targetType!.isAssignableTo(other);
+  bool isAssignableTo(SemanticType other) =>
+      _targetType.value.isAssignableTo(other);
 }
 
 final class ServiceType extends SemanticType {

@@ -2,13 +2,21 @@ import '../../ast/ast_visitor.dart';
 import '../../ast/nodes/ast_nodes.dart';
 import '../errors/error_reporter.dart';
 import '../rules/base_rule.dart';
+import '../rules/type_checking/const_identifier_resolution_rule.dart';
 import '../semantic_types.dart';
 import '../symbols/symbol_table.dart';
 import '../utils.dart';
 
 class TypeCheckingVisitor implements AstVisitor<void> {
   TypeCheckingVisitor(this._symbolTable, this._reporter)
-    : _ruleDispatcher = RuleDispatcher();
+    : _ruleDispatcher = RuleDispatcher() {
+    _ruleDispatcher.addRule<ConstDefinitionNode>(
+      ConstIdentifierResolutionRule(
+        reporter: _reporter,
+        symbolTable: _symbolTable,
+      ),
+    );
+  }
 
   final SymbolTable _symbolTable;
   final ErrorReporter _reporter;
@@ -40,10 +48,10 @@ class TypeCheckingVisitor implements AstVisitor<void> {
 
   @override
   void visitConstDefinitionNode(ConstDefinitionNode node) {
-    _ruleDispatcher.applyRules(node);
-
     node.type.accept(this);
     node.value.accept(this);
+
+    _ruleDispatcher.applyRules(node);
   }
 
   @override
@@ -53,11 +61,13 @@ class TypeCheckingVisitor implements AstVisitor<void> {
     node.type.accept(this);
 
     final entry = _symbolTable.lookup(node.identifier.value, node.span);
+
     if (entry != null && entry.resolvedType is TypedefType) {
+      final typedefSemanticType = entry.resolvedType!.cast<TypedefType>();
       final targetType = getSemanticType(node.type, _reporter, _symbolTable);
 
       if (targetType != null) {
-        // entry.resolvedType.setTargetType(targetType);
+        typedefSemanticType.targetType = targetType;
       }
     }
   }
@@ -69,25 +79,75 @@ class TypeCheckingVisitor implements AstVisitor<void> {
   void visitEnumValueNode(EnumValueNode node) {}
 
   @override
-  void visitStructDefinitionNode(StructDefinitionNode node) {}
+  void visitStructDefinitionNode(StructDefinitionNode node) {
+    _ruleDispatcher.applyRules(node);
+
+    for (final field in node.fields) {
+      field.accept(this);
+    }
+  }
 
   @override
-  void visitUnionDefinitionNode(UnionDefinitionNode node) {}
+  void visitUnionDefinitionNode(UnionDefinitionNode node) {
+    _ruleDispatcher.applyRules(node);
+  }
 
   @override
-  void visitExceptionDefinitionNode(ExceptionDefinitionNode node) {}
+  void visitExceptionDefinitionNode(ExceptionDefinitionNode node) {
+    _ruleDispatcher.applyRules(node);
+  }
 
   @override
-  void visitServiceDefinitionNode(ServiceDefinitionNode node) {}
+  void visitServiceDefinitionNode(ServiceDefinitionNode node) {
+    _ruleDispatcher.applyRules(node);
+  }
 
   @override
-  void visitFieldRequirementNode(FieldRequirementNode node) {}
+  void visitFieldRequirementNode(FieldRequirementNode node) {
+    _ruleDispatcher.applyRules(node);
+  }
 
   @override
-  void visitFieldNode(FieldNode node) {}
+  void visitFieldNode(FieldNode node) {
+    _ruleDispatcher.applyRules(node);
+
+    final fieldSemanticType = getSemanticType(
+      node.type,
+      _reporter,
+      _symbolTable,
+    );
+
+    if (node.defaultValue != null && fieldSemanticType != null) {
+      final defaultValueSemanticType = getConstantValueSemanticType(
+        node.defaultValue!,
+        _reporter,
+        _symbolTable,
+      );
+
+      if (defaultValueSemanticType != null) {
+        if (!defaultValueSemanticType.isAssignableTo(fieldSemanticType)) {
+          _reporter.reportConstValueCannotBeAssigned(
+            constTypeName: fieldSemanticType.name,
+            valueKindName: 'default value',
+            valueTypeName: defaultValueSemanticType.name,
+            valueSpan: node.defaultValue!.span,
+            constTypeSpan: node.type.span,
+          );
+        }
+      }
+    }
+
+    node.type.accept(this);
+  }
 
   @override
-  void visitFunctionNode(FunctionNode node) {}
+  void visitFunctionNode(FunctionNode node) {
+    _ruleDispatcher.applyRules(node);
+
+    for (final parameter in node.parameters) {
+      parameter.accept(this);
+    }
+  }
 
   // Type nodes
 
@@ -138,23 +198,42 @@ class TypeCheckingVisitor implements AstVisitor<void> {
   // Constant value nodes
 
   @override
-  void visitIntConstantNode(IntConstantNode node) {}
+  void visitIntConstantNode(IntConstantNode node) {
+    _ruleDispatcher.applyRules(node);
+  }
 
   @override
-  void visitDoubleConstantNode(DoubleConstantNode node) {}
+  void visitDoubleConstantNode(DoubleConstantNode node) {
+    _ruleDispatcher.applyRules(node);
+  }
 
   @override
-  void visitBoolConstantNode(BoolConstantNode node) {}
+  void visitBoolConstantNode(BoolConstantNode node) {
+    _ruleDispatcher.applyRules(node);
+  }
 
   @override
-  void visitLiteralNode(LiteralNode node) {}
+  void visitLiteralNode(LiteralNode node) {
+    _ruleDispatcher.applyRules(node);
+  }
 
   @override
-  void visitIdentifierNode(IdentifierNode node) {}
+  void visitIdentifierNode(IdentifierNode node) {
+    _ruleDispatcher.applyRules(node);
+  }
 
   @override
-  void visitConstListNode(ConstListNode node) {}
+  void visitConstListNode(ConstListNode node) {
+    _ruleDispatcher.applyRules(node);
+  }
 
   @override
-  void visitConstMapNode(ConstMapNode node) {}
+  void visitConstMapNode(ConstMapNode node) {
+    _ruleDispatcher.applyRules(node);
+
+    for (final entry in node.entries) {
+      entry.key.accept(this);
+      entry.value.accept(this);
+    }
+  }
 }

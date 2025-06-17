@@ -11,6 +11,7 @@ import '../rules/declaration/required_field_rule.dart';
 import '../semantic_types.dart';
 import '../symbols/symbol_entry.dart';
 import '../symbols/symbol_table.dart';
+import '../utils.dart';
 
 class SymbolTableVisitor extends AstVisitor<void> {
   SymbolTableVisitor(this._symbolTable, this._reporter)
@@ -83,14 +84,18 @@ class SymbolTableVisitor extends AstVisitor<void> {
   void visitConstDefinitionNode(ConstDefinitionNode node) {
     _ruleDispatcher.applyRules(node);
 
-    // Add the constant identifier to the current scope.
-    // The `resolvedType` can be null for now; TypeCheckingVisitor will set it.
+    final declaredSemanticType = getSemanticType(
+      node.type,
+      _reporter,
+      _symbolTable,
+    );
+
     _symbolTable.addSymbol(
       name: node.identifier.value,
       kind: SymbolKind.constant,
-      span: node.span,
       declaration: node,
-      resolvedType: null, // Initial type can be null or a placeholder
+      span: node.span,
+      resolvedType: declaredSemanticType,
     );
 
     // Continue visiting children to ensure all parts of the AST are covered
@@ -115,6 +120,8 @@ class SymbolTableVisitor extends AstVisitor<void> {
     // Visit the aliased type. Its resolution will happen in the
     // TypeCheckingVisitor.
     node.type.accept(this);
+
+    
   }
 
   @override
