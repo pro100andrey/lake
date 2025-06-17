@@ -9,12 +9,12 @@ void main() {
     test('should parse field without field id', () {
       const source = 'i32 count;';
       final doc = parseAstFromString('struct S { $source }');
-      final struct = doc.definitions.first as StructDefinitionNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
       expect(field.span, hasSpan(11, 21));
 
-      expect((field.type as BaseTypeNode).value, 'i32');
+      expect(field.type.cast<BaseTypeNode>().value, 'i32');
       expect(field.type.span, hasSpan(11, 14));
 
       expect(field.identifier.value, 'count');
@@ -28,7 +28,7 @@ void main() {
     test('should parse field with field id', () {
       const source = '1: i32 count;';
       final doc = parseAstFromString('struct S { $source }');
-      final struct = doc.definitions.first as StructDefinitionNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
       expect(field.span, hasSpan(11, 24));
@@ -38,7 +38,7 @@ void main() {
       expect(field.fieldId!.value, 1);
       expect(field.fieldId!.span, hasSpan(11, 12));
 
-      expect((field.type as BaseTypeNode).value, 'i32');
+      expect(field.type.cast<BaseTypeNode>().value, 'i32');
       expect(field.type.span, hasSpan(14, 17));
 
       expect(field.identifier.value, 'count');
@@ -52,7 +52,7 @@ void main() {
     test('should parse required field', () {
       const source = '2: required string name;';
       final doc = parseAstFromString('struct S { $source }');
-      final struct = doc.definitions.first as StructDefinitionNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
       expect(field.span, hasSpan(11, 35));
@@ -68,7 +68,7 @@ void main() {
       expect(field.requirement!.value, 'required');
       expect(field.requirement!.span, hasSpan(14, 22));
 
-      expect((field.type as BaseTypeNode).value, 'string');
+      expect(field.type.cast<BaseTypeNode>().value, 'string');
       expect(field.type.span, hasSpan(23, 29));
 
       expect(field.identifier.span, hasSpan(30, 34));
@@ -79,7 +79,7 @@ void main() {
     test('should parse optional field', () {
       const source = '3: optional bool flag;';
       final doc = parseAstFromString('struct S { $source }');
-      final struct = doc.definitions.first as StructDefinitionNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
       expect(field.span, hasSpan(11, 33));
@@ -107,7 +107,7 @@ void main() {
     test('should parse field with default value', () {
       const source = '1: optional i32 count = 0;';
       final doc = parseAstFromString('struct S { $source }');
-      final struct = doc.definitions.first as StructDefinitionNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
       expect(field.span, hasSpan(11, 37));
@@ -123,13 +123,13 @@ void main() {
       expect(field.requirement!.value, 'optional');
       expect(field.requirement!.span, hasSpan(14, 22));
 
-      expect((field.type as BaseTypeNode).value, 'i32');
+      expect(field.type.cast<BaseTypeNode>().value, 'i32');
       expect(field.type.span, hasSpan(23, 26));
 
       expect(field.identifier.value, 'count');
       expect(field.identifier.span, hasSpan(27, 32));
 
-      final defaultValue = field.defaultValue! as IntConstantNode;
+      final defaultValue = field.defaultValue!.cast<IntConstantNode>();
       expect(defaultValue.rawValue, '0');
       expect(defaultValue.value, 0);
       expect(defaultValue.span, hasSpan(35, 36));
@@ -138,7 +138,7 @@ void main() {
     test('should parse field with list type', () {
       const source = 'list<string> tags;';
       final doc = parseAstFromString('struct S { $source }');
-      final struct = doc.definitions.first as StructDefinitionNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
       expect(field.span, hasSpan(11, 29));
@@ -146,8 +146,8 @@ void main() {
       expect(field.type is ListTypeNode, isTrue);
       expect(field.type.span, hasSpan(11, 23));
 
-      final listType = field.type as ListTypeNode;
-      final elementType = listType.elementType as BaseTypeNode;
+      final listType = field.type.cast<ListTypeNode>();
+      final elementType = listType.elementType.cast<BaseTypeNode>();
 
       expect(elementType.value, 'string');
       expect(elementType.span, hasSpan(16, 22));
@@ -163,28 +163,28 @@ void main() {
     test('should parse field with map type and default value', () {
       const source = 'map<string, i32> dict = {};';
       final doc = parseAstFromString('struct S { $source }');
-      final struct = doc.definitions.first as StructDefinitionNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
       expect(field.span, hasSpan(11, 38));
 
-      expect(field.type is MapTypeNode, isTrue);
+      expect(field.type.cast<MapTypeNode>(), isNotNull);
       expect(field.type.span, hasSpan(11, 27));
 
-      final mapType = field.type as MapTypeNode;
-      expect(mapType.keyType is BaseTypeNode, isTrue);
-      expect((mapType.keyType as BaseTypeNode).value, 'string');
+      final mapType = field.type.cast<MapTypeNode>();
+      expect(mapType.keyType.cast<BaseTypeNode>(), isNotNull);
+      expect(mapType.keyType.cast<BaseTypeNode>().value, 'string');
       expect(mapType.keyType.span, hasSpan(15, 21));
 
-      expect(mapType.valueType is BaseTypeNode, isTrue);
-      expect((mapType.valueType as BaseTypeNode).value, 'i32');
+      expect(mapType.valueType.cast<BaseTypeNode>(), isNotNull);
+      expect(mapType.valueType.cast<BaseTypeNode>().value, 'i32');
       expect(mapType.valueType.span, hasSpan(23, 26));
 
       expect(field.identifier.value, 'dict');
       expect(field.identifier.span, hasSpan(28, 32));
 
-      expect(field.defaultValue is ConstMapNode, isTrue);
-      final defaultValue = field.defaultValue! as ConstMapNode;
+      expect(field.defaultValue!.cast<ConstMapNode>(), isNotNull);
+      final defaultValue = field.defaultValue!.cast<ConstMapNode>();
       expect(defaultValue.span, hasSpan(35, 37));
       expect(defaultValue.entries, isEmpty);
 
@@ -195,25 +195,25 @@ void main() {
     test('should parse field with nested container type', () {
       const source = 'list<map<string, list<i32>>> complex;';
       final doc = parseAstFromString('struct S { $source }');
-      final struct = doc.definitions.first as StructDefinitionNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
       expect(field.span, hasSpan(11, 48));
 
       expect(field.type.span, hasSpan(11, 39));
 
-      final listType = field.type as ListTypeNode;
-      final mapType = listType.elementType as MapTypeNode;
+      final listType = field.type.cast<ListTypeNode>();
+      final mapType = listType.elementType.cast<MapTypeNode>();
       expect(mapType.span, hasSpan(16, 38));
 
-      final keyType = mapType.keyType as BaseTypeNode;
+      final keyType = mapType.keyType.cast<BaseTypeNode>();
       expect(keyType.value, 'string');
       expect(keyType.span, hasSpan(20, 26));
 
-      final valueType = mapType.valueType as ListTypeNode;
+      final valueType = mapType.valueType.cast<ListTypeNode>();
       expect(valueType.span, hasSpan(28, 37));
 
-      final innerListType = valueType.elementType as BaseTypeNode;
+      final innerListType = valueType.elementType.cast<BaseTypeNode>();
       expect(innerListType.value, 'i32');
       expect(innerListType.span, hasSpan(33, 36));
 
@@ -228,12 +228,12 @@ void main() {
     test('should parse field with custom type', () {
       const source = 'MyType ref;';
       final doc = parseAstFromString('struct S { $source }');
-      final struct = doc.definitions.first as StructDefinitionNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
       expect(field.span, hasSpan(11, 22));
 
-      final typeNode = field.type as CustomTypeNode;
+      final typeNode = field.type.cast<CustomTypeNode>();
       expect(typeNode.value, 'MyType');
       expect(typeNode.span, hasSpan(11, 17));
 
@@ -248,7 +248,7 @@ void main() {
     test('should parse field with field id, required, and default value', () {
       const source = '4: required i32 count = 10;';
       final doc = parseAstFromString('struct S { $source }');
-      final struct = doc.definitions.first as StructDefinitionNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
       expect(field.span, hasSpan(11, 38));
@@ -264,13 +264,13 @@ void main() {
       expect(field.requirement!.value, 'required');
       expect(field.requirement!.span, hasSpan(14, 22));
 
-      expect((field.type as BaseTypeNode).value, 'i32');
+      expect(field.type.cast<BaseTypeNode>().value, 'i32');
       expect(field.type.span, hasSpan(23, 26));
 
       expect(field.identifier.value, 'count');
       expect(field.identifier.span, hasSpan(27, 32));
 
-      final defaultValue = field.defaultValue! as IntConstantNode;
+      final defaultValue = field.defaultValue!.cast<IntConstantNode>();
       expect(defaultValue.rawValue, '10');
       expect(defaultValue.value, 10);
       expect(defaultValue.span, hasSpan(35, 37));
@@ -286,8 +286,8 @@ void main() {
 
       expect(doc1, equals(doc2));
 
-      final struct1 = doc1.definitions.first as StructDefinitionNode;
-      final struct2 = doc2.definitions.first as StructDefinitionNode;
+      final struct1 = doc1.definitions.first.cast<StructDefinitionNode>();
+      final struct2 = doc2.definitions.first.cast<StructDefinitionNode>();
 
       expect(struct1, equals(struct2));
       expect(struct1.fields, equals(struct2.fields));
@@ -301,8 +301,8 @@ void main() {
 
       expect(doc1, isNot(equals(doc2)));
 
-      final struct1 = doc1.definitions.first as StructDefinitionNode;
-      final struct2 = doc2.definitions.first as StructDefinitionNode;
+      final struct1 = doc1.definitions.first.cast<StructDefinitionNode>();
+      final struct2 = doc2.definitions.first.cast<StructDefinitionNode>();
 
       expect(struct1, isNot(equals(struct2)));
       expect(struct1.fields, isNot(equals(struct2.fields)));

@@ -10,20 +10,20 @@ void main() {
       final doc = parseAstFromString(
         'service S { stream<i32> processNumbers(stream<i32> input); }',
       );
-      final service = doc.definitions.first as ServiceDefinitionNode;
+      final service = doc.definitions.first.cast<ServiceDefinitionNode>();
       final fn = service.methods.first;
 
-      final returnType = fn.returnType as StreamTypeNode;
+      final returnType = fn.returnType.cast<StreamTypeNode>();
       expect(returnType.span, hasSpan(12, 23));
 
-      final returnElementType = returnType.elementType as BaseTypeNode;
+      final returnElementType = returnType.elementType.cast<BaseTypeNode>();
       expect(returnElementType.value, 'i32');
       expect(returnElementType.span, hasSpan(19, 22));
 
-      final paramType = fn.parameters.first.type as StreamTypeNode;
+      final paramType = fn.parameters.first.type.cast<StreamTypeNode>();
       expect(paramType.span, hasSpan(39, 50));
 
-      final paramElementType = paramType.elementType as BaseTypeNode;
+      final paramElementType = paramType.elementType.cast<BaseTypeNode>();
       expect(paramElementType.value, 'i32');
       expect(paramElementType.span, hasSpan(46, 49));
     });
@@ -31,13 +31,13 @@ void main() {
     test('should parse stream of custom type', () {
       const source = 'stream<LogEntry>';
       final doc = parseAstFromString('service S { $source getLogs(); }');
-      final service = doc.definitions.first as ServiceDefinitionNode;
+      final service = doc.definitions.first.cast<ServiceDefinitionNode>();
       final fn = service.methods.first;
 
-      final streamType = fn.returnType as StreamTypeNode;
+      final streamType = fn.returnType.cast<StreamTypeNode>();
       expect(streamType.span, hasSpan(12, 28));
 
-      final elementType = streamType.elementType as CustomTypeNode;
+      final elementType = streamType.elementType.cast<CustomTypeNode>();
       expect(elementType.value, 'LogEntry');
       expect(elementType.span, hasSpan(19, 27));
     });
@@ -45,16 +45,16 @@ void main() {
     test('should parse stream of nested container type (stream of lists)', () {
       const source = 'stream<list<string>>';
       final doc = parseAstFromString('service S { $source getBatches(); }');
-      final service = doc.definitions.first as ServiceDefinitionNode;
+      final service = doc.definitions.first.cast<ServiceDefinitionNode>();
       final fn = service.methods.first;
 
-      final streamType = fn.returnType as StreamTypeNode;
+      final streamType = fn.returnType.cast<StreamTypeNode>();
       expect(streamType.span, hasSpan(12, 32));
 
-      final elementType = streamType.elementType as ListTypeNode;
+      final elementType = streamType.elementType.cast<ListTypeNode>();
       expect(elementType.span, hasSpan(19, 31));
 
-      final nestedElementType = elementType.elementType as BaseTypeNode;
+      final nestedElementType = elementType.elementType.cast<BaseTypeNode>();
       expect(nestedElementType.value, 'string');
       expect(nestedElementType.span, hasSpan(24, 30));
     });
@@ -62,13 +62,13 @@ void main() {
     test('should parse stream of map type', () {
       const source = 'stream<map<string, i32>>';
       final doc = parseAstFromString('service S { $source getMappings(); }');
-      final service = doc.definitions.first as ServiceDefinitionNode;
+      final service = doc.definitions.first.cast<ServiceDefinitionNode>();
       final fn = service.methods.first;
 
-      final streamType = fn.returnType as StreamTypeNode;
+      final streamType = fn.returnType.cast<StreamTypeNode>();
       expect(streamType.span, hasSpan(12, 36));
 
-      final elementType = streamType.elementType as MapTypeNode;
+      final elementType = streamType.elementType.cast<MapTypeNode>();
       expect(elementType.span, hasSpan(19, 35));
 
       expect(elementType.keyType, isA<BaseTypeNode>());
@@ -87,8 +87,8 @@ void main() {
 
       expect(doc1, equals(doc2));
 
-      final struct1 = doc1.definitions.first as StructDefinitionNode;
-      final struct2 = doc2.definitions.first as StructDefinitionNode;
+      final struct1 = doc1.definitions.first.cast<StructDefinitionNode>();
+      final struct2 = doc2.definitions.first.cast<StructDefinitionNode>();
 
       expect(struct1, equals(struct2));
 
@@ -102,8 +102,8 @@ void main() {
       final doc1 = parseAstFromString('struct S { stream<CustomType> x; }');
       final doc2 = parseAstFromString('struct S { stream<AnotherType> x; }');
 
-      final def1 = doc1.definitions.first as StructDefinitionNode;
-      final def2 = doc2.definitions.first as StructDefinitionNode;
+      final def1 = doc1.definitions.first.cast<StructDefinitionNode>();
+      final def2 = doc2.definitions.first.cast<StructDefinitionNode>();
 
       expect(def1, isNot(equals(def2)));
 

@@ -11,9 +11,9 @@ void main() {
       final doc = parseAstFromString(
         'struct S { list<i32> numbers = $source; }',
       );
-      final struct = doc.definitions.first as StructDefinitionNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
-      final constList = field.defaultValue! as ConstListNode;
+      final constList = field.defaultValue!.cast<ConstListNode>();
 
       expect(constList.span, hasSpan(31, 33));
       expect(constList.elements, isEmpty);
@@ -24,28 +24,30 @@ void main() {
       final doc = parseAstFromString(
         'struct S { list<i32> numbers = $source; }',
       );
-      final struct = doc.definitions.first as StructDefinitionNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
-      final constList = field.defaultValue! as ConstListNode;
+      final constList = field.defaultValue!.cast<ConstListNode>();
 
       expect(constList.span, hasSpan(31, 40));
-      expect(constList.elements, hasLength(3));
 
-      final e1 = constList.elements[0] as IntConstantNode;
+      final [
+        IntConstantNode e0,
+        IntConstantNode e1,
+        IntConstantNode e2,
+      ] = constList.elements
+          .cast<IntConstantNode>();
 
-      expect(e1.rawValue, '1');
-      expect(e1.value, 1);
-      expect(e1.span, hasSpan(32, 33));
+      expect(e0.rawValue, '1');
+      expect(e0.value, 1);
+      expect(e0.span, hasSpan(32, 33));
 
-      final e2 = constList.elements[1] as IntConstantNode;
-      expect(e2.rawValue, '2');
-      expect(e2.value, 2);
-      expect(e2.span, hasSpan(35, 36));
+      expect(e1.rawValue, '2');
+      expect(e1.value, 2);
+      expect(e1.span, hasSpan(35, 36));
 
-      final e3 = constList.elements[2] as IntConstantNode;
-      expect(e3.rawValue, '3');
-      expect(e3.value, 3);
-      expect(e3.span, hasSpan(38, 39));
+      expect(e2.rawValue, '3');
+      expect(e2.value, 3);
+      expect(e2.span, hasSpan(38, 39));
     });
 
     test('should parse constant list with string elements', () {
@@ -53,28 +55,30 @@ void main() {
       final doc = parseAstFromString(
         'struct S { list<string> letters = $source; }',
       );
-      final struct = doc.definitions.first as StructDefinitionNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
-      final constList = field.defaultValue! as ConstListNode;
+      final constList = field.defaultValue!.cast<ConstListNode>();
 
       expect(constList.span, hasSpan(34, 49));
 
-      expect(constList.elements, hasLength(3));
+      final [
+        LiteralNode e0,
+        LiteralNode e1,
+        LiteralNode e2,
+      ] = constList.elements
+          .cast<LiteralNode>();
 
-      final e1 = constList.elements[0] as LiteralNode;
-      expect(e1.rawValue, '"a"');
-      expect(e1.value, 'a');
-      expect(e1.span, hasSpan(35, 38));
+      expect(e0.rawValue, '"a"');
+      expect(e0.value, 'a');
+      expect(e0.span, hasSpan(35, 38));
 
-      final e2 = constList.elements[1] as LiteralNode;
-      expect(e2.rawValue, '"b"');
-      expect(e2.value, 'b');
-      expect(e2.span, hasSpan(40, 43));
+      expect(e1.rawValue, '"b"');
+      expect(e1.value, 'b');
+      expect(e1.span, hasSpan(40, 43));
 
-      final e3 = constList.elements[2] as LiteralNode;
-      expect(e3.rawValue, '"c"');
-      expect(e3.value, 'c');
-      expect(e3.span, hasSpan(45, 48));
+      expect(e2.rawValue, '"c"');
+      expect(e2.value, 'c');
+      expect(e2.span, hasSpan(45, 48));
     });
 
     test('should parse constant list with mixed primitive elements', () {
@@ -88,22 +92,24 @@ void main() {
       final constList = field.defaultValue! as ConstListNode;
       expect(constList.span, hasSpan(29, 45));
 
-      expect(constList.elements, hasLength(3));
+      final [
+        IntConstantNode e0,
+        LiteralNode e1,
+        BoolConstantNode e2,
+      ] = constList.elements
+          .cast<dynamic>();
 
-      final e1 = constList.elements[0] as IntConstantNode;
-      expect(e1.rawValue, '1');
-      expect(e1.value, 1);
-      expect(e1.span, hasSpan(30, 31));
+      expect(e0.rawValue, '1');
+      expect(e0.value, 1);
+      expect(e0.span, hasSpan(30, 31));
 
-      final e2 = constList.elements[1] as LiteralNode;
-      expect(e2.rawValue, '"two"');
-      expect(e2.value, 'two');
-      expect(e2.span, hasSpan(33, 38));
+      expect(e1.rawValue, '"two"');
+      expect(e1.value, 'two');
+      expect(e1.span, hasSpan(33, 38));
 
-      final e3 = constList.elements[2] as BoolConstantNode;
-      expect(e3.rawValue, 'true');
-      expect(e3.value, true);
-      expect(e3.span, hasSpan(40, 44));
+      expect(e2.rawValue, 'true');
+      expect(e2.value, true);
+      expect(e2.span, hasSpan(40, 44));
     });
 
     test('should parse constant list with nested constant list', () {
@@ -117,32 +123,41 @@ void main() {
       final constList = field.defaultValue! as ConstListNode;
       expect(constList.span, hasSpan(36, 52));
 
-      expect(constList.elements, hasLength(2));
+      final [
+        ConstListNode e0,
+        ConstListNode e1,
+      ] = constList.elements
+          .cast<ConstListNode>();
 
-      final e1 = constList.elements[0] as ConstListNode;
-      expect(e1.elements, hasLength(2));
-      expect(e1.span, hasSpan(37, 43));
+      expect(e0.elements, hasLength(2));
+      expect(e0.span, hasSpan(37, 43));
 
-      final e11 = e1.elements[0] as IntConstantNode;
-      expect(e11.rawValue, '1');
-      expect(e11.value, 1);
-      expect(e11.span, hasSpan(38, 39));
+      final [
+        IntConstantNode e01,
+        IntConstantNode e02,
+      ] = e0.elements
+          .cast<IntConstantNode>();
 
-      final e12 = e1.elements[1] as IntConstantNode;
-      expect(e12.rawValue, '2');
-      expect(e12.value, 2);
-      expect(e12.span, hasSpan(41, 42));
+      expect(e01.rawValue, '1');
+      expect(e01.value, 1);
+      expect(e01.span, hasSpan(38, 39));
 
-      final e2 = constList.elements[1] as ConstListNode;
-      expect(e2.elements, hasLength(2));
-      expect(e2.span, hasSpan(45, 51));
+      expect(e02.rawValue, '2');
+      expect(e02.value, 2);
+      expect(e02.span, hasSpan(41, 42));
 
-      final e21 = e2.elements[0] as IntConstantNode;
+      final [
+        IntConstantNode e21,
+        IntConstantNode e22,
+      ] = e1.elements
+          .cast<IntConstantNode>();
+
       expect(e21.rawValue, '3');
+      expect(e21.value, 3);
       expect(e21.span, hasSpan(46, 47));
 
-      final e22 = e2.elements[1] as IntConstantNode;
       expect(e22.rawValue, '4');
+      expect(e22.value, 4);
       expect(e22.span, hasSpan(49, 50));
     });
 
@@ -159,27 +174,34 @@ void main() {
       final constList = field.defaultValue! as ConstListNode;
       expect(constList.span, hasSpan(41, 65));
 
-      expect(constList.elements, hasLength(2));
-      final e1 = constList.elements[0] as ConstMapNode;
+      final [
+        ConstMapNode e1,
+        ConstMapNode e2,
+      ] = constList.elements
+          .cast<ConstMapNode>();
+
       expect(e1.span, hasSpan(42, 52));
 
-      expect(e1.entries, hasLength(1));
-      final entry1 = e1.entries[0];
-      expect((entry1.key as LiteralNode).rawValue, '"key"');
-      expect((entry1.key as LiteralNode).value, 'key');
+      final [entry1] = e1.entries
+          .cast<({LiteralNode key, IntConstantNode value})>();
+
+      expect(entry1.key.rawValue, '"key"');
+      expect(entry1.key.value, 'key');
       expect(entry1.key.span, hasSpan(43, 48));
 
-      expect((entry1.value as IntConstantNode).rawValue, '1');
-      expect((entry1.value as IntConstantNode).value, 1);
+      expect(entry1.value.rawValue, '1');
+      expect(entry1.value.value, 1);
       expect(entry1.value.span, hasSpan(50, 51));
 
-      final e2 = constList.elements[1] as ConstMapNode;
       expect(e2.span, hasSpan(54, 64));
 
+      final [entry2] = e2.entries
+          .cast<({LiteralNode key, IntConstantNode value})>();
+
       expect(e2.entries, hasLength(1));
-      final entry2 = e2.entries[0];
-      expect((entry2.key as LiteralNode).rawValue, '"key"');
-      expect((entry2.key as LiteralNode).value, 'key');
+
+      expect(entry2.key.rawValue, '"key"');
+      expect(entry2.key.value, 'key');
       expect(entry2.key.span, hasSpan(55, 60));
     });
   });
@@ -197,8 +219,8 @@ void main() {
 
       expect(doc1, equals(doc2));
 
-      final struct1 = doc1.definitions.first as StructDefinitionNode;
-      final struct2 = doc2.definitions.first as StructDefinitionNode;
+      final struct1 = doc1.definitions.first.cast<StructDefinitionNode>();
+      final struct2 = doc2.definitions.first.cast<StructDefinitionNode>();
 
       final field1 = struct1.fields.first;
       final field2 = struct2.fields.first;
@@ -218,8 +240,8 @@ void main() {
 
       expect(doc1, isNot(equals(doc2)));
 
-      final struct1 = doc1.definitions.first as StructDefinitionNode;
-      final struct2 = doc2.definitions.first as StructDefinitionNode;
+      final struct1 = doc1.definitions.first.cast<StructDefinitionNode>();
+      final struct2 = doc2.definitions.first.cast<StructDefinitionNode>();
 
       final field1 = struct1.fields.first;
       final field2 = struct2.fields.first;

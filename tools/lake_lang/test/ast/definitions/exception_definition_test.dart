@@ -9,7 +9,7 @@ void main() {
     test('should parse simple exception', () {
       const source = 'exception MyException {}';
       final doc = parseAstFromString(source);
-      final def = doc.definitions.first as ExceptionDefinitionNode;
+      final def = doc.definitions.first.cast<ExceptionDefinitionNode>();
 
       expect(def.span, hasSpan(0, 24));
 
@@ -22,7 +22,7 @@ void main() {
     test('should parse exception with fields without field index', () {
       const source = 'exception MyException { string message; i32 code; }';
       final doc = parseAstFromString(source);
-      final def = doc.definitions.first as ExceptionDefinitionNode;
+      final def = doc.definitions.first.cast<ExceptionDefinitionNode>();
 
       expect(def.span, hasSpan(0, 51));
 
@@ -33,7 +33,7 @@ void main() {
 
       expect(def.fields, hasLength(2));
 
-      final fieldType = field.type as BaseTypeNode;
+      final fieldType = field.type.cast<BaseTypeNode>();
 
       expect(field.fieldId, isNull);
       expect(fieldType.value, 'string');
@@ -42,7 +42,7 @@ void main() {
       expect(field.identifier.value, 'message');
       expect(field.identifier.span, hasSpan(31, 38));
 
-      final field1Type = field1.type as BaseTypeNode;
+      final field1Type = field1.type.cast<BaseTypeNode>();
 
       expect(field1.fieldId, isNull);
       expect(field1Type.value, 'i32');
@@ -55,7 +55,7 @@ void main() {
     test('should parse exception with fields with field index', () {
       const source = 'exception MyException {1: string message; 2: i32 code; }';
       final doc = parseAstFromString(source);
-      final def = doc.definitions.first as ExceptionDefinitionNode;
+      final def = doc.definitions.first.cast<ExceptionDefinitionNode>();
 
       expect(def.span, hasSpan(0, 56));
 
@@ -66,7 +66,7 @@ void main() {
 
       final [FieldNode field, FieldNode field1] = def.fields;
 
-      final fieldType = field.type as BaseTypeNode;
+      final fieldType = field.type.cast<BaseTypeNode>();
 
       expect(field.fieldId, isNotNull);
       expect(field.fieldId!.rawValue, '1');
@@ -79,7 +79,7 @@ void main() {
       expect(field.identifier.value, 'message');
       expect(field.identifier.span, hasSpan(33, 40));
 
-      final field1Type = field1.type as BaseTypeNode;
+      final field1Type = field1.type.cast<BaseTypeNode>();
 
       expect(field1.fieldId, isNotNull);
       expect(field1.fieldId!.rawValue, '2');
@@ -98,7 +98,7 @@ void main() {
           'exception AuthError '
           '{ required string username; required i32 code; }';
       final doc = parseAstFromString(source);
-      final def = doc.definitions.first as ExceptionDefinitionNode;
+      final def = doc.definitions.first.cast<ExceptionDefinitionNode>();
 
       expect(def.span, hasSpan(0, 68));
       expect(def.span.end, 68);
@@ -114,7 +114,7 @@ void main() {
       expect(field.requirement!.value, 'required');
       expect(field.requirement!.span, hasSpan(22, 30));
 
-      expect((field.type as BaseTypeNode).value, 'string');
+      expect(field.type.cast<BaseTypeNode>().value, 'string');
       expect(field.type.span, hasSpan(31, 37));
 
       expect(field.identifier.value, 'username');
@@ -124,7 +124,7 @@ void main() {
       expect(field1.requirement!.value, 'required');
       expect(field1.requirement!.span, hasSpan(48, 56));
 
-      expect((field1.type as BaseTypeNode).value, 'i32');
+      expect(field1.type.cast<BaseTypeNode>().value, 'i32');
       expect(field1.type.span, hasSpan(57, 60));
 
       expect(field1.identifier.value, 'code');
@@ -136,7 +136,7 @@ void main() {
           'exception AuthError '
           '{ optional string username; optional i32 code; }';
       final doc = parseAstFromString(source);
-      final def = doc.definitions.first as ExceptionDefinitionNode;
+      final def = doc.definitions.first.cast<ExceptionDefinitionNode>();
 
       expect(def.span, hasSpan(0, 68));
 
@@ -152,7 +152,7 @@ void main() {
       expect(field.requirement!.value, 'optional');
       expect(field.requirement!.span, hasSpan(22, 30));
 
-      expect((field.type as BaseTypeNode).value, 'string');
+      expect(field.type.cast<BaseTypeNode>().value, 'string');
       expect(field.type.span, hasSpan(31, 37));
 
       expect(field.identifier.value, 'username');
@@ -163,7 +163,7 @@ void main() {
       expect(field1.requirement!.value, 'optional');
       expect(field1.requirement!.span, hasSpan(48, 56));
 
-      expect((field1.type as BaseTypeNode).value, 'i32');
+      expect(field1.type.cast<BaseTypeNode>().value, 'i32');
       expect(field1.type.span, hasSpan(57, 60));
 
       expect(field1.identifier.value, 'code');
@@ -183,8 +183,8 @@ void main() {
       final doc1 = parseAstFromString(source);
       final doc2 = parseAstFromString(source2);
 
-      final exception1 = doc1.definitions.first as ExceptionDefinitionNode;
-      final exception2 = doc2.definitions.first as ExceptionDefinitionNode;
+      final exception1 = doc1.definitions.first.cast<ExceptionDefinitionNode>();
+      final exception2 = doc2.definitions.first.cast<ExceptionDefinitionNode>();
 
       expect(exception1, equals(exception2));
       expect(exception1.fields, equals(exception2.fields));
@@ -202,8 +202,8 @@ void main() {
 
       expect(doc1, isNot(equals(doc2)));
 
-      final exception1 = doc1.definitions.first as ExceptionDefinitionNode;
-      final exception2 = doc2.definitions.first as ExceptionDefinitionNode;
+      final exception1 = doc1.definitions.first.cast<ExceptionDefinitionNode>();
+      final exception2 = doc2.definitions.first.cast<ExceptionDefinitionNode>();
 
       expect(exception1, isNot(equals(exception2)));
       expect(exception1.fields, isNot(equals(exception2.fields)));

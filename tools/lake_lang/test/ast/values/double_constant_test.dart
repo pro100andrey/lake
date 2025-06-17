@@ -9,11 +9,10 @@ void main() {
     test('should parse positive double with decimal part', () {
       const source = '3.14';
       final doc = parseAstFromString('struct S { double pi = $source; }');
-      final struct = doc.definitions.first as StructDefinitionNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
-      final doubleConst = field.defaultValue! as DoubleConstantNode;
-      expect(doubleConst, isA<DoubleConstantNode>());
+      final doubleConst = field.defaultValue!.cast<DoubleConstantNode>();
       expect(doubleConst.rawValue, '3.14');
       expect(doubleConst.value, 3.14);
       expect(doubleConst.span, hasSpan(23, 27));
@@ -22,10 +21,10 @@ void main() {
     test('should parse negative double with decimal part', () {
       const source = '-1.234';
       final doc = parseAstFromString('struct S { double val = $source; }');
-      final struct = doc.definitions.first as StructDefinitionNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
-      final doubleConst = field.defaultValue! as DoubleConstantNode;
+      final doubleConst = field.defaultValue!.cast<DoubleConstantNode>();
       expect(doubleConst.rawValue, '-1.234');
       expect(doubleConst.value, -1.234);
       expect(doubleConst.span, hasSpan(24, 30));
@@ -34,10 +33,10 @@ void main() {
     test('should parse double with exponential notation (lowercase e)', () {
       const source = '6.022e23';
       final doc = parseAstFromString('struct S { double avogadro = $source; }');
-      final struct = doc.definitions.first as StructDefinitionNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
-      final doubleConst = field.defaultValue! as DoubleConstantNode;
+      final doubleConst = field.defaultValue!.cast<DoubleConstantNode>();
       expect(doubleConst.rawValue, '6.022e23');
       expect(doubleConst.value, 6.022e23);
       expect(doubleConst.span, hasSpan(29, 37));
@@ -50,10 +49,10 @@ void main() {
         final doc = parseAstFromString(
           'struct S { double largeNum = $source; }',
         );
-        final struct = doc.definitions.first as StructDefinitionNode;
+        final struct = doc.definitions.first.cast<StructDefinitionNode>();
         final field = struct.fields.first;
 
-        final doubleConst = field.defaultValue! as DoubleConstantNode;
+        final doubleConst = field.defaultValue!.cast<DoubleConstantNode>();
         expect(doubleConst.rawValue, '1.0E+5');
         expect(doubleConst.value, 100000.0);
         expect(doubleConst.span, hasSpan(29, 35));
@@ -67,10 +66,10 @@ void main() {
         final doc = parseAstFromString(
           'struct S { double smallNum = $source; }',
         );
-        final struct = doc.definitions.first as StructDefinitionNode;
+        final struct = doc.definitions.first.cast<StructDefinitionNode>();
         final field = struct.fields.first;
 
-        final doubleConst = field.defaultValue! as DoubleConstantNode;
+        final doubleConst = field.defaultValue!.cast<DoubleConstantNode>();
         expect(doubleConst.rawValue, '1.23e-4');
         expect(doubleConst.span, hasSpan(29, 36));
       },
@@ -83,10 +82,10 @@ void main() {
         final doc = parseAstFromString(
           'struct S { double intAsDouble = $source; }',
         );
-        final struct = doc.definitions.first as StructDefinitionNode;
+        final struct = doc.definitions.first.cast<StructDefinitionNode>();
         final field = struct.fields.first;
 
-        final doubleConst = field.defaultValue! as DoubleConstantNode;
+        final doubleConst = field.defaultValue!.cast<DoubleConstantNode>();
         expect(doubleConst.rawValue, '5.0');
         expect(doubleConst.span, hasSpan(32, 35));
       },
@@ -99,10 +98,10 @@ void main() {
         final doc = parseAstFromString(
           'struct S { double quarter = $source; }',
         );
-        final struct = doc.definitions.first as StructDefinitionNode;
+        final struct = doc.definitions.first.cast<StructDefinitionNode>();
         final field = struct.fields.first;
 
-        final doubleConst = field.defaultValue! as DoubleConstantNode;
+        final doubleConst = field.defaultValue!.cast<DoubleConstantNode>();
         expect(doubleConst.rawValue, '.25');
         expect(doubleConst.span, hasSpan(28, 31));
       },
@@ -117,8 +116,8 @@ void main() {
 
       expect(doc1, equals(doc2));
 
-      final struct1 = doc1.definitions.first as StructDefinitionNode;
-      final struct2 = doc2.definitions.first as StructDefinitionNode;
+      final struct1 = doc1.definitions.first.cast<StructDefinitionNode>();
+      final struct2 = doc2.definitions.first.cast<StructDefinitionNode>();
 
       expect(struct1, equals(struct2));
 
@@ -137,8 +136,8 @@ void main() {
 
       expect(doc1, isNot(equals(doc2)));
 
-      final struct1 = doc1.definitions.first as StructDefinitionNode;
-      final struct2 = doc2.definitions.first as StructDefinitionNode;
+      final struct1 = doc1.definitions.first.cast<StructDefinitionNode>();
+      final struct2 = doc2.definitions.first.cast<StructDefinitionNode>();
 
       expect(struct1, isNot(equals(struct2)));
 

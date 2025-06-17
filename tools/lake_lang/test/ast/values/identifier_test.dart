@@ -9,7 +9,7 @@ void main() {
     test('should parse a simple identifier', () {
       const source = 'myVariable';
       final doc = parseAstFromString('struct S { i32 $source; }');
-      final struct = doc.definitions.first as StructDefinitionNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
       final identifier = field.identifier;
 
@@ -22,7 +22,7 @@ void main() {
       final doc = parseAstFromString(
         'service MyService { void foo(string $source); }',
       );
-      final service = doc.definitions.first as ServiceDefinitionNode;
+      final service = doc.definitions.first.cast<ServiceDefinitionNode>();
       final fn = service.methods.first;
       final parameter = fn.parameters.first;
       final identifier = parameter.identifier;
@@ -34,7 +34,7 @@ void main() {
     test('should parse an identifier starting with an underscore', () {
       const source = '_privateField';
       final doc = parseAstFromString('struct S { bool $source; }');
-      final struct = doc.definitions.first as StructDefinitionNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
       final identifier = field.identifier;
 
@@ -45,7 +45,7 @@ void main() {
     test('should parse an identifier with numbers', () {
       const source = 'data2023';
       final doc = parseAstFromString('enum MyEnum { $source = 1; }');
-      final enumDef = doc.definitions.first as EnumDefinitionNode;
+      final enumDef = doc.definitions.first.cast<EnumDefinitionNode>();
       final enumField = enumDef.members.first;
       final identifier = enumField.identifier;
 
@@ -56,7 +56,7 @@ void main() {
     test('should parse an identifier which is a keyword as part of a name', () {
       const source = 'structData';
       final doc = parseAstFromString('typedef i32 $source;');
-      final typedefDef = doc.definitions.first as TypedefDefinitionNode;
+      final typedefDef = doc.definitions.first.cast<TypedefDefinitionNode>();
       final identifier = typedefDef.identifier;
 
       expect(identifier.value, 'structData');
@@ -68,7 +68,7 @@ void main() {
       final doc = parseAstFromString(
         'service $source { void processPayment(); }',
       );
-      final service = doc.definitions.first as ServiceDefinitionNode;
+      final service = doc.definitions.first.cast<ServiceDefinitionNode>();
       final identifier = service.identifier;
 
       expect(identifier.value, 'PaymentService');
@@ -79,7 +79,7 @@ void main() {
     test('should parse an identifier as an enum name', () {
       const source = 'UserStatus';
       final doc = parseAstFromString('enum $source { ACTIVE, INACTIVE; }');
-      final enumDef = doc.definitions.first as EnumDefinitionNode;
+      final enumDef = doc.definitions.first.cast<EnumDefinitionNode>();
       final identifier = enumDef.identifier;
 
       expect(identifier.value, 'UserStatus');
@@ -96,8 +96,8 @@ void main() {
 
       expect(doc1, equals(doc2));
 
-      final struct1 = doc1.definitions.first as StructDefinitionNode;
-      final struct2 = doc2.definitions.first as StructDefinitionNode;
+      final struct1 = doc1.definitions.first.cast<StructDefinitionNode>();
+      final struct2 = doc2.definitions.first.cast<StructDefinitionNode>();
 
       expect(struct1, equals(struct2));
 
@@ -115,8 +115,8 @@ void main() {
 
       expect(doc1, isNot(equals(doc2)));
 
-      final struct1 = doc1.definitions.first as StructDefinitionNode;
-      final struct2 = doc2.definitions.first as StructDefinitionNode;
+      final struct1 = doc1.definitions.first.cast<StructDefinitionNode>();
+      final struct2 = doc2.definitions.first.cast<StructDefinitionNode>();
 
       expect(struct1, isNot(equals(struct2)));
 

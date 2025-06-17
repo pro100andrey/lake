@@ -10,7 +10,7 @@ void main() {
       const source = 'namespace * Foo';
       final doc = parseAstFromString(source);
 
-      final ns = doc.headers.first as NamespaceNode;
+      final ns = doc.headers.first.cast<NamespaceNode>();
       expect(ns.span, hasSpan(0, 15));
 
       expect(ns.scope.value, '*');
@@ -24,7 +24,7 @@ void main() {
       const source = 'namespace js example';
       final doc = parseAstFromString(source);
 
-      final ns = doc.headers.first as NamespaceNode;
+      final ns = doc.headers.first.cast<NamespaceNode>();
       expect(ns.span, hasSpan(0, 20));
 
       expect(ns.scope.value, 'js');
@@ -38,7 +38,7 @@ void main() {
       const source = 'namespace dart com.example.api.gen';
       final doc = parseAstFromString(source);
 
-      final ns = doc.headers.first as NamespaceNode;
+      final ns = doc.headers.first.cast<NamespaceNode>();
       expect(ns.span, hasSpan(0, 34));
 
       expect(ns.scope.value, 'dart');
@@ -52,7 +52,7 @@ void main() {
       const source = 'namespace js foo\nnamespace dart bar';
       final doc = parseAstFromString(source);
 
-      final ns1 = doc.headers[0] as NamespaceNode;
+      final ns1 = doc.headers[0].cast<NamespaceNode>();
       expect(ns1.span, hasSpan(0, 16));
 
       expect(ns1.scope.value, 'js');
@@ -61,7 +61,7 @@ void main() {
       expect(ns1.identifier.value, 'foo');
       expect(ns1.identifier.span, hasSpan(13, 16));
 
-      final ns2 = doc.headers[1] as NamespaceNode;
+      final ns2 = doc.headers[1].cast<NamespaceNode>();
       expect(ns2.span, hasSpan(17, 35));
 
       expect(ns2.scope.value, 'dart');
@@ -75,7 +75,7 @@ void main() {
       const source = '  namespace   js   foo  ';
       final doc = parseAstFromString(source);
 
-      final ns = doc.headers.first as NamespaceNode;
+      final ns = doc.headers.first.cast<NamespaceNode>();
       expect(ns.span, hasSpan(2, 22));
 
       expect(ns.scope.value, 'js');
@@ -93,8 +93,8 @@ void main() {
       final doc1 = parseAstFromString(source1);
       final doc2 = parseAstFromString(source2);
 
-      final ns1 = doc1.headers.first as NamespaceNode;
-      final ns2 = doc2.headers.first as NamespaceNode;
+      final ns1 = doc1.headers.first.cast<NamespaceNode>();
+      final ns2 = doc2.headers.first.cast<NamespaceNode>();
 
       expect(ns1, equals(ns2));
       expect(ns1.scope, equals(ns2.scope));
@@ -107,8 +107,8 @@ void main() {
       final doc1 = parseAstFromString(source1);
       final doc2 = parseAstFromString(source2);
 
-      final ns1 = doc1.headers.first as NamespaceNode;
-      final ns2 = doc2.headers.first as NamespaceNode;
+      final ns1 = doc1.headers.first.cast<NamespaceNode>();
+      final ns2 = doc2.headers.first.cast<NamespaceNode>();
 
       expect(ns1, isNot(equals(ns2)));
       expect(ns1.scope, isNot(equals(ns2.scope)));

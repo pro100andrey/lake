@@ -9,7 +9,7 @@ void main() {
     test('should parse empty enum', () {
       const source = 'enum Color {}';
       final doc = parseAstFromString(source);
-      final def = doc.definitions.first as EnumDefinitionNode;
+      final def = doc.definitions.first.cast<EnumDefinitionNode>();
 
       expect(def.span, hasSpan(0, 13));
       expect(def.identifier.value, 'Color');
@@ -20,7 +20,7 @@ void main() {
     test('should parse enum with values', () {
       const source = 'enum Color { RED, GREEN, BLUE }';
       final doc = parseAstFromString(source);
-      final def = doc.definitions.first as EnumDefinitionNode;
+      final def = doc.definitions.first.cast<EnumDefinitionNode>();
 
       expect(def.span, hasSpan(0, 31));
 
@@ -49,7 +49,7 @@ void main() {
     test('should parse enum with values and explicit values', () {
       const source = 'enum Color { RED = 1, GREEN = 2, BLUE = 3 }';
       final doc = parseAstFromString(source);
-      final def = doc.definitions.first as EnumDefinitionNode;
+      final def = doc.definitions.first.cast<EnumDefinitionNode>();
 
       expect(def.span, hasSpan(0, 43));
 
@@ -84,7 +84,7 @@ void main() {
     test('should parse enum with values using semicolon separators', () {
       const source = 'enum Direction { NORTH; SOUTH; EAST; WEST; }';
       final doc = parseAstFromString(source);
-      final def = doc.definitions.first as EnumDefinitionNode;
+      final def = doc.definitions.first.cast<EnumDefinitionNode>();
 
       expect(def.span, hasSpan(0, 44));
 
@@ -119,7 +119,7 @@ void main() {
       const source =
           'enum Status { PENDING = 1, PROCESSING, COMPLETED = 5, FAILED }';
       final doc = parseAstFromString(source);
-      final def = doc.definitions.first as EnumDefinitionNode;
+      final def = doc.definitions.first.cast<EnumDefinitionNode>();
 
       expect(def.span, hasSpan(0, 62));
 
@@ -165,8 +165,8 @@ void main() {
 
       expect(doc1, equals(doc2));
 
-      final enum1 = doc1.definitions.first as EnumDefinitionNode;
-      final enum2 = doc2.definitions.first as EnumDefinitionNode;
+      final enum1 = doc1.definitions.first.cast<EnumDefinitionNode>();
+      final enum2 = doc2.definitions.first.cast<EnumDefinitionNode>();
 
       expect(enum1, equals(enum2));
       expect(enum1.members, equals(enum2.members));
@@ -180,8 +180,8 @@ void main() {
 
       expect(doc1, isNot(equals(doc2)));
 
-      final enum1 = doc1.definitions.first as EnumDefinitionNode;
-      final enum2 = doc2.definitions.first as EnumDefinitionNode;
+      final enum1 = doc1.definitions.first.cast<EnumDefinitionNode>();
+      final enum2 = doc2.definitions.first.cast<EnumDefinitionNode>();
 
       expect(enum1, isNot(equals(enum2)));
       expect(enum1.members, isNot(equals(enum2.members)));

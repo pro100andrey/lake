@@ -11,11 +11,9 @@ void main() {
       final doc = parseAstFromString(
         'service MyService { $source doSomething(); }',
       );
-      final service = doc.definitions.first as ServiceDefinitionNode;
+      final service = doc.definitions.first.cast<ServiceDefinitionNode>();
       final fn = service.methods.first;
-      final returnType = fn.returnType as VoidTypeNode;
-
-      expect(returnType, isA<VoidTypeNode>());
+      final returnType = fn.returnType.cast<VoidTypeNode>();
       expect(returnType.span, hasSpan(20, 24));
     });
 
@@ -26,11 +24,9 @@ void main() {
         final doc = parseAstFromString(
           'service MyService { $source doSomething(i32 id, string name); }',
         );
-        final service = doc.definitions.first as ServiceDefinitionNode;
+        final service = doc.definitions.first.cast<ServiceDefinitionNode>();
         final fn = service.methods.first;
-        final returnType = fn.returnType as VoidTypeNode;
-
-        expect(returnType, isA<VoidTypeNode>());
+        final returnType = fn.returnType.cast<VoidTypeNode>();
         expect(returnType.span, hasSpan(20, 24));
       },
     );
@@ -48,8 +44,8 @@ void main() {
 
       expect(doc1, equals(doc2));
 
-      final service1 = doc1.definitions.first as ServiceDefinitionNode;
-      final service2 = doc2.definitions.first as ServiceDefinitionNode;
+      final service1 = doc1.definitions.first.cast<ServiceDefinitionNode>();
+      final service2 = doc2.definitions.first.cast<ServiceDefinitionNode>();
 
       expect(service1, equals(service2));
 
@@ -67,8 +63,8 @@ void main() {
         'service MyService { int doSomething(); }',
       );
 
-      final def1 = doc1.definitions.first as ServiceDefinitionNode;
-      final def2 = doc2.definitions.first as ServiceDefinitionNode;
+      final def1 = doc1.definitions.first.cast<ServiceDefinitionNode>();
+      final def2 = doc2.definitions.first.cast<ServiceDefinitionNode>();
 
       expect(def1, isNot(equals(def2)));
 

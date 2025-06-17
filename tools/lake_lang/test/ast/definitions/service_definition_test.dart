@@ -10,7 +10,7 @@ void main() {
       const source = 'service MyService {}';
       final doc = parseAstFromString(source);
 
-      final def = doc.definitions.first as ServiceDefinitionNode;
+      final def = doc.definitions.first.cast<ServiceDefinitionNode>();
 
       expect(def.span, hasSpan(0, 20));
 
@@ -25,7 +25,7 @@ void main() {
       const source = 'service S { void foo(); }';
       final doc = parseAstFromString(source);
 
-      final def = doc.definitions.first as ServiceDefinitionNode;
+      final def = doc.definitions.first.cast<ServiceDefinitionNode>();
       expect(def.span, hasSpan(0, 25));
 
       expect(def.identifier.value, 'S');
@@ -48,7 +48,7 @@ void main() {
         const source = 'service S { void foo(); i32 bar(i32 x); }';
         final doc = parseAstFromString(source);
 
-        final def = doc.definitions.first as ServiceDefinitionNode;
+        final def = doc.definitions.first.cast<ServiceDefinitionNode>();
         expect(def.span, hasSpan(0, 41));
 
         expect(def.identifier.value, 'S');
@@ -68,7 +68,7 @@ void main() {
         expect(fn1.identifier.span, hasSpan(17, 20));
 
         final fn2 = def.methods[1];
-        expect((fn2.returnType as BaseTypeNode).value, 'i32');
+        expect(fn2.returnType.cast<BaseTypeNode>().value, 'i32');
         expect(fn2.returnType.span, hasSpan(24, 27));
 
         expect(fn2.identifier.value, 'bar');
@@ -77,7 +77,7 @@ void main() {
         expect(fn2.parameters, hasLength(1));
 
         final fn2Params = fn2.parameters[0];
-        expect((fn2Params.type as BaseTypeNode).value, 'i32');
+        expect(fn2Params.type.cast<BaseTypeNode>().value, 'i32');
         expect(fn2Params.type.span, hasSpan(32, 35));
 
         expect(fn2Params.identifier.value, 'x');
@@ -89,7 +89,7 @@ void main() {
       const source = 'service S { void foo(1: i32 x, 2: i32 y)}';
       final doc = parseAstFromString(source);
 
-      final def = doc.definitions.first as ServiceDefinitionNode;
+      final def = doc.definitions.first.cast<ServiceDefinitionNode>();
       expect(def.span, hasSpan(0, 41));
 
       expect(def.identifier.value, 'S');
@@ -115,7 +115,7 @@ void main() {
       expect(parameter.fieldId!.value, 1);
       expect(parameter.fieldId!.span, hasSpan(21, 22));
 
-      expect((parameter.type as BaseTypeNode).value, 'i32');
+      expect(parameter.type.cast<BaseTypeNode>().value, 'i32');
       expect(parameter.type.span, hasSpan(24, 27));
 
       expect(parameter.identifier.value, 'x');
@@ -126,7 +126,7 @@ void main() {
       expect(parameter1.fieldId!.value, 2);
       expect(parameter1.fieldId!.span, hasSpan(31, 32));
 
-      expect((parameter1.type as BaseTypeNode).value, 'i32');
+      expect(parameter1.type.cast<BaseTypeNode>().value, 'i32');
       expect(parameter1.type.span, hasSpan(34, 37));
 
       expect(parameter1.identifier.value, 'y');
@@ -137,7 +137,7 @@ void main() {
       const source = 'service S extends Base { void foo(); }';
       final doc = parseAstFromString(source);
 
-      final def = doc.definitions.first as ServiceDefinitionNode;
+      final def = doc.definitions.first.cast<ServiceDefinitionNode>();
       expect(def.span, hasSpan(0, 38));
 
       expect(def.identifier.value, 'S');
@@ -166,7 +166,7 @@ void main() {
             'service S { i32 foo(1: i32 x, 3: string y) throws (i32 err); }';
         final doc = parseAstFromString(source);
 
-        final def = doc.definitions.first as ServiceDefinitionNode;
+        final def = doc.definitions.first.cast<ServiceDefinitionNode>();
         expect(def.span, hasSpan(0, 62));
 
         expect(def.identifier.value, 'S');
@@ -176,7 +176,7 @@ void main() {
 
         final [FunctionNode fn] = def.methods;
 
-        expect((fn.returnType as BaseTypeNode).value, 'i32');
+        expect(fn.returnType.cast<BaseTypeNode>().value, 'i32');
         expect(fn.returnType.span, hasSpan(12, 15));
 
         expect(fn.identifier.value, 'foo');
@@ -188,7 +188,7 @@ void main() {
         expect(parameter.fieldId!.value, 1);
         expect(parameter.fieldId!.span, hasSpan(20, 21));
 
-        expect((parameter.type as BaseTypeNode).value, 'i32');
+        expect(parameter.type.cast<BaseTypeNode>().value, 'i32');
         expect(parameter.type.span, hasSpan(23, 26));
 
         expect(parameter.identifier.value, 'x');
@@ -198,7 +198,7 @@ void main() {
         expect(parameter1.fieldId!.value, 3);
         expect(parameter1.fieldId!.span, hasSpan(30, 31));
 
-        expect((parameter1.type as BaseTypeNode).value, 'string');
+        expect(parameter1.type.cast<BaseTypeNode>().value, 'string');
         expect(parameter1.type.span, hasSpan(33, 39));
 
         expect(parameter1.identifier.value, 'y');
@@ -208,7 +208,7 @@ void main() {
 
         expect(throw0.span, hasSpan(51, 58));
 
-        expect((throw0.type as BaseTypeNode).value, 'i32');
+        expect(throw0.type.cast<BaseTypeNode>().value, 'i32');
         expect(throw0.type.span, hasSpan(51, 54));
 
         expect(throw0.identifier, isNotNull);
@@ -224,7 +224,7 @@ void main() {
             'service S { i32 foo(1: i32 x, 3: string y) throws (1: i32 err); }';
         final doc = parseAstFromString(source);
 
-        final def = doc.definitions.first as ServiceDefinitionNode;
+        final def = doc.definitions.first.cast<ServiceDefinitionNode>();
         expect(def.span, hasSpan(0, 65));
 
         expect(def.identifier.value, 'S');
@@ -234,7 +234,7 @@ void main() {
 
         final [FunctionNode fn] = def.methods;
 
-        expect((fn.returnType as BaseTypeNode).value, 'i32');
+        expect(fn.returnType.cast<BaseTypeNode>().value, 'i32');
         expect(fn.returnType.span, hasSpan(12, 15));
 
         expect(fn.identifier.value, 'foo');
@@ -246,7 +246,7 @@ void main() {
         expect(p1.fieldId!.value, 1);
         expect(p1.fieldId!.span, hasSpan(20, 21));
 
-        expect((p1.type as BaseTypeNode).value, 'i32');
+        expect(p1.type.cast<BaseTypeNode>().value, 'i32');
         expect(p1.type.span, hasSpan(23, 26));
 
         expect(p1.identifier.value, 'x');
@@ -256,7 +256,7 @@ void main() {
         expect(p2.fieldId!.value, 3);
         expect(p2.fieldId!.span, hasSpan(30, 31));
 
-        expect((p2.type as BaseTypeNode).value, 'string');
+        expect(p2.type.cast<BaseTypeNode>().value, 'string');
         expect(p2.type.span, hasSpan(33, 39));
 
         expect(p2.identifier.value, 'y');
@@ -270,7 +270,7 @@ void main() {
         expect(throwField.fieldId!.value, 1);
         expect(throwField.fieldId!.span, hasSpan(51, 52));
 
-        expect((throwField.type as BaseTypeNode).value, 'i32');
+        expect(throwField.type.cast<BaseTypeNode>().value, 'i32');
         expect(throwField.type.span, hasSpan(54, 57));
 
         expect(throwField.identifier.value, 'err');
@@ -285,7 +285,7 @@ void main() {
             'service S { void func1(); string func2(); i32 func3(); }';
         final doc = parseAstFromString(source);
 
-        final def = doc.definitions.first as ServiceDefinitionNode;
+        final def = doc.definitions.first.cast<ServiceDefinitionNode>();
         expect(def.span, hasSpan(0, 56));
 
         expect(def.identifier.value, 'S');
@@ -303,13 +303,13 @@ void main() {
         expect(func1.identifier.value, 'func1');
         expect(func1.identifier.span, hasSpan(17, 22));
 
-        expect((func2.returnType as BaseTypeNode).value, 'string');
+        expect(func2.returnType.cast<BaseTypeNode>().value, 'string');
         expect(func2.returnType.span, hasSpan(26, 32));
 
         expect(func2.identifier.value, 'func2');
         expect(func2.identifier.span, hasSpan(33, 38));
 
-        expect((func3.returnType as BaseTypeNode).value, 'i32');
+        expect(func3.returnType.cast<BaseTypeNode>().value, 'i32');
         expect(func3.returnType.span, hasSpan(42, 45));
 
         expect(func3.identifier.value, 'func3');
@@ -328,8 +328,8 @@ void main() {
 
       expect(doc1, equals(doc2));
 
-      final service1 = doc1.definitions.first as ServiceDefinitionNode;
-      final service2 = doc2.definitions.first as ServiceDefinitionNode;
+      final service1 = doc1.definitions.first.cast<ServiceDefinitionNode>();
+      final service2 = doc2.definitions.first.cast<ServiceDefinitionNode>();
 
       expect(service1, equals(service2));
       expect(service1.methods, equals(service2.methods));
@@ -343,8 +343,8 @@ void main() {
 
       expect(doc1, isNot(equals(doc2)));
 
-      final service1 = doc1.definitions.first as ServiceDefinitionNode;
-      final service2 = doc2.definitions.first as ServiceDefinitionNode;
+      final service1 = doc1.definitions.first.cast<ServiceDefinitionNode>();
+      final service2 = doc2.definitions.first.cast<ServiceDefinitionNode>();
 
       expect(service1, isNot(equals(service2)));
       expect(service1.methods, isNot(equals(service2.methods)));

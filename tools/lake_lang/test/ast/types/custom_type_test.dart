@@ -9,8 +9,8 @@ void main() {
     test('should parse custom type when used as a struct field', () {
       const source = 'CustomType';
       final doc = parseAstFromString('struct Data { $source x; }');
-      final def = doc.definitions.first as StructDefinitionNode;
-      final fieldType = def.fields[0].type as CustomTypeNode;
+      final def = doc.definitions.first.cast<StructDefinitionNode>();
+      final fieldType = def.fields[0].type.cast<CustomTypeNode>();
 
       expect(fieldType.value, 'CustomType');
       expect(fieldType.span, hasSpan(14, 24));
@@ -21,10 +21,10 @@ void main() {
       final doc = parseAstFromString(
         'service MyService { $source getData(); }',
       );
-      final def = doc.definitions.first as ServiceDefinitionNode;
+      final def = doc.definitions.first.cast<ServiceDefinitionNode>();
       final function1 = def.methods.first;
 
-      expect((function1.returnType as CustomTypeNode).value, 'CustomType');
+      expect(function1.returnType.cast<CustomTypeNode>().value, 'CustomType');
       expect(function1.returnType.span, hasSpan(20, 30));
     });
   });
@@ -37,8 +37,8 @@ void main() {
 
       expect(doc1, equals(doc2));
 
-      final struct1 = doc1.definitions.first as StructDefinitionNode;
-      final struct2 = doc2.definitions.first as StructDefinitionNode;
+      final struct1 = doc1.definitions.first.cast<StructDefinitionNode>();
+      final struct2 = doc2.definitions.first.cast<StructDefinitionNode>();
 
       expect(struct1, equals(struct2));
 
@@ -52,8 +52,8 @@ void main() {
       final doc1 = parseAstFromString('struct S { CustomType x; }');
       final doc2 = parseAstFromString('struct S { AnotherType x; }');
 
-      final def1 = doc1.definitions.first as StructDefinitionNode;
-      final def2 = doc2.definitions.first as StructDefinitionNode;
+      final def1 = doc1.definitions.first.cast<StructDefinitionNode>();
+      final def2 = doc2.definitions.first.cast<StructDefinitionNode>();
 
       expect(def1, isNot(equals(def2)));
 

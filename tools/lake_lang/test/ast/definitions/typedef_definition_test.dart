@@ -9,11 +9,11 @@ void main() {
     test('should parse simple typedef with base type', () {
       const source = 'typedef i32 MyInt;';
       final doc = parseAstFromString(source);
-      final def = doc.definitions.first as TypedefDefinitionNode;
+      final def = doc.definitions.first.cast<TypedefDefinitionNode>();
 
       expect(def.span, hasSpan(0, 18));
 
-      expect((def.type as BaseTypeNode).value, 'i32');
+      expect(def.type.cast<BaseTypeNode>().value, 'i32');
       expect(def.type.span, hasSpan(8, 11));
 
       expect(def.identifier.value, 'MyInt');
@@ -23,14 +23,14 @@ void main() {
     test('should parse typedef with List type', () {
       const source = 'typedef list<string> StringList;';
       final doc = parseAstFromString(source);
-      final def = doc.definitions.first as TypedefDefinitionNode;
+      final def = doc.definitions.first.cast<TypedefDefinitionNode>();
 
       expect(def.span, hasSpan(0, 32));
 
-      final type = def.type as ListTypeNode;
+      final type = def.type.cast<ListTypeNode>();
       expect(type.span, hasSpan(8, 20));
 
-      final itemType = type.elementType as BaseTypeNode;
+      final itemType = type.elementType.cast<BaseTypeNode>();
       expect(itemType.value, 'string');
       expect(itemType.span, hasSpan(13, 19));
 
@@ -41,18 +41,18 @@ void main() {
     test('should parse typedef with Map type', () {
       const source = 'typedef map<string, i32> BaseMapType;';
       final doc = parseAstFromString(source);
-      final def = doc.definitions.first as TypedefDefinitionNode;
+      final def = doc.definitions.first.cast<TypedefDefinitionNode>();
 
       expect(def.span, hasSpan(0, 37));
 
-      final type = def.type as MapTypeNode;
+      final type = def.type.cast<MapTypeNode>();
       expect(type.span, hasSpan(8, 24));
 
-      final keyType = type.keyType as BaseTypeNode;
+      final keyType = type.keyType.cast<BaseTypeNode>();
       expect(keyType.value, 'string');
       expect(keyType.span, hasSpan(12, 18));
 
-      final valueType = type.valueType as BaseTypeNode;
+      final valueType = type.valueType.cast<BaseTypeNode>();
       expect(valueType.value, 'i32');
       expect(valueType.span, hasSpan(20, 23));
 
@@ -64,14 +64,14 @@ void main() {
       const source = 'typedef set<binary> BinarySet;';
       final doc = parseAstFromString(source);
 
-      final def = doc.definitions.first as TypedefDefinitionNode;
+      final def = doc.definitions.first.cast<TypedefDefinitionNode>();
 
       expect(def.span, hasSpan(0, 30));
 
-      final type = def.type as SetTypeNode;
+      final type = def.type.cast<SetTypeNode>();
       expect(type.span, hasSpan(8, 19));
 
-      final itemType = type.elementType as BaseTypeNode;
+      final itemType = type.elementType.cast<BaseTypeNode>();
       expect(itemType.value, 'binary');
       expect(itemType.span, hasSpan(12, 18));
 
@@ -89,8 +89,8 @@ void main() {
 
       expect(doc1, equals(doc2));
 
-      final def1 = doc1.definitions.first as TypedefDefinitionNode;
-      final def2 = doc2.definitions.first as TypedefDefinitionNode;
+      final def1 = doc1.definitions.first.cast<TypedefDefinitionNode>();
+      final def2 = doc2.definitions.first.cast<TypedefDefinitionNode>();
 
       expect(def1, equals(def2));
     });
@@ -103,8 +103,8 @@ void main() {
 
       expect(doc1, isNot(equals(doc2)));
 
-      final def1 = doc1.definitions.first as TypedefDefinitionNode;
-      final def2 = doc2.definitions.first as TypedefDefinitionNode;
+      final def1 = doc1.definitions.first.cast<TypedefDefinitionNode>();
+      final def2 = doc2.definitions.first.cast<TypedefDefinitionNode>();
 
       expect(def1, isNot(equals(def2)));
     });

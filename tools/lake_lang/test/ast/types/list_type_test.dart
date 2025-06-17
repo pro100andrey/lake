@@ -9,13 +9,13 @@ void main() {
     test('should parse list of base type', () {
       const source = 'list<i32>';
       final doc = parseAstFromString('struct S { $source numbers; }');
-      final def = doc.definitions.first as StructDefinitionNode;
+      final def = doc.definitions.first.cast<StructDefinitionNode>();
       final field = def.fields[0];
 
-      final fieldType = field.type as ListTypeNode;
+      final fieldType = field.type.cast<ListTypeNode>();
       expect(fieldType.span, hasSpan(11, 20));
 
-      final elementType = fieldType.elementType as BaseTypeNode;
+      final elementType = fieldType.elementType.cast<BaseTypeNode>();
       expect(elementType.value, 'i32');
       expect(elementType.span, hasSpan(16, 19));
     });
@@ -23,13 +23,13 @@ void main() {
     test('should parse list of custom type', () {
       const source = 'list<CustomType>';
       final doc = parseAstFromString('struct S { $source items; }');
-      final def = doc.definitions.first as StructDefinitionNode;
+      final def = doc.definitions.first.cast<StructDefinitionNode>();
       final field = def.fields[0];
 
-      final fieldType = field.type as ListTypeNode;
+      final fieldType = field.type.cast<ListTypeNode>();
       expect(fieldType.span, hasSpan(11, 27));
 
-      final elementType = fieldType.elementType as CustomTypeNode;
+      final elementType = fieldType.elementType.cast<CustomTypeNode>();
       expect(elementType.value, 'CustomType');
       expect(elementType.span, hasSpan(16, 26));
     });
@@ -37,16 +37,16 @@ void main() {
     test('should parse list of nested container type (list of lists)', () {
       const source = 'list<list<i32>>';
       final doc = parseAstFromString('struct S { $source nestedLists; }');
-      final def = doc.definitions.first as StructDefinitionNode;
+      final def = doc.definitions.first.cast<StructDefinitionNode>();
       final field = def.fields[0];
 
-      final fieldType = field.type as ListTypeNode;
+      final fieldType = field.type.cast<ListTypeNode>();
       expect(fieldType.span, hasSpan(11, 26));
 
-      final elementType = fieldType.elementType as ListTypeNode;
+      final elementType = fieldType.elementType.cast<ListTypeNode>();
       expect(elementType.span, hasSpan(16, 25));
 
-      final nestedType = elementType.elementType as BaseTypeNode;
+      final nestedType = elementType.elementType.cast<BaseTypeNode>();
       expect(nestedType.value, 'i32');
       expect(nestedType.span, hasSpan(21, 24));
     });
@@ -54,13 +54,13 @@ void main() {
     test('should parse list of map type', () {
       const source = 'list<map<string, i32>>';
       final doc = parseAstFromString('struct S { $source data; }');
-      final def = doc.definitions.first as StructDefinitionNode;
+      final def = doc.definitions.first.cast<StructDefinitionNode>();
       final field = def.fields[0];
 
-      final fieldType = field.type as ListTypeNode;
+      final fieldType = field.type.cast<ListTypeNode>();
       expect(fieldType.span, hasSpan(11, 33));
 
-      final elementType = fieldType.elementType as MapTypeNode;
+      final elementType = fieldType.elementType.cast<MapTypeNode>();
       expect(elementType.span, hasSpan(16, 32));
 
       expect(elementType.keyType, isA<BaseTypeNode>());
@@ -73,13 +73,13 @@ void main() {
     test('should parse list of set type', () {
       const source = 'list<set<string>>';
       final doc = parseAstFromString('struct S { $source tags; }');
-      final def = doc.definitions.first as StructDefinitionNode;
+      final def = doc.definitions.first.cast<StructDefinitionNode>();
       final field = def.fields[0];
 
-      final fieldType = field.type as ListTypeNode;
+      final fieldType = field.type.cast<ListTypeNode>();
       expect(fieldType.span, hasSpan(11, 28));
 
-      final elementType = fieldType.elementType as SetTypeNode;
+      final elementType = fieldType.elementType.cast<SetTypeNode>();
       expect(elementType.span, hasSpan(16, 27));
 
       expect(elementType.elementType, isA<BaseTypeNode>());
@@ -95,8 +95,8 @@ void main() {
 
       expect(doc1, equals(doc2));
 
-      final struct1 = doc1.definitions.first as StructDefinitionNode;
-      final struct2 = doc2.definitions.first as StructDefinitionNode;
+      final struct1 = doc1.definitions.first.cast<StructDefinitionNode>();
+      final struct2 = doc2.definitions.first.cast<StructDefinitionNode>();
 
       expect(struct1, equals(struct2));
 
@@ -110,8 +110,8 @@ void main() {
       final doc1 = parseAstFromString('struct S { list<CustomType> x; }');
       final doc2 = parseAstFromString('struct S { list<AnotherType> y; }');
 
-      final def1 = doc1.definitions.first as StructDefinitionNode;
-      final def2 = doc2.definitions.first as StructDefinitionNode;
+      final def1 = doc1.definitions.first.cast<StructDefinitionNode>();
+      final def2 = doc2.definitions.first.cast<StructDefinitionNode>();
 
       expect(def1, isNot(equals(def2)));
 

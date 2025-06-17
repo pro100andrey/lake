@@ -9,17 +9,17 @@ void main() {
     test('should parse map with base types', () {
       const source = 'map<string, i32>';
       final doc = parseAstFromString('struct S { $source data; }');
-      final def = doc.definitions.first as StructDefinitionNode;
+      final def = doc.definitions.first.cast<StructDefinitionNode>();
       final field = def.fields[0];
 
-      final fieldType = field.type as MapTypeNode;
+      final fieldType = field.type.cast<MapTypeNode>();
       expect(fieldType.span, hasSpan(11, 27));
 
-      final keyType = fieldType.keyType as BaseTypeNode;
+      final keyType = fieldType.keyType.cast<BaseTypeNode>();
       expect(keyType.value, 'string');
       expect(keyType.span, hasSpan(15, 21));
 
-      final valueType = fieldType.valueType as BaseTypeNode;
+      final valueType = fieldType.valueType.cast<BaseTypeNode>();
       expect(valueType.value, 'i32');
       expect(valueType.span, hasSpan(23, 26));
     });
@@ -27,17 +27,17 @@ void main() {
     test('should parse map with custom types', () {
       const source = 'map<CustomKey, CustomValue>';
       final doc = parseAstFromString('struct S { $source data; }');
-      final def = doc.definitions.first as StructDefinitionNode;
+      final def = doc.definitions.first.cast<StructDefinitionNode>();
       final field = def.fields[0];
 
-      final fieldType = field.type as MapTypeNode;
+      final fieldType = field.type.cast<MapTypeNode>();
       expect(fieldType.span, hasSpan(11, 38));
 
-      final keyType = fieldType.keyType as CustomTypeNode;
+      final keyType = fieldType.keyType.cast<CustomTypeNode>();
       expect(keyType.value, 'CustomKey');
       expect(keyType.span, hasSpan(15, 24));
 
-      final valueType = fieldType.valueType as CustomTypeNode;
+      final valueType = fieldType.valueType.cast<CustomTypeNode>();
       expect(valueType.value, 'CustomValue');
       expect(valueType.span, hasSpan(26, 37));
     });
@@ -45,20 +45,20 @@ void main() {
     test('should parse map with a list as value type', () {
       const source = 'map<string, list<i32>>';
       final doc = parseAstFromString('struct S { $source data; }');
-      final def = doc.definitions.first as StructDefinitionNode;
+      final def = doc.definitions.first.cast<StructDefinitionNode>();
       final field = def.fields[0];
 
-      final fieldType = field.type as MapTypeNode;
+      final fieldType = field.type.cast<MapTypeNode>();
       expect(fieldType.span, hasSpan(11, 33));
 
-      final keyType = fieldType.keyType as BaseTypeNode;
+      final keyType = fieldType.keyType.cast<BaseTypeNode>();
       expect(keyType.value, 'string');
       expect(keyType.span, hasSpan(15, 21));
 
-      final valueType = fieldType.valueType as ListTypeNode;
+      final valueType = fieldType.valueType.cast<ListTypeNode>();
       expect(valueType.span, hasSpan(23, 32));
 
-      final nestedElementType = valueType.elementType as BaseTypeNode;
+      final nestedElementType = valueType.elementType.cast<BaseTypeNode>();
       expect(nestedElementType.value, 'i32');
       expect(nestedElementType.span, hasSpan(28, 31));
     });
@@ -66,24 +66,24 @@ void main() {
     test('should parse map with nested map as value type', () {
       const source = 'map<string, map<i32, bool>>';
       final doc = parseAstFromString('struct S { $source data; }');
-      final def = doc.definitions.first as StructDefinitionNode;
+      final def = doc.definitions.first.cast<StructDefinitionNode>();
       final field = def.fields[0];
 
-      final fieldType = field.type as MapTypeNode;
+      final fieldType = field.type.cast<MapTypeNode>();
       expect(fieldType.span, hasSpan(11, 38));
 
-      final keyType = fieldType.keyType as BaseTypeNode;
+      final keyType = fieldType.keyType.cast<BaseTypeNode>();
       expect(keyType.value, 'string');
       expect(keyType.span, hasSpan(15, 21));
 
-      final valueType = fieldType.valueType as MapTypeNode;
+      final valueType = fieldType.valueType.cast<MapTypeNode>();
       expect(valueType.span, hasSpan(23, 37));
 
-      final nestedKeyType = valueType.keyType as BaseTypeNode;
+      final nestedKeyType = valueType.keyType.cast<BaseTypeNode>();
       expect(nestedKeyType.value, 'i32');
       expect(nestedKeyType.span, hasSpan(27, 30));
 
-      final nestedValueType = valueType.valueType as BaseTypeNode;
+      final nestedValueType = valueType.valueType.cast<BaseTypeNode>();
       expect(nestedValueType.value, 'bool');
       expect(nestedValueType.span, hasSpan(32, 36));
     });
@@ -91,20 +91,20 @@ void main() {
     test('should parse map with a set as key type', () {
       const source = 'map<set<string>, i32>';
       final doc = parseAstFromString('struct S { $source data; }');
-      final def = doc.definitions.first as StructDefinitionNode;
+      final def = doc.definitions.first.cast<StructDefinitionNode>();
       final field = def.fields[0];
 
-      final fieldType = field.type as MapTypeNode;
+      final fieldType = field.type.cast<MapTypeNode>();
       expect(fieldType.span, hasSpan(11, 32));
 
-      final keyType = fieldType.keyType as SetTypeNode;
+      final keyType = fieldType.keyType.cast<SetTypeNode>();
       expect(keyType.span, hasSpan(15, 26));
 
-      final nestedElementType = keyType.elementType as BaseTypeNode;
+      final nestedElementType = keyType.elementType.cast<BaseTypeNode>();
       expect(nestedElementType.value, 'string');
       expect(nestedElementType.span, hasSpan(19, 25));
 
-      final valueType = fieldType.valueType as BaseTypeNode;
+      final valueType = fieldType.valueType.cast<BaseTypeNode>();
       expect(valueType.value, 'i32');
       expect(valueType.span, hasSpan(28, 31));
     });
@@ -118,8 +118,8 @@ void main() {
 
       expect(doc1, equals(doc2));
 
-      final struct1 = doc1.definitions.first as StructDefinitionNode;
-      final struct2 = doc2.definitions.first as StructDefinitionNode;
+      final struct1 = doc1.definitions.first.cast<StructDefinitionNode>();
+      final struct2 = doc2.definitions.first.cast<StructDefinitionNode>();
 
       expect(struct1, equals(struct2));
 
@@ -133,8 +133,8 @@ void main() {
       final doc1 = parseAstFromString('struct S { map<string, i32> x; }');
       final doc2 = parseAstFromString('struct S { map<string, bool> x; }');
 
-      final def1 = doc1.definitions.first as StructDefinitionNode;
-      final def2 = doc2.definitions.first as StructDefinitionNode;
+      final def1 = doc1.definitions.first.cast<StructDefinitionNode>();
+      final def2 = doc2.definitions.first.cast<StructDefinitionNode>();
 
       expect(def1, isNot(equals(def2)));
 

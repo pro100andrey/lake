@@ -9,9 +9,9 @@ void main() {
     test('should parse string literal as StringConstantNode', () {
       const source = '"hello"';
       final doc = parseAstFromString('struct S { string field = $source; }');
-      final struct = doc.definitions.first as StructDefinitionNode;
-      final literal = struct.fields.first.defaultValue! as LiteralNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
 
+      final literal = struct.fields.first.defaultValue!.cast<LiteralNode>();
       expect(literal.value, 'hello');
       expect(literal.rawValue, '"hello"');
       expect(literal.span, hasSpan(26, 33));
@@ -22,15 +22,16 @@ void main() {
       final doc = parseAstFromString(
         'struct S { map<string, string> field = $source; }',
       );
-      final struct = doc.definitions.first as StructDefinitionNode;
-      final map = struct.fields.first.defaultValue! as ConstMapNode;
+      final struct = doc.definitions.first.cast<StructDefinitionNode>();
 
-      final key = map.entries.first.key as LiteralNode;
+      final map = struct.fields.first.defaultValue!.cast<ConstMapNode>();
+
+      final key = map.entries.first.key.cast<LiteralNode>();
       expect(key.value, 'key');
       expect(key.rawValue, '"key"');
       expect(key.span, hasSpan(40, 45));
 
-      final value = map.entries.first.value as LiteralNode;
+      final value = map.entries.first.value.cast<LiteralNode>();
       expect(value.value, 'value');
       expect(value.rawValue, '"value"');
       expect(value.span, hasSpan(47, 54));
@@ -52,13 +53,13 @@ void main() {
 
         expect(doc1, equals(doc2));
 
-        final struct1 = doc1.definitions.first as StructDefinitionNode;
-        final struct2 = doc2.definitions.first as StructDefinitionNode;
+        final struct1 = doc1.definitions.first.cast<StructDefinitionNode>();
+        final struct2 = doc2.definitions.first.cast<StructDefinitionNode>();
 
         expect(struct1, equals(struct2));
 
-        final literal1 = struct1.fields.first.defaultValue! as LiteralNode;
-        final literal2 = struct2.fields.first.defaultValue! as LiteralNode;
+        final literal1 = struct1.fields.first.defaultValue!.cast<LiteralNode>();
+        final literal2 = struct2.fields.first.defaultValue!.cast<LiteralNode>();
 
         expect(literal1, equals(literal2));
       },
@@ -78,13 +79,13 @@ void main() {
 
         expect(doc1, isNot(equals(doc2)));
 
-        final struct1 = doc1.definitions.first as StructDefinitionNode;
-        final struct2 = doc2.definitions.first as StructDefinitionNode;
+        final struct1 = doc1.definitions.first.cast<StructDefinitionNode>();
+        final struct2 = doc2.definitions.first.cast<StructDefinitionNode>();
 
         expect(struct1, isNot(equals(struct2)));
 
-        final literal1 = struct1.fields.first.defaultValue! as LiteralNode;
-        final literal2 = struct2.fields.first.defaultValue! as LiteralNode;
+        final literal1 = struct1.fields.first.defaultValue!.cast<LiteralNode>();
+        final literal2 = struct2.fields.first.defaultValue!.cast<LiteralNode>();
 
         expect(literal1, isNot(equals(literal2)));
       },
