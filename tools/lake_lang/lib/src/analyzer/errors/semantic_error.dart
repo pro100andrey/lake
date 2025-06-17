@@ -62,18 +62,18 @@ enum DiagnosticSeverity {
 /// Each code is associated with a specific error, warning, or hint, and
 /// provides a list of actionable suggestions to resolve the issue.
 enum DiagnosticCode {
-  /// Error code for constant value assignment issues.
+  /// Error code for literal value assignment issues.
   ///
-  /// This occurs when a value cannot be assigned to a constant because of a
+  /// This occurs when a value cannot be assigned to a literal because of a
   /// type mismatch.
-  constValueCannotBeAssigned('E1001', [
-    'Ensure the constant value matches the declared type.',
+  literalValueCannotBeAssigned('E1001', [
+    'Ensure the literal value matches the declared type.',
     'Change the declared type to match the value.',
   ]),
 
   /// Error code for duplicate declarations of a symbol.
   ///
-  /// This occurs when a symbol (e.g., variable, function, class) is declared
+  /// This occurs when a symbol (e.g., variable, method, class) is declared
   /// more than once in the same scope.
   duplicateDeclaration('E1002', [
     'Rename one of the declarations.',
@@ -254,42 +254,42 @@ final class GenericDiagnostic extends Diagnostic {
   });
 }
 
-/// Diagnostic for when a value of one type cannot be assigned to a constant
+/// Diagnostic for when a value of one type cannot be assigned to a literal
 /// declared with a different type.
 ///
 /// This error (E1001) occurs during semantic analysis when there is a type
-/// mismatch in a constant assignment.
-final class ConstValueCannotBeAssignedDiagnostic extends Diagnostic {
-  /// Creates a [ConstValueCannotBeAssignedDiagnostic] instance.
+/// mismatch in a literal assignment.
+final class LiteralValueCannotBeAssignedDiagnostic extends Diagnostic {
+  /// Creates a [LiteralValueCannotBeAssignedDiagnostic] instance.
   ///
   /// - Parameters:
   ///   - [valueTypeName]: The name of the type of the value being assigned
   /// (e.g., "string").
   ///   - [valueKindName]: A description of the kind of value (e.g., "literal",
   /// "expression").
-  ///   - [constTypeName]: The name of the type declared for the constant (e.g.,
-  ///  "i32").
+  ///   - [literalTypeName]: The name of the type declared for the literal
+  /// (e.g., "i32").
   ///   - [valueSpan]: The [SourceSpan] of the value that is causing the type
   /// mismatch.
-  ///   - [constTypeSpan]: An optional [SourceSpan] indicating the location
-  /// where the constant's type was declared, providing additional context.
-  ConstValueCannotBeAssignedDiagnostic({
+  ///   - [literalTypeSpan]: An optional [SourceSpan] indicating the location
+  /// where the literal's type was declared, providing additional context.
+  LiteralValueCannotBeAssignedDiagnostic({
     required String valueTypeName,
     required String valueKindName,
-    required String constTypeName,
+    required String literalTypeName,
     required Span valueSpan,
-    Span? constTypeSpan,
+    Span? literalTypeSpan,
   }) : super(
          span: valueSpan,
          message:
              'Cannot assign a value of type "$valueTypeName" ($valueKindName) '
-             'to a constant of type "$constTypeName".',
-         code: DiagnosticCode.constValueCannotBeAssigned,
+             'to a literal of type "$literalTypeName".',
+         code: DiagnosticCode.literalValueCannotBeAssigned,
          labels: [
-           if (constTypeSpan != null)
+           if (literalTypeSpan != null)
              (
-               span: constTypeSpan,
-               message: 'Constant declared here as "$constTypeName"',
+               span: literalTypeSpan,
+               message: 'Literal declared here as "$literalTypeName"',
              ),
          ],
        );
@@ -381,7 +381,7 @@ final class EmptyStructDefinitionDiagnostic extends Diagnostic {
 ///
 /// This error (E1006) occurs when a programmer attempts to use a word that
 /// is reserved by the language (e.g., `if`, `for`, `class`) as a name for
-/// a variable, function, or other identifier.
+/// a variable, method, or other identifier.
 final class KeywordAsIdentifierDiagnostic extends Diagnostic {
   /// Creates a [KeywordAsIdentifierDiagnostic] instance.
   ///

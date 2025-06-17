@@ -71,7 +71,7 @@ final class ImportNode extends HeaderNode {
   const ImportNode({required this.path, required super.span});
 
   /// The path being imported, as a string literal node.
-  final LiteralNode path;
+  final StringLiteralNode path;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitImportNode(this);
@@ -127,7 +127,7 @@ final class ConstDefinitionNode extends DefinitionNode {
   final IdentifierNode identifier;
 
   /// The value assigned to the constant.
-  final ConstValueNode value;
+  final LiteralValueNode value;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitConstDefinitionNode(this);
@@ -197,7 +197,7 @@ final class EnumValueNode extends AstNode {
   final IdentifierNode identifier;
 
   /// The optional integer value assigned to the enum member.
-  final IntConstantNode? value;
+  final IntLiteralNode? value;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitEnumValueNode(this);
@@ -292,8 +292,8 @@ final class ServiceDefinitionNode extends DefinitionNode {
   /// The optional identifier of the service being extended.
   final IdentifierNode? extendsService;
 
-  /// The list of function nodes defined in the service.
-  final List<FunctionNode> methods;
+  /// The list of method nodes defined in the service.
+  final List<MethodNode> methods;
 
   @override
   T accept<T>(AstVisitor<T> visitor) =>
@@ -320,7 +320,7 @@ final class FieldRequirementNode extends AstNode {
   List<Object?> get props => [value, span];
 }
 
-/// Represents a field in a struct, exception, or function parameter list.
+/// Represents a field in a struct, exception, or method parameter list.
 final class FieldNode extends AstNode {
   /// Creates a [FieldNode] with the given [fieldId], [requirement], [type],
   /// [identifier], [defaultValue], and [span].
@@ -334,7 +334,7 @@ final class FieldNode extends AstNode {
   });
 
   /// The optional field ID (for explicit field numbering).
-  final IntConstantNode? fieldId;
+  final IntLiteralNode? fieldId;
 
   /// The optional requirement node (e.g., required/optional).
   final FieldRequirementNode? requirement;
@@ -346,7 +346,7 @@ final class FieldNode extends AstNode {
   final IdentifierNode identifier;
 
   /// The optional default value for the field.
-  final ConstValueNode? defaultValue;
+  final LiteralValueNode? defaultValue;
 
   /// Whether the field is required based on its requirement node.
   bool get isRequired => requirement?.isRequired ?? false;
@@ -365,11 +365,11 @@ final class FieldNode extends AstNode {
   ];
 }
 
-/// Represents a function (method) in a service definition.
-final class FunctionNode extends AstNode {
-  /// Creates a [FunctionNode] with the given [returnType], [identifier],
+/// Represents a method in a service definition.
+final class MethodNode extends AstNode {
+  /// Creates a [MethodNode] with the given [returnType], [identifier],
   /// [parameters], [throws], and [span].
-  const FunctionNode({
+  const MethodNode({
     required this.returnType,
     required this.identifier,
     required this.parameters,
@@ -377,20 +377,20 @@ final class FunctionNode extends AstNode {
     required super.span,
   });
 
-  /// The return type of the function.
+  /// The return type of the method.
   final TypeNode returnType;
 
-  /// The identifier for the function.
+  /// The identifier for the method.
   final IdentifierNode identifier;
 
-  /// The list of parameter fields for the function.
+  /// The list of parameter fields for the method.
   final List<FieldNode> parameters;
 
-  /// The list of fields representing exceptions that the function may throw.
+  /// The list of fields representing exceptions that the method may throw.
   final List<FieldNode> throws;
 
   @override
-  T accept<T>(AstVisitor<T> visitor) => visitor.visitFunctionNode(this);
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitMethodNode(this);
 
   @override
   List<Object?> get props => [returnType, identifier, parameters, throws, span];
@@ -519,24 +519,24 @@ class VoidTypeNode extends TypeNode {
   List<Object?> get props => [span];
 }
 
-// Constants
+// Literal Values
 
-/// Base class for all constant value nodes.
-sealed class ConstValueNode extends AstNode {
-  /// Constructs a [ConstValueNode] with the given [span].
-  const ConstValueNode({required super.span});
+/// Base class for all literal value nodes.
+sealed class LiteralValueNode extends AstNode {
+  /// Constructs a [LiteralValueNode] with the given [span].
+  const LiteralValueNode({required super.span});
 
-  /// The kind of value (e.g., "literal integer", "identifier").
+  /// The kind of value (e.g., "integer literal", "identifier").
   String get valueKind;
 
   /// The type of value (e.g., "integer", "string").
   String get valueType;
 }
 
-/// Represents an integer constant value.
-final class IntConstantNode extends ConstValueNode {
-  /// Creates an [IntConstantNode] with the given [rawValue] and [span].
-  IntConstantNode({required this.rawValue, required super.span});
+/// Represents an integer literal value.
+final class IntLiteralNode extends LiteralValueNode {
+  /// Creates an [IntLiteralNode] with the given [rawValue] and [span].
+  IntLiteralNode({required this.rawValue, required super.span});
 
   /// The integer value as a string.
   final String rawValue;
@@ -551,16 +551,16 @@ final class IntConstantNode extends ConstValueNode {
   String get valueType => 'integer';
 
   @override
-  T accept<T>(AstVisitor<T> visitor) => visitor.visitIntConstantNode(this);
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitIntLiteralNode(this);
 
   @override
   List<Object?> get props => [rawValue, span];
 }
 
-/// Represents a double constant value.
-final class DoubleConstantNode extends ConstValueNode {
-  /// Creates a [DoubleConstantNode] with the given [rawValue] and [span].
-  DoubleConstantNode({required this.rawValue, required super.span});
+/// Represents a double literal value.
+final class DoubleLiteralNode extends LiteralValueNode {
+  /// Creates a [DoubleLiteralNode] with the given [rawValue] and [span].
+  DoubleLiteralNode({required this.rawValue, required super.span});
 
   /// The double value as a string.
   final String rawValue;
@@ -575,16 +575,16 @@ final class DoubleConstantNode extends ConstValueNode {
   String get valueType => 'double';
 
   @override
-  T accept<T>(AstVisitor<T> visitor) => visitor.visitDoubleConstantNode(this);
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitDoubleLiteralNode(this);
 
   @override
   List<Object?> get props => [rawValue, span];
 }
 
-/// Represents a boolean constant value.
-final class BoolConstantNode extends ConstValueNode {
-  /// Creates a [BoolConstantNode] with the given [rawValue] and [span].
-  BoolConstantNode({required this.rawValue, required super.span});
+/// Represents a boolean literal value.
+final class BoolLiteralNode extends LiteralValueNode {
+  /// Creates a [BoolLiteralNode] with the given [rawValue] and [span].
+  BoolLiteralNode({required this.rawValue, required super.span});
 
   /// The boolean value.
   final String rawValue;
@@ -599,16 +599,16 @@ final class BoolConstantNode extends ConstValueNode {
   String get valueType => 'bool';
 
   @override
-  T accept<T>(AstVisitor<T> visitor) => visitor.visitBoolConstantNode(this);
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitBoolLiteralNode(this);
 
   @override
   List<Object?> get props => [rawValue, span];
 }
 
-/// Represents a string literal constant value.
-final class LiteralNode extends ConstValueNode {
-  /// Creates a [LiteralNode] with the given [rawValue] and [span].
-  LiteralNode({required this.rawValue, required super.span});
+/// Represents a string literal value.
+final class StringLiteralNode extends LiteralValueNode {
+  /// Creates a [StringLiteralNode] with the given [rawValue] and [span].
+  StringLiteralNode({required this.rawValue, required super.span});
 
   /// The string literal value.
   final String rawValue;
@@ -622,60 +622,60 @@ final class LiteralNode extends ConstValueNode {
   String get valueType => 'string';
 
   @override
-  T accept<T>(AstVisitor<T> visitor) => visitor.visitLiteralNode(this);
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitStringLiteralNode(this);
 
   @override
   List<Object?> get props => [rawValue, span];
 }
 
-/// Represents a list constant value.
-final class ConstListNode extends ConstValueNode {
-  /// Creates a [ConstListNode] with the given [elements] and [span].
-  const ConstListNode({required this.elements, required super.span});
+/// Represents a list literal value.
+final class ListLiteralNode extends LiteralValueNode {
+  /// Creates a [ListLiteralNode] with the given [elements] and [span].
+  const ListLiteralNode({required this.elements, required super.span});
 
-  /// The list of constant value elements.
-  final List<ConstValueNode> elements;
+  /// The list of literal value elements.
+  final List<LiteralValueNode> elements;
 
   @override
-  String get valueKind => 'literal list';
+  String get valueKind => 'list literal';
 
   @override
   String get valueType => 'list';
 
   @override
-  T accept<T>(AstVisitor<T> visitor) => visitor.visitConstListNode(this);
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitListLiteralNode(this);
 
   @override
   List<Object?> get props => [elements, span];
 }
 
-/// Represents a pair of constant values used in map entries.
-/// This is a tuple-like structure for key-value pairs in a constant map.
-typedef ConstMapNodePair = ({ConstValueNode key, ConstValueNode value});
+/// Represents a pair of literal values used in map entries.
+/// This is a tuple-like structure for key-value pairs in a map literal.
+typedef MapLiteralEntry = ({LiteralValueNode key, LiteralValueNode value});
 
-/// Represents a map constant value.
-final class ConstMapNode extends ConstValueNode {
-  /// Creates a [ConstMapNode] with the given [entries] and [span].
-  const ConstMapNode({required this.entries, required super.span});
+/// Represents a map literal value.
+final class MapLiteralNode extends LiteralValueNode {
+  /// Creates a [MapLiteralNode] with the given [entries] and [span].
+  const MapLiteralNode({required this.entries, required super.span});
 
-  /// The list of map entries, each as a key-value pair of constant values.
-  final List<ConstMapNodePair> entries;
+  /// The list of map entries, each as a key-value pair of literal values.
+  final List<MapLiteralEntry> entries;
 
   @override
-  String get valueKind => 'literal map';
+  String get valueKind => 'map literal';
 
   @override
   String get valueType => 'map';
 
   @override
-  T accept<T>(AstVisitor<T> visitor) => visitor.visitConstMapNode(this);
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitMapLiteralNode(this);
 
   @override
   List<Object?> get props => [entries, span];
 }
 
 /// Represents an identifier (reference to a named value).
-final class IdentifierNode extends ConstValueNode {
+final class IdentifierNode extends LiteralValueNode {
   /// Creates an [IdentifierNode] with the given [value] and [span].
   const IdentifierNode({required this.value, required super.span});
 

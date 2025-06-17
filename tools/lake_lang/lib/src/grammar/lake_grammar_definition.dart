@@ -38,7 +38,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// declaration.
   Parser header() => ref0(import) | ref0(namespace);
 
-  /// Import ::= 'import' Literal ListSeparator?
+  /// Import ::= 'import' StringLiteral ListSeparator?
   ///
   /// Parses an import statement, consisting of the keyword 'import' followed
   /// by a string literal.
@@ -48,7 +48,9 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// import "path/to/my_file";
   /// ```
   Parser import() =>
-      ref1(token, 'import') & ref0(literal) & ref0(listSeparator).optional();
+      ref1(token, 'import') &
+      ref0(stringLiteral) &
+      ref0(listSeparator).optional();
 
   /// Namespace ::= 'namespace' NamespaceScope Identifier ListSeparator?
   ///
@@ -72,7 +74,8 @@ class LakeGrammarDefinition extends GrammarDefinition {
   Parser namespaceScope() =>
       ref1(token, '*') | ref1(token, 'js') | ref1(token, 'dart');
 
-  /// Definition ::= Const | Typedef | Enum | Struct | Exception | Service
+  /// Definition ::= ConstDefinition | TypedefDefinition | EnumDefinition |
+  /// StructDefinition | ExceptionDefinition | ServiceDefinition
   ///
   /// Parses a definition, which can be a constant, typedef, enum, struct,
   /// union, exception, or service.
@@ -85,10 +88,11 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(exceptionDefinition) |
       ref0(serviceDefinition);
 
-  /// Const ::= 'const' FieldType Identifier '=' ConstValue ListSeparator?
+  /// ConstDefinition ::= 'const' FieldType Identifier '='
+  /// LiteralValue ListSeparator?
   ///
   /// Parses a constant definition, consisting of the keyword 'const', a field
-  /// type, an identifier, an equals sign, a constant value, and an optional
+  /// type, an identifier, an equals sign, a literal value, and an optional
   /// list separator.
   ///
   /// Example:
@@ -100,10 +104,10 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(fieldType) &
       ref0(identifier) &
       ref1(token, '=') &
-      ref0(constValue) &
+      ref0(literalValue) &
       ref0(listSeparator).optional();
 
-  /// Typedef ::= 'typedef' DefinitionType Identifier ListSeparator?
+  /// TypedefDefinition ::= 'typedef' DefinitionType Identifier ListSeparator?
   ///
   /// Parses a typedef definition, consisting of the keyword 'typedef', a
   /// definition type, an identifier, and an optional list separator.
@@ -118,7 +122,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(identifier) &
       ref0(listSeparator).optional();
 
-  /// Enum ::= 'enum' Identifier '{' EnumValue* '}'
+  /// EnumDefinition ::= 'enum' Identifier '{' EnumValue* '}'
   ///
   /// Parses an enum definition, consisting of the keyword 'enum', an
   /// identifier, and a brace-enclosed list of enum values.
@@ -138,7 +142,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(enumValue).star() &
       ref1(token, '}');
 
-  /// EnumValue ::= Identifier ('=' IntConstant)? ListSeparator?
+  /// EnumValue ::= Identifier ('=' IntLiteral)? ListSeparator?
   ///
   /// Parses an enum value, consisting of an identifier, an optional integer
   /// assignment, and an optional list separator.
@@ -153,10 +157,10 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// ```
   Parser enumValue() =>
       ref0(identifier) &
-      (ref1(token, '=') & ref0(intConstant)).optional() &
+      (ref1(token, '=') & ref0(intLiteral)).optional() &
       ref0(listSeparator).optional();
 
-  /// Struct ::= 'struct' Identifier '{' Field* '}'
+  /// StructDefinition ::= 'struct' Identifier '{' Field* '}'
   ///
   /// Parses a struct definition, consisting of the keyword 'struct', an
   /// identifier, and a brace-enclosed list of fields.
@@ -175,7 +179,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(field).star() &
       ref1(token, '}');
 
-  /// Union ::= 'union' Identifier '{' Field* '}'
+  /// UnionDefinition ::= 'union' Identifier '{' Field* '}'
   ///
   /// Parses a union definition, consisting of the keyword 'union', an
   /// identifier, and a brace-enclosed list of fields.
@@ -194,7 +198,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(field).star() &
       ref1(token, '}');
 
-  /// Exception ::= 'exception' Identifier '{' Field* '}'
+  /// ExceptionDefinition ::= 'exception' Identifier '{' Field* '}'
   ///
   /// Parses an exception definition, consisting of the keyword 'exception', an
   /// identifier, and a brace-enclosed list of fields.
@@ -212,12 +216,12 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(field).star() &
       ref1(token, '}');
 
-  /// Service ::= 'service' Identifier ( 'extends' Identifier )?
-  /// '{' Function* '}'
+  /// ServiceDefinition ::= 'service' Identifier ( 'extends' Identifier )?
+  /// '{' Method* '}'
   ///
   /// Parses a service definition, consisting of the keyword 'service', an
   /// identifier, an optional 'extends' clause, and a brace-enclosed list of
-  /// functions.
+  /// methods.
   ///
   /// Example:
   /// ```lake
@@ -231,10 +235,10 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(identifier) &
       (ref1(token, 'extends') & ref0(identifier)).optional() &
       ref1(token, '{') &
-      ref0(function).star() &
+      ref0(method).star() &
       ref1(token, '}');
 
-  /// Field ::= FieldID? FieldReq? FieldType Identifier ('=' ConstValue)?
+  /// Field ::= FieldID? FieldReq? FieldType Identifier ('=' LiteralValue)?
   /// ListSeparator?
   ///
   /// Parses a field, consisting of an optional field ID, an optional
@@ -254,27 +258,27 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(fieldReq).optional() &
       ref0(fieldType) &
       ref0(identifier) &
-      (ref1(token, '=') & ref0(constValue)).optional() &
+      (ref1(token, '=') & ref0(literalValue)).optional() &
       ref0(listSeparator).optional();
 
-  /// FieldID ::= IntConstant ':'
+  /// FieldID ::= IntLiteral ':'
   ///
-  /// Parses a field ID, consisting of an integer constant followed by a colon.
+  /// Parses a field ID, consisting of an integer literal followed by a colon.
   ///
   /// Example:
   /// ```
   /// 1:
   /// ```
-  Parser fieldID() => ref0(intConstant) & ref1(token, ':');
+  Parser fieldID() => ref0(intLiteral) & ref1(token, ':');
 
   /// FieldReq ::= 'required' | 'optional'
   ///
   /// Parses a field requirement specifier, either 'required' or 'optional'.
   Parser fieldReq() => ref1(token, 'required') | ref1(token, 'optional');
 
-  /// Function ::= FunctionType Identifier '(' Field* ')' Throws? ListSeparator?
+  /// Method ::= MethodType Identifier '(' Field* ')' Throws? ListSeparator?
   ///
-  /// Parses a function definition, consisting of a function type, an
+  /// Parses a method definition, consisting of a method type, an
   /// identifier, a parenthesized list of fields (arguments), an optional
   /// throws clause, and an optional list separator.
   ///
@@ -282,8 +286,8 @@ class LakeGrammarDefinition extends GrammarDefinition {
   /// ```
   /// string getUserById(1: i32 id) throws (1: UserNotFoundException);
   /// ```
-  Parser function() =>
-      ref0(functionType) &
+  Parser method() =>
+      ref0(methodType) &
       ref0(identifier) &
       ref1(token, '(') &
       ref0(field).star() &
@@ -291,10 +295,10 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(throws).optional() &
       ref0(listSeparator).optional();
 
-  /// FunctionType ::= FieldType | 'void'
+  /// MethodType ::= FieldType | 'void'
   ///
-  /// Parses a function return type, which can be any field type or 'void'.
-  Parser functionType() =>
+  /// Parses a method return type, which can be any field type or 'void'.
+  Parser methodType() =>
       ref0(fieldType) |
       ref1(token, 'void') |
       FailureParser('return type expected');
@@ -420,28 +424,28 @@ class LakeGrammarDefinition extends GrammarDefinition {
       ref0(fieldType) &
       ref1(token, '>');
 
-  /// ConstValue ::= ConstList | ConstMap | DoubleConstant | IntConstant |
-  /// BooleanConstant | Identifier | Literal
+  /// LiteralValue ::= ListLiteral | MapLiteral | DoubleLiteral | IntLiteral |
+  /// BooleanLiteral | Identifier | StringLiteral
   ///
-  /// Parses a constant value, which can be a list, map, double, integer,
-  /// boolean, identifier (referencing another const), or string literal.
-  Parser constValue() =>
-      ref0(constList) |
-      ref0(constMap) |
-      ref0(intConstant) |
-      ref0(doubleConstant) |
-      ref0(boolConstant) |
+  /// Parses a literal value, which can be a list, map, double, integer,
+  /// boolean, identifier (referencing another literal), or string literal.
+  Parser literalValue() =>
+      ref0(listLiteral) |
+      ref0(mapLiteral) |
+      ref0(intLiteral) |
+      ref0(doubleLiteral) |
+      ref0(boolLiteral) |
       ref0(identifier) |
-      ref0(literal) |
-      FailureParser('const literal expected');
+      ref0(stringLiteral) |
+      FailureParser('literal expected');
 
-  /// IntConstant ::= ('+' | '-')? Digit+
+  /// IntLiteral ::= ('+' | '-')? Digit+
   ///
-  /// Parses an integer constant, consisting of an optional sign and one or more
+  /// Parses an integer literal, consisting of an optional sign and one or more
   /// digits, *without* a decimal point or exponent.
   ///
   /// Example: `123`, `-45`, `+9`
-  Parser intConstant() {
+  Parser intLiteral() {
     final sign = (char('+') | char('-')).optional();
     final integerPart = sign & digit().plus();
 
@@ -458,14 +462,14 @@ class LakeGrammarDefinition extends GrammarDefinition {
     );
   }
 
-  /// DoubleConstant ::= ('+' | '-')? ( Digit* '.' Digit+ ( ('E' | 'e')
+  /// DoubleLiteral ::= ('+' | '-')? ( Digit* '.' Digit+ ( ('E' | 'e')
   /// ('+' | '-')? Digit+ )? | Digit+ ( ('E' | 'e') ('+' | '-')? Digit+ )? )
   ///
-  /// Parses a double constant, consisting of an optional sign, a decimal
+  /// Parses a double literal, consisting of an optional sign, a decimal
   /// number, or an integer with an exponent.
   ///
   /// Example: `3.14`, `-0.5`, `1e-3`, `2.5E+2`
-  Parser doubleConstant() {
+  Parser doubleLiteral() {
     final sign = (char('+') | char('-')).optional();
     final exponent = (char('E') | char('e')) & (sign & digit().plus());
 
@@ -480,43 +484,43 @@ class LakeGrammarDefinition extends GrammarDefinition {
     return ref1(token, combinedParts);
   }
 
-  /// BooleanConstant ::= 'true' | 'false'
+  /// BoolLiteral ::= 'true' | 'false'
   ///
-  /// Parses a boolean constant, either 'true' or 'false'.
-  Parser boolConstant() => ref1(token, 'true') | ref1(token, 'false');
+  /// Parses a boolean literal, either 'true' or 'false'.
+  Parser boolLiteral() => ref1(token, 'true') | ref1(token, 'false');
 
-  /// ConstList ::= '[' (ConstValue ListSeparator?)* ']'
+  /// ListLiteral ::= '[' (LiteralValue ListSeparator?)* ']'
   ///
-  /// Parses a constant list, consisting of square-bracketed constant values
+  /// Parses a list literal, consisting of square-bracketed literal values
   /// with optional separators.
   ///
   /// Example: `[1, 2, 3]` or `["a"; "b";]`
-  Parser constList() =>
+  Parser listLiteral() =>
       ref1(token, '[') &
-      (ref0(constValue) & ref0(listSeparator).optional()).star() &
+      (ref0(literalValue) & ref0(listSeparator).optional()).star() &
       ref1(token, ']');
 
-  /// ConstMap ::= '{' (ConstValue ':' ConstValue ListSeparator?)* '}'
+  /// MapLiteral ::= '{' (LiteralValue ':' LiteralValue ListSeparator?)* '}'
   ///
-  /// Parses a constant map, consisting of brace-enclosed key-value pairs with
+  /// Parses a map literal, consisting of brace-enclosed key-value pairs with
   /// optional separators.
   ///
   /// Example: `{"key1": "value1", "key2": 123}`
-  Parser constMap() =>
+  Parser mapLiteral() =>
       ref1(token, '{') &
-      (ref0(constValue) &
+      (ref0(literalValue) &
               ref1(token, ':') &
-              ref0(constValue) &
+              ref0(literalValue) &
               ref0(listSeparator).optional())
           .star() &
       ref1(token, '}');
 
-  /// Literal ::= ('"' [^"]* '"') | ("'" [^']* "'")
+  /// StringLiteral ::= ('"' [^"]* '"') | ("'" [^']* "'")
   ///
   /// Parses a string literal, enclosed in either single or double quotes.
   ///
   /// Example: `"Hello, World!"` or `'Another string'`
-  Parser literal() => ref1(
+  Parser stringLiteral() => ref1(
     token,
     (char('"') & pattern('^"').star() & char('"') |
             char("'") & pattern("^'").star() & char("'"))

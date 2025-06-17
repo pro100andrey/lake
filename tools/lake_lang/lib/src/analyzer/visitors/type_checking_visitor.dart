@@ -118,7 +118,7 @@ class TypeCheckingVisitor implements AstVisitor<void> {
     );
 
     if (node.defaultValue != null && fieldSemanticType != null) {
-      final defaultValueSemanticType = getConstantValueSemanticType(
+      final defaultValueSemanticType = getLiteralValueSemanticType(
         node.defaultValue!,
         _reporter,
         _symbolTable,
@@ -126,12 +126,12 @@ class TypeCheckingVisitor implements AstVisitor<void> {
 
       if (defaultValueSemanticType != null) {
         if (!defaultValueSemanticType.isAssignableTo(fieldSemanticType)) {
-          _reporter.reportConstValueCannotBeAssigned(
-            constTypeName: fieldSemanticType.name,
+          _reporter.reportLiteralValueCannotBeAssigned(
+            literalTypeName: fieldSemanticType.name,
             valueKindName: 'default value',
             valueTypeName: defaultValueSemanticType.name,
             valueSpan: node.defaultValue!.span,
-            constTypeSpan: node.type.span,
+            literalTypeSpan: node.type.span,
           );
         }
       }
@@ -141,7 +141,7 @@ class TypeCheckingVisitor implements AstVisitor<void> {
   }
 
   @override
-  void visitFunctionNode(FunctionNode node) {
+  void visitMethodNode(MethodNode node) {
     _ruleDispatcher.applyRules(node);
 
     for (final parameter in node.parameters) {
@@ -195,25 +195,25 @@ class TypeCheckingVisitor implements AstVisitor<void> {
     _ruleDispatcher.applyRules(node);
   }
 
-  // Constant value nodes
+  // Literal value nodes
 
   @override
-  void visitIntConstantNode(IntConstantNode node) {
+  void visitIntLiteralNode(IntLiteralNode node) {
     _ruleDispatcher.applyRules(node);
   }
 
   @override
-  void visitDoubleConstantNode(DoubleConstantNode node) {
+  void visitDoubleLiteralNode(DoubleLiteralNode node) {
     _ruleDispatcher.applyRules(node);
   }
 
   @override
-  void visitBoolConstantNode(BoolConstantNode node) {
+  void visitBoolLiteralNode(BoolLiteralNode node) {
     _ruleDispatcher.applyRules(node);
   }
 
   @override
-  void visitLiteralNode(LiteralNode node) {
+  void visitStringLiteralNode(StringLiteralNode node) {
     _ruleDispatcher.applyRules(node);
   }
 
@@ -223,12 +223,12 @@ class TypeCheckingVisitor implements AstVisitor<void> {
   }
 
   @override
-  void visitConstListNode(ConstListNode node) {
+  void visitListLiteralNode(ListLiteralNode node) {
     _ruleDispatcher.applyRules(node);
   }
 
   @override
-  void visitConstMapNode(ConstMapNode node) {
+  void visitMapLiteralNode(MapLiteralNode node) {
     _ruleDispatcher.applyRules(node);
 
     for (final entry in node.entries) {

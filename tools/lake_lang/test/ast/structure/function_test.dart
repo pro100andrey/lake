@@ -5,8 +5,8 @@ import '../../testing/matchers.dart';
 import '../_ast_helpers.dart';
 
 void main() {
-  group('Function AST', () {
-    test('should parse function with no parameters', () {
+  group('Method AST', () {
+    test('should parse method with no parameters', () {
       const source = 'void foo();';
       final doc = parseAstFromString('service Foo { $source }');
       final service = doc.definitions.first.cast<ServiceDefinitionNode>();
@@ -23,7 +23,7 @@ void main() {
       expect(fn.parameters, isEmpty);
     });
 
-    test('should parse function with parameters without field identifiers', () {
+    test('should parse method with parameters without field identifiers', () {
       const source = 'AddResponse add(i32 a, i32 b)';
       final doc = parseAstFromString('service Foo { $source }');
       final service = doc.definitions.first.cast<ServiceDefinitionNode>();
@@ -60,7 +60,7 @@ void main() {
       expect(field2.requirement, isNull);
     });
 
-    test('should parse function with parameters with field identifiers', () {
+    test('should parse method with parameters with field identifiers', () {
       const source = 'UsersListResponse usersList(1:i32 a, 2:i32 b)';
       final doc = parseAstFromString('service Foo { $source }');
       final service = doc.definitions.first.cast<ServiceDefinitionNode>();
@@ -109,7 +109,7 @@ void main() {
       expect(field2.requirement, isNull);
     });
 
-    test('should parse function with throws (no fieldId)', () {
+    test('should parse method with throws (no fieldId)', () {
       const source = 'void foo() throws (CustomException err)';
       final doc = parseAstFromString('service S { $source }');
       final service = doc.definitions.first.cast<ServiceDefinitionNode>();
@@ -140,7 +140,7 @@ void main() {
       expect(throwField.requirement, isNull);
     });
 
-    test('should parse function with throws (with fieldId)', () {
+    test('should parse method with throws (with fieldId)', () {
       const source = 'void foo() throws (1: CustomException err)';
       final doc = parseAstFromString('service S { $source }');
       final service = doc.definitions.first.cast<ServiceDefinitionNode>();
@@ -174,7 +174,7 @@ void main() {
       expect(throwField.requirement, isNull);
     });
 
-    test('should parse function with multiple parameters and throws', () {
+    test('should parse method with multiple parameters and throws', () {
       const source =
           'i32 sum(1: i32 a, 2: i32 b) throws (1: CustomException err)';
       final doc = parseAstFromString('service S { $source }');
@@ -234,7 +234,7 @@ void main() {
       expect(throwField.requirement, isNull);
     });
 
-    test('should parse function with stream parameter', () {
+    test('should parse method with stream parameter', () {
       const source = 'void streamFunc(stream<i32> s)';
       final doc = parseAstFromString('service S { $source }');
       final service = doc.definitions.first.cast<ServiceDefinitionNode>();
@@ -267,7 +267,7 @@ void main() {
       expect(param.requirement, isNull);
     });
 
-    test('should parse unidirectional function', () {
+    test('should parse unidirectional stream method', () {
       const source = 'stream<ChatMessage> streamFunc(1: stream<ChatMessage> s)';
       final doc = parseAstFromString('service S { $source }');
       final service = doc.definitions.first.cast<ServiceDefinitionNode>();
@@ -312,7 +312,7 @@ void main() {
     });
   });
 
-  group('Function AST (equality)', () {
+  group('Method AST (equality)', () {
     test('should equal if they have the same name and parameters', () {
       const source1 =
           'stream<ChatMessage> streamFunc(1: stream<ChatMessage> s)';
@@ -331,13 +331,14 @@ void main() {
       expect(parameters1, equals(parameters2));
     });
 
-    test('should consider functions unequal if they have different names', () {
+    test('should consider methods unequal if they have different names', () {
       const source1 =
           'stream<ChatMessage> streamFunc(1: stream<ChatMessage> s)';
       const source2 =
           'stream<ChatMessage> streamFunc2(1: stream<ChatMessage> s)';
       final doc1 = parseAstFromString('service S { $source1 }');
       final doc2 = parseAstFromString('service S { $source2 }');
+      
       final service1 = doc1.definitions.first.cast<ServiceDefinitionNode>();
       final service2 = doc2.definitions.first.cast<ServiceDefinitionNode>();
 

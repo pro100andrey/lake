@@ -4,9 +4,9 @@ import 'package:test/test.dart';
 
 void main() {
   const grammar = LakeGrammarDefinition();
-  final parser = resolve(grammar.functionType().end());
+  final parser = resolve(grammar.methodType().end());
 
-  group('FunctionType grammar (positive):', () {
+  group('MethodType grammar (positive):', () {
     test('should parse stream type', () {
       final result = parser.parse('stream<int>');
       final [Token t, Token ld, Token type, Token rd] = result.value as List;
@@ -95,7 +95,7 @@ void main() {
     });
   });
 
-  group('FunctionType grammar (negative):', () {
+  group('MethodType grammar (negative):', () {
     test('should fail to parse invalid type', () {
       final result = parser.parse('invalidType<');
 

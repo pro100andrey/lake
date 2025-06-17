@@ -25,7 +25,7 @@ void main() {
       expect(rd.value, '}');
     });
 
-    test('should parse service with one function', () {
+    test('should parse service with one method', () {
       final result = parser.parse('service S { void foo() }');
       final [
         Token keyword,
@@ -133,7 +133,7 @@ void main() {
       expect(rd.value, '}');
     });
 
-    test('should parse service with trailing comma in function', () {
+    test('should parse service with trailing comma in method', () {
       final result = parser.parse('service S { void foo(), }');
       expect(result, isA<Success>());
       final [
@@ -182,7 +182,7 @@ void main() {
       expect(result.message, '"{" expected');
     });
 
-    test('should fail to parse invalid function', () {
+    test('should fail to parse invalid method', () {
       final result = parser.parse('service S { foo }');
 
       expect(result, isA<Failure>());

@@ -44,8 +44,8 @@ void main() {
 
       expect(constant.identifier.value, 'MAX_USERS');
 
-      final value = constant.value.cast<IntConstantNode>();
-      expect(value.value, 1000);
+      final literal = constant.value.cast<IntLiteralNode>();
+      expect(literal.value, 1000);
     });
 
     test('should parse string ADMIN_EMAIL constant', () {
@@ -55,8 +55,8 @@ void main() {
 
       expect(constant.identifier.value, 'ADMIN_EMAIL');
 
-      final value = constant.value.cast<LiteralNode>();
-      expect(value.value, 'admin@example.com');
+      final literal = constant.value.cast<StringLiteralNode>();
+      expect(literal.value, 'admin@example.com');
     });
 
     test('should parse bool DEBUG_MODE constant', () {
@@ -66,8 +66,8 @@ void main() {
 
       expect(constant.identifier.value, 'DEBUG_MODE');
 
-      final value = constant.value.cast<BoolConstantNode>();
-      expect(value.value, true);
+      final literal = constant.value.cast<BoolLiteralNode>();
+      expect(literal.value, true);
     });
 
     test('should parse double PI constant', () {
@@ -77,8 +77,8 @@ void main() {
 
       expect(constant.identifier.value, 'PI');
 
-      final value = constant.value.cast<DoubleConstantNode>();
-      expect(value.value, 3.14159);
+      final literal = constant.value.cast<DoubleLiteralNode>();
+      expect(literal.value, 3.14159);
     });
 
     test('should parse binary EMPTY_BINARY constant', () {
@@ -88,8 +88,8 @@ void main() {
 
       expect(constant.identifier.value, 'EMPTY_BINARY');
 
-      final value = constant.value.cast<LiteralNode>();
-      expect(value.value, '');
+      final literal = constant.value.cast<StringLiteralNode>();
+      expect(literal.value, '');
     });
 
     test('should parse uuid API_KEY_UUID constant', () {
@@ -99,8 +99,8 @@ void main() {
 
       expect(constant.identifier.value, 'API_KEY_UUID');
 
-      final value = constant.value.cast<LiteralNode>();
-      expect(value.value, 'a1b2c3d4-e5f6-7890-1234-567890abcdef');
+      final literal = constant.value.cast<StringLiteralNode>();
+      expect(literal.value, 'a1b2c3d4-e5f6-7890-1234-567890abcdef');
     });
 
     test('should parse list<i32> PRIME_NUMBERS constant', () {
@@ -112,16 +112,16 @@ void main() {
 
       expect(constant.identifier.value, 'PRIME_NUMBERS');
 
-      final value = constant.value.cast<ConstListNode>();
-      final elements = value.elements.cast<IntConstantNode>();
+      final value = constant.value.cast<ListLiteralNode>();
+      final elements = value.elements.cast<IntLiteralNode>();
       expect(elements.length, 5);
 
       final [
-        IntConstantNode e0,
-        IntConstantNode e1,
-        IntConstantNode e2,
-        IntConstantNode e3,
-        IntConstantNode e4,
+        IntLiteralNode e0,
+        IntLiteralNode e1,
+        IntLiteralNode e2,
+        IntLiteralNode e3,
+        IntLiteralNode e4,
       ] = elements;
 
       expect(e0.value, 2);
@@ -140,11 +140,12 @@ void main() {
 
       expect(constant.identifier.value, 'GREETINGS');
 
-      final value = constant.value.cast<ConstListNode>();
-      final elements = value.elements.cast<LiteralNode>();
+      final value = constant.value.cast<ListLiteralNode>();
+      final elements = value.elements.cast<StringLiteralNode>();
       expect(elements.length, 3);
 
-      final [LiteralNode e0, LiteralNode e1, LiteralNode e2] = elements;
+      final [StringLiteralNode e0, StringLiteralNode e1, StringLiteralNode e2] =
+          elements;
 
       expect(e0.value, 'Hello');
       expect(e1.value, 'Hi');
@@ -160,11 +161,11 @@ void main() {
 
       expect(constant.identifier.value, 'BOOLEAN_FLAGS');
 
-      final value = constant.value.cast<ConstListNode>();
-      final elements = value.elements.cast<BoolConstantNode>();
+      final value = constant.value.cast<ListLiteralNode>();
+      final elements = value.elements.cast<BoolLiteralNode>();
       expect(elements.length, 2);
 
-      final [BoolConstantNode e0, BoolConstantNode e1] = elements;
+      final [BoolLiteralNode e0, BoolLiteralNode e1] = elements;
 
       expect(e0.value, true);
       expect(e1.value, false);
@@ -179,23 +180,23 @@ void main() {
 
       expect(constant.identifier.value, 'NESTED_LIST');
 
-      final value = constant.value.cast<ConstListNode>();
-      final elements = value.elements.cast<ConstListNode>();
+      final value = constant.value.cast<ListLiteralNode>();
+      final elements = value.elements.cast<ListLiteralNode>();
 
       expect(elements.length, 2);
 
-      final [ConstListNode nestedList1, ConstListNode nestedList2] = elements;
+      final [ListLiteralNode nestedList1, ListLiteralNode nestedList2] =
+          elements;
       expect(nestedList1.elements.length, 2);
       expect(nestedList2.elements.length, 1);
 
-      final [IntConstantNode e11, IntConstantNode e12] = nestedList1.elements
-          .cast<IntConstantNode>();
+      final [IntLiteralNode e11, IntLiteralNode e12] = nestedList1.elements
+          .cast<IntLiteralNode>();
 
       expect(e11.value, 1);
       expect(e12.value, 2);
 
-      final [IntConstantNode e21] = nestedList2.elements
-          .cast<IntConstantNode>();
+      final [IntLiteralNode e21] = nestedList2.elements.cast<IntLiteralNode>();
       expect(e21.value, 3);
     });
 
@@ -208,18 +209,18 @@ void main() {
 
       expect(constant.identifier.value, 'HTTP_STATUS_CODES');
 
-      final value = constant.value.cast<ConstMapNode>();
+      final value = constant.value.cast<MapLiteralNode>();
 
       final entries = value.entries
-          .cast<({LiteralNode key, IntConstantNode value})>();
+          .cast<({StringLiteralNode key, IntLiteralNode value})>();
 
       expect(entries.length, 2);
 
-      final entry1 = entries[0];
+      final [entry1, entry2] = entries;
+
       expect(entry1.key.value, 'OK');
       expect(entry1.value.value, 200);
 
-      final entry2 = entries[1];
       expect(entry2.key.value, 'NOT_FOUND');
       expect(entry2.value.value, 404);
     });
@@ -233,15 +234,15 @@ void main() {
 
       expect(constant.identifier.value, 'ERROR_MESSAGES');
 
-      final value = constant.value.cast<ConstMapNode>();
+      final value = constant.value.cast<MapLiteralNode>();
       final entries = value.entries
-          .cast<({IntConstantNode key, LiteralNode value})>();
-      expect(entries.length, 2);
-      final entry1 = entries[0];
+          .cast<({IntLiteralNode key, StringLiteralNode value})>();
+
+      final [entry1, entry2] = entries;
+
       expect(entry1.key.value, 100);
       expect(entry1.value.value, 'Invalid Input');
 
-      final entry2 = entries[1];
       expect(entry2.key.value, 200);
       expect(entry2.value.value, 'Service Unavailable');
     });
@@ -258,9 +259,9 @@ void main() {
 
       expect(constant.identifier.value, 'USER_ROLES');
 
-      final value = constant.value.cast<ConstMapNode>();
+      final value = constant.value.cast<MapLiteralNode>();
       final entries = value.entries
-          .cast<({LiteralNode key, ConstListNode value})>();
+          .cast<({StringLiteralNode key, ListLiteralNode value})>();
 
       expect(entries.length, 2);
 
@@ -268,8 +269,8 @@ void main() {
       expect(entry1.key.value, 'admin');
 
       final listValue1 = entry1.value;
-      final [LiteralNode e11, LiteralNode e12] = listValue1.elements
-          .cast<LiteralNode>();
+      final [StringLiteralNode e11, StringLiteralNode e12] = listValue1.elements
+          .cast<StringLiteralNode>();
 
       expect(e11.value, 'create');
       expect(e12.value, 'delete');
@@ -280,7 +281,8 @@ void main() {
       final listValue2 = entry2.value;
       expect(listValue2.elements.length, 1);
 
-      final [LiteralNode e21] = listValue2.elements.cast<LiteralNode>();
+      final [StringLiteralNode e21] = listValue2.elements
+          .cast<StringLiteralNode>();
       expect(e21.value, 'read');
     });
 
@@ -363,7 +365,10 @@ void main() {
       expect(f2.requirement!.value, 'optional');
       expect(f2.type.cast<BaseTypeNode>().value, 'string');
       expect(f2.identifier.value, 'email');
-      expect(f2.defaultValue!.cast<LiteralNode>().value, 'user@example.com');
+      expect(
+        f2.defaultValue!.cast<StringLiteralNode>().value,
+        'user@example.com',
+      );
 
       // 3: Timestamp lastLogin;
       expect(f3.fieldId!.value, 3);
@@ -389,10 +394,10 @@ void main() {
       );
       expect(f6.identifier.value, 'interests');
 
-      final [LiteralNode f6e1, LiteralNode f6e2] = f6.defaultValue!
-          .cast<ConstListNode>()
+      final [StringLiteralNode f6e1, StringLiteralNode f6e2] = f6.defaultValue!
+          .cast<ListLiteralNode>()
           .elements
-          .cast<LiteralNode>();
+          .cast<StringLiteralNode>();
 
       expect(f6e1.value, 'coding');
       expect(f6e2.value, 'reading');
@@ -453,12 +458,12 @@ void main() {
       expect(serviceDef.methods.length, 6);
 
       final [
-        FunctionNode m1,
-        FunctionNode m2,
-        FunctionNode m3,
-        FunctionNode m4,
-        FunctionNode m5,
-        FunctionNode m6,
+        MethodNode m1,
+        MethodNode m2,
+        MethodNode m3,
+        MethodNode m4,
+        MethodNode m5,
+        MethodNode m6,
       ] = serviceDef.methods;
 
       // i32 add(1: i32 a, 2: i32 b);
@@ -561,9 +566,9 @@ void main() {
       expect(serviceDef.methods.length, 3);
 
       final [
-        FunctionNode m1,
-        FunctionNode m2,
-        FunctionNode m3,
+        MethodNode m1,
+        MethodNode m2,
+        MethodNode m3,
       ] = serviceDef.methods;
 
       // bool createUser(...) throws (...);

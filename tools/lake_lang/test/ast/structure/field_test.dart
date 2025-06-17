@@ -129,7 +129,7 @@ void main() {
       expect(field.identifier.value, 'count');
       expect(field.identifier.span, hasSpan(27, 32));
 
-      final defaultValue = field.defaultValue!.cast<IntConstantNode>();
+      final defaultValue = field.defaultValue!.cast<IntLiteralNode>();
       expect(defaultValue.rawValue, '0');
       expect(defaultValue.value, 0);
       expect(defaultValue.span, hasSpan(35, 36));
@@ -183,8 +183,8 @@ void main() {
       expect(field.identifier.value, 'dict');
       expect(field.identifier.span, hasSpan(28, 32));
 
-      expect(field.defaultValue!.cast<ConstMapNode>(), isNotNull);
-      final defaultValue = field.defaultValue!.cast<ConstMapNode>();
+      expect(field.defaultValue!.cast<MapLiteralNode>(), isNotNull);
+      final defaultValue = field.defaultValue!.cast<MapLiteralNode>();
       expect(defaultValue.span, hasSpan(35, 37));
       expect(defaultValue.entries, isEmpty);
 
@@ -270,7 +270,7 @@ void main() {
       expect(field.identifier.value, 'count');
       expect(field.identifier.span, hasSpan(27, 32));
 
-      final defaultValue = field.defaultValue!.cast<IntConstantNode>();
+      final defaultValue = field.defaultValue!.cast<IntLiteralNode>();
       expect(defaultValue.rawValue, '10');
       expect(defaultValue.value, 10);
       expect(defaultValue.span, hasSpan(35, 37));

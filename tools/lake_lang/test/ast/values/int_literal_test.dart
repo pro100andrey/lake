@@ -5,14 +5,14 @@ import '../../testing/matchers.dart';
 import '../_ast_helpers.dart';
 
 void main() {
-  group('IntConstant AST', () {
+  group('IntLiteral AST', () {
     test('should parse a positive integer', () {
       const source = '123';
       final doc = parseAstFromString('struct S { i32 num = $source; }');
       final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
-      
-      final intConst = field.defaultValue!.cast<IntConstantNode>();
+
+      final intConst = field.defaultValue!.cast<IntLiteralNode>();
       expect(intConst.rawValue, '123');
       expect(intConst.value, 123);
       expect(intConst.span, hasSpan(21, 24));
@@ -24,7 +24,7 @@ void main() {
       final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
-      final intConst = field.defaultValue!.cast<IntConstantNode>();
+      final intConst = field.defaultValue!.cast<IntLiteralNode>();
       expect(intConst.rawValue, '-456');
       expect(intConst.value, -456);
       expect(intConst.span, hasSpan(24, 28));
@@ -36,7 +36,7 @@ void main() {
       final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
-      final intConst = field.defaultValue!.cast<IntConstantNode>();
+      final intConst = field.defaultValue!.cast<IntLiteralNode>();
       expect(intConst.rawValue, '0');
       expect(intConst.value, 0);
       expect(intConst.span, hasSpan(22, 23));
@@ -48,14 +48,14 @@ void main() {
       final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
-      final intConst = field.defaultValue!.cast<IntConstantNode>();
+      final intConst = field.defaultValue!.cast<IntLiteralNode>();
       expect(intConst.rawValue, '9876543210');
       expect(intConst.value, 9876543210);
       expect(intConst.span, hasSpan(24, 34));
     });
   });
 
-  group('IntConstant AST (equality)', () {
+  group('IntLiteral AST (equality)', () {
     test('should be equal for same value', () {
       const source = '123';
       const source2 = '123';

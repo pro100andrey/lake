@@ -19,7 +19,7 @@ void main() {
       expect(def.identifier.value, 'myInt');
       expect(def.identifier.span, hasSpan(10, 15));
 
-      final intConst = def.value.cast<IntConstantNode>();
+      final intConst = def.value.cast<IntLiteralNode>();
       expect(intConst.rawValue, '42');
       expect(intConst.value, 42);
       expect(intConst.span, hasSpan(18, 20));
@@ -39,7 +39,7 @@ void main() {
       expect(def.identifier.value, 'myString');
       expect(def.identifier.span, hasSpan(13, 21));
 
-      final literal = def.value.cast<LiteralNode>();
+      final literal = def.value.cast<StringLiteralNode>();
       expect(literal.rawValue, '"Hello, World!"');
       expect(literal.value, 'Hello, World!');
       expect(literal.span, hasSpan(24, 39));
@@ -58,7 +58,7 @@ void main() {
       expect(def.identifier.value, 'myBool');
       expect(def.identifier.span, hasSpan(11, 17));
 
-      final boolConst = def.value.cast<BoolConstantNode>();
+      final boolConst = def.value.cast<BoolLiteralNode>();
       expect(boolConst.value, isTrue);
       expect(boolConst.rawValue, 'true');
       expect(boolConst.span, hasSpan(20, 24));
@@ -77,7 +77,7 @@ void main() {
       expect(def.identifier.value, 'myDouble');
       expect(def.identifier.span, hasSpan(13, 21));
 
-      final doubleConst = def.value.cast<DoubleConstantNode>();
+      final doubleConst = def.value.cast<DoubleLiteralNode>();
       expect(doubleConst.value, 3.14);
       expect(doubleConst.rawValue, '3.14');
       expect(doubleConst.span, hasSpan(24, 28));
@@ -102,11 +102,11 @@ void main() {
 
       expect(def.value.span, hasSpan(26, 35));
 
-      final constList = def.value.cast<ConstListNode>();
+      final constList = def.value.cast<ListLiteralNode>();
       final elements = constList.elements;
 
-      final [IntConstantNode e0, IntConstantNode e1, IntConstantNode e2] =
-          elements.cast<IntConstantNode>();
+      final [IntLiteralNode e0, IntLiteralNode e1, IntLiteralNode e2] = elements
+          .cast<IntLiteralNode>();
 
       expect(e0.rawValue, '1');
       expect(e0.value, 1);
@@ -138,7 +138,7 @@ void main() {
       expect(def.identifier.value, 'myArray');
       expect(def.identifier.span, hasSpan(16, 23));
 
-      expect(def.value.cast<ConstListNode>().elements, isEmpty);
+      expect(def.value.cast<ListLiteralNode>().elements, isEmpty);
       expect(def.value.span, hasSpan(26, 28));
     });
 
@@ -166,25 +166,25 @@ void main() {
       expect(valueType.span, hasSpan(18, 21));
 
       final entries = def.value
-          .cast<ConstMapNode>()
+          .cast<MapLiteralNode>()
           .entries
-          .cast<ConstMapNodePair>();
+          .cast<MapLiteralEntry>();
 
-      final k1 = entries[0].key.cast<LiteralNode>();
+      final k1 = entries[0].key.cast<StringLiteralNode>();
       expect(k1.rawValue, '"a"');
       expect(k1.span, hasSpan(32, 35));
 
-      final v1 = entries[0].value.cast<IntConstantNode>();
+      final v1 = entries[0].value.cast<IntLiteralNode>();
       expect(v1.rawValue, '1');
       expect(v1.value, 1);
       expect(v1.span, hasSpan(37, 38));
 
-      final k2 = entries[1].key.cast<LiteralNode>();
+      final k2 = entries[1].key.cast<StringLiteralNode>();
       expect(k2.rawValue, '"b"');
       expect(k2.value, 'b');
       expect(k2.span, hasSpan(40, 43));
 
-      final v2 = entries[1].value.cast<IntConstantNode>();
+      final v2 = entries[1].value.cast<IntLiteralNode>();
       expect(v2.rawValue, '2');
       expect(v2.value, 2);
       expect(v2.span, hasSpan(45, 46));
@@ -203,7 +203,7 @@ void main() {
       expect(def.identifier.value, 'myMap');
       expect(def.identifier.span, hasSpan(23, 28));
 
-      expect(def.value.cast<ConstMapNode>().entries, isEmpty);
+      expect(def.value.cast<MapLiteralNode>().entries, isEmpty);
       expect(def.value.span, hasSpan(31, 33));
     });
 
@@ -220,7 +220,7 @@ void main() {
       expect(def.identifier.value, 'myByte');
       expect(def.identifier.span, hasSpan(11, 17));
 
-      final byteConst = def.value.cast<IntConstantNode>();
+      final byteConst = def.value.cast<IntLiteralNode>();
       expect(byteConst.rawValue, '255');
       expect(byteConst.value, 255);
       expect(byteConst.span, hasSpan(20, 23));
@@ -239,7 +239,7 @@ void main() {
       expect(def.identifier.value, 'myI8');
       expect(def.identifier.span, hasSpan(9, 13));
 
-      final intConst = def.value.cast<IntConstantNode>();
+      final intConst = def.value.cast<IntLiteralNode>();
       expect(intConst.rawValue, '127');
       expect(intConst.value, 127);
       expect(intConst.span, hasSpan(16, 19));
@@ -258,7 +258,7 @@ void main() {
       expect(def.identifier.value, 'myI16');
       expect(def.identifier.span, hasSpan(10, 15));
 
-      expect(def.value.cast<IntConstantNode>().rawValue, '32767');
+      expect(def.value.cast<IntLiteralNode>().rawValue, '32767');
       expect(def.value.span, hasSpan(18, 23));
     });
 
@@ -275,7 +275,7 @@ void main() {
       expect(def.identifier.value, 'myI64');
       expect(def.identifier.span, hasSpan(10, 15));
 
-      final intConst = def.value.cast<IntConstantNode>();
+      final intConst = def.value.cast<IntLiteralNode>();
       expect(intConst.rawValue, '9223372036854775807');
       expect(intConst.value, 9223372036854775807);
       expect(intConst.span, hasSpan(18, 37));
@@ -294,7 +294,7 @@ void main() {
       expect(def.identifier.value, 'myBinary');
       expect(def.identifier.span, hasSpan(13, 21));
 
-      final literal = def.value.cast<LiteralNode>();
+      final literal = def.value.cast<StringLiteralNode>();
       expect(literal.rawValue, '"01010101"');
       expect(literal.span, hasSpan(24, 34));
     });
@@ -314,7 +314,7 @@ void main() {
       expect(def.identifier.span, hasSpan(11, 17));
 
       expect(
-        def.value.cast<LiteralNode>().rawValue,
+        def.value.cast<StringLiteralNode>().rawValue,
         '"123e4567-e89b-12d3-a456-426614174000"',
       );
       expect(def.value.span, hasSpan(20, 58));

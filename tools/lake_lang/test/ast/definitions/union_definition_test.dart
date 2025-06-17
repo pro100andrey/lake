@@ -84,7 +84,7 @@ void main() {
       expect(field.identifier.value, 'x');
       expect(field.identifier.span, hasSpan(17, 18));
 
-      final defaultValue = field.defaultValue!.cast<IntConstantNode>();
+      final defaultValue = field.defaultValue!.cast<IntLiteralNode>();
 
       expect(defaultValue.rawValue, '42');
       expect(defaultValue.value, 42);

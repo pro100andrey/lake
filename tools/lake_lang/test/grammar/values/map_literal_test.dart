@@ -4,10 +4,10 @@ import 'package:test/test.dart';
 
 void main() {
   const grammar = LakeGrammarDefinition();
-  final parser = resolve(grammar.constMap().end());
+  final parser = resolve(grammar.mapLiteral().end());
 
-  group('ConstMap grammar (positive):', () {
-    test('should parse an empty map', () {
+  group('MapLiteral grammar (positive):', () {
+    test('should parse an empty map literal', () {
       final result = parser.parse('{}');
       final [
         Token lb,
@@ -21,7 +21,7 @@ void main() {
       expect(rb.value, '}');
     });
 
-    test('should parse a map with integer keys and values', () {
+    test('should parse a map literal with integer keys and values', () {
       final result = parser.parse('{1: 2, 3: 4}');
       final [
         Token lb,
@@ -41,7 +41,7 @@ void main() {
       expect(rb.value, '}');
     });
 
-    test('should parse a map with string keys and values', () {
+    test('should parse a map literal with string keys and values', () {
       final result = parser.parse('{"a": "b", "c": "d"}');
       final [
         Token lb,
@@ -61,7 +61,7 @@ void main() {
       expect(rb.value, '}');
     });
 
-    test('should parse a map with mixed value types', () {
+    test('should parse a map literal with mixed value types', () {
       final result = parser.parse('{"x": 1, "y": 2.2, "z": SOME_CONST}');
       final [
         Token lb,
@@ -84,7 +84,7 @@ void main() {
       expect(rb.value, '}');
     });
 
-    test('should parse a map with trailing comma', () {
+    test('should parse a map literal with trailing comma', () {
       final result = parser.parse('{1: 2, 3: 4, }');
 
       final [
@@ -106,7 +106,7 @@ void main() {
       expect(rb.value, '}');
     });
 
-    test('should parse a map with mixed separators', () {
+    test('should parse a map literal with mixed separators', () {
       final result = parser.parse('{1: 2, 3: 4; 5: 6,}');
       final [
         Token lb,
@@ -130,7 +130,7 @@ void main() {
       expect(rb.value, '}');
     });
 
-    test('should parse a map with nested lists and maps', () {
+    test('should parse a map literal with nested lists and maps', () {
       final result = parser.parse('{"a": [1,2], "b": {"c": 3}}');
 
       final [
@@ -167,7 +167,7 @@ void main() {
       expect(rb.value, '}');
     });
 
-    test('should parse a map with whitespace', () {
+    test('should parse a map literal with whitespace', () {
       final result = parser.parse('{ "a" : 1 , "b" : 2 }');
       final [
         Token lb,
@@ -188,43 +188,43 @@ void main() {
     });
   });
 
-  group('ConstMap grammar (negative):', () {
-    test('should fail to parse missing closing brace', () {
+  group('MapLiteral grammar (negative):', () {
+    test('should fail to parse map literal with missing closing brace', () {
       final result = parser.parse('{"a": 1');
 
       expect(result, isA<Failure>());
       expect(result.message, '"}" expected');
     });
 
-    test('should fail to parse missing opening brace', () {
+    test('should fail to parse map literal with missing opening brace', () {
       final result = parser.parse('"a": 1}');
 
       expect(result, isA<Failure>());
       expect(result.message, '"{" expected');
     });
 
-    test('should fail to parse not a map', () {
+    test('should fail to parse not a map literal', () {
       final result = parser.parse('notamap');
 
       expect(result, isA<Failure>());
       expect(result.message, '"{" expected');
     });
 
-    test('should fail to parse map with missing colon', () {
+    test('should fail to parse map literal with missing colon', () {
       final result = parser.parse('{"a" 1}');
 
       expect(result, isA<Failure>());
       expect(result.message, '"}" expected');
     });
 
-    test('should fail to parse map with invalid separator', () {
+    test('should fail to parse map literal with invalid separator', () {
       final result = parser.parse('{1:2 | 3:4}');
 
       expect(result, isA<Failure>());
       expect(result.message, '"}" expected');
     });
 
-    test('should fail to parse empty string', () {
+    test('should fail to parse empty string as map literal', () {
       final result = parser.parse('');
 
       expect(result, isA<Failure>());

@@ -4,10 +4,10 @@ import 'package:test/test.dart';
 
 void main() {
   const grammar = LakeGrammarDefinition();
-  final parser = resolve(grammar.function().end());
+  final parser = resolve(grammar.method().end());
 
-  group('Function grammar (positive):', () {
-    test('should parse function with no arguments', () {
+  group('Method grammar (positive):', () {
+    test('should parse method with no arguments', () {
       final result = parser.parse('void foo()');
       final [Token t, Token id, Token ld, List args, Token rd, _, _] =
           result.value as List;
@@ -20,7 +20,7 @@ void main() {
       expect(rd.value, ')');
     });
 
-    test('should parse function with one field argument', () {
+    test('should parse method with one field argument', () {
       final result = parser.parse('i32 bar(i32 x)');
       final [
         Token t,
@@ -41,7 +41,7 @@ void main() {
       expect(rd.value, ')');
     });
 
-    test('should parse function with multiple field arguments', () {
+    test('should parse method with multiple field arguments', () {
       final result = parser.parse('string baz(i32 x, string y)');
       final [
         Token t,
@@ -67,7 +67,7 @@ void main() {
       expect(rd.value, ')');
     });
 
-    test('should parse function with stream argument', () {
+    test('should parse method with stream argument', () {
       final result = parser.parse('void streamFunc(stream<i32> s)');
       final [
         Token t,
@@ -100,7 +100,7 @@ void main() {
       expect(rd.value, ')');
     });
 
-    test('should parse function with throws clause', () {
+    test('should parse method with throws clause', () {
       final result = parser.parse(
         'void errFunc() '
         'throws ( '
@@ -144,7 +144,7 @@ void main() {
       expect(rd1.value, ')');
     });
 
-    test('should parse function with trailing comma', () {
+    test('should parse method with trailing comma', () {
       final result = parser.parse('void foo(),');
       final [Token t, Token id, Token ld, List args, Token rd, _, Token sep] =
           result.value as List;
@@ -158,7 +158,7 @@ void main() {
       expect(sep.value, ',');
     });
 
-    test('should parse function with trailing semicolon', () {
+    test('should parse method with trailing semicolon', () {
       final result = parser.parse('void foo();');
       final [Token t, Token id, Token ld, List args, Token rd, _, Token sep] =
           result.value as List;
@@ -172,7 +172,7 @@ void main() {
       expect(sep.value, ';');
     });
 
-    test('should parse function with whitespace', () {
+    test('should parse method with whitespace', () {
       final result = parser.parse('  i32   spaced  (  i32   x  ,  i32 y )  ');
       expect(result, isA<Success>());
       final [
@@ -198,7 +198,7 @@ void main() {
       expect(rd.value, ')');
     });
 
-    test('should parse function with no return type (identifier)', () {
+    test('should parse method with no return type (identifier)', () {
       final result = parser.parse('CustomType customFunc()');
       final [Token t, Token id, Token ld, List args, Token rd, _, _] =
           result.value as List;
@@ -212,36 +212,36 @@ void main() {
     });
   });
 
-  group('Function grammar (negative):', () {
-    test('should fail to parse missing parentheses', () {
+  group('Method grammar (negative):', () {
+    test('should fail to parse missing method parentheses', () {
       final result = parser.parse('void foo');
 
       expect(result, isA<Failure>());
       expect(result.message, '"(" expected');
     });
 
-    test('should fail to parse missing function name', () {
+    test('should fail to parse missing method name', () {
       final result = parser.parse('void ()');
 
       expect(result, isA<Failure>());
       expect(result.message, '"letter" or "_" for start identifier expected');
     });
 
-    test('should fail to parse invalid argument', () {
+    test('should fail to parse invalid method argument', () {
       final result = parser.parse('void foo(,)');
 
       expect(result, isA<Failure>());
       expect(result.message, '")" expected');
     });
 
-    test('should fail to parse empty string', () {
+    test('should fail to parse empty string as method', () {
       final result = parser.parse('');
 
       expect(result, isA<Failure>());
       expect(result.message, 'return type expected');
     });
 
-    test('should fail to parse only type', () {
+    test('should fail to parse only type ', () {
       final result = parser.parse('i32');
 
       expect(result, isA<Failure>());

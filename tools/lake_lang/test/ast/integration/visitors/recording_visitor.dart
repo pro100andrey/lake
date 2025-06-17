@@ -115,13 +115,15 @@ class RecordingVisitor extends AstVisitor<void> {
   }
 
   @override
-  void visitFunctionNode(FunctionNode node) {
+  void visitMethodNode(MethodNode node) {
     visitedTypes.add(node.runtimeType);
     node.returnType.accept(this);
     node.identifier.accept(this);
+
     for (final p in node.parameters) {
       p.accept(this);
     }
+
     for (final t in node.throws) {
       t.accept(this);
     }
@@ -163,22 +165,22 @@ class RecordingVisitor extends AstVisitor<void> {
   }
 
   @override
-  void visitIntConstantNode(IntConstantNode node) {
+  void visitIntLiteralNode(IntLiteralNode node) {
     visitedTypes.add(node.runtimeType);
   }
 
   @override
-  void visitDoubleConstantNode(DoubleConstantNode node) {
+  void visitDoubleLiteralNode(DoubleLiteralNode node) {
     visitedTypes.add(node.runtimeType);
   }
 
   @override
-  void visitBoolConstantNode(BoolConstantNode node) {
+  void visitBoolLiteralNode(BoolLiteralNode node) {
     visitedTypes.add(node.runtimeType);
   }
 
   @override
-  void visitLiteralNode(LiteralNode node) {
+  void visitStringLiteralNode(StringLiteralNode node) {
     visitedTypes.add(node.runtimeType);
   }
 
@@ -188,12 +190,12 @@ class RecordingVisitor extends AstVisitor<void> {
   }
 
   @override
-  void visitConstListNode(ConstListNode node) {
+  void visitListLiteralNode(ListLiteralNode node) {
     visitedTypes.add(node.runtimeType);
   }
 
   @override
-  void visitConstMapNode(ConstMapNode node) {
+  void visitMapLiteralNode(MapLiteralNode node) {
     visitedTypes.add(node.runtimeType);
   }
 }

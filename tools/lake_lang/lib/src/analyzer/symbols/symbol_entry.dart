@@ -8,7 +8,7 @@ enum SymbolKind {
   constant,
   type,
   field,
-  function,
+  method,
   parameter,
   enumMember,
   service,
@@ -27,7 +27,7 @@ final class SymbolEntry extends Equatable {
   /// The name of the symbol as it appears in the source code.
   final String name;
 
-  /// The kind of symbol (e.g., constant, type, function).
+  /// The kind of symbol (e.g., constant, type, method).
   final SymbolKind kind;
 
   /// The Abstract Syntax Tree (AST) node that corresponds to the declaration

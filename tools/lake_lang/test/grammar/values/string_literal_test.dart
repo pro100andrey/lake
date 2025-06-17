@@ -4,9 +4,9 @@ import 'package:test/test.dart';
 
 void main() {
   const grammar = LakeGrammarDefinition();
-  final parser = resolve(grammar.literal().end());
+  final parser = resolve(grammar.stringLiteral().end());
 
-  group('Literal grammar (positive):', () {
+  group('StringLiteral grammar (positive):', () {
     test('should parse a string literal with double quotes', () {
       final result = parser.parse('"Hello, World!"');
       final Token(:String value) = result.value;
@@ -15,7 +15,7 @@ void main() {
       expect(value, '"Hello, World!"');
     });
 
-    test('should parse an empty string with double quotes', () {
+    test('should parse an empty string literal with double quotes', () {
       final result = parser.parse('""');
       final Token(:String value) = result.value;
 
@@ -31,7 +31,7 @@ void main() {
       expect(value, "'Lake is cool!'");
     });
 
-    test('should parse an empty string with single quotes', () {
+    test('should parse an empty string literal with single quotes', () {
       final result = parser.parse("''");
       final Token(:String value) = result.value;
 
@@ -39,13 +39,16 @@ void main() {
       expect(value, "''");
     });
 
-    test('should parse a string with numbers and special characters', () {
-      final result = parser.parse(r'"123_abc-!@#$%^&*()[]{}.,;"');
-      final Token(:String value) = result.value;
+    test(
+      'should parse a string literal with numbers and special characters',
+      () {
+        final result = parser.parse(r'"123_abc-!@#$%^&*()[]{}.,;"');
+        final Token(:String value) = result.value;
 
-      expect(result, isA<Success>());
-      expect(value, r'"123_abc-!@#$%^&*()[]{}.,;"');
-    });
+        expect(result, isA<Success>());
+        expect(value, r'"123_abc-!@#$%^&*()[]{}.,;"');
+      },
+    );
 
     test('should parse a string literal with unescaped new line', () {
       final result = parser.parse('"first line\nsecond line"');
@@ -95,7 +98,7 @@ void main() {
       expect(value, "'b'");
     });
 
-    test('should parse a string with spaces and tabs', () {
+    test('should parse a string literal with spaces and tabs', () {
       final result = parser.parse('"   \t  "');
       final Token(:String value) = result.value;
 
@@ -104,7 +107,7 @@ void main() {
     });
   });
 
-  group('Literal grammar (negative):', () {
+  group('StringLiteral grammar (negative):', () {
     test('should fail to parse a string literal without quotes', () {
       final result = parser.parse('unquoted_string');
 

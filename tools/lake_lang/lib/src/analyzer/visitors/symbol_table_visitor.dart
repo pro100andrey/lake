@@ -2,8 +2,8 @@ import '../../ast/ast_visitor.dart';
 import '../../ast/nodes/ast_nodes.dart';
 import '../errors/error_reporter.dart';
 import '../rules/base_rule.dart';
-import '../rules/declaration/const_assignment_type_rule.dart';
 import '../rules/declaration/keyword_as_identifier_rule.dart';
+import '../rules/declaration/literal_assignment_type_rule.dart';
 import '../rules/declaration/non_empty_enum_definition_rule.dart';
 import '../rules/declaration/non_empty_struct_definition_rule.dart';
 import '../rules/declaration/optional_field_rule.dart';
@@ -18,7 +18,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
     : _ruleDispatcher = RuleDispatcher() {
     _ruleDispatcher
       ..addRule<ConstDefinitionNode>(
-        ConstAssignmentTypeRule(reporter: _reporter),
+        LiteralAssignmentTypeRule(reporter: _reporter),
       )
       ..addRule<EnumDefinitionNode>(
         NonEmptyEnumDefinitionRule(reporter: _reporter),
@@ -120,8 +120,6 @@ class SymbolTableVisitor extends AstVisitor<void> {
     // Visit the aliased type. Its resolution will happen in the
     // TypeCheckingVisitor.
     node.type.accept(this);
-
-    
   }
 
   @override
@@ -163,7 +161,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
       resolvedType: null,
     );
 
-    // Visit the optional constant value assigned to the enum member.
+    // Visit the optional literal value assigned to the enum member.
     node.value?.accept(this);
   }
 
@@ -296,24 +294,24 @@ class SymbolTableVisitor extends AstVisitor<void> {
   }
 
   @override
-  void visitFunctionNode(FunctionNode node) {
-    // Add the function to the current (service) scope.
+  void visitMethodNode(MethodNode node) {
+    // Add the  to the current (service) scope.
     _symbolTable
       ..addSymbol(
         name: node.identifier.value,
-        kind: SymbolKind.function,
+        kind: SymbolKind.method,
         declaration: node,
         span: node.span,
-        resolvedType: null, // A FunctionType will be set by TypeCheckingVisitor
+        resolvedType: null, // A MethodType will be set by TypeCheckingVisitor
       )
-      // Functions introduce a new scope for their parameters and throws.
+      // Methods introduce a new scope for their parameters and throws.
       ..pushScope();
 
     // Visit the return type.
     node.returnType.accept(this);
 
     for (final param in node.parameters) {
-      // Parameters are FiledNodes, but in function context, they are
+      // Parameters are FieldNodes, but in method context, they are
       // parameters.
       _symbolTable.addSymbol(
         name: param.identifier.value,
@@ -333,7 +331,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
       throwType.accept(this);
     }
 
-    // Visit the function body, which may contain further declarations.
+    // Pop the scope after processing all method parameters and throws.
     _symbolTable.popScope();
   }
 
@@ -377,22 +375,22 @@ class SymbolTableVisitor extends AstVisitor<void> {
     // No symbols to add for void type.
   }
 
-  // --- Constant Value Nodes ---
-  // These nodes represent literal values or constant expressions.
+  // --- Literal Value Nodes ---
+  // These nodes represent literal values or expressions.
   // They don't introduce new symbols, but their components (e.g., identifiers
-  // within a constant expression) might need to be visited.
+  // within a literal expression) might need to be visited.
 
   @override
-  void visitIntConstantNode(IntConstantNode node) {}
+  void visitIntLiteralNode(IntLiteralNode node) {}
 
   @override
-  void visitDoubleConstantNode(DoubleConstantNode node) {}
+  void visitDoubleLiteralNode(DoubleLiteralNode node) {}
 
   @override
-  void visitBoolConstantNode(BoolConstantNode node) {}
+  void visitBoolLiteralNode(BoolLiteralNode node) {}
 
   @override
-  void visitLiteralNode(LiteralNode node) {}
+  void visitStringLiteralNode(StringLiteralNode node) {}
 
   @override
   void visitIdentifierNode(IdentifierNode node) {
@@ -404,14 +402,14 @@ class SymbolTableVisitor extends AstVisitor<void> {
   }
 
   @override
-  void visitConstListNode(ConstListNode node) {
+  void visitListLiteralNode(ListLiteralNode node) {
     for (final element in node.elements) {
       element.accept(this);
     }
   }
 
   @override
-  void visitConstMapNode(ConstMapNode node) {
+  void visitMapLiteralNode(MapLiteralNode node) {
     for (final entry in node.entries) {
       entry.key.accept(this);
       entry.value.accept(this);

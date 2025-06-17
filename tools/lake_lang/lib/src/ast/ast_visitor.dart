@@ -19,7 +19,7 @@ abstract class AstVisitor<T> {
   T visitServiceDefinitionNode(ServiceDefinitionNode node);
   T visitFieldRequirementNode(FieldRequirementNode node);
   T visitFieldNode(FieldNode node);
-  T visitFunctionNode(FunctionNode node);
+  T visitMethodNode(MethodNode node);
 
   // Type nodes
   T visitBaseTypeNode(BaseTypeNode node);
@@ -30,12 +30,12 @@ abstract class AstVisitor<T> {
   T visitCustomTypeNode(CustomTypeNode node);
   T visitVoidTypeNode(VoidTypeNode node);
 
-  // Constant value nodes
-  T visitIntConstantNode(IntConstantNode node);
-  T visitDoubleConstantNode(DoubleConstantNode node);
-  T visitBoolConstantNode(BoolConstantNode node);
-  T visitLiteralNode(LiteralNode node);
+  // Literal value nodes
+  T visitIntLiteralNode(IntLiteralNode node);
+  T visitDoubleLiteralNode(DoubleLiteralNode node);
+  T visitBoolLiteralNode(BoolLiteralNode node);
+  T visitStringLiteralNode(StringLiteralNode node);
   T visitIdentifierNode(IdentifierNode node);
-  T visitConstListNode(ConstListNode node);
-  T visitConstMapNode(ConstMapNode node);
+  T visitListLiteralNode(ListLiteralNode node);
+  T visitMapLiteralNode(MapLiteralNode node);
 }

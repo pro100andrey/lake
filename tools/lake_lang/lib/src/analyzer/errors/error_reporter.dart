@@ -142,7 +142,7 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   // Reports an [UndefinedSymbolDiagnostic].
   ///
   /// This diagnostic is typically used when a symbol (e.g., a variable,
-  /// function, or type name) is used but has not been declared or is not
+  /// method, or type name) is used but has not been declared or is not
   /// in scope.
   ///
   /// - Parameters:
@@ -196,33 +196,33 @@ extension ErrorReporterGenericExtension on ErrorReporter {
     report(EmptyStructDefinitionDiagnostic(span: span));
   }
 
-  /// Reports a [ConstValueCannotBeAssignedDiagnostic].
+  /// Reports a [LiteralValueCannotBeAssignedDiagnostic].
   ///
   /// This diagnostic occurs when a value of one type cannot be assigned to
-  /// a constant declared with a different type.
+  /// a literal declared with a different type.
   ///
   /// - Parameters:
   ///   - [valueTypeName]: The name of the type of the value being assigned.
   ///   - [valueKindName]: A description of the kind of value (e.g., "literal",
   /// "expression").
-  ///   - [constTypeName]: The name of the type declared for the constant.
+  ///   - [literalTypeName]: The name of the type declared for the literal.
   ///   - [valueSpan]: The [Span] of the value causing the type mismatch.
-  ///   - [constTypeSpan]: An optional [Span] indicating the constant's
+  ///   - [literalTypeSpan]: An optional [Span] indicating the literal's
   /// type declaration for additional context.
-  void reportConstValueCannotBeAssigned({
+  void reportLiteralValueCannotBeAssigned({
     required String valueTypeName,
     required String valueKindName,
-    required String constTypeName,
+    required String literalTypeName,
     required Span valueSpan,
-    Span? constTypeSpan,
+    Span? literalTypeSpan,
   }) {
     report(
-      ConstValueCannotBeAssignedDiagnostic(
+      LiteralValueCannotBeAssignedDiagnostic(
         valueTypeName: valueTypeName,
         valueKindName: valueKindName,
-        constTypeName: constTypeName,
+        literalTypeName: literalTypeName,
         valueSpan: valueSpan,
-        constTypeSpan: constTypeSpan,
+        literalTypeSpan: literalTypeSpan,
       ),
     );
   }

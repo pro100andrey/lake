@@ -20,7 +20,7 @@ void main() {
 
         // Import `../visitors/data/my_lib`
         ImportNode,
-        LiteralNode,
+        StringLiteralNode,
 
         // Namespace `my_app`
         NamespaceNode,
@@ -32,7 +32,7 @@ void main() {
         IdentifierNode,
         EnumValueNode,
         IdentifierNode,
-        IntConstantNode,
+        IntLiteralNode,
         EnumValueNode,
         IdentifierNode,
 
@@ -45,7 +45,7 @@ void main() {
         StructDefinitionNode,
         IdentifierNode,
         FieldNode,
-        IntConstantNode,
+        IntLiteralNode,
         BaseTypeNode,
         IdentifierNode,
 
@@ -54,30 +54,30 @@ void main() {
         IdentifierNode,
         // 1: required string name;
         FieldNode,
-        IntConstantNode,
+        IntLiteralNode,
         FieldRequirementNode,
         BaseTypeNode,
         IdentifierNode,
         // 2: optional int age = 30;
         FieldNode,
-        IntConstantNode,
+        IntLiteralNode,
         FieldRequirementNode,
         BaseTypeNode,
         IdentifierNode,
-        IntConstantNode,
+        IntLiteralNode,
         // 3: Address homeAddress;
         FieldNode,
-        IntConstantNode,
+        IntLiteralNode,
         CustomTypeNode,
         IdentifierNode,
         // 4: map<string, string> attributes;
         FieldNode,
-        IntConstantNode,
+        IntLiteralNode,
         MapTypeNode,
         IdentifierNode,
         //  5: list<i32> favoriteNumbers;
         FieldNode,
-        IntConstantNode,
+        IntLiteralNode,
         ListTypeNode,
         IdentifierNode,
 
@@ -86,7 +86,7 @@ void main() {
         IdentifierNode,
         // 1: string message;
         FieldNode,
-        IntConstantNode,
+        IntLiteralNode,
         BaseTypeNode,
         IdentifierNode,
 
@@ -95,27 +95,27 @@ void main() {
         IdentifierNode,
         IdentifierNode,
         // getUserById
-        FunctionNode,
+        MethodNode,
         CustomTypeNode,
         IdentifierNode,
         FieldNode,
-        IntConstantNode,
+        IntLiteralNode,
         BaseTypeNode,
         IdentifierNode,
         FieldNode,
-        IntConstantNode,
+        IntLiteralNode,
         CustomTypeNode,
         IdentifierNode,
         // createUser
-        FunctionNode,
+        MethodNode,
         VoidTypeNode,
         IdentifierNode,
         FieldNode,
-        IntConstantNode,
+        IntLiteralNode,
         CustomTypeNode,
         IdentifierNode,
         // subscribeToUpdates
-        FunctionNode,
+        MethodNode,
         StreamTypeNode,
         IdentifierNode,
 
@@ -123,7 +123,7 @@ void main() {
         ConstDefinitionNode,
         BaseTypeNode,
         IdentifierNode,
-        LiteralNode,
+        StringLiteralNode,
       ];
 
       expect(visitedTypes, containsAllInOrder(expectedTypes));

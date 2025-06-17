@@ -55,7 +55,7 @@ final class ConstIdentifierResolutionRule
         reporter,
         symbolTable,
       );
-      
+
       if (declaredSemanticType == null) {
         // Error already reported by getSemanticType
         return;
@@ -63,13 +63,13 @@ final class ConstIdentifierResolutionRule
 
       // 4. Check assignability
       if (!identifierSemanticType.isAssignableTo(declaredSemanticType)) {
-        reporter.reportConstValueCannotBeAssigned(
-          constTypeName: declaredSemanticType.name,
+        reporter.reportLiteralValueCannotBeAssigned(
+          literalTypeName: declaredSemanticType.name,
           // Or a more specific kind if known from symbolEntry.kind
           valueKindName: 'identifier',
           valueSpan: identifierNode.span,
           valueTypeName: identifierSemanticType.name,
-          constTypeSpan: node.type.span,
+          literalTypeSpan: node.type.span,
         );
       }
     }

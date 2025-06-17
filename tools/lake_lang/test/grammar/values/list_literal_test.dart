@@ -4,9 +4,9 @@ import 'package:test/test.dart';
 
 void main() {
   const grammar = LakeGrammarDefinition();
-  final parser = resolve(grammar.constList().end());
+  final parser = resolve(grammar.listLiteral().end());
 
-  group('ConstList grammar (positive):', () {
+  group('ListLiteral grammar (positive):', () {
     test('should parse an empty list', () {
       final result = parser.parse('[]');
       final [Token lb, List values, Token rb] = result.value as List;
@@ -202,7 +202,7 @@ void main() {
     });
   });
 
-  group('ConstList grammar (negative):', () {
+  group('ListLiteral grammar (negative):', () {
     test('should fail to parse missing closing bracket', () {
       final result = parser.parse('[1, 2, 3');
 

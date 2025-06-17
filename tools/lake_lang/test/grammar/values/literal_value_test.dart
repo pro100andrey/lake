@@ -4,10 +4,10 @@ import 'package:test/test.dart';
 
 void main() {
   const grammar = LakeGrammarDefinition();
-  final parser = resolve(grammar.constValue().end());
+  final parser = resolve(grammar.literalValue().end());
 
-  group('ConstValue grammar (positive):', () {
-    test('should parse a double constant', () {
+  group('LiteralValue grammar (positive):', () {
+    test('should parse a double literal', () {
       final result = parser.parse('1.23');
       final Token(:String value) = result.value;
 
@@ -15,7 +15,7 @@ void main() {
       expect(value, '1.23');
     });
 
-    test('should parse an int constant', () {
+    test('should parse an int literal', () {
       final result = parser.parse('-42');
       final Token(:String value) = result.value;
 
@@ -47,7 +47,7 @@ void main() {
       expect(value, 'SOME_CONST');
     });
 
-    test('should parse a const list', () {
+    test('should parse a list literal', () {
       final result = parser.parse('[1, 2, 3]');
       final [
         Token lb,
@@ -67,7 +67,7 @@ void main() {
       expect(rb.value, ']');
     });
 
-    test('should parse a const list with mixed values', () {
+    test('should parse a list literal with mixed values', () {
       final result = parser.parse('[1, "two", SOME_CONST]');
       final [
         Token lb,
@@ -87,7 +87,7 @@ void main() {
       expect(rb.value, ']');
     });
 
-    test('should parse an empty const list', () {
+    test('should parse an empty list literal', () {
       final result = parser.parse('[]');
       final [Token lb, List values, Token rb] = result.value as List;
 
@@ -97,7 +97,7 @@ void main() {
       expect(rb.value, ']');
     });
 
-    test('should parse a const map', () {
+    test('should parse a map literal', () {
       final result = parser.parse('{"a": 1, "b": 2}');
       final [
         Token lb,
@@ -117,7 +117,7 @@ void main() {
       expect(rb.value, '}');
     });
 
-    test('should parse a const map with mixed values', () {
+    test('should parse a map literal with mixed values', () {
       final result = parser.parse('{"x": SOME_CONST, "y": [1,2]}');
       final [
         Token lb,
@@ -145,7 +145,7 @@ void main() {
       expect(rb.value, '}');
     });
 
-    test('should parse an empty const map', () {
+    test('should parse an empty map literal', () {
       final result = parser.parse('{}');
       final [Token lb, List values, Token rb] = result.value as List;
 
@@ -155,7 +155,7 @@ void main() {
       expect(rb.value, '}');
     });
 
-    test('should parse a nested const list and map', () {
+    test('should parse a nested list and map literal', () {
       final result = parser.parse('[{"a": [1,2]}, 3]');
       final [
         Token lb,
@@ -194,40 +194,40 @@ void main() {
     });
   });
 
-  group('ConstValue grammar (negative):', () {
+  group('LiteralValue grammar (negative):', () {
     test('should fail to parse invalid literal', () {
       final result = parser.parse('"unterminated');
 
       expect(result, isA<Failure>());
-      expect(result.message, 'const literal expected');
+      expect(result.message, 'literal expected');
     });
 
-    test('should fail to parse invalid int', () {
+    test('should fail to parse invalid int literal', () {
       final result = parser.parse('--1');
 
       expect(result, isA<Failure>());
-      expect(result.message, 'const literal expected');
+      expect(result.message, 'literal expected');
     });
 
-    test('should fail to parse invalid list', () {
+    test('should fail to parse invalid list literal', () {
       final result = parser.parse('[1, 2');
 
       expect(result, isA<Failure>());
-      expect(result.message, 'const literal expected');
+      expect(result.message, 'literal expected');
     });
 
-    test('should fail to parse invalid map', () {
+    test('should fail to parse invalid map literal', () {
       final result = parser.parse('{"a": 1, "b" 2}');
 
       expect(result, isA<Failure>());
-      expect(result.message, 'const literal expected');
+      expect(result.message, 'literal expected');
     });
 
-    test('should fail to parse empty string', () {
+    test('should fail to parse empty string literal', () {
       final result = parser.parse('');
 
       expect(result, isA<Failure>());
-      expect(result.message, 'const literal expected');
+      expect(result.message, 'literal expected');
     });
   });
 }

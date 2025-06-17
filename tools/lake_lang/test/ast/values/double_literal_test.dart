@@ -5,14 +5,14 @@ import '../../testing/matchers.dart';
 import '../_ast_helpers.dart';
 
 void main() {
-  group('DoubleConstant AST', () {
+  group('DoubleLiteral AST', () {
     test('should parse positive double with decimal part', () {
       const source = '3.14';
       final doc = parseAstFromString('struct S { double pi = $source; }');
       final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
-      final doubleConst = field.defaultValue!.cast<DoubleConstantNode>();
+      final doubleConst = field.defaultValue!.cast<DoubleLiteralNode>();
       expect(doubleConst.rawValue, '3.14');
       expect(doubleConst.value, 3.14);
       expect(doubleConst.span, hasSpan(23, 27));
@@ -24,7 +24,7 @@ void main() {
       final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
-      final doubleConst = field.defaultValue!.cast<DoubleConstantNode>();
+      final doubleConst = field.defaultValue!.cast<DoubleLiteralNode>();
       expect(doubleConst.rawValue, '-1.234');
       expect(doubleConst.value, -1.234);
       expect(doubleConst.span, hasSpan(24, 30));
@@ -36,7 +36,7 @@ void main() {
       final struct = doc.definitions.first.cast<StructDefinitionNode>();
       final field = struct.fields.first;
 
-      final doubleConst = field.defaultValue!.cast<DoubleConstantNode>();
+      final doubleConst = field.defaultValue!.cast<DoubleLiteralNode>();
       expect(doubleConst.rawValue, '6.022e23');
       expect(doubleConst.value, 6.022e23);
       expect(doubleConst.span, hasSpan(29, 37));
@@ -52,7 +52,7 @@ void main() {
         final struct = doc.definitions.first.cast<StructDefinitionNode>();
         final field = struct.fields.first;
 
-        final doubleConst = field.defaultValue!.cast<DoubleConstantNode>();
+        final doubleConst = field.defaultValue!.cast<DoubleLiteralNode>();
         expect(doubleConst.rawValue, '1.0E+5');
         expect(doubleConst.value, 100000.0);
         expect(doubleConst.span, hasSpan(29, 35));
@@ -69,7 +69,7 @@ void main() {
         final struct = doc.definitions.first.cast<StructDefinitionNode>();
         final field = struct.fields.first;
 
-        final doubleConst = field.defaultValue!.cast<DoubleConstantNode>();
+        final doubleConst = field.defaultValue!.cast<DoubleLiteralNode>();
         expect(doubleConst.rawValue, '1.23e-4');
         expect(doubleConst.span, hasSpan(29, 36));
       },
@@ -85,7 +85,7 @@ void main() {
         final struct = doc.definitions.first.cast<StructDefinitionNode>();
         final field = struct.fields.first;
 
-        final doubleConst = field.defaultValue!.cast<DoubleConstantNode>();
+        final doubleConst = field.defaultValue!.cast<DoubleLiteralNode>();
         expect(doubleConst.rawValue, '5.0');
         expect(doubleConst.span, hasSpan(32, 35));
       },
@@ -101,14 +101,14 @@ void main() {
         final struct = doc.definitions.first.cast<StructDefinitionNode>();
         final field = struct.fields.first;
 
-        final doubleConst = field.defaultValue!.cast<DoubleConstantNode>();
+        final doubleConst = field.defaultValue!.cast<DoubleLiteralNode>();
         expect(doubleConst.rawValue, '.25');
         expect(doubleConst.span, hasSpan(28, 31));
       },
     );
   });
 
-  group('DoubleConstant AST (equality)', () {
+  group('DoubleLiteral AST (equality)', () {
     test('should be equal for same value', () {
       const source = '3.14';
       final doc1 = parseAstFromString('struct S { double pi = $source; }');

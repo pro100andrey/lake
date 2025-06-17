@@ -4,25 +4,25 @@ import '../base_rule.dart';
 import '../utils.dart';
 
 final class _BaseTypeRule extends BaseRule<FieldNode> {
-  /// Creates a rule that checks constant values against base types.
+  /// Creates a rule that checks literal values against base types.
   const _BaseTypeRule({required super.reporter});
 
   @override
   void check(FieldNode node) {
     if ((node.type, node.defaultValue) case (
-      BaseTypeNode(value: final constTypeName),
-      ConstValueNode(:final valueKind, :final valueType, :final span),
+      BaseTypeNode(value: final literalTypeName),
+      LiteralValueNode(:final valueKind, :final valueType, :final span),
     )) {
-      if (!isConstValueCompatibleWithBaseType(
-        constTypeName,
+      if (!isLiteralValueCompatibleWithBaseType(
+        literalTypeName,
         node.defaultValue!,
       )) {
-        reporter.reportConstValueCannotBeAssigned(
-          constTypeName: constTypeName,
+        reporter.reportLiteralValueCannotBeAssigned(
+          literalTypeName: literalTypeName,
           valueKindName: valueKind,
           valueSpan: span,
           valueTypeName: valueType,
-          constTypeSpan: node.type.span,
+          literalTypeSpan: node.type.span,
         );
       }
     }

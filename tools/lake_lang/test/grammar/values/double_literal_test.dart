@@ -4,9 +4,9 @@ import 'package:test/test.dart';
 
 void main() {
   const grammar = LakeGrammarDefinition();
-  final parser = resolve(grammar.doubleConstant().end());
+  final parser = resolve(grammar.doubleLiteral().end());
 
-  group('DoubleConstant grammar (positive):', () {
+  group('DoubleLiteral grammar (positive):', () {
     test('should parse a simple decimal number', () {
       final result = parser.parse('123.45');
       final Token(:String value) = result.value;
@@ -161,7 +161,7 @@ void main() {
     });
   });
 
-  group('DoubleConstant grammar (negative):', () {
+  group('DoubleLiteral grammar (negative):', () {
     test('should fail to parse a non-numeric string', () {
       final result = parser.parse('abc');
 

@@ -9,32 +9,32 @@ import '../utils.dart';
 /// This rule handles types like `i32`, `bool`, `string`, `double`, etc.
 /// It uses the `_expectedCheck` map to determine type compatibility.
 final class _BaseTypeRule extends BaseRule<ConstDefinitionNode> {
-  /// Creates a rule that checks constant values against base types.
+  /// Creates a rule that checks literal values against base types.
   const _BaseTypeRule({required super.reporter});
 
   @override
   void check(ConstDefinitionNode node) {
     if ((node.type, node.value) case (
       BaseTypeNode(value: final constTypeName),
-      ConstValueNode(:final valueKind, :final valueType, :final span),
+      LiteralValueNode(:final valueKind, :final valueType, :final span),
     )) {
-      if (!isConstValueCompatibleWithBaseType(constTypeName, node.value)) {
-        reporter.reportConstValueCannotBeAssigned(
-          constTypeName: constTypeName,
+      if (!isLiteralValueCompatibleWithBaseType(constTypeName, node.value)) {
+        reporter.reportLiteralValueCannotBeAssigned(
+          literalTypeName: constTypeName,
           valueKindName: valueKind,
           valueSpan: span,
           valueTypeName: valueType,
-          constTypeSpan: node.type.span,
+          literalTypeSpan: node.type.span,
         );
       }
     }
   }
 }
 
-/// A private rule that checks constant values against **list types**
+/// A private rule that checks literal values against **list types**
 /// (e.g., `list<i32>`).
 ///
-/// It ensures that all elements within a constant list literal are compatible
+/// It ensures that all elements within a literal list are compatible
 /// with the list's declared element type. It also checks if the list's element
 /// type is supported (e.g., only primitive types are allowed for now).
 final class _ListTypeRule extends BaseRule<ConstDefinitionNode> {
@@ -44,17 +44,17 @@ final class _ListTypeRule extends BaseRule<ConstDefinitionNode> {
   void check(ConstDefinitionNode node) {
     if ((node.type, node.value) case (
       ListTypeNode(:final elementType),
-      ConstListNode(:final elements),
+      ListLiteralNode(:final elements),
     )) {
       if (elementType case BaseTypeNode(value: final expectedType)) {
         for (final element in elements) {
           if (element is IdentifierNode) {
-            // Skip identifiers in constant list elements for now.
+            // Skip identifiers in list literal elements for now.
             // Their type compatibility will be checked in TypeCheckingVisitor.
             continue;
           }
 
-          if (!isConstValueCompatibleWithBaseType(expectedType, element)) {
+          if (!isLiteralValueCompatibleWithBaseType(expectedType, element)) {
             reporter.reportListElementTypeMismatch(
               // (e.g., 'i32')
               expectedType: expectedType,
@@ -81,10 +81,10 @@ final class _MapTypeRule extends BaseRule<ConstDefinitionNode> {
   void check(ConstDefinitionNode node) {
     if ((node.type, node.value) case (
       MapTypeNode(:final keyType, :final valueType),
-      ConstMapNode(:final entries),
+      MapLiteralNode(:final entries),
     )) {
       for (final entry in entries) {
-        if (!isConstValueCompatibleWithBaseType(
+        if (!isLiteralValueCompatibleWithBaseType(
           getTypeName(keyType),
           entry.key,
         )) {
@@ -95,7 +95,7 @@ final class _MapTypeRule extends BaseRule<ConstDefinitionNode> {
           );
         }
 
-        if (!isConstValueCompatibleWithBaseType(
+        if (!isLiteralValueCompatibleWithBaseType(
           getTypeName(valueType),
           entry.value,
         )) {
@@ -110,14 +110,14 @@ final class _MapTypeRule extends BaseRule<ConstDefinitionNode> {
   }
 }
 
-/// A semantic rule that checks whether constant values are assignable
+/// A semantic rule that checks whether literal values are assignable
 /// to their declared types (e.g., `i32`, `bool`, `string`, `list<i32>`, etc.).
 ///
 /// This rule dispatches to specialized sub-rules (`_BaseTypeCheckRule` and
-/// `_ListTypeCheckRule`) to handle different constant type definitions.
-final class ConstAssignmentTypeRule extends BaseRule<ConstDefinitionNode> {
-  /// Creates a rule that checks constant values against base types.
-  ConstAssignmentTypeRule({required super.reporter});
+/// `_ListTypeCheckRule`) to handle different literal type definitions.
+final class LiteralAssignmentTypeRule extends BaseRule<ConstDefinitionNode> {
+  /// Creates a rule that checks literal values against base types.
+  LiteralAssignmentTypeRule({required super.reporter});
 
   late final _baseTypeRule = _BaseTypeRule(reporter: reporter);
   late final _listTypeRule = _ListTypeRule(reporter: reporter);

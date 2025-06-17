@@ -90,7 +90,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   Parser import() => super.import().map((t) {
     final [
       Token keyword,
-      LiteralNode literal,
+      StringLiteralNode literal,
       Token? listSeparator,
     ] = t as List;
 
@@ -117,10 +117,11 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     return NamespaceNode(scope: lang, identifier: identifier, span: span);
   });
 
-  /// Overrides the [namespaceScope] parser to return a [LiteralNode].
+  /// Overrides the [namespaceScope] parser to return a [StringLiteralNode].
   ///
   /// Converts the raw token representing the namespace scope
-  /// ('*', 'js', 'dart') into a [LiteralNode] for consistency within the AST.
+  /// ('*', 'js', 'dart') into a [StringLiteralNode] for consistency within the
+  /// AST.
   @override
   Parser namespaceScope() => super.namespaceScope().map((t) {
     final token = t as Token;
@@ -132,7 +133,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
   /// Overrides the [constDefinition] parser to return a [ConstDefinitionNode].
   ///
-  /// It parses the 'const' keyword, type, identifier, '=' sign, and constant
+  /// It parses the 'const' keyword, type, identifier, '=' sign, and literal
   /// value to form a [ConstDefinitionNode].
   @override
   Parser constDefinition() => super.constDefinition().map((t) {
@@ -141,7 +142,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
       TypeNode type,
       IdentifierNode identifier,
       Token eq,
-      ConstValueNode value,
+      LiteralValueNode value,
       Token? listSeparator,
     ] = t as List;
 
@@ -205,7 +206,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
   /// Overrides the [enumValue] parser to return an [EnumValueNode].
   ///
   /// Handles enum members, which can be just an identifier or an identifier
-  /// with an assigned integer constant.
+  /// with an assigned integer literal.
   @override
   Parser enumValue() => super.enumValue().map((t) {
     final [
@@ -215,7 +216,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     ] = t as List;
 
     final value = switch (v) {
-      [_, final IntConstantNode value] => value,
+      [_, final IntLiteralNode value] => value,
       null => null,
       _ => throw StateError('Unexpected enum value list: $v'),
     };
@@ -325,15 +326,15 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     ] = t as List;
 
     final fieldId = switch (fieldIdentifier) {
-      [final IntConstantNode index, _] => index,
+      [final IntLiteralNode index, _] => index,
       null => null,
       _ => throw StateError('Unexpected field index format: $fieldIdentifier'),
     };
 
     final defaultValueResult = switch (defaultValue) {
       null => null,
-      [Token() /*equalOp*/, final ConstValueNode value] => switch (value) {
-        final ConstValueNode constValue => constValue,
+      [Token() /*equalOp*/, final LiteralValueNode value] => switch (value) {
+        final LiteralValueNode constValue => constValue,
       },
       _ => throw StateError('Unexpected default value list: $defaultValue'),
     };
@@ -470,65 +471,65 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     return ListTypeNode(elementType: elementType, span: span);
   });
 
-  /// Overrides the [intConstant] parser to return an [IntConstantNode].
+  /// Overrides the [intLiteral] parser to return an [IntLiteralNode].
   ///
-  /// Converts the raw token of an integer constant into an [IntConstantNode].
+  /// Converts the raw token of an integer literal into an [IntLiteralNode].
   @override
-  Parser intConstant() => super.intConstant().map((t) {
+  Parser intLiteral() => super.intLiteral().map((t) {
     final Token token = t;
 
     final span = _getSpan(token, token);
 
-    return IntConstantNode(rawValue: token.value, span: span);
+    return IntLiteralNode(rawValue: token.value, span: span);
   });
 
-  /// Overrides the [doubleConstant] parser to return a [DoubleConstantNode].
+  /// Overrides the [doubleLiteral] parser to return a [DoubleLiteralNode].
   ///
-  /// Converts the raw token of a double constant into a [DoubleConstantNode].
+  /// Converts the raw token of a double literal into a [DoubleLiteralNode].
   @override
-  Parser doubleConstant() => super.doubleConstant().map((t) {
+  Parser doubleLiteral() => super.doubleLiteral().map((t) {
     final Token token = t;
 
     final span = _getSpan(token, token);
 
-    return DoubleConstantNode(rawValue: token.value, span: span);
+    return DoubleLiteralNode(rawValue: token.value, span: span);
   });
 
-  /// Overrides the [boolConstant] parser to return a [BoolConstantNode].
+  /// Overrides the [boolLiteral] parser to return a [BoolLiteralNode].
   ///
-  /// Converts the 'true' or 'false' token into a [BoolConstantNode].
+  /// Converts the 'true' or 'false' literal token into a [BoolLiteralNode].
   @override
-  Parser boolConstant() => super.boolConstant().map((t) {
+  Parser boolLiteral() => super.boolLiteral().map((t) {
     final Token token = t;
 
     final span = _getSpan(token, token);
 
-    return BoolConstantNode(rawValue: token.value, span: span);
+    return BoolLiteralNode(rawValue: token.value, span: span);
   });
 
-  /// Overrides the [constList] parser to return a [ConstListNode].
+  /// Overrides the [listLiteral] parser to return a [ListLiteralNode].
   ///
   /// Processes a list of constant values enclosed in square brackets,
-  /// converting them into a [ConstListNode].
+  /// converting them into a [ListLiteralNode].
   @override
-  Parser constList() => super.constList().map((t) {
+  Parser listLiteral() => super.listLiteral().map((t) {
     final [Token ld, List<List> values, Token rd] = t as List;
 
     final span = _getSpan(ld, rd);
 
     final elements = values
-        .map((e) => e.first as ConstValueNode)
+        .map((e) => e.first as LiteralValueNode)
         .toList(growable: false);
 
-    return ConstListNode(elements: elements, span: span);
+    return ListLiteralNode(elements: elements, span: span);
   });
 
-  /// Overrides the [constMap] parser to return a [ConstMapNode].
+  /// Overrides the [mapLiteral] parser to return a [MapLiteralNode].
   ///
   /// Processes a map of key-value constant pairs enclosed in curly braces,
-  /// converting them into a [ConstMapNode].
+  /// converting them into a [MapLiteralNode].
   @override
-  Parser constMap() => super.constMap().map((t) {
+  Parser mapLiteral() => super.mapLiteral().map((t) {
     final [Token ld, List<List> values, Token rd] = t as List;
 
     final span = _getSpan(ld, rd);
@@ -536,25 +537,26 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     final entries = values
         .map(
           (e) => (
-            key: e[0] as ConstValueNode,
-            value: e[2] as ConstValueNode,
+            key: e[0] as LiteralValueNode,
+            value: e[2] as LiteralValueNode,
           ),
         )
         .toList(growable: false);
 
-    return ConstMapNode(entries: entries, span: span);
+    return MapLiteralNode(entries: entries, span: span);
   });
 
-  /// Overrides the [literal] parser to return a [LiteralNode].
+  /// Overrides the [stringLiteral] parser to return a [StringLiteralNode].
   ///
-  /// Converts string literals (single or double quoted) into a [LiteralNode].
+  /// Converts string literals (single or double quoted) into a
+  /// [StringLiteralNode].
   @override
-  Parser literal() => super.literal().map((t) {
+  Parser stringLiteral() => super.stringLiteral().map((t) {
     final token = t as Token;
 
     final span = _getSpan(token, token);
 
-    return LiteralNode(rawValue: token.value, span: span);
+    return StringLiteralNode(rawValue: token.value, span: span);
   });
 
   /// Overrides the [identifier] parser to return an [IdentifierNode].
@@ -593,7 +595,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     };
 
     final span = _getSpan(keyword, rd);
-    final methods = functions.cast<FunctionNode>();
+    final methods = functions.cast<MethodNode>();
 
     return ServiceDefinitionNode(
       identifier: identifier,
@@ -603,13 +605,13 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     );
   });
 
-  /// Overrides the [function] parser to return a [FunctionNode].
+  /// Overrides the [method] parser to return a [MethodNode].
   ///
-  /// Parses a function definition, including its return type, identifier,
-  /// parameters, and optional 'throws' clause, then creates a [FunctionNode].
+  /// Parses a method definition, including its return type, identifier,
+  /// parameters, and optional 'throws' clause, then creates a [MethodNode].
   /// It also correctly handles the 'void' return type.
   @override
-  Parser function() => super.function().map((e) {
+  Parser method() => super.method().map((e) {
     final [
       AstNode type,
       IdentifierNode identifier,
@@ -627,7 +629,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
         _ => CustomTypeNode(value: type.value, span: type.span),
       },
 
-      _ => throw StateError('Unexpected return type in function: $type'),
+      _ => throw StateError('Unexpected return type in method: $type'),
     };
 
     final parametersList = parameters.cast<FieldNode>();
@@ -642,7 +644,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final span = _getSpan(type, separator ?? throws?.last ?? rparen);
 
-    return FunctionNode(
+    return MethodNode(
       returnType: returnType,
       identifier: identifier,
       parameters: parametersList,

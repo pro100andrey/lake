@@ -6,7 +6,7 @@ import '../_ast_helpers.dart';
 
 void main() {
   group('VoidType AST', () {
-    test('should parse void type when used as a function return type', () {
+    test('should parse void type when used as a method return type', () {
       const source = 'void';
       final doc = parseAstFromString(
         'service MyService { $source doSomething(); }',
@@ -18,7 +18,7 @@ void main() {
     });
 
     test(
-      'should parse void type as a function return type with parameters',
+      'should parse void type as a method return type with parameters',
       () {
         const source = 'void';
         final doc = parseAstFromString(

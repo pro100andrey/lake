@@ -134,12 +134,12 @@ SemanticType? getSemanticType(
   return null;
 }
 
-SemanticType? getConstantValueSemanticType(
-  ConstValueNode node,
+SemanticType? getLiteralValueSemanticType(
+  LiteralValueNode node,
   ErrorReporter reporter,
   SymbolTable symbolTable,
 ) {
-  if (node case IntConstantNode()) {
+  if (node case IntLiteralNode()) {
     // Assuming all integer literals default to i64, or determine based on
     //value range.
     return BaseType.byName[node.valueType];
@@ -148,15 +148,15 @@ SemanticType? getConstantValueSemanticType(
     // default.
   }
 
-  if (node case DoubleConstantNode()) {
+  if (node case DoubleLiteralNode()) {
     return BaseType.doubleT;
   }
 
-  if (node case BoolConstantNode()) {
+  if (node case BoolLiteralNode()) {
     return BaseType.boolT;
   }
 
-  if (node case LiteralNode()) {
+  if (node case StringLiteralNode()) {
     // Assuming LiteralNode is for string literals
     return BaseType.stringT;
   }
@@ -170,11 +170,11 @@ SemanticType? getConstantValueSemanticType(
       return null;
     }
 
-    // The resolvedType for constants is set by SymbolTableVisitor.
+    // The resolvedType for literals is set by SymbolTableVisitor.
     return symbolEntry.resolvedType;
   }
 
-  if (node case ConstListNode(:final elements, :final span)) {
+  if (node case ListLiteralNode(:final elements, :final span)) {
     if (elements.isEmpty) {
       return ListType(const VoidType());
     }
@@ -182,7 +182,7 @@ SemanticType? getConstantValueSemanticType(
     SemanticType? commonElementType;
 
     for (final element in elements) {
-      final elementType = getConstantValueSemanticType(
+      final elementType = getLiteralValueSemanticType(
         element,
         reporter,
         symbolTable,
@@ -199,7 +199,7 @@ SemanticType? getConstantValueSemanticType(
           !commonElementType.isAssignableTo(elementType)) {
         reporter.reportGeneric(
           message:
-              'Inconsistent types in constant list. '
+              'Inconsistent types in list literal. '
               'Expected ${commonElementType.name}, got ${elementType.name}.',
           span: element.span,
         );

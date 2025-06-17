@@ -183,15 +183,15 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
     _printNode(node);
 
     final hasExtends = node.extendsService != null;
-    final hasFunctions = node.methods.isNotEmpty;
+    final hasMethods = node.methods.isNotEmpty;
 
-    _visit(node.identifier, isLast: !hasExtends && !hasFunctions);
+    _visit(node.identifier, isLast: !hasExtends && !hasMethods);
 
     if (hasExtends) {
-      _visit(node.extendsService, isLast: !hasFunctions);
+      _visit(node.extendsService, isLast: !hasMethods);
     }
 
-    if (hasFunctions) {
+    if (hasMethods) {
       _visitList('Methods', node.methods, isLast: true);
     }
   }
@@ -215,7 +215,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   }
 
   @override
-  void visitFunctionNode(FunctionNode node) {
+  void visitMethodNode(MethodNode node) {
     _printNode(node);
 
     final hasParameters = node.parameters.isNotEmpty;
@@ -276,25 +276,25 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
     _printNode(node);
   }
 
-  // Constant value nodes
+  // Literal value nodes
 
   @override
-  void visitIntConstantNode(IntConstantNode node) {
+  void visitIntLiteralNode(IntLiteralNode node) {
     _printNode(node, {'value': node.value, 'rawValue': node.rawValue});
   }
 
   @override
-  void visitDoubleConstantNode(DoubleConstantNode node) {
+  void visitDoubleLiteralNode(DoubleLiteralNode node) {
     _printNode(node, {'value': node.value, 'rawValue': node.rawValue});
   }
 
   @override
-  void visitBoolConstantNode(BoolConstantNode node) {
+  void visitBoolLiteralNode(BoolLiteralNode node) {
     _printNode(node, {'value': node.value, 'rawValue': node.rawValue});
   }
 
   @override
-  void visitLiteralNode(LiteralNode node) {
+  void visitStringLiteralNode(StringLiteralNode node) {
     _printNode(node, {'value': node.value, 'rawValue': node.rawValue});
   }
 
@@ -304,13 +304,13 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   }
 
   @override
-  void visitConstListNode(ConstListNode node) {
+  void visitListLiteralNode(ListLiteralNode node) {
     _printNode(node);
     _visitList('Elements', node.elements, isLast: true);
   }
 
   @override
-  void visitConstMapNode(ConstMapNode node) {
+  void visitMapLiteralNode(MapLiteralNode node) {
     _printNode(node);
 
     if (node.entries.isEmpty) {

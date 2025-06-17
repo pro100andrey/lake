@@ -21,7 +21,7 @@ void main() {
       expect(def.methods, isEmpty);
     });
 
-    test('should parse service with one function', () {
+    test('should parse service with one method', () {
       const source = 'service S { void foo(); }';
       final doc = parseAstFromString(source);
 
@@ -85,7 +85,7 @@ void main() {
       },
     );
 
-    test('should parse service with function with fieldId', () {
+    test('should parse service with method with fieldId', () {
       const source = 'service S { void foo(1: i32 x, 2: i32 y)}';
       final doc = parseAstFromString(source);
 
@@ -160,7 +160,7 @@ void main() {
     });
 
     test(
-      'should parse service with function arguments and throws without fieldId',
+      'should parse service with method arguments and throws without fieldId',
       () {
         const source =
             'service S { i32 foo(1: i32 x, 3: string y) throws (i32 err); }';
@@ -174,7 +174,7 @@ void main() {
 
         expect(def.extendsService, isNull);
 
-        final [FunctionNode fn] = def.methods;
+        final [MethodNode fn] = def.methods;
 
         expect(fn.returnType.cast<BaseTypeNode>().value, 'i32');
         expect(fn.returnType.span, hasSpan(12, 15));
@@ -218,7 +218,7 @@ void main() {
     );
 
     test(
-      'should parse service with function arguments and throws with fieldId',
+      'should parse service with method arguments and throws with fieldId',
       () {
         const source =
             'service S { i32 foo(1: i32 x, 3: string y) throws (1: i32 err); }';
@@ -232,7 +232,7 @@ void main() {
 
         expect(def.extendsService, isNull);
 
-        final [FunctionNode fn] = def.methods;
+        final [MethodNode fn] = def.methods;
 
         expect(fn.returnType.cast<BaseTypeNode>().value, 'i32');
         expect(fn.returnType.span, hasSpan(12, 15));
@@ -294,7 +294,7 @@ void main() {
         expect(def.extendsService, isNull);
         expect(def.methods, hasLength(3));
 
-        final [FunctionNode func1, FunctionNode func2, FunctionNode func3] =
+        final [MethodNode func1, MethodNode func2, MethodNode func3] =
             def.methods;
 
         expect(func1.returnType, isA<VoidTypeNode>());
