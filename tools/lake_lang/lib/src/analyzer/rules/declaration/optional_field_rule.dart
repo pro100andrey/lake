@@ -23,6 +23,7 @@ final class _BaseTypeRule extends BaseRule<FieldNode> {
           valueSpan: span,
           valueTypeName: valueType,
           literalTypeSpan: node.type.span,
+          filePath: '<file_path>',
         );
       }
     }

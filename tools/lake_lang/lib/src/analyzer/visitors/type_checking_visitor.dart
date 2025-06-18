@@ -76,7 +76,7 @@ class TypeCheckingVisitor implements AstVisitor<void> {
   void visitEnumDefinitionNode(EnumDefinitionNode node) {}
 
   @override
-  void visitEnumValueNode(EnumValueNode node) {}
+  void visitEnumMemberNode(EnumMemberNode node) {}
 
   @override
   void visitStructDefinitionNode(StructDefinitionNode node) {
@@ -132,6 +132,7 @@ class TypeCheckingVisitor implements AstVisitor<void> {
             valueTypeName: defaultValueSemanticType.name,
             valueSpan: node.defaultValue!.span,
             literalTypeSpan: node.type.span,
+            filePath: '<file_path>',
           );
         }
       }

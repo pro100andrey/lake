@@ -150,7 +150,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
   }
 
   @override
-  void visitEnumValueNode(EnumValueNode node) {
+  void visitEnumMemberNode(EnumMemberNode node) {
     // Add each enum value as an enum member within the enum's scope.
     _symbolTable.addSymbol(
       name: node.identifier.value,

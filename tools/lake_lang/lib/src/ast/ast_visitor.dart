@@ -12,7 +12,7 @@ abstract class AstVisitor<T> {
   T visitConstDefinitionNode(ConstDefinitionNode node);
   T visitTypedefDefinitionNode(TypedefDefinitionNode node);
   T visitEnumDefinitionNode(EnumDefinitionNode node);
-  T visitEnumValueNode(EnumValueNode node);
+  T visitEnumMemberNode(EnumMemberNode node);
   T visitStructDefinitionNode(StructDefinitionNode node);
   T visitUnionDefinitionNode(UnionDefinitionNode node);
   T visitExceptionDefinitionNode(ExceptionDefinitionNode node);

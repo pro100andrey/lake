@@ -45,6 +45,7 @@ final class ConstIdentifierResolutionRule
               'Could not determine type of constant identifier '
               "'${identifierNode.value}'.",
           span: identifierNode.span,
+          filePath: '<file_path>',
         );
         return;
       }
@@ -70,6 +71,7 @@ final class ConstIdentifierResolutionRule
           valueSpan: identifierNode.span,
           valueTypeName: identifierSemanticType.name,
           literalTypeSpan: node.type.span,
+          filePath: '<file_path>',
         );
       }
     }

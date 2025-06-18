@@ -27,6 +27,7 @@ final class KeywordAsIdentifierRule extends BaseRule<IdentifierNode> {
       reporter.reportKeywordAsIdentifier(
         identifier: node.value,
         span: node.span,
+        filePath: '<file_path>',
       );
     }
   }

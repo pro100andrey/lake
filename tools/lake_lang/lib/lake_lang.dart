@@ -3,6 +3,7 @@ library;
 
 export 'src/analyzer/errors/error_reporter.dart';
 export 'src/analyzer/semantic_analyzer.dart';
+export 'src/analyzer_new/semantic_analyzer.dart';
 export 'src/ast/ast_visitor.dart';
 export 'src/ast/lake_ast_grammar_definition.dart';
 export 'src/ast/nodes/ast_nodes.dart';

@@ -28,9 +28,9 @@ void main() {
       expect(def.identifier.span, hasSpan(5, 10));
 
       final [
-        EnumValueNode member1,
-        EnumValueNode member2,
-        EnumValueNode member3,
+        EnumMemberNode member1,
+        EnumMemberNode member2,
+        EnumMemberNode member3,
       ] = def.members;
 
       expect(member1.identifier.value, 'RED');
@@ -57,9 +57,9 @@ void main() {
       expect(def.identifier.span, hasSpan(5, 10));
 
       final [
-        EnumValueNode member1,
-        EnumValueNode member2,
-        EnumValueNode member3,
+        EnumMemberNode member1,
+        EnumMemberNode member2,
+        EnumMemberNode member3,
       ] = def.members;
 
       expect(member1.identifier.value, 'RED');
@@ -92,10 +92,10 @@ void main() {
       expect(def.identifier.span, hasSpan(5, 14));
 
       final [
-        EnumValueNode member1,
-        EnumValueNode member2,
-        EnumValueNode member3,
-        EnumValueNode member4,
+        EnumMemberNode member1,
+        EnumMemberNode member2,
+        EnumMemberNode member3,
+        EnumMemberNode member4,
       ] = def.members;
 
       expect(member1.identifier.value, 'NORTH');
@@ -127,10 +127,10 @@ void main() {
       expect(def.identifier.span, hasSpan(5, 11));
 
       final [
-        EnumValueNode member1,
-        EnumValueNode member2,
-        EnumValueNode member3,
-        EnumValueNode member4,
+        EnumMemberNode member1,
+        EnumMemberNode member2,
+        EnumMemberNode member3,
+        EnumMemberNode member4,
       ] = def.members;
 
       expect(member1.identifier.value, 'PENDING');

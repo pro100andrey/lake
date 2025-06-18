@@ -200,20 +200,26 @@ sealed class Diagnostic {
   /// to parts of the code related to the primary span. Defaults to an empty
   /// list.
   const Diagnostic({
-    required this.span,
     required this.message,
+    required this.span,
+    required this.filePath,
     this.severity = DiagnosticSeverity.error,
     this.code,
     this.labels = const [],
   });
 
+  /// The main message describing the diagnostic.
+  /// This message should be clear and concise, explaining what went wrong.
+  final String message;
+
   /// The main location in the source code where the diagnostic originates.
   /// This is typically the most relevant part of the code for the issue.
   final Span span;
 
-  /// The main message describing the diagnostic.
-  /// This message should be clear and concise, explaining what went wrong.
-  final String message;
+  /// The absolute path of the source file where the diagnostic was generated.
+  /// This is useful for identifying the file in larger projects or when
+  /// reporting diagnostics across multiple files.
+  final String filePath;
 
   /// The severity of the diagnostic (e.g., error, warning, info, fatal).
   /// Determines how the diagnostic should be presented to the user and its
@@ -246,6 +252,7 @@ final class GenericDiagnostic extends Diagnostic {
   ///   - [code]: An optional diagnostic code.
   ///   - [labels]: Additional contextual labels.
   const GenericDiagnostic({
+    required super.filePath,
     required super.message,
     required super.span,
     required super.severity,
@@ -278,6 +285,7 @@ final class LiteralValueCannotBeAssignedDiagnostic extends Diagnostic {
     required String valueKindName,
     required String literalTypeName,
     required Span valueSpan,
+    required super.filePath,
     Span? literalTypeSpan,
   }) : super(
          span: valueSpan,
@@ -312,6 +320,7 @@ final class DuplicateDeclarationDiagnostic extends Diagnostic {
     required String name,
     required super.span,
     required Span previousDeclarationSpan,
+    required super.filePath,
   }) : super(
          message: 'A symbol named "$name" is already declared in this scope.',
          code: DiagnosticCode.duplicateDeclaration,
@@ -337,6 +346,7 @@ final class UndefinedSymbolDiagnostic extends Diagnostic {
   const UndefinedSymbolDiagnostic({
     required String name,
     required super.span,
+    required super.filePath,
   }) : super(
          message: 'Undefined symbol: "$name".',
          code: DiagnosticCode.undefinedSymbol,
@@ -351,13 +361,15 @@ final class EmptyEnumDefinitionDiagnostic extends Diagnostic {
   ///
   /// - Parameters:
   ///   - [span]: The [SourceSpan] of the empty enum definition.
-  const EmptyEnumDefinitionDiagnostic({required super.span})
-    : super(
-        message:
-            'Enum definition cannot be empty. '
-            'Enums must have at least one member.',
-        code: DiagnosticCode.emptyEnumDefinition,
-      );
+  const EmptyEnumDefinitionDiagnostic({
+    required super.span,
+    required super.filePath,
+  }) : super(
+         message:
+             'Enum definition cannot be empty. '
+             'Enums must have at least one member.',
+         code: DiagnosticCode.emptyEnumDefinition,
+       );
 }
 
 /// Diagnostic for an empty struct definition.
@@ -368,13 +380,15 @@ final class EmptyStructDefinitionDiagnostic extends Diagnostic {
   ///
   /// - Parameters:
   ///   - [span]: The [SourceSpan] of the empty struct definition
-  const EmptyStructDefinitionDiagnostic({required super.span})
-    : super(
-        message:
-            'Struct definition cannot be empty. '
-            'Structs must have at least one field.',
-        code: DiagnosticCode.emptyStructDefinition,
-      );
+  const EmptyStructDefinitionDiagnostic({
+    required super.span,
+    required super.filePath,
+  }) : super(
+         message:
+             'Struct definition cannot be empty. '
+             'Structs must have at least one field.',
+         code: DiagnosticCode.emptyStructDefinition,
+       );
 }
 
 /// Diagnostic for using a reserved keyword as an identifier.
@@ -391,6 +405,7 @@ final class KeywordAsIdentifierDiagnostic extends Diagnostic {
   const KeywordAsIdentifierDiagnostic({
     required String identifier,
     required super.span,
+    required super.filePath,
   }) : super(
          message:
              'Invalid identifier name: "$identifier" '
@@ -414,6 +429,7 @@ final class ListElementTypeMismatchDiagnostic extends Diagnostic {
     required String expectedType,
     required String actualType,
     required super.span,
+    required super.filePath,
   }) : super(
          message:
              'List element type mismatch: expected "$expectedType", '
@@ -435,6 +451,7 @@ final class UnsupportedListElementTypeDiagnostic extends Diagnostic {
   const UnsupportedListElementTypeDiagnostic({
     required String elementType,
     required super.span,
+    required super.filePath,
   }) : super(
          message:
              'Unsupported list element type: "$elementType". '
@@ -457,6 +474,7 @@ final class MapKeyTypeMismatchDiagnostic extends Diagnostic {
     required String expectedType,
     required String actualType,
     required super.span,
+    required super.filePath,
   }) : super(
          message:
              'Map key type mismatch: expected "$expectedType", '
@@ -480,6 +498,7 @@ final class MapValueTypeMismatchDiagnostic extends Diagnostic {
     required String expectedType,
     required String actualType,
     required super.span,
+    required super.filePath,
   }) : super(
          message:
              'Map value type mismatch: expected "$expectedType", '
@@ -501,6 +520,7 @@ final class RequiredFieldCannotHaveDefaultValueDiagnostic extends Diagnostic {
   const RequiredFieldCannotHaveDefaultValueDiagnostic({
     required String fieldName,
     required super.span,
+    required super.filePath,
   }) : super(
          message: 'A required field "$fieldName" cannot have a default value.',
          code: DiagnosticCode.requiredFieldCannotHaveDefaultValue,

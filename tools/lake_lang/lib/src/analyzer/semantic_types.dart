@@ -13,6 +13,16 @@ sealed class SemanticType extends Equatable {
   bool isAssignableTo(SemanticType other);
 }
 
+final class SemanticUnresolvedType extends SemanticType {
+  const SemanticUnresolvedType() : super('unresolved');
+
+  @override
+  List<Object?> get props => [];
+
+  @override
+  bool isAssignableTo(SemanticType other) => false;
+}
+
 extension SemanticTypesCastExtension on SemanticType {
   T cast<T extends SemanticType>() => this as T;
 }
@@ -266,7 +276,7 @@ final class EnumType extends SemanticType {
 }
 
 final class LazyBox<T extends SemanticType> {
-  LazyBox();
+  LazyBox(this._value);
 
   T? _value;
 
@@ -288,8 +298,8 @@ final class LazyBox<T extends SemanticType> {
 }
 
 final class TypedefType extends SemanticType {
-  TypedefType(this.declaration)
-    : _targetType = LazyBox(),
+  TypedefType(this.declaration, [SemanticType? targetType])
+    : _targetType = LazyBox(targetType),
       super(declaration.identifier.value);
 
   final TypedefDefinitionNode declaration;

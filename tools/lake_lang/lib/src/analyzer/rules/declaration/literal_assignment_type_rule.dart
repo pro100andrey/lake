@@ -25,6 +25,7 @@ final class _BaseTypeRule extends BaseRule<ConstDefinitionNode> {
           valueSpan: span,
           valueTypeName: valueType,
           literalTypeSpan: node.type.span,
+          filePath: '<file_path>',
         );
       }
     }
@@ -61,6 +62,7 @@ final class _ListTypeRule extends BaseRule<ConstDefinitionNode> {
               // (e.g., 'integer', 'string', etc.)
               actualType: element.valueType,
               span: element.span,
+              filePath: '<file_path>',
             );
           }
         }
@@ -68,6 +70,7 @@ final class _ListTypeRule extends BaseRule<ConstDefinitionNode> {
         reporter.reportUnsupportedListElementType(
           elementType: getTypeName(elementType),
           span: node.type.span,
+          filePath: '<file_path>',
         );
       }
     }
@@ -92,6 +95,7 @@ final class _MapTypeRule extends BaseRule<ConstDefinitionNode> {
             expectedType: getTypeName(keyType),
             actualType: entry.key.valueType,
             span: entry.key.span,
+            filePath: '<file_path>',
           );
         }
 
@@ -103,6 +107,7 @@ final class _MapTypeRule extends BaseRule<ConstDefinitionNode> {
             expectedType: getTypeName(valueType),
             actualType: entry.value.valueType,
             span: entry.value.span,
+            filePath: '<file_path>',
           );
         }
       }

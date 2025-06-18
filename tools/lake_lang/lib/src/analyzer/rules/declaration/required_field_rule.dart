@@ -17,6 +17,7 @@ final class RequiredFieldRule extends BaseRule<FieldNode> {
         reporter.reportRequiredFieldCannotHaveDefaultValue(
           fieldName: node.identifier.value,
           span: node.requirement!.span,
+          filePath: '<file_path>',
         );
       }
     }

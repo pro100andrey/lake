@@ -30,10 +30,10 @@ void main() {
         // Enum `Status`
         EnumDefinitionNode,
         IdentifierNode,
-        EnumValueNode,
+        EnumMemberNode,
         IdentifierNode,
         IntLiteralNode,
-        EnumValueNode,
+        EnumMemberNode,
         IdentifierNode,
 
         //  Typedef `StringList`

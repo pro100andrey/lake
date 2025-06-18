@@ -56,7 +56,7 @@ class RecordingVisitor extends AstVisitor<void> {
   }
 
   @override
-  void visitEnumValueNode(EnumValueNode node) {
+  void visitEnumMemberNode(EnumMemberNode node) {
     visitedTypes.add(node.runtimeType);
     node.identifier.accept(this);
     node.value?.accept(this);

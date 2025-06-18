@@ -12,7 +12,11 @@ SemanticType? getSemanticType(
     final type = BaseType.byName[value];
 
     if (type == null) {
-      reporter.reportGeneric(message: 'Unknown base type: $value', span: span);
+      reporter.reportGeneric(
+        message: 'Unknown base type: $value',
+        span: span,
+        filePath: '<file_path>',
+      );
     }
 
     return type;
@@ -27,6 +31,7 @@ SemanticType? getSemanticType(
       reporter.reportGeneric(
         message: 'Unknown custom type: $value',
         span: span,
+        filePath: '<file_path>',
       );
     }
 
@@ -44,6 +49,7 @@ SemanticType? getSemanticType(
       reporter.reportGeneric(
         message: 'Invalid element type in list',
         span: span,
+        filePath: '<file_path>',
       );
 
       return null;
@@ -70,11 +76,19 @@ SemanticType? getSemanticType(
     );
 
     if (keySemanticType == null) {
-      reporter.reportGeneric(message: 'Invalid key type in map', span: span);
+      reporter.reportGeneric(
+        message: 'Invalid key type in map',
+        span: span,
+        filePath: '<file_path>',
+      );
     }
 
     if (valueSemanticType == null) {
-      reporter.reportGeneric(message: 'Invalid value type in map', span: span);
+      reporter.reportGeneric(
+        message: 'Invalid value type in map',
+        span: span,
+        filePath: '<file_path>',
+      );
     }
 
     if (keySemanticType == null || valueSemanticType == null) {
@@ -95,6 +109,7 @@ SemanticType? getSemanticType(
       reporter.reportGeneric(
         message: 'Invalid element type in set',
         span: span,
+        filePath: '<file_path>',
       );
 
       return null;
@@ -114,6 +129,7 @@ SemanticType? getSemanticType(
       reporter.reportGeneric(
         message: 'Invalid element type in stream',
         span: span,
+        filePath: '<file_path>',
       );
 
       return null;
@@ -129,6 +145,7 @@ SemanticType? getSemanticType(
   reporter.reportGeneric(
     message: 'Unsupported type node: ${typeNode.runtimeType}',
     span: typeNode.span,
+    filePath: '<file_path>',
   );
 
   return null;
@@ -175,6 +192,8 @@ SemanticType? getLiteralValueSemanticType(
   }
 
   if (node case ListLiteralNode(:final elements, :final span)) {
+    final _ = span;
+
     if (elements.isEmpty) {
       return ListType(const VoidType());
     }
@@ -202,6 +221,7 @@ SemanticType? getLiteralValueSemanticType(
               'Inconsistent types in list literal. '
               'Expected ${commonElementType.name}, got ${elementType.name}.',
           span: element.span,
+          filePath: '<file_path>',
         );
 
         return null; // Mixed types, cannot infer single type

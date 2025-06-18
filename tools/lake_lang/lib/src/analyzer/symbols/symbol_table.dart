@@ -24,6 +24,7 @@ class Scope {
         name: name,
         span: span,
         previousDeclarationSpan: existingEntry.span,
+        filePath: '<file_path>',
       );
 
       return;
@@ -71,6 +72,7 @@ class SymbolTable {
       _errorReporter.reportGeneric(
         message: 'Cannot pop the global scope.',
         span: (start: 0, end: 0),
+        filePath: '<file_path>',
       );
       return;
     }
@@ -90,6 +92,7 @@ class SymbolTable {
         message:
             'Cannot add symbol "$name": no active scope. '
             'This is an internal error.',
+        filePath: '<file_path>',
         span: span,
       );
       return;
@@ -112,6 +115,7 @@ class SymbolTable {
             'Cannot lookup symbol "$name": no active scope. '
             'This is an internal error.',
         span: span,
+        filePath: '<file_path>',
       );
       return null;
     }
@@ -119,7 +123,11 @@ class SymbolTable {
     final symbol = _currentScope!.lookup(name);
 
     if (symbol == null) {
-      _errorReporter.reportUndefinedSymbol(name: name, span: span);
+      _errorReporter.reportUndefinedSymbol(
+        name: name,
+        span: span,
+        filePath: '<file_path>',
+      );
       return null;
     }
 

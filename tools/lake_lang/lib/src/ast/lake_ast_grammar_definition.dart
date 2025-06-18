@@ -194,7 +194,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     ] = t as List;
 
     final span = _getSpan(keyword, rd);
-    final enumValues = values.cast<EnumValueNode>();
+    final enumValues = values.cast<EnumMemberNode>();
 
     return EnumDefinitionNode(
       identifier: identifier,
@@ -203,7 +203,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
     );
   });
 
-  /// Overrides the [enumValue] parser to return an [EnumValueNode].
+  /// Overrides the [enumValue] parser to return an [EnumMemberNode].
   ///
   /// Handles enum members, which can be just an identifier or an identifier
   /// with an assigned integer literal.
@@ -223,7 +223,7 @@ class LakeAstGrammarDefinition extends LakeGrammarDefinition {
 
     final span = _getSpan(identifier, separator ?? value ?? identifier);
 
-    return EnumValueNode(
+    return EnumMemberNode(
       identifier: identifier,
       value: value,
       span: span,

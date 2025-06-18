@@ -174,7 +174,7 @@ final class EnumDefinitionNode extends DefinitionNode {
   final IdentifierNode identifier;
 
   /// The list of enum value nodes.
-  final List<EnumValueNode> members;
+  final List<EnumMemberNode> members;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitEnumDefinitionNode(this);
@@ -184,23 +184,23 @@ final class EnumDefinitionNode extends DefinitionNode {
 }
 
 /// Represents a single value/member of an enum.
-final class EnumValueNode extends AstNode {
-  /// Creates an [EnumValueNode] with the given [identifier], optional [value],
+final class EnumMemberNode extends AstNode {
+  /// Creates an [EnumMemberNode] with the given [identifier], optional [value],
   /// and [span].
-  const EnumValueNode({
+  const EnumMemberNode({
     required this.identifier,
     required super.span,
     this.value,
   });
 
-  /// The identifier for the enum value.
+  /// The identifier for the enum member.
   final IdentifierNode identifier;
 
   /// The optional integer value assigned to the enum member.
   final IntLiteralNode? value;
 
   @override
-  T accept<T>(AstVisitor<T> visitor) => visitor.visitEnumValueNode(this);
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitEnumMemberNode(this);
 
   @override
   List<Object?> get props => [identifier, value, span];

@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print
 
+import 'dart:io';
+
 import 'package:source_span/source_span.dart';
 
 import '../../ast/base/types.dart';
@@ -50,7 +52,7 @@ final class ErrorReporter {
   /// Each diagnostic is formatted to show its location, severity, message,
   /// associated code (if any), highlighted source span, additional labels,
   /// suggestions, and a link to more information.
-  void printDiagnostics(SourceFile sourceFile) {
+  void printDiagnostics() {
     if (_diagnostics.isEmpty) {
       print('No issues found.');
       return;
@@ -59,6 +61,9 @@ final class ErrorReporter {
     final separator = '-' * 120;
 
     for (final diag in _diagnostics) {
+      final file = File(diag.filePath);
+      final sourceFile = SourceFile.fromString(file.readAsStringSync());
+
       final diagSpan = sourceFile.span(
         diag.span.start,
         diag.span.end,
@@ -98,6 +103,10 @@ final class ErrorReporter {
       print(separator);
     }
   }
+
+  void clearErrors() {
+    _diagnostics.clear();
+  }
 }
 
 /// Extension methods for [ErrorReporter] to report common diagnostic types.
@@ -124,6 +133,7 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   void reportGeneric({
     required String message,
     required Span span,
+    required String filePath,
     DiagnosticSeverity severity = DiagnosticSeverity.error,
     DiagnosticCode? code,
     List<DiagnosticLabel> labels = const [],
@@ -133,6 +143,7 @@ extension ErrorReporterGenericExtension on ErrorReporter {
       GenericDiagnostic(
         message: message,
         span: span,
+        filePath: filePath,
         severity: severity,
         labels: labels,
       ),
@@ -148,8 +159,14 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// - Parameters:
   ///   - [name]: The name of the undefined symbol.
   ///   - [span]: The [Span] where the undefined symbol was encountered.
-  void reportUndefinedSymbol({required String name, required Span span}) {
-    report(UndefinedSymbolDiagnostic(name: name, span: span));
+  void reportUndefinedSymbol({
+    required String name,
+    required Span span,
+    required String filePath,
+  }) {
+    report(
+      UndefinedSymbolDiagnostic(name: name, span: span, filePath: filePath),
+    );
   }
 
   /// Reports a [DuplicateDeclarationDiagnostic].
@@ -166,12 +183,14 @@ extension ErrorReporterGenericExtension on ErrorReporter {
     required String name,
     required Span span,
     required Span previousDeclarationSpan,
+    required String filePath,
   }) {
     report(
       DuplicateDeclarationDiagnostic(
         name: name,
         span: span,
         previousDeclarationSpan: previousDeclarationSpan,
+        filePath: filePath,
       ),
     );
   }
@@ -182,8 +201,11 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// members.
   ///
   /// - Parameter [span]: The [Span] of the empty enum definition.
-  void reportEmptyEnumDefinition({required Span span}) {
-    report(EmptyEnumDefinitionDiagnostic(span: span));
+  void reportEmptyEnumDefinition({
+    required Span span,
+    required String filePath,
+  }) {
+    report(EmptyEnumDefinitionDiagnostic(span: span, filePath: filePath));
   }
 
   /// Reports an [EmptyStructDefinitionDiagnostic].
@@ -192,8 +214,11 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// fields.
   ///
   /// - Parameter [span]: The [Span] of the empty struct definition.
-  void reportEmptyStructDefinition({required Span span}) {
-    report(EmptyStructDefinitionDiagnostic(span: span));
+  void reportEmptyStructDefinition({
+    required Span span,
+    required String filePath,
+  }) {
+    report(EmptyStructDefinitionDiagnostic(span: span, filePath: filePath));
   }
 
   /// Reports a [LiteralValueCannotBeAssignedDiagnostic].
@@ -214,6 +239,7 @@ extension ErrorReporterGenericExtension on ErrorReporter {
     required String valueKindName,
     required String literalTypeName,
     required Span valueSpan,
+    required String filePath,
     Span? literalTypeSpan,
   }) {
     report(
@@ -223,6 +249,7 @@ extension ErrorReporterGenericExtension on ErrorReporter {
         literalTypeName: literalTypeName,
         valueSpan: valueSpan,
         literalTypeSpan: literalTypeSpan,
+        filePath: filePath,
       ),
     );
   }
@@ -240,12 +267,14 @@ extension ErrorReporterGenericExtension on ErrorReporter {
     required String expectedType,
     required String actualType,
     required Span span,
+    required String filePath,
   }) {
     report(
       ListElementTypeMismatchDiagnostic(
         expectedType: expectedType,
         actualType: actualType,
         span: span,
+        filePath: filePath,
       ),
     );
   }
@@ -261,8 +290,15 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   void reportKeywordAsIdentifier({
     required String identifier,
     required Span span,
+    required String filePath,
   }) {
-    report(KeywordAsIdentifierDiagnostic(identifier: identifier, span: span));
+    report(
+      KeywordAsIdentifierDiagnostic(
+        identifier: identifier,
+        span: span,
+        filePath: filePath,
+      ),
+    );
   }
 
   /// Reports an [UnsupportedListElementTypeDiagnostic].
@@ -278,11 +314,13 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   void reportUnsupportedListElementType({
     required String elementType,
     required Span span,
+    required String filePath,
   }) {
     report(
       UnsupportedListElementTypeDiagnostic(
         elementType: elementType,
         span: span,
+        filePath: filePath,
       ),
     );
   }
@@ -300,12 +338,14 @@ extension ErrorReporterGenericExtension on ErrorReporter {
     required String expectedType,
     required String actualType,
     required Span span,
+    required String filePath,
   }) {
     report(
       MapKeyTypeMismatchDiagnostic(
         expectedType: expectedType,
         actualType: actualType,
         span: span,
+        filePath: filePath,
       ),
     );
   }
@@ -323,12 +363,14 @@ extension ErrorReporterGenericExtension on ErrorReporter {
     required String expectedType,
     required String actualType,
     required Span span,
+    required String filePath,
   }) {
     report(
       MapValueTypeMismatchDiagnostic(
         expectedType: expectedType,
         actualType: actualType,
         span: span,
+        filePath: filePath,
       ),
     );
   }
@@ -346,11 +388,13 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   void reportRequiredFieldCannotHaveDefaultValue({
     required String fieldName,
     required Span span,
+    required String filePath,
   }) {
     report(
       RequiredFieldCannotHaveDefaultValueDiagnostic(
         fieldName: fieldName,
         span: span,
+        filePath: filePath,
       ),
     );
   }

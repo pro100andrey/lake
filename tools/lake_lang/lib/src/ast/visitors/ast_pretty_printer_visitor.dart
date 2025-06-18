@@ -151,7 +151,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   }
 
   @override
-  void visitEnumValueNode(EnumValueNode node) {
+  void visitEnumMemberNode(EnumMemberNode node) {
     _printNode(node);
     _visit(node.identifier, isLast: node.value == null);
     _visit(node.value, isLast: true);

@@ -310,9 +310,9 @@ void main() {
       expect(enumDef.identifier.value, 'LogLevel');
 
       final [
-        EnumValueNode member1,
-        EnumValueNode member2,
-        EnumValueNode member3,
+        EnumMemberNode member1,
+        EnumMemberNode member2,
+        EnumMemberNode member3,
       ] = enumDef.members;
 
       expect(member1.identifier.value, 'INFO');
