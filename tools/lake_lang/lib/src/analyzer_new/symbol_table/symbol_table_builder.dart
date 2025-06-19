@@ -1,6 +1,7 @@
 // lib/analyzer/symbol_table/symbol_table_builder.dart
 
 import '../../analyzer/errors/error_reporter.dart';
+import '../../ast/nodes/ast_nodes.dart';
 import 'compilation_symbol_table.dart';
 import 'scope.dart';
 import 'symbol_entry.dart';
@@ -26,17 +27,16 @@ class SymbolTableBuilder {
        _compilationSymbolTable = compilationSymbolTable {
     // Initialize the global scope for the current file.
     _currentScope = Scope(errorReporter: _errorReporter);
-
     // Store the global scope
     _fileGlobalScope = _currentScope;
 
-    _compilationSymbolTable
-      ..registerFileScope(_filePath, _fileGlobalScope!)
-      ..setCurrentProcessingFile(_filePath);
+    _compilationSymbolTable.registerFileScope(_filePath, _fileGlobalScope!);
   }
 
   /// The global symbol table manager for the entire compilation.
   final CompilationSymbolTable _compilationSymbolTable;
+
+  final Map<SymbolEntry, Scope> scopeMap = {};
 
   /// The absolute path of the file currently being processed by this builder.
   final String _filePath;
@@ -55,14 +55,31 @@ class SymbolTableBuilder {
       // ... error reporting ...
       throw StateError('Global scope not initialized.');
     }
+
     return _fileGlobalScope!;
   }
 
   /// Pushes a new scope onto the scope stack.
   /// Call this when entering a new lexical block (e.g., inside a service,
   /// struct).
-  void pushScope() {
-    _currentScope = Scope(parent: _currentScope);
+  void pushScope({required SymbolEntry ownerSymbol}) {
+
+
+    // if (childScope != null) {
+    //   _currentScope = childScope;
+
+    //   return;
+    // }
+
+    final newScope = Scope(
+      parent: _currentScope,
+      ownerSymbol: ownerSymbol,
+      errorReporter: _errorReporter,
+    );
+
+    scopeMap[ownerSymbol] = newScope;
+
+    _currentScope = newScope;
   }
 
   /// Pops the current scope from the scope stack, returning to the parent
@@ -78,6 +95,7 @@ class SymbolTableBuilder {
       );
       return;
     }
+
     _currentScope = _currentScope!.parent;
   }
 
@@ -86,6 +104,12 @@ class SymbolTableBuilder {
   /// This method is an entry point for the AST visitors to define symbols
   /// within their respective scopes.
   bool addSymbol(SymbolEntry entry) {
+    print(
+      'SymbolTableBuilder: '
+      'Adding symbol: $entry to scope: '
+      '${_currentScope?.ownerSymbol?.name ?? 'global'}',
+    );
+
     if (_currentScope == null) {
       _errorReporter.reportGeneric(
         message:
@@ -97,21 +121,15 @@ class SymbolTableBuilder {
       return false;
     }
 
-    final added = _currentScope!.addSymbol(entry);
-
-    if (!added) {
-      _errorReporter.reportGeneric(
-        message:
-            "Duplicate declaration of symbol '${entry.name}' in this scope.",
-        span: entry.span,
-        filePath: _filePath,
-      );
-    }
-    return added;
+    return _currentScope!.addSymbol(entry, _filePath);
   }
 
   /// Registers an import path with the compilation symbol table.
   void registerImport(String importedPath) {
+    print(
+      'SymbolTableBuilder: '
+      'Registering import: $importedPath for file: $_filePath',
+    );
     _compilationSymbolTable.registerImport(_filePath, importedPath);
   }
 
@@ -120,16 +138,16 @@ class SymbolTableBuilder {
   ///
   /// - Parameter [name]: The name of the symbol to look up.
   /// - Returns: The [SymbolEntry] if found, otherwise `null`.
-  SymbolEntry? lookupLocal(String name) => _currentScope?.lookup(name);
+  SymbolEntry? lookupLocal(String name) => _currentScope!.lookup(name);
 
   /// Looks up a symbol by name, considering the current file's context,
   /// including its own top-level scope and imported files.
-  /// This delegates to [CompilationSymbolTable.lookup].
+  /// This delegates to [CompilationSymbolTable.lookupSymbolInFileAndImports].
   ///
   /// - Parameter [name]: The name of the symbol to look up. Can be qualified.
   /// - Returns: The [SymbolEntry] if found, otherwise `null`.
   SymbolEntry? lookupGlobal(String name) =>
-      _compilationSymbolTable.lookup(name);
+      _compilationSymbolTable.lookupSymbolInFileAndImports(_filePath, name);
 
   /// Updates an existing symbol entry.
   ///

@@ -1,5 +1,4 @@
 import '../../analyzer/errors/error_reporter.dart';
-import '../../analyzer/semantic_types.dart';
 import '../../ast/ast_visitor.dart';
 import '../../ast/nodes/ast_nodes.dart';
 import '../symbol_table/symbol_entry.dart';
@@ -44,41 +43,39 @@ class InitialSymbolCollectorVisitor extends AstVisitor<void> {
 
   @override
   void visitConstDefinitionNode(ConstDefinitionNode node) {
-    _symbolTableBuilder.addSymbol(
-      ConstSymbolEntry(
-        name: node.identifier.value,
-        declaration: node,
-        span: node.span,
-      ),
+    final symbol = ConstSymbolEntry(
+      name: node.identifier.value,
+      declaration: node,
+      span: node.span,
     );
+
+    _symbolTableBuilder.addSymbol(symbol);
   }
 
   @override
   void visitTypedefDefinitionNode(TypedefDefinitionNode node) {
-    _symbolTableBuilder.addSymbol(
-      TypedefSymbolEntry(
-        name: node.identifier.value,
-        declaration: node,
-        span: node.span,
-        resolvedType: TypedefType(node),
-      ),
+    final symbol = TypedefSymbolEntry(
+      name: node.identifier.value,
+      declaration: node,
+      span: node.span,
     );
+
+    _symbolTableBuilder.addSymbol(symbol);
   }
 
   @override
   void visitEnumDefinitionNode(EnumDefinitionNode node) {
+    final symbol = EnumSymbolEntry(
+      name: node.identifier.value,
+      declaration: node,
+      span: node.span,
+    );
+
     _symbolTableBuilder
-      ..addSymbol(
-        EnumSymbolEntry(
-          name: node.identifier.value,
-          declaration: node,
-          span: node.span,
-          resolvedType: EnumType(node),
-        ),
-      )
+      ..addSymbol(symbol)
       // Enter a new scope for enum members.
       // Members are immediately added to this scope as they are declarations.
-      ..pushScope();
+      ..pushScope(ownerSymbol: symbol);
 
     for (final member in node.members) {
       member.accept(this); // Visit members to add them to the enum's scope
@@ -89,31 +86,30 @@ class InitialSymbolCollectorVisitor extends AstVisitor<void> {
 
   @override
   void visitEnumMemberNode(EnumMemberNode node) {
-    _symbolTableBuilder.addSymbol(
-      EnumMemberSymbolEntry(
-        name: node.identifier.value,
-        declaration: node,
-        span: node.span,
-      ),
+    final symbol = EnumMemberSymbolEntry(
+      name: node.identifier.value,
+      declaration: node,
+      span: node.span,
     );
+
+    _symbolTableBuilder.addSymbol(symbol);
   }
 
   @override
   void visitStructDefinitionNode(StructDefinitionNode node) {
+    final symbol = StructSymbolEntry(
+      name: node.identifier.value,
+      declaration: node,
+      span: node.span,
+    );
+
     _symbolTableBuilder
-      ..addSymbol(
-        StructSymbolEntry(
-          name: node.identifier.value,
-          declaration: node,
-          span: node.span,
-          resolvedType: StructType(node),
-        ),
-      )
+      ..addSymbol(symbol)
       // Enter a new scope for struct fields.
       // We traverse fields to handle any potential nested declarations
       // (though unlikely for Lake IDL fields). FieldSymbolEntry creation
       // and type resolution will happen in the second pass.
-      ..pushScope();
+      ..pushScope(ownerSymbol: symbol);
 
     for (final field in node.fields) {
       field.accept(this); // Visit fields to add them to the struct's scope
@@ -124,18 +120,17 @@ class InitialSymbolCollectorVisitor extends AstVisitor<void> {
 
   @override
   void visitUnionDefinitionNode(UnionDefinitionNode node) {
+    final symbol = UnionSymbolEntry(
+      name: node.identifier.value,
+      declaration: node,
+      span: node.span,
+    );
+
     _symbolTableBuilder
-      ..addSymbol(
-        UnionSymbolEntry(
-          name: node.identifier.value,
-          declaration: node,
-          span: node.span,
-          resolvedType: UnionType(node),
-        ),
-      )
+      ..addSymbol(symbol)
       // Enter a new scope for union fields.
       // Fields are immediately added to this scope as they are declarations.
-      ..pushScope();
+      ..pushScope(ownerSymbol: symbol);
 
     for (final field in node.fields) {
       field.accept(this); // Visit fields to add them to the union's scope
@@ -146,18 +141,17 @@ class InitialSymbolCollectorVisitor extends AstVisitor<void> {
 
   @override
   void visitExceptionDefinitionNode(ExceptionDefinitionNode node) {
+    final symbol = ExceptionSymbolEntry(
+      name: node.identifier.value,
+      declaration: node,
+      span: node.span,
+    );
+
     _symbolTableBuilder
-      ..addSymbol(
-        ExceptionSymbolEntry(
-          name: node.identifier.value,
-          declaration: node,
-          span: node.span,
-          resolvedType: ExceptionType(node),
-        ),
-      )
+      ..addSymbol(symbol)
       // Enter a new scope for exception fields.
       // Fields are immediately added to this scope as they are declarations.
-      ..pushScope();
+      ..pushScope(ownerSymbol: symbol);
 
     for (final field in node.fields) {
       field.accept(this); // Visit fields to add them to the exception's scope
@@ -168,18 +162,17 @@ class InitialSymbolCollectorVisitor extends AstVisitor<void> {
 
   @override
   void visitServiceDefinitionNode(ServiceDefinitionNode node) {
+    final symbol = ServiceSymbolEntry(
+      name: node.identifier.value,
+      declaration: node,
+      span: node.span,
+    );
+
     _symbolTableBuilder
-      ..addSymbol(
-        ServiceSymbolEntry(
-          name: node.identifier.value,
-          declaration: node,
-          span: node.span,
-          resolvedType: ServiceType(node),
-        ),
-      )
+      ..addSymbol(symbol)
       // Enter a new scope for service methods.
       // Methods are immediately added to this scope as they are declarations.
-      ..pushScope();
+      ..pushScope(ownerSymbol: symbol);
 
     for (final method in node.methods) {
       method.accept(this); // Visit methods to add them to the service's scope
@@ -197,26 +190,38 @@ class InitialSymbolCollectorVisitor extends AstVisitor<void> {
 
   @override
   void visitFieldNode(FieldNode node) {
-    // FieldNode itself is not a top-level symbol.
-    node.type.accept(this);
-    node.identifier.accept(this);
-    node.defaultValue?.accept(this);
-    node.requirement?.accept(this);
+    final symbol = FieldSymbolEntry(
+      name: node.identifier.value,
+      declaration: node,
+      span: node.span,
+    );
+
+    _symbolTableBuilder.addSymbol(symbol);
   }
 
   @override
   void visitMethodNode(MethodNode node) {
-    // MethodNode itself is not a top-level symbol.
-    node.returnType.accept(this);
-    node.identifier.accept(this);
+    final symbol = MethodSymbolEntry(
+      name: node.identifier.value,
+      declaration: node,
+      span: node.span,
+    );
+
+    _symbolTableBuilder
+      ..addSymbol(symbol)
+      ..pushScope(ownerSymbol: symbol);
 
     for (final param in node.parameters) {
+      // These are FieldNodes, will create ParameterSymbolEntry (see below)
       param.accept(this);
     }
 
     for (final thr in node.throws) {
+      // These are TypeNodes, will create TypeSymbolEntry (see below)
       thr.accept(this);
     }
+
+    _symbolTableBuilder.popScope();
   }
 
   @override

@@ -1,8 +1,11 @@
 import '../../analyzer/errors/error_reporter.dart';
+import '../../analyzer/semantic_types.dart';
 import '../../ast/ast_visitor.dart';
 import '../../ast/nodes/ast_nodes.dart';
 import '../symbol_table/compilation_symbol_table.dart';
+import '../symbol_table/symbol_entry.dart';
 import '../symbol_table/symbol_table_builder.dart';
+import 'type_resolver_visitor.dart';
 
 class SymbolTablePopulatorVisitor extends AstVisitor<void> {
   SymbolTablePopulatorVisitor({
@@ -11,17 +14,21 @@ class SymbolTablePopulatorVisitor extends AstVisitor<void> {
     required ErrorReporter reporter,
   }) : _compilationSymbolTable = compilationSymbolTable,
        _symbolTableBuilder = symbolTableBuilder,
-       _reporter = reporter;
+       _reporter = reporter,
+       _typeResolver = TypeResolverVisitor(
+         compilationSymbolTable: compilationSymbolTable,
+         symbolTableBuilder: symbolTableBuilder,
+         reporter: reporter,
+         currentFilePath: symbolTableBuilder.filePath,
+       );
 
   final CompilationSymbolTable _compilationSymbolTable;
   final SymbolTableBuilder _symbolTableBuilder;
   final ErrorReporter _reporter;
+  final TypeResolverVisitor _typeResolver;
 
   @override
   void visitDocumentNode(DocumentNode node) {
-    _compilationSymbolTable.setCurrentProcessingFile(
-      _symbolTableBuilder.fileGlobalScope.ownerSymbol?.name ?? 'UnknownFile',
-    ); // Needs actual file path or name.
     // Then process top-level definitions.
     for (final definition in node.definitions) {
       definition.accept(this);
@@ -41,7 +48,7 @@ class SymbolTablePopulatorVisitor extends AstVisitor<void> {
     // Find the ConstSymbolEntry created in the first pass.
     final symbol = _symbolTableBuilder.lookupGlobal(node.identifier.value);
 
-    if (symbol == null) {
+    if (symbol == null && symbol is! ConstSymbolEntry) {
       _reporter.reportGeneric(
         message:
             "Internal error: Constant '${node.identifier.value}' "
@@ -50,16 +57,111 @@ class SymbolTablePopulatorVisitor extends AstVisitor<void> {
         filePath: _symbolTableBuilder.filePath,
       );
     }
+
+    final constSymbol = symbol!.cast<ConstSymbolEntry>();
+    if (constSymbol.resolvedType != const SemanticUnresolvedType()) {
+      throw StateError(
+        'Expected unresolved type for constant symbol "${constSymbol.name}" '
+        'before resolution, but found ${constSymbol.resolvedType}.',
+      );
+    }
+
+    final resolvedConstantType = node.type.accept(_typeResolver);
+    final updatedSymbol = symbol.cast<ConstSymbolEntry>().copyWith(
+      resolvedType: resolvedConstantType,
+      declaration: node,
+    );
+
+    _symbolTableBuilder.updateSymbol(updatedSymbol);
   }
 
   @override
-  void visitTypedefDefinitionNode(TypedefDefinitionNode node) {}
+  void visitTypedefDefinitionNode(TypedefDefinitionNode node) {
+    final symbol = _symbolTableBuilder.lookupGlobal(node.identifier.value);
+
+    if (symbol == null || symbol is! TypedefSymbolEntry) {
+      _reporter.reportGeneric(
+        message:
+            "Internal error: Typedef '${node.identifier.value}' "
+            'not found or is of wrong type in symbol table during population.',
+        span: node.span,
+        filePath: _symbolTableBuilder.filePath,
+      );
+      return;
+    }
+
+    final typedefSymbol = symbol.cast<TypedefSymbolEntry>();
+    if (typedefSymbol.resolvedType != const SemanticUnresolvedType()) {
+      throw StateError(
+        'Expected unresolved type for typedef symbol "${typedefSymbol.name}" '
+        'before resolution, but found ${typedefSymbol.resolvedType}.',
+      );
+    }
+
+    final resolvedUnderlyingType = node.type.accept(_typeResolver);
+    final updatedTypedefSymbol = typedefSymbol.copyWith(
+      resolvedType: TypedefType(node, resolvedUnderlyingType),
+      declaration: node,
+    );
+
+    _symbolTableBuilder.updateSymbol(updatedTypedefSymbol);
+  }
 
   @override
-  void visitEnumDefinitionNode(EnumDefinitionNode node) {}
+  void visitEnumDefinitionNode(EnumDefinitionNode node) {
+    final enumSymbol = _symbolTableBuilder.lookupGlobal(node.identifier.value);
+    if (enumSymbol == null || enumSymbol is! EnumSymbolEntry) {
+      _reporter.reportGeneric(
+        message:
+            "Internal error: Enum '${node.identifier.value}' "
+            'not found or is of wrong type in symbol table during population.',
+        span: node.span,
+        filePath: _symbolTableBuilder.filePath,
+      );
+      return;
+    }
+
+    // Push scope for enum members
+    _symbolTableBuilder.pushScope(ownerSymbol: enumSymbol);
+
+    // No need to create SemanticEnumType here, as it was done in the first
+    // pass. We just need to update it with fully resolved details if any.
+    // For now, EnumType simply wraps the AST node.
+
+    for (final member in node.members) {
+      member.accept(this); // Visit members to ensure they are processed
+    }
+
+    _symbolTableBuilder.popScope();
+  }
 
   @override
-  void visitEnumMemberNode(EnumMemberNode node) {}
+  void visitEnumMemberNode(EnumMemberNode node) {
+    // Enum members are already added as SymbolEntry in the first pass.
+    // No additional resolution needed unless they had associated types/values,
+    // which is not defined in Lake's IDL for now.
+    // We might need to update their resolvedType to be the parent enum's type.
+    final memberSymbol = _symbolTableBuilder.lookupLocal(node.identifier.value);
+
+    if (memberSymbol == null || memberSymbol is! EnumMemberSymbolEntry) {
+      _reporter.reportGeneric(
+        message:
+            "Internal error: Enum member '${node.identifier.value}' "
+            'not found or is of wrong type in symbol table during population.',
+        span: node.span,
+        filePath: _symbolTableBuilder.filePath,
+      );
+
+      return;
+    }
+
+    final parentEnumScope = _symbolTableBuilder.fileGlobalScope.parent;
+
+    if (parentEnumScope != null &&
+        parentEnumScope.ownerSymbol is EnumSymbolEntry) {
+      return;
+    }
+  }
 
   @override
   void visitStructDefinitionNode(StructDefinitionNode node) {}

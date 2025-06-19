@@ -88,9 +88,6 @@ class SemanticAnalyzerNew {
       final document = entry.value;
       final symbolTableBuilder = fileBuilders[filePath]!;
 
-      // Set the current file being processed in CompilationSymbolTable
-      _compilationSymbolTable.setCurrentProcessingFile(filePath);
-
       // Run SymbolTablePopulatorVisitor
       final populator = SymbolTablePopulatorVisitor(
         compilationSymbolTable: _compilationSymbolTable,

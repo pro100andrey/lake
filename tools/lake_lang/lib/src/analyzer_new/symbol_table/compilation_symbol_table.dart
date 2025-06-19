@@ -10,7 +10,8 @@ import 'symbol_entry.dart';
 /// This class holds the root [Scope] for each processed file and facilitates
 /// symbol resolution across file boundaries, especially for imports.
 class CompilationSymbolTable {
-  CompilationSymbolTable(this._errorReporter);
+  CompilationSymbolTable(ErrorReporter errorReporter)
+    : _errorReporter = errorReporter;
 
   /// Stores the root (global) scope for each compilation unit.
   /// The key is the file path (String), and the value is the global [Scope] for
@@ -25,16 +26,6 @@ class CompilationSymbolTable {
 
   /// The error reporter instance used for logging semantic errors.
   final ErrorReporter _errorReporter;
-
-  /// The current file path being processed. This is essential for
-  /// resolving relative symbol lookups.
-  String? _currentProcessingFilePath;
-
-  /// Sets the current file path being processed by the analyzer.
-  /// This should be called before processing each new file.
-  void setCurrentProcessingFile(String filePath) {
-    _currentProcessingFilePath = filePath;
-  }
 
   /// Registers the global scope for a given file.
   ///
@@ -82,7 +73,7 @@ class CompilationSymbolTable {
   Scope? getFileGlobalScope(String filePath) => _fileGlobalScopes[filePath];
 
   /// Looks up a symbol by its potentially qualified name within the context
-  /// of the current file being processed.
+  /// of a given file.
   ///
   /// This is the primary lookup method for the second pass. It handles:
   /// 1. Direct lookup in the current file's global scope.
@@ -90,38 +81,44 @@ class CompilationSymbolTable {
   /// 3. Future: If `symbolName` is qualified (e.g., `pkg.MyType`), it should
   /// also handle resolving `pkg` as an import alias (not yet implemented here).
   ///
+  /// - Parameter [currentFilePath]: The path of the file where the lookup
+  /// is initiated.
   /// - Parameter [symbolName]: The name of the symbol to look up. Can be a
   /// simple name (e.g., "MyStruct") or a fully qualified name
   /// (e.g., "com.example.MyService").
   ///   For simplicity, currently assumes simple names from imports are global.
   /// - Returns: The [SymbolEntry] if found, otherwise `null`.
-  SymbolEntry? lookup(String symbolName) {
-    if (_currentProcessingFilePath == null) {
+  SymbolEntry? lookupSymbolInFileAndImports(
+    String currentFilePath,
+    String symbolName,
+  ) {
+    // 1. Try to find the symbol in the current file's global scope.
+    final currentFileScope = _fileGlobalScopes[currentFilePath];
+
+    if (currentFileScope == null) {
+      // This is an internal error: a file should always have its global scope
+      // registered before lookups are performed for it.
       _errorReporter.reportGeneric(
         message:
-            'Internal error: Cannot perform lookup without a current '
-            'processing file set.',
-        span: (start: 0, end: 0),
-        filePath: _currentProcessingFilePath!,
+            'Internal error: No global scope found for file "$currentFilePath" '
+            'during symbol lookup.',
+        span: (start: 0, end: 0), // No specific span for this internal error
+        filePath: currentFilePath,
       );
 
       return null;
     }
 
-    // 1. Try to find the symbol in the current file's global scope.
-    final currentFileScope = _fileGlobalScopes[_currentProcessingFilePath];
-
-    if (currentFileScope != null) {
-      final localSymbol = currentFileScope.lookup(symbolName);
-      if (localSymbol != null) {
-        return localSymbol;
-      }
+    final localSymbol = currentFileScope.lookup(symbolName);
+    
+    if (localSymbol != null) {
+      return localSymbol;
     }
 
     // 2. If not found locally, try to find in directly imported files.
     // This assumes imported symbols are accessible by their simple name
     // or by their fully qualified name across files.
-    final importedFiles = _importDependencies[_currentProcessingFilePath] ?? [];
+    final importedFiles = _importDependencies[currentFilePath] ?? [];
 
     for (final importedPath in importedFiles) {
       final importedFileScope = _fileGlobalScopes[importedPath];
@@ -132,6 +129,19 @@ class CompilationSymbolTable {
         if (importedSymbol != null) {
           return importedSymbol;
         }
+      } else {
+        // This scenario indicates a missing imported file or a dependency cycle
+        // where an imported file hasn't been processed yet.
+        // This might be better reported as a specific error during initial
+        // import resolution.
+        _errorReporter.reportGeneric(
+          message:
+              'Internal error: Imported file "$importedPath" '
+              'not found or not yet processed during lookup from '
+              '"$currentFilePath".',
+          span: (start: 0, end: 0),
+          filePath: currentFilePath,
+        );
       }
     }
 
@@ -147,12 +157,7 @@ class CompilationSymbolTable {
   ///
   /// - Parameter [updatedEntry]: The [SymbolEntry] with updated information.
   /// - Returns: `true` if the symbol was found and updated, `false` otherwise.
-  bool updateSymbol(SymbolEntry updatedEntry) {
-    final declaration = updatedEntry.declaration;
-    final declarationFilePath = _getFilePathForDeclaration(
-      declaration,
-    ); // Helper needed
-
+  bool updateSymbol(SymbolEntry updatedEntry, String declarationFilePath) {
     final globalScopeForFile = _fileGlobalScopes[declarationFilePath];
     if (globalScopeForFile == null) {
       _errorReporter.reportGeneric(
@@ -193,27 +198,6 @@ class CompilationSymbolTable {
     }
 
     return updated;
-  }
-
-  /// Helper to determine the file path for a given AST declaration node.
-  /// This needs to be robust. Ideally, your AST nodes or the parsing process
-  /// would stamp each node with its origin file path.
-  String _getFilePathForDeclaration(AstNode declaration) {
-    // This is a placeholder. You need a way to map an AstNode back to its file.
-    // Possible approaches:
-    // 1. Each AstNode has a 'sourceFilePath' property.
-    // 2. The parser/analyzer passes the file path down when building AST,
-    // and it's stored in the root DocumentNode, then accessible through
-    // parent pointers.
-    // 3. You pass the current file path explicitly to the updateSymbol method.
-    if (_currentProcessingFilePath != null) {
-      return _currentProcessingFilePath!;
-    }
-    // Fallback or error if not set.
-    throw StateError(
-      'Cannot determine file path for declaration: '
-      'current processing file is not set.',
-    );
   }
 
   /// Resolves a top-level symbol across all relevant files.

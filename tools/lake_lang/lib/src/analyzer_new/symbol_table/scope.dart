@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:equatable/equatable.dart';
 
 import '../../analyzer/errors/error_reporter.dart';
@@ -33,11 +35,17 @@ class Scope extends Equatable {
 
   /// Adds a new symbol to this scope.
   ///
-  /// Reports a [SemanticError] if a symbol with the same name already exists
+  /// Reports a SemanticError if a symbol with the same name already exists
   /// in this specific scope.
   ///
   /// [symbol]: The specialized [SymbolEntry] to add.
-  bool addSymbol(SymbolEntry symbol) {
+  bool addSymbol(SymbolEntry symbol, String filePath) {
+    print(
+      'Scope: '
+      'Adding symbol: $symbol to scope: '
+      '${_ownerSymbol?.name ?? 'global'}',
+    );
+
     if (_symbols.containsKey(symbol.name)) {
       final existingEntry = _symbols[symbol.name]!;
       _errorReporter?.reportDuplicateDeclaration(
@@ -45,7 +53,7 @@ class Scope extends Equatable {
         span: symbol.span, // Span of the new (duplicate) declaration
         // Span of the original declaration
         previousDeclarationSpan: existingEntry.span,
-        filePath: '<unknown>',
+        filePath: filePath,
       );
 
       return false;
@@ -63,6 +71,7 @@ class Scope extends Equatable {
   /// error reporting is left to the caller (e.g., SymbolTableBuilder).
   SymbolEntry? lookup(String name) {
     final entry = _symbols[name];
+    
     if (entry != null) {
       return entry;
     }
