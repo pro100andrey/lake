@@ -1,5 +1,6 @@
 import '../../ast/nodes/ast_nodes.dart';
 import '../errors/error_reporter.dart';
+import '../symbol_table/compilation_symbol_table.dart';
 
 /// Abstract base class for all semantic analysis rules.
 ///
@@ -8,14 +9,31 @@ import '../errors/error_reporter.dart';
 ///
 /// Type parameter [T] specifies the type of [AstNode] that this rule can check.
 abstract class BaseRule<T extends AstNode> {
-  /// Creates a new rule with the given [reporter] for error reporting.
+  /// Creates a new rule with the given context.
   ///
   /// - Parameter [reporter]: The [ErrorReporter] instance used to emit
   ///   semantic errors, warnings, or hints.
-  const BaseRule({required this.reporter});
+  /// - Parameter [compilationSymbolTable]: The central manager for all symbol
+  ///   tables across compilation units, used for resolving symbols globally.
+  /// - Parameter [currentFilePath]: The absolute path of the file currently
+  ///   being processed, which serves as the context for symbol lookups.
+  const BaseRule({
+    required this.reporter,
+    required this.compilationSymbolTable,
+    required this.currentFilePath,
+  });
 
   /// Reporter used to emit semantic errors.
   final ErrorReporter reporter;
+
+  /// The compilation-wide symbol table, providing access to all resolved
+  /// symbols
+  /// across different files.
+  final CompilationSymbolTable compilationSymbolTable;
+
+  /// The path of the file currently being analyzed by this rule.
+  /// This is crucial for cross-file symbol resolution.
+  final String currentFilePath;
 
   /// Validates the provided [node] against the rule's logic.
   ///
@@ -25,62 +43,4 @@ abstract class BaseRule<T extends AstNode> {
   ///
   /// - Parameter [node]: The [AstNode] of type [T] to be checked.
   void check(T node);
-}
-
-/// A dispatcher that manages and applies semantic analysis rules to AST nodes.
-///
-/// [RuleDispatcher] allows for registering multiple [BaseRule] instances,
-/// mapping them to specific [AstNode] types. When `applyRules` is called
-/// with an AST node, it automatically dispatches the node to all relevant
-/// registered rules for validation.
-final class RuleDispatcher {
-  /// A map that stores lists of [BaseRule] instances,
-  /// keyed by the [Type] of [AstNode] they apply to.
-  ///
-  /// This map ensures that rules are organized by the type of AST node
-  /// they are designed to validate, allowing efficient lookup and application.
-  final Map<Type, List<BaseRule>> _ruleMap = {};
-
-  /// Adds a [rule] to the dispatcher.
-  ///
-  /// The rule will be associated with the type [T], meaning it will be applied
-  /// to [AstNode]s of type [T] or its exact subtypes when [applyRules] is
-  /// called.
-  ///
-  /// Example:
-  /// ```dart
-  /// class MyVariableRule extends BaseRule<VariableDeclaration> {
-  ///   MyVariableRule(super.reporter);
-  ///   @override
-  ///   void check(VariableDeclaration node) {
-  ///     // Implement checking logic
-  ///   }
-  /// }
-  ///
-  /// final dispatcher = RuleDispatcher();
-  /// dispatcher.addRule<VariableDeclaration>(MyVariableRule(errorReporter));
-  /// ```
-  ///```
-  void addRule<T extends AstNode>(BaseRule<T> rule) {
-    _ruleMap.putIfAbsent(T, () => []).add(rule);
-  }
-
-  /// Applies all registered rules to the given [node].
-  ///
-  /// This method looks up rules associated with the exact [runtimeType] of the
-  /// provided [node] and executes their `check` method. It is important to note
-  /// that rules are matched by the *exact* runtime type, not by supertypes.
-  ///
-  /// Rules are applied in the order they were added for a specific node type.
-  ///
-  /// - Parameter [node]: The [AstNode] to which the rules should be applied.
-  void applyRules(AstNode node) {
-    final rulesForNode = _ruleMap[node.runtimeType];
-
-    if (rulesForNode != null) {
-      for (final rule in rulesForNode) {
-        rule.check(node);
-      }
-    }
-  }
 }

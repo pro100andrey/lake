@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 
-import '../../analyzer/semantic_types.dart';
 import '../../ast/base/types.dart';
 import '../../ast/nodes/ast_nodes.dart';
+import '../semantic_types.dart';
 
 base class SymbolEntry extends Equatable {
   const SymbolEntry({

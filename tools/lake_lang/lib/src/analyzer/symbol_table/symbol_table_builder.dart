@@ -1,7 +1,7 @@
 // lib/analyzer/symbol_table/symbol_table_builder.dart
 
-import '../../analyzer/errors/error_reporter.dart';
 import '../../ast/nodes/ast_nodes.dart';
+import '../errors/error_reporter.dart';
 import 'compilation_symbol_table.dart';
 import 'scope.dart';
 import 'symbol_entry.dart';
@@ -36,7 +36,7 @@ class SymbolTableBuilder {
   /// The global symbol table manager for the entire compilation.
   final CompilationSymbolTable _compilationSymbolTable;
 
-  final Map<SymbolEntry, Scope> scopeMap = {};
+  final Map<AstNode, Scope> scopeMap = {};
 
   /// The absolute path of the file currently being processed by this builder.
   final String _filePath;
@@ -64,12 +64,13 @@ class SymbolTableBuilder {
   /// struct).
   void pushScope({required SymbolEntry ownerSymbol}) {
 
+    final childScope = scopeMap[ownerSymbol.declaration];
 
-    // if (childScope != null) {
-    //   _currentScope = childScope;
+    if (childScope != null) {
+      _currentScope = childScope;
 
-    //   return;
-    // }
+      return;
+    }
 
     final newScope = Scope(
       parent: _currentScope,
@@ -77,7 +78,7 @@ class SymbolTableBuilder {
       errorReporter: _errorReporter,
     );
 
-    scopeMap[ownerSymbol] = newScope;
+    scopeMap[ownerSymbol.declaration] = newScope;
 
     _currentScope = newScope;
   }
@@ -104,12 +105,6 @@ class SymbolTableBuilder {
   /// This method is an entry point for the AST visitors to define symbols
   /// within their respective scopes.
   bool addSymbol(SymbolEntry entry) {
-    print(
-      'SymbolTableBuilder: '
-      'Adding symbol: $entry to scope: '
-      '${_currentScope?.ownerSymbol?.name ?? 'global'}',
-    );
-
     if (_currentScope == null) {
       _errorReporter.reportGeneric(
         message:
@@ -126,10 +121,6 @@ class SymbolTableBuilder {
 
   /// Registers an import path with the compilation symbol table.
   void registerImport(String importedPath) {
-    print(
-      'SymbolTableBuilder: '
-      'Registering import: $importedPath for file: $_filePath',
-    );
     _compilationSymbolTable.registerImport(_filePath, importedPath);
   }
 

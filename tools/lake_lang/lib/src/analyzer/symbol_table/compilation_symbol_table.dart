@@ -1,7 +1,7 @@
 // lib/analyzer/symbol_table/compilation_symbol_table.dart
 
-import '../../../lake_lang.dart';
 import '../../ast/base/types.dart';
+import '../errors/error_reporter.dart';
 import 'scope.dart';
 import 'symbol_entry.dart';
 

@@ -1,7 +1,7 @@
-import '../../analyzer/errors/error_reporter.dart';
-import '../../analyzer/semantic_types.dart';
 import '../../ast/ast_visitor.dart';
 import '../../ast/nodes/ast_nodes.dart';
+import '../errors/error_reporter.dart';
+import '../semantic_types.dart';
 import '../symbol_table/compilation_symbol_table.dart';
 import '../symbol_table/symbol_table_builder.dart';
 

@@ -1,7 +1,7 @@
-import '../ast/nodes/ast_nodes.dart';
-import 'errors/error_reporter.dart';
-import 'semantic_types.dart';
-import 'symbols/symbol_table.dart';
+import '../../ast/nodes/ast_nodes.dart';
+import '../errors/error_reporter.dart';
+import '../semantic_types.dart';
+import '../symbols/symbol_table.dart';
 
 SemanticType? getSemanticType(
   TypeNode typeNode,

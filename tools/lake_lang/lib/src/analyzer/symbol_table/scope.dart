@@ -2,7 +2,8 @@
 
 import 'package:equatable/equatable.dart';
 
-import '../../analyzer/errors/error_reporter.dart';
+
+import '../errors/error_reporter.dart';
 import 'symbol_entry.dart';
 
 /// Represents a single lexical scope in the Lake language.

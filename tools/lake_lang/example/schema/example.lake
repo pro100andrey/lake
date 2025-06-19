@@ -63,19 +63,19 @@ enum UserStatus {
   banned = 3
 }
 
-// // enum with custom values example
-// enum ProductCategory {
-//   electronic = 10,
-//   books = 20,
-//   clothing = 30,
-//   foot = 40
-// }
+// enum with custom values example
+enum ProductCategory {
+  electronic = 10,
+  books = 20,
+  clothing = 30,
+  foot = 40
+}
 
-// struct Matrix {
-//   1: required i32 rows,
-//   2: required i32 columns,
-//   3: required list<list<double>> data
-// }
+struct Matrix {
+  1: required i32 rows,
+  2: required i32 columns,
+  3: required list<list<double>> data
+}
 
 // struct ComplexData { 
 //   list<map<string, list<i32>>> complexData; 
