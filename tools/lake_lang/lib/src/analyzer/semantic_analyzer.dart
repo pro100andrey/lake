@@ -12,7 +12,9 @@ import 'visitors/symbol_table_populator_visitor.dart';
 class SemanticAnalyzerNew {
   SemanticAnalyzerNew(DiagnosticSystem diagnosticSystem)
     : _diagnosticSystem = diagnosticSystem,
-      _compilationSymbolTable = CompilationSymbolTable(diagnosticSystem),
+      _compilationSymbolTable = CompilationSymbolTable(
+        diagnosticSystem: diagnosticSystem,
+      ),
       _astGrammar = const LakeAstGrammarDefinition();
 
   final LakeAstGrammarDefinition _astGrammar;

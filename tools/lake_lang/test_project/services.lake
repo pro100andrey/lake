@@ -1,0 +1,19 @@
+import "common.lake"
+
+namespace * services
+
+exception UserNotFoundException {
+    1: required common.MyId userId;
+}
+
+service UserService {
+    common.User getUserById(1: required common.MyId id) throws (UserNotFoundException exception);
+
+    // Method with a syntax error (missing semicolon)
+    void createUser(1: required common.User user)
+
+    // Method with an undefined type (will cause a semantic error)
+    void deleteUser(1: required UnknownType userId);
+
+    AnotherService getAnotherService(); // Assuming AnotherService from another file
+}

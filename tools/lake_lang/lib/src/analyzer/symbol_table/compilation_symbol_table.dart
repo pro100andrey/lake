@@ -9,7 +9,7 @@ import 'symbol_entry.dart';
 /// This class holds the root [Scope] for each processed file and facilitates
 /// symbol resolution across file boundaries, especially for imports.
 class CompilationSymbolTable {
-  CompilationSymbolTable(DiagnosticSystem diagnosticSystem)
+  CompilationSymbolTable({required DiagnosticSystem diagnosticSystem})
     : _diagnosticSystem = diagnosticSystem;
 
   /// Stores the root (global) scope for each compilation unit.

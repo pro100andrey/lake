@@ -1,9 +1,19 @@
+import 'dart:async';
+
 import 'diagnostic.dart';
 
 /// Manages and provides access to diagnostics (errors, warnings, hints).
 final class DiagnosticSystem {
   // Map of file paths to a list of diagnostics for that file.
   final Map<String, List<Diagnostic>> _fileDiagnostics = {};
+
+  // Stream controller to notify listeners when diagnostics change.
+  final StreamController<void> _onDiagnosticsChangedController =
+      StreamController.broadcast();
+
+  /// A stream that emits an event whenever diagnostics are updated.
+  Stream<void> get onDiagnosticsChanged =>
+      _onDiagnosticsChangedController.stream;
 
   /// Reports a new diagnostic.
   void report(Diagnostic diagnostic) {
@@ -32,4 +42,10 @@ final class DiagnosticSystem {
 
   /// Checks if there are any diagnostics found in the system.
   bool hasDiagnostics() => _fileDiagnostics.isNotEmpty;
+
+  /// Disposes the stream controller. Should be called when the system is no
+  /// longer needed.
+  Future<void> dispose() async {
+    await _onDiagnosticsChangedController.close();
+  }
 }

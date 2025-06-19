@@ -37,7 +37,7 @@ sealed class AstNode extends Equatable {
 /// Represents the entire Lake document, containing all header nodes
 /// (such as imports and namespaces) and all top-level definitions
 /// (constants, typedefs, enums, structs, exceptions, and services).
-final class DocumentNode extends AstNode {
+class DocumentNode extends AstNode {
   /// Creates a [DocumentNode] with the given [headers], [definitions], and
   /// [span].
   const DocumentNode({
@@ -66,7 +66,7 @@ sealed class HeaderNode extends AstNode {
 }
 
 /// Represents an import statement in the Lake language.
-final class ImportNode extends HeaderNode {
+class ImportNode extends HeaderNode {
   /// Creates an [ImportNode] with the given [path] and [span].
   const ImportNode({required this.path, required super.span});
 
@@ -81,7 +81,7 @@ final class ImportNode extends HeaderNode {
 }
 
 /// Represents a namespace declaration in the Lake language.
-final class NamespaceNode extends HeaderNode {
+class NamespaceNode extends HeaderNode {
   /// Creates a [NamespaceNode] with the given [scope], [identifier], and
   /// [span].
   const NamespaceNode({
@@ -110,7 +110,7 @@ sealed class DefinitionNode extends AstNode {
 }
 
 /// Represents a constant definition in the Lake language.
-final class ConstDefinitionNode extends DefinitionNode {
+class ConstDefinitionNode extends DefinitionNode {
   /// Creates a [ConstDefinitionNode] with the given [type], [identifier],
   /// [value], and [span].
   const ConstDefinitionNode({
@@ -137,7 +137,7 @@ final class ConstDefinitionNode extends DefinitionNode {
 }
 
 /// Represents a typedef definition in the Lake language.
-final class TypedefDefinitionNode extends DefinitionNode {
+class TypedefDefinitionNode extends DefinitionNode {
   /// Creates a [TypedefDefinitionNode] with the given [type], [identifier], and
   /// [span].
   const TypedefDefinitionNode({
@@ -161,7 +161,7 @@ final class TypedefDefinitionNode extends DefinitionNode {
 }
 
 /// Represents an enum definition in the Lake language.
-final class EnumDefinitionNode extends DefinitionNode {
+class EnumDefinitionNode extends DefinitionNode {
   /// Creates an [EnumDefinitionNode] with the given [identifier], [members],
   /// and [span].
   const EnumDefinitionNode({
@@ -184,7 +184,7 @@ final class EnumDefinitionNode extends DefinitionNode {
 }
 
 /// Represents a single value/member of an enum.
-final class EnumMemberNode extends AstNode {
+class EnumMemberNode extends AstNode {
   /// Creates an [EnumMemberNode] with the given [identifier], optional [value],
   /// and [span].
   const EnumMemberNode({
@@ -207,7 +207,7 @@ final class EnumMemberNode extends AstNode {
 }
 
 /// Represents a struct definition in the Lake language.
-final class StructDefinitionNode extends DefinitionNode {
+class StructDefinitionNode extends DefinitionNode {
   /// Creates a [StructDefinitionNode] with the given [identifier], [fields],
   /// and [span].
   const StructDefinitionNode({
@@ -229,7 +229,7 @@ final class StructDefinitionNode extends DefinitionNode {
   List<Object?> get props => [identifier, fields, span];
 }
 
-final class UnionDefinitionNode extends DefinitionNode {
+class UnionDefinitionNode extends DefinitionNode {
   /// Creates a [UnionDefinitionNode] with the given [identifier], [fields],
   /// and [span].
   const UnionDefinitionNode({
@@ -252,7 +252,7 @@ final class UnionDefinitionNode extends DefinitionNode {
 }
 
 /// Represents an exception definition in the Lake language.
-final class ExceptionDefinitionNode extends DefinitionNode {
+class ExceptionDefinitionNode extends DefinitionNode {
   /// Creates an [ExceptionDefinitionNode] with the given [identifier],
   /// [fields], and [span].
   const ExceptionDefinitionNode({
@@ -276,7 +276,7 @@ final class ExceptionDefinitionNode extends DefinitionNode {
 }
 
 /// Represents a service definition in the Lake language.
-final class ServiceDefinitionNode extends DefinitionNode {
+class ServiceDefinitionNode extends DefinitionNode {
   /// Creates a [ServiceDefinitionNode] with the given [identifier], optional
   /// [extendsService], [methods], and [span].
   const ServiceDefinitionNode({
@@ -304,7 +304,7 @@ final class ServiceDefinitionNode extends DefinitionNode {
 }
 
 /// Represents the requirement (e.g., required/optional) of a field.
-final class FieldRequirementNode extends AstNode {
+class FieldRequirementNode extends AstNode {
   /// Creates a [FieldRequirementNode] with the given [value] and [span].
   const FieldRequirementNode({required this.value, required super.span});
 
@@ -321,7 +321,7 @@ final class FieldRequirementNode extends AstNode {
 }
 
 /// Represents a field in a struct, exception, or method parameter list.
-final class FieldNode extends AstNode {
+class FieldNode extends AstNode {
   /// Creates a [FieldNode] with the given [fieldId], [requirement], [type],
   /// [identifier], [defaultValue], and [span].
   const FieldNode({
@@ -366,7 +366,7 @@ final class FieldNode extends AstNode {
 }
 
 /// Represents a method in a service definition.
-final class MethodNode extends AstNode {
+class MethodNode extends AstNode {
   /// Creates a [MethodNode] with the given [returnType], [identifier],
   /// [parameters], [throws], and [span].
   const MethodNode({
@@ -405,7 +405,7 @@ sealed class TypeNode extends AstNode {
 }
 
 /// Represents a built-in base type (e.g., "i32", "string").
-final class BaseTypeNode extends TypeNode {
+class BaseTypeNode extends TypeNode {
   /// Creates a [BaseTypeNode] with the given [value] and [span].
   const BaseTypeNode({required this.value, required super.span});
 
@@ -426,7 +426,7 @@ sealed class ContainerTypeNode extends TypeNode {
 }
 
 /// Represents a map type (e.g., map<string, i32>).
-final class MapTypeNode extends ContainerTypeNode {
+class MapTypeNode extends ContainerTypeNode {
   /// Creates a [MapTypeNode] with the given [keyType], [valueType], and [span].
   const MapTypeNode({
     required this.keyType,
@@ -448,7 +448,7 @@ final class MapTypeNode extends ContainerTypeNode {
 }
 
 /// Represents a set type (e.g., set<i32>).
-final class SetTypeNode extends ContainerTypeNode {
+class SetTypeNode extends ContainerTypeNode {
   /// Creates a [SetTypeNode] with the given [elementType] and [span].
   const SetTypeNode({required this.elementType, required super.span});
 
@@ -463,7 +463,7 @@ final class SetTypeNode extends ContainerTypeNode {
 }
 
 /// Represents a list type (e.g., list<string>).
-final class ListTypeNode extends ContainerTypeNode {
+class ListTypeNode extends ContainerTypeNode {
   /// Creates a [ListTypeNode] with the given [elementType] and [span].
   const ListTypeNode({required this.elementType, required super.span});
 
@@ -478,7 +478,7 @@ final class ListTypeNode extends ContainerTypeNode {
 }
 
 /// Represents a stream type (e.g., stream<i32>).
-final class StreamTypeNode extends TypeNode {
+class StreamTypeNode extends TypeNode {
   /// Creates a [StreamTypeNode] with the given [elementType] and [span].
   const StreamTypeNode({required this.elementType, required super.span});
 
@@ -493,7 +493,7 @@ final class StreamTypeNode extends TypeNode {
 }
 
 /// Represents a user-defined or custom type.
-final class CustomTypeNode extends TypeNode {
+class CustomTypeNode extends TypeNode {
   /// Creates a [CustomTypeNode] with the given [value] and [span].
   const CustomTypeNode({required this.value, required super.span});
 
@@ -534,7 +534,7 @@ sealed class LiteralValueNode extends AstNode {
 }
 
 /// Represents an integer literal value.
-final class IntLiteralNode extends LiteralValueNode {
+class IntLiteralNode extends LiteralValueNode {
   /// Creates an [IntLiteralNode] with the given [rawValue] and [span].
   IntLiteralNode({required this.rawValue, required super.span});
 
@@ -558,7 +558,7 @@ final class IntLiteralNode extends LiteralValueNode {
 }
 
 /// Represents a double literal value.
-final class DoubleLiteralNode extends LiteralValueNode {
+class DoubleLiteralNode extends LiteralValueNode {
   /// Creates a [DoubleLiteralNode] with the given [rawValue] and [span].
   DoubleLiteralNode({required this.rawValue, required super.span});
 
@@ -582,7 +582,7 @@ final class DoubleLiteralNode extends LiteralValueNode {
 }
 
 /// Represents a boolean literal value.
-final class BoolLiteralNode extends LiteralValueNode {
+class BoolLiteralNode extends LiteralValueNode {
   /// Creates a [BoolLiteralNode] with the given [rawValue] and [span].
   BoolLiteralNode({required this.rawValue, required super.span});
 
@@ -606,7 +606,7 @@ final class BoolLiteralNode extends LiteralValueNode {
 }
 
 /// Represents a string literal value.
-final class StringLiteralNode extends LiteralValueNode {
+class StringLiteralNode extends LiteralValueNode {
   /// Creates a [StringLiteralNode] with the given [rawValue] and [span].
   StringLiteralNode({required this.rawValue, required super.span});
 
@@ -629,7 +629,7 @@ final class StringLiteralNode extends LiteralValueNode {
 }
 
 /// Represents a list literal value.
-final class ListLiteralNode extends LiteralValueNode {
+class ListLiteralNode extends LiteralValueNode {
   /// Creates a [ListLiteralNode] with the given [elements] and [span].
   const ListLiteralNode({required this.elements, required super.span});
 
@@ -675,7 +675,7 @@ final class MapLiteralNode extends LiteralValueNode {
 }
 
 /// Represents an identifier (reference to a named value).
-final class IdentifierNode extends LiteralValueNode {
+class IdentifierNode extends LiteralValueNode {
   /// Creates an [IdentifierNode] with the given [value] and [span].
   const IdentifierNode({required this.value, required super.span});
 

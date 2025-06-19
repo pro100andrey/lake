@@ -1,0 +1,17 @@
+namespace * common
+
+const string APP_NAME = "MyLakeApp"
+
+typedef i32 MyId
+
+enum Status {
+    ACTIVE = 1,
+    INACTIVE = 2,
+    PENDING = 3
+}
+
+struct User {
+    1: required i32 id;
+    2: optional string name;
+    3: required Status status;
+}
