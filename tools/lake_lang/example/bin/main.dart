@@ -54,8 +54,8 @@ void main(List<String> args) {
 
   if (isRunningSemantic) {
     final watch = Stopwatch()..start();
-    final reporter = ErrorReporter();
-    final analyzer = SemanticAnalyzerNew(reporter);
+    final diagnosticSystem = DiagnosticSystem();
+    final analyzer = SemanticAnalyzerNew(diagnosticSystem);
 
     final sourceFiles = <String, String>{};
     for (final input in inputs) {

@@ -1,7 +1,7 @@
 import 'package:petitparser/petitparser.dart';
 
+import '../common/span.dart';
 import '../grammar/lake_grammar_definition.dart';
-import 'base/types.dart';
 import 'nodes/ast_nodes.dart';
 
 /// Defines the grammar for the Lake language with a focus on building an

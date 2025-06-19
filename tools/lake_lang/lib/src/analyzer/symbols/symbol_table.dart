@@ -1,6 +1,7 @@
-import '../../ast/base/types.dart';
 import '../../ast/nodes/ast_nodes.dart';
-import '../errors/error_reporter.dart';
+import '../../common/span.dart';
+import '../diagnostics/diagnostic_system.dart';
+import '../diagnostics/diagnostics.dart';
 import '../semantic_types.dart';
 import 'symbol_entry.dart';
 
@@ -15,16 +16,18 @@ class Scope {
     required SymbolKind kind,
     required AstNode declaration,
     required Span span,
-    required ErrorReporter reporter,
+    required DiagnosticSystem diagnosticSystem,
     SemanticType? resolvedType,
   }) {
     if (_symbols.containsKey(name)) {
       final existingEntry = _symbols[name]!;
-      reporter.reportDuplicateDeclaration(
-        name: name,
-        span: span,
-        previousDeclarationSpan: existingEntry.span,
-        filePath: '<file_path>',
+      diagnosticSystem.report(
+        DuplicateDeclarationDiagnostic(
+          name: name,
+          span: span,
+          previousDeclarationSpan: existingEntry.span,
+          filePath: '<file_path>',
+        ),
       );
 
       return;
@@ -55,12 +58,12 @@ class Scope {
 
 class SymbolTable {
   /// Creates a new symbol table and initializes it with a global scope.
-  SymbolTable(this._errorReporter) {
+  SymbolTable(this._diagnosticSystem) {
     _currentScope = Scope();
   }
 
   Scope? _currentScope;
-  final ErrorReporter _errorReporter;
+  final DiagnosticSystem _diagnosticSystem;
 
   void pushScope() {
     final newScope = Scope(parent: _currentScope);
@@ -69,10 +72,12 @@ class SymbolTable {
 
   void popScope() {
     if (_currentScope?.parent == null) {
-      _errorReporter.reportGeneric(
-        message: 'Cannot pop the global scope.',
-        span: (start: 0, end: 0),
-        filePath: '<file_path>',
+      _diagnosticSystem.report(
+        const GenericDiagnostic(
+          filePath: '<file_path>',
+          message: 'Cannot pop the global scope.',
+          span: (start: 0, end: 0),
+        ),
       );
       return;
     }
@@ -88,12 +93,14 @@ class SymbolTable {
     required SemanticType? resolvedType,
   }) {
     if (_currentScope == null) {
-      _errorReporter.reportGeneric(
-        message:
-            'Cannot add symbol "$name": no active scope. '
-            'This is an internal error.',
-        filePath: '<file_path>',
-        span: span,
+      _diagnosticSystem.report(
+        GenericDiagnostic(
+          message:
+              'Cannot add symbol "$name": no active scope. '
+              'This is an internal error.',
+          filePath: '<file_path>',
+          span: span,
+        ),
       );
       return;
     }
@@ -103,19 +110,21 @@ class SymbolTable {
       kind: kind,
       declaration: declaration,
       span: span,
-      reporter: _errorReporter,
+      diagnosticSystem: _diagnosticSystem,
       resolvedType: resolvedType,
     );
   }
 
   SymbolEntry? lookup(String name, Span span) {
     if (_currentScope == null) {
-      _errorReporter.reportGeneric(
-        message:
-            'Cannot lookup symbol "$name": no active scope. '
-            'This is an internal error.',
-        span: span,
-        filePath: '<file_path>',
+      _diagnosticSystem.report(
+        GenericDiagnostic(
+          message:
+              'Cannot lookup symbol "$name": no active scope. '
+              'This is an internal error.',
+          span: span,
+          filePath: '<file_path>',
+        ),
       );
       return null;
     }
@@ -123,10 +132,12 @@ class SymbolTable {
     final symbol = _currentScope!.lookup(name);
 
     if (symbol == null) {
-      _errorReporter.reportUndefinedSymbol(
-        name: name,
-        span: span,
-        filePath: '<file_path>',
+      _diagnosticSystem.report(
+        GenericDiagnostic(
+          message: 'Undefined symbol "$name".',
+          span: span,
+          filePath: '<file_path>',
+        ),
       );
       return null;
     }

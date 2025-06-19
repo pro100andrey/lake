@@ -1,7 +1,6 @@
-// lib/analyzer/symbol_table/symbol_table_builder.dart
-
 import '../../ast/nodes/ast_nodes.dart';
-import '../errors/error_reporter.dart';
+import '../diagnostics/diagnostic_system.dart';
+import '../diagnostics/diagnostics.dart';
 import 'compilation_symbol_table.dart';
 import 'scope.dart';
 import 'symbol_entry.dart';
@@ -20,13 +19,13 @@ class SymbolTableBuilder {
   /// registers it with the [CompilationSymbolTable].
   SymbolTableBuilder({
     required String filePath,
-    required ErrorReporter errorReporter,
+    required DiagnosticSystem diagnosticSystem,
     required CompilationSymbolTable compilationSymbolTable,
   }) : _filePath = filePath,
-       _errorReporter = errorReporter,
+       _diagnosticSystem = diagnosticSystem,
        _compilationSymbolTable = compilationSymbolTable {
     // Initialize the global scope for the current file.
-    _currentScope = Scope(errorReporter: _errorReporter);
+    _currentScope = Scope(diagnosticSystem: _diagnosticSystem);
     // Store the global scope
     _fileGlobalScope = _currentScope;
 
@@ -43,7 +42,7 @@ class SymbolTableBuilder {
 
   String get filePath => _filePath;
 
-  final ErrorReporter _errorReporter;
+  final DiagnosticSystem _diagnosticSystem;
 
   /// The current active scope in the AST traversal.
   /// This represents the stack of nested scopes for the current file.
@@ -63,7 +62,6 @@ class SymbolTableBuilder {
   /// Call this when entering a new lexical block (e.g., inside a service,
   /// struct).
   void pushScope({required SymbolEntry ownerSymbol}) {
-
     final childScope = scopeMap[ownerSymbol.declaration];
 
     if (childScope != null) {
@@ -75,7 +73,7 @@ class SymbolTableBuilder {
     final newScope = Scope(
       parent: _currentScope,
       ownerSymbol: ownerSymbol,
-      errorReporter: _errorReporter,
+      diagnosticSystem: _diagnosticSystem,
     );
 
     scopeMap[ownerSymbol.declaration] = newScope;
@@ -88,11 +86,13 @@ class SymbolTableBuilder {
   /// Call this when exiting a lexical block.
   void popScope() {
     if (_currentScope?.parent == null || _currentScope == _fileGlobalScope) {
-      _errorReporter.reportGeneric(
-        message:
-            'Internal error: Attempted to pop scope below file global scope.',
-        span: (start: 0, end: 0),
-        filePath: _filePath,
+      _diagnosticSystem.report(
+        GenericDiagnostic(
+          filePath: filePath,
+          message:
+              'Internal error: Attempted to pop scope below file global scope.',
+          span: (start: 0, end: 0),
+        ),
       );
       return;
     }
@@ -106,12 +106,14 @@ class SymbolTableBuilder {
   /// within their respective scopes.
   bool addSymbol(SymbolEntry entry) {
     if (_currentScope == null) {
-      _errorReporter.reportGeneric(
-        message:
-            'Internal error: Attempted to add symbol "${entry.name}" '
-            'to null scope.',
-        span: entry.span,
-        filePath: _filePath,
+      _diagnosticSystem.report(
+        GenericDiagnostic(
+          filePath: _filePath,
+          message:
+              'Internal error: Attempted to add symbol "${entry.name}" '
+              'to null scope.',
+          span: entry.span,
+        ),
       );
       return false;
     }
@@ -167,12 +169,14 @@ class SymbolTableBuilder {
     // the `SymbolTablePopulatorVisitor` is designed to update symbols
     // when it *revisits* their declaration, so they should generally be
     // in the current scope or the file's global scope.
-    _errorReporter.reportGeneric(
-      message:
-          "Internal error: Failed to update symbol '${updatedEntry.name}'."
-          ' Symbol not found in current or global scope for file $_filePath.',
-      span: updatedEntry.span,
-      filePath: _filePath,
+    _diagnosticSystem.report(
+      GenericDiagnostic(
+        filePath: _filePath,
+        message:
+            "Internal error: Failed to update symbol '${updatedEntry.name}'."
+            ' Symbol not found in current or global scope for file $_filePath.',
+        span: updatedEntry.span,
+      ),
     );
     return false;
   }

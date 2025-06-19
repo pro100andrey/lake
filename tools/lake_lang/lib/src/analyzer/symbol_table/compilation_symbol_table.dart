@@ -1,7 +1,6 @@
-// lib/analyzer/symbol_table/compilation_symbol_table.dart
-
-import '../../ast/base/types.dart';
-import '../errors/error_reporter.dart';
+import '../../common/span.dart';
+import '../diagnostics/diagnostic_system.dart';
+import '../diagnostics/diagnostics.dart';
 import 'scope.dart';
 import 'symbol_entry.dart';
 
@@ -10,8 +9,8 @@ import 'symbol_entry.dart';
 /// This class holds the root [Scope] for each processed file and facilitates
 /// symbol resolution across file boundaries, especially for imports.
 class CompilationSymbolTable {
-  CompilationSymbolTable(ErrorReporter errorReporter)
-    : _errorReporter = errorReporter;
+  CompilationSymbolTable(DiagnosticSystem diagnosticSystem)
+    : _diagnosticSystem = diagnosticSystem;
 
   /// Stores the root (global) scope for each compilation unit.
   /// The key is the file path (String), and the value is the global [Scope] for
@@ -24,8 +23,8 @@ class CompilationSymbolTable {
   /// file.
   final Map<String, List<String>> _importDependencies = {};
 
-  /// The error reporter instance used for logging semantic errors.
-  final ErrorReporter _errorReporter;
+  /// The diagnostic system instance used for logging semantic errors.
+  final DiagnosticSystem _diagnosticSystem;
 
   /// Registers the global scope for a given file.
   ///
@@ -37,12 +36,14 @@ class CompilationSymbolTable {
   /// - Parameter [globalScope]: The root [Scope] of that file.
   void registerFileScope(String filePath, Scope globalScope) {
     if (_fileGlobalScopes.containsKey(filePath)) {
-      _errorReporter.reportGeneric(
-        message:
-            'Internal error: Global scope for file "$filePath" '
-            'already registered.',
-        span: (start: 0, end: 0), // No specific span for this internal error
-        filePath: filePath,
+      _diagnosticSystem.report(
+        GenericDiagnostic(
+          message:
+              'Internal error: Global scope for file "$filePath" '
+              'already registered.',
+          span: (start: 0, end: 0), // No specific span for this internal error
+          filePath: filePath,
+        ),
       );
 
       return;
@@ -98,19 +99,21 @@ class CompilationSymbolTable {
     if (currentFileScope == null) {
       // This is an internal error: a file should always have its global scope
       // registered before lookups are performed for it.
-      _errorReporter.reportGeneric(
-        message:
-            'Internal error: No global scope found for file "$currentFilePath" '
-            'during symbol lookup.',
-        span: (start: 0, end: 0), // No specific span for this internal error
-        filePath: currentFilePath,
+      _diagnosticSystem.report(
+        GenericDiagnostic(
+          message:
+              'Internal error: No global scope found for file '
+              '"$currentFilePath" during symbol lookup.',
+          span: (start: 0, end: 0), // No specific span for this internal error
+          filePath: currentFilePath,
+        ),
       );
 
       return null;
     }
 
     final localSymbol = currentFileScope.lookup(symbolName);
-    
+
     if (localSymbol != null) {
       return localSymbol;
     }
@@ -134,13 +137,15 @@ class CompilationSymbolTable {
         // where an imported file hasn't been processed yet.
         // This might be better reported as a specific error during initial
         // import resolution.
-        _errorReporter.reportGeneric(
-          message:
-              'Internal error: Imported file "$importedPath" '
-              'not found or not yet processed during lookup from '
-              '"$currentFilePath".',
-          span: (start: 0, end: 0),
-          filePath: currentFilePath,
+        _diagnosticSystem.report(
+          GenericDiagnostic(
+            message:
+                'Internal error: Imported file "$importedPath" '
+                'not found or not yet processed during lookup from '
+                '"$currentFilePath".',
+            span: (start: 0, end: 0),
+            filePath: currentFilePath,
+          ),
         );
       }
     }
@@ -160,12 +165,14 @@ class CompilationSymbolTable {
   bool updateSymbol(SymbolEntry updatedEntry, String declarationFilePath) {
     final globalScopeForFile = _fileGlobalScopes[declarationFilePath];
     if (globalScopeForFile == null) {
-      _errorReporter.reportGeneric(
-        message:
-            "Internal error: Cannot update symbol '${updatedEntry.name}': "
-            "Global scope for file '$declarationFilePath' not found.",
-        span: updatedEntry.span,
-        filePath: declarationFilePath,
+      _diagnosticSystem.report(
+        GenericDiagnostic(
+          message:
+              "Internal error: Cannot update symbol '${updatedEntry.name}': "
+              "Global scope for file '$declarationFilePath' not found.",
+          span: updatedEntry.span,
+          filePath: declarationFilePath,
+        ),
       );
       return false;
     }
@@ -187,13 +194,15 @@ class CompilationSymbolTable {
       // StructSymbolEntry is updated in its scope.
       // The `updateSymbol` in `CompilationSymbolTable` is mostly for updating
       // the top-level entries that have been enhanced in the second pass.
-      _errorReporter.reportGeneric(
-        message:
-            "Internal error: Symbol '${updatedEntry.name}' not directly "
-            "replaceable in global scope of '$declarationFilePath'. "
-            'It might be a nested symbol whose parent needs updating.',
-        span: updatedEntry.span,
-        filePath: declarationFilePath,
+      _diagnosticSystem.report(
+        GenericDiagnostic(
+          message:
+              "Internal error: Symbol '${updatedEntry.name}' not directly "
+              "replaceable in global scope of '$declarationFilePath'. "
+              'It might be a nested symbol whose parent needs updating.',
+          span: updatedEntry.span,
+          filePath: declarationFilePath,
+        ),
       );
     }
 
@@ -221,12 +230,14 @@ class CompilationSymbolTable {
     // 1. Try to resolve in the current file's global scope
     final currentFileScope = _fileGlobalScopes[currentFilePath];
     if (currentFileScope == null) {
-      _errorReporter.reportGeneric(
-        message:
-            'Internal error: No global scope found for current file '
-            '"$currentFilePath".',
-        span: usageSpan,
-        filePath: currentFilePath,
+      _diagnosticSystem.report(
+        GenericDiagnostic(
+          message:
+              'Internal error: No global scope found for current file '
+              '"$currentFilePath".',
+          span: usageSpan,
+          filePath: currentFilePath,
+        ),
       );
       return null;
     }
@@ -254,13 +265,15 @@ class CompilationSymbolTable {
       } else {
         // This scenario indicates a missing imported file or a dependency cycle
         // where an imported file hasn't been processed yet.
-        _errorReporter.reportGeneric(
-          message:
-              'Error: Imported file "$importedPath" '
-              'not found or not yet processed.',
-          // Or a more specific span related to the import statement itself
-          span: usageSpan,
-          filePath: currentFilePath,
+        _diagnosticSystem.report(
+          GenericDiagnostic(
+            message:
+                'Error: Imported file "$importedPath" '
+                'not found or not yet processed.',
+            // Or a more specific span related to the import statement itself
+            span: usageSpan,
+            filePath: currentFilePath,
+          ),
         );
       }
     }

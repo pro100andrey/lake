@@ -1,6 +1,6 @@
 import '../../ast/ast_visitor.dart';
 import '../../ast/nodes/ast_nodes.dart';
-import '../errors/error_reporter.dart';
+import '../diagnostics/diagnostic_system.dart';
 import '../symbol_table/symbol_entry.dart';
 import '../symbol_table/symbol_table_builder.dart';
 
@@ -14,12 +14,12 @@ import '../symbol_table/symbol_table_builder.dart';
 class InitialSymbolCollectorVisitor extends AstVisitor<void> {
   const InitialSymbolCollectorVisitor({
     required SymbolTableBuilder symbolTableBuilder,
-    required ErrorReporter reporter,
+    required DiagnosticSystem diagnosticSystem,
   }) : _symbolTableBuilder = symbolTableBuilder,
-       _reporter = reporter;
+       _diagnosticSystem = diagnosticSystem;
 
   final SymbolTableBuilder _symbolTableBuilder;
-  final ErrorReporter _reporter;
+  final DiagnosticSystem _diagnosticSystem;
 
   @override
   void visitDocumentNode(DocumentNode node) {

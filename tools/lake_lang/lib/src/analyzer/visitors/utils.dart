@@ -1,21 +1,24 @@
 import '../../ast/nodes/ast_nodes.dart';
-import '../errors/error_reporter.dart';
+import '../diagnostics/diagnostic_system.dart';
+import '../diagnostics/diagnostics.dart';
 import '../semantic_types.dart';
 import '../symbols/symbol_table.dart';
 
 SemanticType? getSemanticType(
   TypeNode typeNode,
-  ErrorReporter reporter,
+  DiagnosticSystem diagnosticSystem,
   SymbolTable symbolTable,
 ) {
   if (typeNode case BaseTypeNode(:final value, :final span)) {
     final type = BaseType.byName[value];
 
     if (type == null) {
-      reporter.reportGeneric(
-        message: 'Unknown base type: $value',
-        span: span,
-        filePath: '<file_path>',
+      diagnosticSystem.report(
+        GenericDiagnostic(
+          message: 'Unknown base type: $value',
+          span: span,
+          filePath: '<file_path>',
+        ),
       );
     }
 
@@ -28,10 +31,12 @@ SemanticType? getSemanticType(
     if (entry?.declaration != null) {
       return entry!.resolvedType;
     } else {
-      reporter.reportGeneric(
-        message: 'Unknown custom type: $value',
-        span: span,
-        filePath: '<file_path>',
+      diagnosticSystem.report(
+        GenericDiagnostic(
+          message: 'Unknown custom type: $value',
+          span: span,
+          filePath: '<file_path>',
+        ),
       );
     }
 
@@ -41,15 +46,17 @@ SemanticType? getSemanticType(
   if (typeNode case ListTypeNode(:final elementType, :final span)) {
     final elementSemanticType = getSemanticType(
       elementType,
-      reporter,
+      diagnosticSystem,
       symbolTable,
     );
 
     if (elementSemanticType == null) {
-      reporter.reportGeneric(
-        message: 'Invalid element type in list',
-        span: span,
-        filePath: '<file_path>',
+      diagnosticSystem.report(
+        GenericDiagnostic(
+          message: 'Invalid element type in list',
+          span: span,
+          filePath: '<file_path>',
+        ),
       );
 
       return null;
@@ -65,29 +72,33 @@ SemanticType? getSemanticType(
   )) {
     final keySemanticType = getSemanticType(
       keyType,
-      reporter,
+      diagnosticSystem,
       symbolTable,
     );
 
     final valueSemanticType = getSemanticType(
       valueType,
-      reporter,
+      diagnosticSystem,
       symbolTable,
     );
 
     if (keySemanticType == null) {
-      reporter.reportGeneric(
-        message: 'Invalid key type in map',
-        span: span,
-        filePath: '<file_path>',
+      diagnosticSystem.report(
+        GenericDiagnostic(
+          message: 'Invalid key type in map',
+          span: span,
+          filePath: '<file_path>',
+        ),
       );
     }
 
     if (valueSemanticType == null) {
-      reporter.reportGeneric(
-        message: 'Invalid value type in map',
-        span: span,
-        filePath: '<file_path>',
+      diagnosticSystem.report(
+        GenericDiagnostic(
+          message: 'Invalid value type in map',
+          span: span,
+          filePath: '<file_path>',
+        ),
       );
     }
 
@@ -101,15 +112,17 @@ SemanticType? getSemanticType(
   if (typeNode case SetTypeNode(:final elementType, :final span)) {
     final elementSemanticType = getSemanticType(
       elementType,
-      reporter,
+      diagnosticSystem,
       symbolTable,
     );
 
     if (elementSemanticType == null) {
-      reporter.reportGeneric(
-        message: 'Invalid element type in set',
-        span: span,
-        filePath: '<file_path>',
+      diagnosticSystem.report(
+        GenericDiagnostic(
+          message: 'Invalid element type in set',
+          span: span,
+          filePath: '<file_path>',
+        ),
       );
 
       return null;
@@ -121,15 +134,17 @@ SemanticType? getSemanticType(
   if (typeNode case StreamTypeNode(:final elementType, :final span)) {
     final elementSemanticType = getSemanticType(
       elementType,
-      reporter,
+      diagnosticSystem,
       symbolTable,
     );
 
     if (elementSemanticType == null) {
-      reporter.reportGeneric(
-        message: 'Invalid element type in stream',
-        span: span,
-        filePath: '<file_path>',
+      diagnosticSystem.report(
+        GenericDiagnostic(
+          message: 'Invalid element type in stream',
+          span: span,
+          filePath: '<file_path>',
+        ),
       );
 
       return null;
@@ -142,10 +157,12 @@ SemanticType? getSemanticType(
     return const VoidType();
   }
 
-  reporter.reportGeneric(
-    message: 'Unsupported type node: ${typeNode.runtimeType}',
-    span: typeNode.span,
-    filePath: '<file_path>',
+  diagnosticSystem.report(
+    GenericDiagnostic(
+      message: 'Unsupported type node: ${typeNode.runtimeType}',
+      span: typeNode.span,
+      filePath: '<file_path>',
+    ),
   );
 
   return null;
@@ -153,7 +170,7 @@ SemanticType? getSemanticType(
 
 SemanticType? getLiteralValueSemanticType(
   LiteralValueNode node,
-  ErrorReporter reporter,
+  DiagnosticSystem diagnosticSystem,
   SymbolTable symbolTable,
 ) {
   if (node case IntLiteralNode()) {
@@ -203,7 +220,7 @@ SemanticType? getLiteralValueSemanticType(
     for (final element in elements) {
       final elementType = getLiteralValueSemanticType(
         element,
-        reporter,
+        diagnosticSystem,
         symbolTable,
       );
 
@@ -216,12 +233,14 @@ SemanticType? getLiteralValueSemanticType(
         commonElementType = elementType;
       } else if (!elementType.isAssignableTo(commonElementType) &&
           !commonElementType.isAssignableTo(elementType)) {
-        reporter.reportGeneric(
-          message:
-              'Inconsistent types in list literal. '
-              'Expected ${commonElementType.name}, got ${elementType.name}.',
-          span: element.span,
-          filePath: '<file_path>',
+        diagnosticSystem.report(
+          GenericDiagnostic(
+            message:
+                'Inconsistent types in list literal. '
+                'Expected ${commonElementType.name}, got ${elementType.name}.',
+            span: element.span,
+            filePath: '<file_path>',
+          ),
         );
 
         return null; // Mixed types, cannot infer single type

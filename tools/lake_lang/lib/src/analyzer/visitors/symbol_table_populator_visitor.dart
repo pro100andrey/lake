@@ -1,6 +1,7 @@
 import '../../ast/ast_visitor.dart';
 import '../../ast/nodes/ast_nodes.dart';
-import '../errors/error_reporter.dart';
+import '../diagnostics/diagnostic_system.dart';
+import '../diagnostics/diagnostics.dart';
 import '../semantic_types.dart';
 import '../symbol_table/compilation_symbol_table.dart';
 import '../symbol_table/symbol_entry.dart';
@@ -11,20 +12,20 @@ class SymbolTablePopulatorVisitor extends AstVisitor<void> {
   SymbolTablePopulatorVisitor({
     required CompilationSymbolTable compilationSymbolTable,
     required SymbolTableBuilder symbolTableBuilder,
-    required ErrorReporter reporter,
+    required DiagnosticSystem diagnosticSystem,
   }) : _compilationSymbolTable = compilationSymbolTable,
        _symbolTableBuilder = symbolTableBuilder,
-       _reporter = reporter,
+       _diagnosticSystem = diagnosticSystem,
        _typeResolver = TypeResolverVisitor(
          compilationSymbolTable: compilationSymbolTable,
          symbolTableBuilder: symbolTableBuilder,
-         reporter: reporter,
+         diagnosticSystem: diagnosticSystem,
          currentFilePath: symbolTableBuilder.filePath,
        );
 
   final CompilationSymbolTable _compilationSymbolTable;
   final SymbolTableBuilder _symbolTableBuilder;
-  final ErrorReporter _reporter;
+  final DiagnosticSystem _diagnosticSystem;
   final TypeResolverVisitor _typeResolver;
 
   @override
@@ -49,12 +50,14 @@ class SymbolTablePopulatorVisitor extends AstVisitor<void> {
     final symbol = _symbolTableBuilder.lookupGlobal(node.identifier.value);
 
     if (symbol == null && symbol is! ConstSymbolEntry) {
-      _reporter.reportGeneric(
-        message:
-            "Internal error: Constant '${node.identifier.value}' "
-            'not found or is wrong type in symbol table during population.',
-        span: node.span,
-        filePath: _symbolTableBuilder.filePath,
+      _diagnosticSystem.report(
+        GenericDiagnostic(
+          message:
+              "Internal error: Constant '${node.identifier.value}' "
+              'not found or is wrong type in symbol table during population.',
+          span: node.span,
+          filePath: _symbolTableBuilder.filePath,
+        ),
       );
     }
 
@@ -80,12 +83,14 @@ class SymbolTablePopulatorVisitor extends AstVisitor<void> {
     final symbol = _symbolTableBuilder.lookupGlobal(node.identifier.value);
 
     if (symbol == null || symbol is! TypedefSymbolEntry) {
-      _reporter.reportGeneric(
-        message:
-            "Internal error: Typedef '${node.identifier.value}' "
-            'not found or is of wrong type in symbol table during population.',
-        span: node.span,
-        filePath: _symbolTableBuilder.filePath,
+      _diagnosticSystem.report(
+        GenericDiagnostic(
+          message:
+              "Internal error: Typedef '${node.identifier.value}' not found "
+              'or is of wrong type in symbol table during population.',
+          span: node.span,
+          filePath: _symbolTableBuilder.filePath,
+        ),
       );
       return;
     }
@@ -111,12 +116,14 @@ class SymbolTablePopulatorVisitor extends AstVisitor<void> {
   void visitEnumDefinitionNode(EnumDefinitionNode node) {
     final enumSymbol = _symbolTableBuilder.lookupGlobal(node.identifier.value);
     if (enumSymbol == null || enumSymbol is! EnumSymbolEntry) {
-      _reporter.reportGeneric(
-        message:
-            "Internal error: Enum '${node.identifier.value}' "
-            'not found or is of wrong type in symbol table during population.',
-        span: node.span,
-        filePath: _symbolTableBuilder.filePath,
+      _diagnosticSystem.report(
+        GenericDiagnostic(
+          message:
+              "Internal error: Enum '${node.identifier.value}' not found "
+              'or is of wrong type in symbol table during population.',
+          span: node.span,
+          filePath: _symbolTableBuilder.filePath,
+        ),
       );
       return;
     }
@@ -144,12 +151,14 @@ class SymbolTablePopulatorVisitor extends AstVisitor<void> {
     final memberSymbol = _symbolTableBuilder.lookupLocal(node.identifier.value);
 
     if (memberSymbol == null || memberSymbol is! EnumMemberSymbolEntry) {
-      _reporter.reportGeneric(
-        message:
-            "Internal error: Enum member '${node.identifier.value}' "
-            'not found or is of wrong type in symbol table during population.',
-        span: node.span,
-        filePath: _symbolTableBuilder.filePath,
+      _diagnosticSystem.report(
+        GenericDiagnostic(
+          message:
+              "Internal error: Enum member '${node.identifier.value}' not "
+              'found or is of wrong type in symbol table during population.',
+          span: node.span,
+          filePath: _symbolTableBuilder.filePath,
+        ),
       );
 
       return;

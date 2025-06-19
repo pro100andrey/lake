@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../common/span.dart';
 import '../ast_visitor.dart';
-import '../base/types.dart';
 
 /// This file defines the complete AST (Abstract Syntax Tree) node structure for
 /// the Lake language. All nodes are immutable and implement the [Equatable]

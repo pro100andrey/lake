@@ -2,27 +2,28 @@
 
 import '../ast/lake_ast_grammar_definition.dart';
 import '../ast/nodes/ast_nodes.dart';
-import 'errors/error_reporter.dart';
+import 'diagnostics/diagnostic_system.dart';
+import 'diagnostics/diagnostics.dart';
 import 'symbol_table/compilation_symbol_table.dart';
 import 'symbol_table/symbol_table_builder.dart';
 import 'visitors/initial_symbol_collector_visitor.dart';
 import 'visitors/symbol_table_populator_visitor.dart';
 
 class SemanticAnalyzerNew {
-  SemanticAnalyzerNew(ErrorReporter errorReporter)
-    : _errorReporter = errorReporter,
-      _compilationSymbolTable = CompilationSymbolTable(errorReporter),
+  SemanticAnalyzerNew(DiagnosticSystem diagnosticSystem)
+    : _diagnosticSystem = diagnosticSystem,
+      _compilationSymbolTable = CompilationSymbolTable(diagnosticSystem),
       _astGrammar = const LakeAstGrammarDefinition();
 
   final LakeAstGrammarDefinition _astGrammar;
   late final _parser = _astGrammar.build();
 
-  final ErrorReporter _errorReporter;
+  final DiagnosticSystem _diagnosticSystem;
 
   final CompilationSymbolTable _compilationSymbolTable;
 
   bool analyze(Map<String, String> sourceFiles) {
-    _errorReporter.clearErrors();
+    _diagnosticSystem.clearAllDiagnostics();
 
     final parsedAsts = <String, DocumentNode>{};
     final fileBuilders = <String, SymbolTableBuilder>{};
@@ -38,12 +39,14 @@ class SemanticAnalyzerNew {
       final document = result.value as DocumentNode?;
 
       if (document == null) {
-        _errorReporter.reportGeneric(
-          message:
-              'Parsing failed for file "$filePath". '
-              'Skipping semantic analysis for this file.',
-          span: (start: 0, end: 0),
-          filePath: filePath,
+        _diagnosticSystem.report(
+          GenericDiagnostic(
+            message:
+                'Parsing failed for file "$filePath". '
+                'Skipping semantic analysis for this file.',
+            span: (start: 0, end: 0),
+            filePath: filePath,
+          ),
         );
 
         continue;
@@ -53,7 +56,7 @@ class SemanticAnalyzerNew {
 
       final symbolTableBuilder = SymbolTableBuilder(
         filePath: filePath,
-        errorReporter: _errorReporter,
+        diagnosticSystem: _diagnosticSystem,
         compilationSymbolTable: _compilationSymbolTable,
       );
 
@@ -62,12 +65,12 @@ class SemanticAnalyzerNew {
       // First pass: Collect initial symbols.
       final initialCollector = InitialSymbolCollectorVisitor(
         symbolTableBuilder: symbolTableBuilder,
-        reporter: _errorReporter,
+        diagnosticSystem: _diagnosticSystem,
       );
 
       document.accept(initialCollector);
 
-      if (_errorReporter.hasErrors) {
+      if (_diagnosticSystem.hasDiagnostics()) {
         print('Errors detected during Pass 1 for $filePath.');
         // Potentially stop early or continue to collect all pass 1 errors
         // For a full compiler, you might want to gather all errors from both
@@ -75,10 +78,8 @@ class SemanticAnalyzerNew {
       }
     }
 
-    if (_errorReporter.hasErrors) {
+    if (_diagnosticSystem.hasDiagnostics()) {
       print('Semantic analysis failed during Pass 1. Reporting errors.');
-
-      _errorReporter.printDiagnostics();
 
       return false;
     }
@@ -92,12 +93,12 @@ class SemanticAnalyzerNew {
       final populator = SymbolTablePopulatorVisitor(
         compilationSymbolTable: _compilationSymbolTable,
         symbolTableBuilder: symbolTableBuilder,
-        reporter: _errorReporter,
+        diagnosticSystem: _diagnosticSystem,
       );
 
       document.accept(populator);
 
-      if (_errorReporter.hasErrors) {
+      if (_diagnosticSystem.hasDiagnostics()) {
         print('Errors detected during Pass 2 for $filePath.');
         // Continue to collect all pass 2 errors
       }
@@ -105,9 +106,9 @@ class SemanticAnalyzerNew {
 
     print('Semantic analysis completed.');
 
-    if (_errorReporter.hasErrors) {
+    if (_diagnosticSystem.hasDiagnostics()) {
       print('Semantic analysis failed with errors:');
-      _errorReporter.printDiagnostics();
+      // _diagnosticSystem.printDiagnostics();
       return false;
     }
 

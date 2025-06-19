@@ -1,4 +1,4 @@
-import 'package:lake_lang/src/ast/base/types.dart';
+import 'package:lake_lang/src/common/span.dart';
 import 'package:test/test.dart';
 
 class HasSpan extends Matcher {

@@ -2,8 +2,8 @@
 
 import 'package:equatable/equatable.dart';
 
-
-import '../errors/error_reporter.dart';
+import '../diagnostics/diagnostic_system.dart';
+import '../diagnostics/diagnostics.dart';
 import 'symbol_entry.dart';
 
 /// Represents a single lexical scope in the Lake language.
@@ -15,9 +15,12 @@ class Scope extends Equatable {
   ///
   /// [parent]: The parent scope of this new scope. If `null`, this scope
   /// is considered a root (global) scope.
-  Scope({this.parent, SymbolEntry? ownerSymbol, ErrorReporter? errorReporter})
-    : _ownerSymbol = ownerSymbol,
-      _errorReporter = errorReporter;
+  Scope({
+    this.parent,
+    SymbolEntry? ownerSymbol,
+    DiagnosticSystem? diagnosticSystem,
+  }) : _ownerSymbol = ownerSymbol,
+       _diagnosticSystem = diagnosticSystem;
 
   /// The parent scope, or `null` if this is the global (root) scope.
   final Scope? parent;
@@ -27,7 +30,7 @@ class Scope extends Equatable {
   SymbolEntry? get ownerSymbol => _ownerSymbol;
 
   /// The error reporter instance for reporting errors related to this scope.
-  final ErrorReporter? _errorReporter;
+  final DiagnosticSystem? _diagnosticSystem;
 
   /// A map storing symbols directly declared within this scope.
   /// Keys are symbol names (String), values are the corresponding SymbolEntry
@@ -49,12 +52,14 @@ class Scope extends Equatable {
 
     if (_symbols.containsKey(symbol.name)) {
       final existingEntry = _symbols[symbol.name]!;
-      _errorReporter?.reportDuplicateDeclaration(
-        name: symbol.name,
-        span: symbol.span, // Span of the new (duplicate) declaration
-        // Span of the original declaration
-        previousDeclarationSpan: existingEntry.span,
-        filePath: filePath,
+      _diagnosticSystem?.report(
+        DuplicateDeclarationDiagnostic(
+          name: symbol.name,
+          span: symbol.span, // Span of the new (duplicate) declaration
+          // Span of the original declaration
+          previousDeclarationSpan: existingEntry.span,
+          filePath: filePath,
+        ),
       );
 
       return false;
@@ -72,7 +77,7 @@ class Scope extends Equatable {
   /// error reporting is left to the caller (e.g., SymbolTableBuilder).
   SymbolEntry? lookup(String name) {
     final entry = _symbols[name];
-    
+
     if (entry != null) {
       return entry;
     }

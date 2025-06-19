@@ -1,6 +1,6 @@
 import '../../ast/ast_visitor.dart';
 import '../../ast/nodes/ast_nodes.dart';
-import '../errors/error_reporter.dart';
+import '../diagnostics/diagnostic_system.dart';
 import '../semantic_types.dart';
 import '../symbol_table/compilation_symbol_table.dart';
 import '../symbol_table/symbol_table_builder.dart';
@@ -11,13 +11,13 @@ class TypeResolverVisitor extends AstVisitor<SemanticType> {
   const TypeResolverVisitor({
     required this.compilationSymbolTable,
     required this.symbolTableBuilder,
-    required this.reporter,
+    required this.diagnosticSystem,
     required this.currentFilePath,
   });
 
   final CompilationSymbolTable compilationSymbolTable;
   final SymbolTableBuilder symbolTableBuilder;
-  final ErrorReporter reporter;
+  final DiagnosticSystem diagnosticSystem;
   final String currentFilePath;
 
   @override
