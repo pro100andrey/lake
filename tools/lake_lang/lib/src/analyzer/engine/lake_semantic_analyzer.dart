@@ -1,10 +1,10 @@
 import '../diagnostics/diagnostic_system.dart';
-import '../file_manager/lake_file_manager.dart';
 import '../symbol_table/compilation_symbol_table.dart';
 import '../symbol_table/symbol_table_builder.dart';
 import '../visitors/initial_symbol_collector_visitor.dart';
 import 'analysis_cache.dart';
 import 'lake_ast_builder.dart';
+import 'lake_file_manager.dart';
 
 /// The main semantic analyzer for the Lake IDL.
 /// It orchestrates symbol collection, type resolution, and semantic checks.

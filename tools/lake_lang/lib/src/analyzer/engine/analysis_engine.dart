@@ -6,10 +6,10 @@ import '../../ast/nodes/ast_nodes.dart';
 import '../../common/span.dart';
 import '../diagnostics/diagnostic.dart';
 import '../diagnostics/diagnostic_system.dart';
-import '../file_manager/lake_file_manager.dart';
 import '../symbol_table/symbol_entry.dart';
 import 'analysis_cache.dart';
 import 'lake_ast_builder.dart';
+import 'lake_file_manager.dart';
 import 'lake_semantic_analyzer.dart';
 import 'semantic_info.dart';
 

@@ -5,7 +5,7 @@ import 'package:petitparser/petitparser.dart';
 import 'package:source_span/source_span.dart';
 
 import '../../../lake_lang.dart';
-import '../engine/analysis_cache.dart';
+import 'analysis_cache.dart';
 
 typedef SourceItem = ({SourceFile sourceFile, String content});
 

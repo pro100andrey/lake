@@ -4,8 +4,8 @@ import '../../ast/lake_ast_grammar_definition.dart';
 import '../../ast/nodes/ast_nodes.dart';
 import '../diagnostics/diagnostic_system.dart';
 import '../diagnostics/diagnostics.dart';
-import '../file_manager/lake_file_manager.dart';
 import 'analysis_cache.dart';
+import 'lake_file_manager.dart';
 
 /// Builds the Abstract Syntax Tree (AST) for a given source file.
 /// It uses the LakeAstGrammarDefinition to parse the file content

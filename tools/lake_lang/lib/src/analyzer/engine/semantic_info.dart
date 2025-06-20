@@ -1,9 +1,11 @@
+import 'package:equatable/equatable.dart';
+
 import '../diagnostics/diagnostic.dart';
 import '../symbols/symbol_table.dart';
 
 /// Represents the complete semantic information for a single source file.
 /// This includes its local symbol table, and any semantic diagnostics found.
-class SemanticInfo {
+class SemanticInfo extends Equatable {
   /// - Resolved types for each expression/node (e.g., Map<AstNode, LakeType>)
   /// - Cross-file references (e.g., Map<IdentifierNode, SymbolInfo>)
 
@@ -19,4 +21,7 @@ class SemanticInfo {
   /// A list of diagnostics (errors, warnings) found during semantic analysis
   /// of this file.
   final List<Diagnostic> diagnostics;
+
+  @override
+  List<Object?> get props => [localSymbolTable, diagnostics];
 }

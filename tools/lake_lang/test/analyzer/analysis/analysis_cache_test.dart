@@ -1,14 +1,14 @@
+// ignore_for_file: avoid_implementing_value_types
+
 import 'package:lake_lang/lake_lang.dart';
 import 'package:lake_lang/src/analyzer/engine/analysis_cache.dart';
 import 'package:lake_lang/src/analyzer/engine/semantic_info.dart';
-import 'package:mockito/annotations.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-import 'analysis_cache_test.mocks.dart';
+class MockDocumentNode extends Mock implements DocumentNode {}
+class MockSemanticInfo extends Mock implements SemanticInfo {}
 
-@GenerateNiceMocks(
-  [MockSpec<DocumentNode>(), MockSpec<SemanticInfo>()],
-)
 void main() {
   group('AST Caching', () {
     late AnalysisCache cache;
