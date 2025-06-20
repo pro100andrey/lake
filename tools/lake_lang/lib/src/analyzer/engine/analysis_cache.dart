@@ -59,7 +59,7 @@ final class AnalysisCache {
   /// Clears all cached data and invalidation flags.
   void clearAll() {
     _astCache.clear();
-    // _semanticCache.clear();
+    _semanticCache.clear();
     _invalidatedFiles.clear();
   }
 }

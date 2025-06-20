@@ -6,7 +6,7 @@ import 'package:path/path.dart' as p;
 
 import 'analysis_engine.dart';
 
-Future<void> main(List<String> args) async {
+void main(List<String> args) {
   final projectRoot = p.join(Directory.current.path, 'test_project');
   final entryPoints = [
     p.join(projectRoot, 'common.lake'),
@@ -26,23 +26,19 @@ Future<void> main(List<String> args) async {
   });
 
   print('--- Initial Analysis ---');
-  await engine.analyzeProject(entryPoints);
+  engine.analyzeProject(entryPoints);
 
   final commonFilePath = p.join(projectRoot, 'common.lake');
-  final commonAst = await engine.getAst(commonFilePath);
+  final commonAst = engine.getAst(commonFilePath);
 
-  if (commonAst != null) {
-    print('AST for common.lake: Root node type: ${commonAst.runtimeType}');
-    // You can traverse commonAst here to inspect it
-  }
+  print('AST for common.lake: Root node type: ${commonAst.runtimeType}');
+  // You can traverse commonAst here to inspect it
 
-  final commonSemanticInfo = await engine.getSemanticInfo(commonFilePath);
-  if (commonSemanticInfo != null) {
-    print('Semantic Info for common.lake: Local symbols:');
-    // commonSemanticInfo.localSymbolTable.getSymbolsInScope().forEach((s) {
-    //   print('  - ${s.name} (${s.kind})');
-    // });
-  }
+  final commonSemanticInfo = engine.getSemanticInfo(commonFilePath);
+  print('Semantic Info for common.lake: Local symbols:');
+  // commonSemanticInfo.localSymbolTable.getSymbolsInScope().forEach((s) {
+  //   print('  - ${s.name} (${s.kind})');
+  // });
 }
 
 void _createTestFiles(String projectRoot) {

@@ -46,18 +46,18 @@ final class LakeFileManager {
 
   /// Loads the content of a file and stores it.
   /// This should be called when a file is opened or changed.
-  Future<SourceItem> loadFile(String filePath) async {
+  SourceItem loadFile(String filePath) {
     final absolutePath = p.absolute(filePath);
 
     if (!_sourceItems.containsKey(absolutePath)) {
-      final content = await File(absolutePath).readAsString();
+      final content = File(absolutePath).readAsStringSync();
       final sourceFile = SourceFile.fromString(content, url: absolutePath);
 
       _sourceItems[absolutePath] = (sourceFile: sourceFile, content: content);
       // Invalidate cache for this file as it's been loaded/reloaded
       _analysisCache.invalidate(absolutePath);
       // Trigger graph update for this file later
-      await _updateImportGraphForFile(absolutePath);
+      _updateImportGraphForFile(absolutePath);
     }
 
     return _sourceItems[absolutePath]!;
@@ -90,7 +90,7 @@ final class LakeFileManager {
   /// Builds or updates the import graph for a given file.
   /// This involves parsing its imports and linking nodes.
   /// Returns a list of newly discovered imported file paths.
-  Future<List<String>> _updateImportGraphForFile(String filePath) async {
+  List<String> _updateImportGraphForFile(String filePath) {
     // Clear old diagnostics for this file
     _diagnosticSystem.clearDiagnosticsForFile(filePath);
 
@@ -124,9 +124,8 @@ final class LakeFileManager {
           if (!_processedForGraph.contains(resolvedImportPath)) {
             _processedForGraph.add(resolvedImportPath);
             try {
-              await loadFile(
-                resolvedImportPath,
-              ); // This will recursively update graph
+              // This will recursively update graph
+              loadFile(resolvedImportPath);
             } on Exception catch (e) {
               _diagnosticSystem.report(
                 GenericDiagnostic(
@@ -163,7 +162,7 @@ final class LakeFileManager {
       _importGraph.putIfAbsent(filePath, () => _ImportGraphNode(filePath));
 
   /// Builds the initial import graph from a set of entry points.
-  Future<void> buildInitialImportGraph(Iterable<String> entryPoints) async {
+  void buildInitialImportGraph(Iterable<String> entryPoints) {
     _importGraph.clear();
     _processedForGraph.clear();
     _diagnosticSystem
@@ -172,7 +171,7 @@ final class LakeFileManager {
     for (final entryPoint in entryPoints) {
       final absolutePath = p.absolute(entryPoint);
       if (!_processedForGraph.contains(absolutePath)) {
-        await loadFile(absolutePath); // This will recursively update graph
+        loadFile(absolutePath); // This will recursively update graph
       }
     }
 

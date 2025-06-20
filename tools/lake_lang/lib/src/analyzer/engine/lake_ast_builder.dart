@@ -34,7 +34,7 @@ final class LakeAstBuilder {
   /// This method first checks the cache. If a valid AST exists, it's returned.
   /// Otherwise, the file content is parsed, and the resulting AST (or errors)
   /// are stored in the cache and reported to the diagnostic system.
-  Future<DocumentNode?> buildAst(String filePath) async {
+  DocumentNode? buildAst(String filePath) {
     final absolutePath = _fileManager.resolvePath('', filePath);
 
     // 1. Check cache first

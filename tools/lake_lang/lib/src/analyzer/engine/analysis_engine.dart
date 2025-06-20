@@ -58,7 +58,7 @@ class AnalysisEngine {
   /// Initiates a full analysis run for the given entry points.
   /// This will build the import graph, parse all relevant files,
   /// and perform full semantic analysis.
-  Future<void> analyzeProject(Iterable<String> entryPoints) async {
+  void analyzeProject(Iterable<String> entryPoints) {
     print('Starting full project analysis...');
     // Clear everything before a full analysis
     _diagnosticSystem.clearAllDiagnostics();
@@ -66,7 +66,7 @@ class AnalysisEngine {
 
     // The semantic analyzer's performFullAnalysis handles graph building
     // internally
-    await _semanticAnalyzer.performFullAnalysis(entryPoints);
+    _semanticAnalyzer.performFullAnalysis(entryPoints);
     print('Full project analysis completed.');
     _diagnosticsController.add(
       _diagnosticSystem.getAllDiagnostics(),
@@ -76,13 +76,13 @@ class AnalysisEngine {
   /// Notifies the analysis engine that a file has changed.
   /// This triggers incremental analysis.
   /// In a real application, this would be called by a file watcher.
-  Future<void> fileChanged(String filePath) async {
+  void fileChanged(String filePath) {
     print('File changed: $filePath. Starting incremental analysis...');
     // Load the file first to update FileManager's internal state and trigger
     //graph update
-    await _fileManager.loadFile(filePath);
+    _fileManager.loadFile(filePath);
     // Then trigger semantic analyzer's incremental logic
-    await _semanticAnalyzer.onFileChanged(filePath);
+    _semanticAnalyzer.onFileChanged(filePath);
     print('Incremental analysis for $filePath completed.');
     _diagnosticsController.add(
       _diagnosticSystem.getAllDiagnostics(),
@@ -110,7 +110,7 @@ class AnalysisEngine {
     // Note: This might cause a full file analysis if the file hasn't been
     //analyzed yet.
     if (_analysisCache.getSemanticInfo(filePath) == null) {
-      await _semanticAnalyzer.analyzeFile(filePath);
+      _semanticAnalyzer.analyzeFile(filePath);
     }
     return _analysisCache.getSemanticInfo(filePath);
   }

@@ -1,3 +1,7 @@
+// ignore_for_file: avoid_print
+
+import 'package:path/path.dart' as p;
+
 import '../diagnostics/diagnostic_system.dart';
 import '../symbol_table/compilation_symbol_table.dart';
 import '../symbol_table/symbol_table_builder.dart';
@@ -27,14 +31,19 @@ class LakeSemanticAnalyzer {
   /// Analyzes a single file.
   /// This method is designed to be called for incremental analysis.
   /// It performs both symbol collection and type resolution/checking.
-  Future<void> analyzeFile(String filePath) async {
-    final absolutePath = _fileManager.resolvePath('', filePath);
+  void analyzeFile(String filePath) {
+    print(
+      'SemanticAnalyzer: Starting analysis for file: '
+      '${p.basename(filePath)}',
+    );
 
+    final absolutePath = _fileManager.resolvePath('', filePath);
     // Clear old semantic diagnostics for this file
     _diagnosticSystem.clearDiagnosticsForFile(absolutePath);
 
+
     // 1. Get AST (from cache or parse)
-    final ast = await _astBuilder.buildAst(absolutePath);
+    final ast = _astBuilder.buildAst(absolutePath);
 
     if (ast == null) {
       // AST build failed, diagnostics already reported by AstBuilder.
@@ -72,29 +81,25 @@ class LakeSemanticAnalyzer {
 
   /// Initiates a full analysis run for a set of entry points.
   /// This typically follows a full import graph build.
-  Future<void> performFullAnalysis(Iterable<String> entryPoints) async {
+  void performFullAnalysis(Iterable<String> entryPoints) {
     _diagnosticSystem.clearAllDiagnostics();
     _analysisCache.clearAll();
     // _globalSymbolTable.clear();
 
     // Ensure all files are loaded and graph is built
-    await _fileManager.buildInitialImportGraph(entryPoints);
+    _fileManager.buildInitialImportGraph(entryPoints);
 
     // Get all files that are part of the project (keys in import graph)
     final allProjectFiles = _fileManager.getTransitiveDependents('');
     // This is a simplification; a better way is to iterate
     // _fileManager._importGraph.keys directly.
 
-    final filesToAnalyze = _fileManager.allGraphFiles;
-
-    for (final filePath in filesToAnalyze) {
-      await analyzeFile(filePath);
-    }
+    _fileManager.allGraphFiles.forEach(analyzeFile);
   }
 
   /// Handles a file change notification from FileManager.
   /// This is the core of the incremental analysis logic.
-  Future<void> onFileChanged(String filePath) async {
+  void onFileChanged(String filePath) {
     _diagnosticSystem.clearDiagnosticsForFile(
       filePath,
     ); // Clear old diagnostics for the changed file
@@ -107,7 +112,7 @@ class LakeSemanticAnalyzer {
       ..forEach(_analysisCache.invalidate);
 
     // First analyze the changed file itself
-    await analyzeFile(filePath);
+    analyzeFile(filePath);
 
     // Then re-analyze its dependents if they are currently loaded/cached and invalidated
     // (This ensures consistency in semantic checks across files)
@@ -116,7 +121,7 @@ class LakeSemanticAnalyzer {
       // and if its AST is still available (i.e., file exists and parsed previously)
       if (_analysisCache.isInvalidated(dependentPath) &&
           _fileManager.sourceItemExists(dependentPath)) {
-        await analyzeFile(dependentPath);
+        analyzeFile(dependentPath);
       }
     }
     // _globalSymbolTable is updated automatically within analyzeFile,
