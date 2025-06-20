@@ -23,6 +23,7 @@ class SymbolTablePopulatorVisitor extends AstVisitor<void> {
          currentFilePath: symbolTableBuilder.filePath,
        );
 
+  // ignore: unused_field
   final CompilationSymbolTable _compilationSymbolTable;
   final SymbolTableBuilder _symbolTableBuilder;
   final DiagnosticSystem _diagnosticSystem;

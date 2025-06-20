@@ -19,6 +19,8 @@ class InitialSymbolCollectorVisitor extends AstVisitor<void> {
        _diagnosticSystem = diagnosticSystem;
 
   final SymbolTableBuilder _symbolTableBuilder;
+
+  // ignore: unused_field
   final DiagnosticSystem _diagnosticSystem;
 
   @override
