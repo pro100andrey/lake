@@ -32,7 +32,7 @@ void main() {
 
       when(
         () => unawaited(pubUpdater.getLatestVersion(any())),
-      ).thenAnswer((_) async => packageVersion);
+      ).thenAnswer((_) => packageVersion);
 
       when(
         () => unawaited(
@@ -41,9 +41,7 @@ void main() {
             versionConstraint: latestVersion,
           ),
         ),
-      ).thenAnswer(
-        (_) async => ProcessResult(0, ExitCode.success.code, null, null),
-      );
+      ).thenAnswer((_) => ProcessResult(0, ExitCode.success.code, null, null));
 
       when(
         () => unawaited(
@@ -52,7 +50,7 @@ void main() {
             currentVersion: any(named: 'currentVersion'),
           ),
         ),
-      ).thenAnswer((_) async => true);
+      ).thenAnswer((_) => true);
 
       when(() => progress.complete(any())).thenAnswer((answer) {
         final message = answer.positionalArguments.elementAt(0) as String?;

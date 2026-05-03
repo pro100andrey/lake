@@ -15,7 +15,7 @@ final class KeywordAsIdentifierRule extends BaseRule<IdentifierNode> {
   /// This set includes keywords for declarations (e.g., `const`, `enum`),
   /// built-in types (e.g., `i32`, `string`), and structural keywords
   /// (e.g., `extends`, `throws`).
-  static const Set<String> _reservedKeywords = {
+  static const _reservedKeywords = <String>{
     'const', 'type', 'enum', 'struct', 'service', 'import', 'namespace', //
     'void', 'bool', 'byte', 'i8', 'i16', 'i32', 'i64', 'double', 'string',
     'binary', 'uuid', 'list', 'map', 'set', 'stream', 'extends', 'throws',

@@ -338,7 +338,7 @@ void main() {
           'stream<ChatMessage> streamFunc2(1: stream<ChatMessage> s)';
       final doc1 = parseAstFromString('service S { $source1 }');
       final doc2 = parseAstFromString('service S { $source2 }');
-      
+
       final service1 = doc1.definitions.first.cast<ServiceDefinitionNode>();
       final service2 = doc2.definitions.first.cast<ServiceDefinitionNode>();
 

@@ -68,8 +68,9 @@ bool isEmptyDirectory(String pathToDirectory) {
     throw ArgumentError('path must not be empty.');
   }
 
-  final isEmptyDirectory =
-      Directory(pathToDirectory).listSync(followLinks: false).isEmpty;
+  final isEmptyDirectory = Directory(
+    pathToDirectory,
+  ).listSync(followLinks: false).isEmpty;
 
   return isEmptyDirectory;
 }

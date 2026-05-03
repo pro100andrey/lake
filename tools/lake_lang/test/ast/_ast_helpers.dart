@@ -14,7 +14,7 @@ DocumentNode parseAstFromString(String source) {
 
   final result = parser.parse(source);
 
-  if (result case Failure(position: final position, message: final message)) {
+  if (result case Failure(position: final position, :final message)) {
     final span = sourceFile.span(position);
 
     fail(

@@ -8,26 +8,26 @@ void main() {
     late TestFsHelper fs;
 
     setUp(() {
-      fs =
-          TestFsHelper()..createTree({
-            'main.dart': '',
-            'models': {
-              'user.yml': '',
-              'user_profile.yaml': '',
-              'requests': {'user_create_request.yaml': ''},
-              'responses': {'user_create_response.yaml': ''},
-              'enums': {'scope.yaml': '', 'user_type.yaml': ''},
-              'exceptions': {'user_exception.yaml': ''},
-            },
-            'services': {
-              'users_service.yaml': '',
-              'auth_with_email_service.yaml': '',
-              'auth_with_google_service.yaml': '',
-            },
-            'tmp': {'file.tmp': '', 'nested_dir': {}},
-            'docs': {'README.md': '', 'CHANGELOG.md': ''},
-            'misc': {'some_file.json': '', 'another_file.txt': ''},
-          });
+      fs = TestFsHelper()
+        ..createTree({
+          'main.dart': '',
+          'models': {
+            'user.yml': '',
+            'user_profile.yaml': '',
+            'requests': {'user_create_request.yaml': ''},
+            'responses': {'user_create_response.yaml': ''},
+            'enums': {'scope.yaml': '', 'user_type.yaml': ''},
+            'exceptions': {'user_exception.yaml': ''},
+          },
+          'services': {
+            'users_service.yaml': '',
+            'auth_with_email_service.yaml': '',
+            'auth_with_google_service.yaml': '',
+          },
+          'tmp': {'file.tmp': '', 'nested_dir': {}},
+          'docs': {'README.md': '', 'CHANGELOG.md': ''},
+          'misc': {'some_file.json': '', 'another_file.txt': ''},
+        });
     });
 
     tearDown(() {
@@ -118,12 +118,12 @@ void main() {
             .map(fs.path)
             .toList(growable: false);
 
-        final filter =
-            FindFiltersBuilder()..groupOr((b) {
-              b
-                ..nameContains('main')
-                ..extensions(['.yaml']);
-            });
+        final filter = FindFiltersBuilder()
+          ..groupOr((b) {
+            b
+              ..nameContains('main')
+              ..extensions(['.yaml']);
+          });
         final streamResult = findFiles(
           workingDirectory: fs.root.path,
           filter: filter(),
@@ -151,14 +151,14 @@ void main() {
             .map(fs.path)
             .toList(growable: false);
 
-        final filter =
-            FindFiltersBuilder()..not((b) {
-              b.groupOr((b2) {
-                b2
-                  ..isDirectory()
-                  ..extensions(['.yaml', '.yml']);
-              });
+        final filter = FindFiltersBuilder()
+          ..not((b) {
+            b.groupOr((b2) {
+              b2
+                ..isDirectory()
+                ..extensions(['.yaml', '.yml']);
             });
+          });
         final streamResult = findFiles(
           workingDirectory: fs.root.path,
           filter: filter(),
@@ -184,26 +184,26 @@ void main() {
     late TestFsHelper fs;
 
     setUp(() {
-      fs =
-          TestFsHelper()..createTree({
-            'main.dart': '',
-            'models': {
-              'notification.yml': '',
-              'notification_config.yaml': '',
-              'requests': {'notification_create_request.yaml': ''},
-              'responses': {'notification_create_response.yaml': ''},
-              'enums': {'notification_type.yaml': ''},
-              'exceptions': {'notification_exception.yaml': ''},
-            },
-            'services': {
-              'users_service.yaml': '',
-              'auth_with_email_service.yaml': '',
-              'auth_with_google_service.yaml': '',
-            },
-            'tmp': {'log.tmp': '', 'nested_dir': {}},
-            'docs': {'README.md': '', 'guidelines.txt': ''},
-            'misc': {'template.json': '', 'changelog.txt': ''},
-          });
+      fs = TestFsHelper()
+        ..createTree({
+          'main.dart': '',
+          'models': {
+            'notification.yml': '',
+            'notification_config.yaml': '',
+            'requests': {'notification_create_request.yaml': ''},
+            'responses': {'notification_create_response.yaml': ''},
+            'enums': {'notification_type.yaml': ''},
+            'exceptions': {'notification_exception.yaml': ''},
+          },
+          'services': {
+            'users_service.yaml': '',
+            'auth_with_email_service.yaml': '',
+            'auth_with_google_service.yaml': '',
+          },
+          'tmp': {'log.tmp': '', 'nested_dir': {}},
+          'docs': {'README.md': '', 'guidelines.txt': ''},
+          'misc': {'template.json': '', 'changelog.txt': ''},
+        });
     });
 
     tearDown(() {

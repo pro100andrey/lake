@@ -450,7 +450,7 @@ class LakeGrammarDefinition extends GrammarDefinition {
     final integerPart = sign & digit().plus();
 
     final noDecimalOrExponent = (char('.') | char('E') | char('e')).not(
-      'invalid integer format',
+      message: 'invalid integer format',
     );
     // The .not() combined with the integerPart ensures that it matches only
     // integers without decimal points or exponents.

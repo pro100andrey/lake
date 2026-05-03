@@ -8,9 +8,8 @@ void main() {
     late TestFsHelper fs;
 
     setUp(() {
-      fs =
-          TestFsHelper()
-            ..createTree({'test_file.txt': '', 'test_directory': {}});
+      fs = TestFsHelper()
+        ..createTree({'test_file.txt': '', 'test_directory': {}});
     });
 
     tearDown(() {

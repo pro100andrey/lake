@@ -174,7 +174,7 @@ SemanticType? getLiteralValueSemanticType(
     return symbolEntry.resolvedType;
   }
 
-  if (node case ListLiteralNode(:final elements, :final span)) {
+  if (node case ListLiteralNode(:final elements)) {
     if (elements.isEmpty) {
       return ListType(const VoidType());
     }

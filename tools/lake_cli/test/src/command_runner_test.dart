@@ -18,7 +18,8 @@ class _MockPubUpdater extends Mock implements PubUpdater {}
 
 const latestVersion = '0.0.0';
 
-final updatePrompt = '''
+final updatePrompt =
+    '''
 ${lightYellow.wrap('Update available!')} ${lightCyan.wrap(packageVersion)} \u2192 ${lightCyan.wrap(latestVersion)}
 Run ${lightCyan.wrap('$executableName update')} to update''';
 
@@ -33,7 +34,7 @@ void main() {
 
       when(
         () => unawaited(pubUpdater.getLatestVersion(any())),
-      ).thenAnswer((_) async => packageVersion);
+      ).thenAnswer((_) => packageVersion);
 
       logger = _MockLogger();
 

@@ -41,7 +41,8 @@ enum DiagnosticSeverity {
 
   /// A fatal error that makes further compilation impossible or meaningless.
   /// Often indicates an unrecoverable state or a critical internal issue.
-  fatal('FATAL', 4);
+  fatal('FATAL', 4)
+  ;
 
   /// Private constructor for [DiagnosticSeverity]
   const DiagnosticSeverity(this.displayName, this.priority);
@@ -157,7 +158,8 @@ enum DiagnosticCode {
   requiredFieldCannotHaveDefaultValue('E1011', [
     'Remove the default value from the required field.',
     'Consider making the field optional if a default value is needed.',
-  ]);
+  ])
+  ;
 
   /// Creates a [DiagnosticCode] instance.
   ///

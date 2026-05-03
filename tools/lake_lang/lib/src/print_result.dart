@@ -1,3 +1,4 @@
+//
 // ignore_for_file: avoid_print
 
 import 'package:petitparser/petitparser.dart';
@@ -11,7 +12,7 @@ void printParseResult(Result result) {
 
     case Failure(
       buffer: final buffer,
-      message: final message,
+      :final message,
       position: final position,
     ):
       if (position < 0 || position > buffer.length) {

@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'package:source_span/source_span.dart';
 
 import '../ast_visitor.dart';

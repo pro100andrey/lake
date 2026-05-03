@@ -95,10 +95,9 @@ class FindFiltersBuilder {
   /// builder.nameContains('test', caseSensitive: false);
   /// ```
   void nameContains(String str, {bool caseSensitive = true}) => _filters.add(
-    (path) =>
-        caseSensitive
-            ? p.basename(path).contains(str)
-            : p.basename(path).toLowerCase().contains(str.toLowerCase()),
+    (path) => caseSensitive
+        ? p.basename(path).contains(str)
+        : p.basename(path).toLowerCase().contains(str.toLowerCase()),
   );
 
   /// Adds a filter that matches file paths against a regular expression.
@@ -191,7 +190,8 @@ class FindFiltersBuilder {
   /// All filters must match for a file to be included.
   ///
   /// Returns a [FindFilter] function that can be passed to [findFiles].
-  FindFilter build() => (path) => _filters.every((f) => f(path));
+  FindFilter build() =>
+      (path) => _filters.every((f) => f(path));
 
   /// Shortcut to call the builder as a function.
   FindFilter call() => build();

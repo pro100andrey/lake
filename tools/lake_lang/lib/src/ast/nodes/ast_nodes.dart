@@ -425,7 +425,7 @@ sealed class ContainerTypeNode extends TypeNode {
   const ContainerTypeNode({required super.span});
 }
 
-/// Represents a map type (e.g., map<string, i32>).
+/// Represents a map type (e.g., `map<string, i32>`).
 final class MapTypeNode extends ContainerTypeNode {
   /// Creates a [MapTypeNode] with the given [keyType], [valueType], and [span].
   const MapTypeNode({
@@ -447,7 +447,7 @@ final class MapTypeNode extends ContainerTypeNode {
   List<Object?> get props => [keyType, valueType, span];
 }
 
-/// Represents a set type (e.g., set<i32>).
+/// Represents a set type (e.g., `set<i32>`).
 final class SetTypeNode extends ContainerTypeNode {
   /// Creates a [SetTypeNode] with the given [elementType] and [span].
   const SetTypeNode({required this.elementType, required super.span});
@@ -462,7 +462,7 @@ final class SetTypeNode extends ContainerTypeNode {
   List<Object?> get props => [elementType, span];
 }
 
-/// Represents a list type (e.g., list<string>).
+/// Represents a list type (e.g., `list<string>`).
 final class ListTypeNode extends ContainerTypeNode {
   /// Creates a [ListTypeNode] with the given [elementType] and [span].
   const ListTypeNode({required this.elementType, required super.span});
@@ -477,7 +477,7 @@ final class ListTypeNode extends ContainerTypeNode {
   List<Object?> get props => [elementType, span];
 }
 
-/// Represents a stream type (e.g., stream<i32>).
+/// Represents a stream type (e.g., `stream<i32>`).
 final class StreamTypeNode extends TypeNode {
   /// Creates a [StreamTypeNode] with the given [elementType] and [span].
   const StreamTypeNode({required this.elementType, required super.span});
@@ -590,7 +590,7 @@ final class BoolLiteralNode extends LiteralValueNode {
   final String rawValue;
 
   /// The parsed boolean value.
-  late final bool value = rawValue == 'true';
+  late final value = rawValue == 'true';
 
   @override
   String get valueKind => 'literal boolean';
