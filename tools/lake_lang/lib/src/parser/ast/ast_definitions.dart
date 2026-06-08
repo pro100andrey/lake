@@ -45,7 +45,12 @@ final class NamespaceNode extends HeaderNode {
 }
 
 sealed class DefinitionNode extends AstNode {
-  const DefinitionNode({required super.startOffset, required super.endOffset});
+  const DefinitionNode({
+    required super.startOffset,
+    required super.endOffset,
+    this.docComment,
+  });
+  final String? docComment;
 }
 
 final class ConstDefinitionNode extends DefinitionNode {
@@ -55,6 +60,7 @@ final class ConstDefinitionNode extends DefinitionNode {
     required this.value,
     required super.startOffset,
     required super.endOffset,
+    super.docComment,
   });
   final TypeNode type;
   final IdentifierNode identifier;
@@ -70,6 +76,7 @@ final class TypedefDefinitionNode extends DefinitionNode {
     required this.identifier,
     required super.startOffset,
     required super.endOffset,
+    super.docComment,
   });
   final TypeNode type;
   final IdentifierNode identifier;
@@ -85,9 +92,11 @@ final class EnumValueNode extends AstNode {
     required super.startOffset,
     required super.endOffset,
     this.value,
+    this.docComment,
   });
   final IdentifierNode identifier;
   final IntLiteralNode? value;
+  final String? docComment;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitEnumValueNode(this);
@@ -99,6 +108,7 @@ final class EnumDefinitionNode extends DefinitionNode {
     required this.members,
     required super.startOffset,
     required super.endOffset,
+    super.docComment,
   });
   final IdentifierNode identifier;
   final List<EnumValueNode> members;
@@ -116,12 +126,14 @@ final class FieldNode extends AstNode {
     required super.endOffset,
     this.fieldId,
     this.defaultValue,
+    this.docComment,
   });
   final IntLiteralNode? fieldId;
   final bool isRequired;
   final TypeNode type;
   final IdentifierNode identifier;
   final LiteralValueNode? defaultValue;
+  final String? docComment;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitFieldNode(this);
@@ -133,6 +145,7 @@ final class StructDefinitionNode extends DefinitionNode {
     required this.fields,
     required super.startOffset,
     required super.endOffset,
+    super.docComment,
   });
   final IdentifierNode identifier;
   final List<FieldNode> fields;
@@ -147,6 +160,7 @@ final class UnionDefinitionNode extends DefinitionNode {
     required this.fields,
     required super.startOffset,
     required super.endOffset,
+    super.docComment,
   });
   final IdentifierNode identifier;
   final List<FieldNode> fields;
@@ -161,6 +175,7 @@ final class ExceptionDefinitionNode extends DefinitionNode {
     required this.fields,
     required super.startOffset,
     required super.endOffset,
+    super.docComment,
   });
   final IdentifierNode identifier;
   final List<FieldNode> fields;
@@ -178,11 +193,13 @@ final class MethodNode extends AstNode {
     required this.throws,
     required super.startOffset,
     required super.endOffset,
+    this.docComment,
   });
   final TypeNode returnType;
   final IdentifierNode identifier;
   final List<FieldNode> parameters;
   final List<FieldNode> throws;
+  final String? docComment;
 
   @override
   T accept<T>(AstVisitor<T> visitor) => visitor.visitMethodNode(this);
@@ -195,6 +212,7 @@ final class ServiceDefinitionNode extends DefinitionNode {
     required super.startOffset,
     required super.endOffset,
     this.extendsService,
+    super.docComment,
   });
   final IdentifierNode identifier;
   final IdentifierNode? extendsService;

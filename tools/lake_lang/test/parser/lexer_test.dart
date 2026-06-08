@@ -246,5 +246,35 @@ void main() {
         lexer.advance();
       }
     });
+
+    test('captures doc comments correctly', () {
+      const input = '''
+        /// This is a doc comment
+        /// for a struct
+        struct Point {
+          /// X coordinate
+          1: double x;
+        }
+      ''';
+
+      final lexer = LakeLexer(input);
+
+      // Consume doc comment BEFORE advancing past the current token?
+      // No, as soon as Lexer is created, it advances to `struct`.
+      // So the doc comment preceding `struct` is already pending.
+      expect(lexer.currentType, TokenType.kwStruct);
+      final structDoc = lexer.consumeDocComments();
+      expect(structDoc, 'This is a doc comment\nfor a struct');
+
+      lexer
+        ..advance() // consume struct
+        ..advance() // consume Point
+        ..advance(); // consume {
+
+      // Now we are at 1:
+      expect(lexer.currentType, TokenType.intLiteral);
+      final fieldDoc = lexer.consumeDocComments();
+      expect(fieldDoc, 'X coordinate');
+    });
   });
 }

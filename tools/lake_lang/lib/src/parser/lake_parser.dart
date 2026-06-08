@@ -11,6 +11,7 @@ class LakeParser {
   Never _reportError(String message) {
     var line = 1;
     var column = 1;
+
     for (var i = 0; i < _lexer.currentStart; i++) {
       if (_input.codeUnitAt(i) == 10) {
         line++;
@@ -35,8 +36,7 @@ class LakeParser {
   }
 
   void _optionalListSeparator() {
-    if (_lexer.currentType == TokenType.comma ||
-        _lexer.currentType == TokenType.semicolon) {
+    if (_lexer.currentType case .comma || .semicolon) {
       _lexer.advance();
     }
   }
@@ -46,9 +46,8 @@ class LakeParser {
     final headers = <HeaderNode>[];
     final definitions = <DefinitionNode>[];
 
-    while (_lexer.currentType != TokenType.eof) {
-      if (_lexer.currentType == TokenType.kwImport ||
-          _lexer.currentType == TokenType.kwNamespace) {
+    while (_lexer.currentType != .eof) {
+      if (_lexer.currentType case .kwImport || .kwNamespace) {
         headers.add(_parseHeader());
       } else {
         definitions.add(_parseDefinition());
@@ -64,20 +63,23 @@ class LakeParser {
   }
 
   HeaderNode _parseHeader() {
-    if (_lexer.currentType == TokenType.kwImport) {
-      return _parseImport();
-    } else if (_lexer.currentType == TokenType.kwNamespace) {
-      return _parseNamespace();
-    } else {
-      _reportError("Expected 'import' or 'namespace'");
+    switch (_lexer.currentType) {
+      case .kwImport:
+        return _parseImport();
+      case .kwNamespace:
+        return _parseNamespace();
+      case _:
+        _reportError("Expected 'import' or 'namespace'");
     }
   }
 
   ImportNode _parseImport() {
     final start = _lexer.currentStart;
-    _expect(TokenType.kwImport, "Expected 'import'");
+    _expect(.kwImport, "Expected 'import'");
+
     final path = _parseStringLiteral();
     _optionalListSeparator();
+
     return ImportNode(
       path: path,
       startOffset: start,
@@ -87,18 +89,19 @@ class LakeParser {
 
   NamespaceNode _parseNamespace() {
     final start = _lexer.currentStart;
-    _expect(TokenType.kwNamespace, "Expected 'namespace'");
+    _expect(.kwNamespace, "Expected 'namespace'");
 
     final scopeStart = _lexer.currentStart;
     String scopeName;
-    if (_lexer.currentType == TokenType.asterisk) {
-      scopeName = '*';
-      _lexer.advance();
-    } else if (_lexer.currentType == TokenType.identifier) {
-      scopeName = _lexer.getSlice();
-      _lexer.advance();
-    } else {
-      _reportError("Expected namespace scope ('*', 'js', 'dart', etc.)");
+    switch (_lexer.currentType) {
+      case .asterisk:
+        scopeName = '*';
+        _lexer.advance();
+      case .identifier:
+        scopeName = _lexer.getSlice();
+        _lexer.advance();
+      case _:
+        _reportError("Expected namespace scope ('*', 'js', 'dart', etc.)");
     }
 
     final scope = IdentifierNode(
@@ -106,8 +109,10 @@ class LakeParser {
       startOffset: scopeStart,
       endOffset: _lexer.currentStart,
     ); // End of scope identifier
+
     final identifier = _parseIdentifier();
     _optionalListSeparator();
+
     return NamespaceNode(
       scope: scope,
       identifier: identifier,
@@ -117,24 +122,23 @@ class LakeParser {
   }
 
   DefinitionNode _parseDefinition() {
+    final docComment = _lexer.consumeDocComments();
     switch (_lexer.currentType) {
-      case TokenType.kwConst:
-        return _parseConstDefinition();
-      case TokenType.kwTypedef:
-        return _parseTypedefDefinition();
-      case TokenType.kwEnum:
-        return _parseEnumDefinition();
-      case TokenType.kwStruct:
-        return _parseStructDefinition();
-      case TokenType.kwUnion:
-        return _parseUnionDefinition();
-      case TokenType.kwException:
-        return _parseExceptionDefinition();
-      case TokenType.kwService:
-        return _parseServiceDefinition();
-      //
-      // ignore: no_default_cases
-      default:
+      case .kwConst:
+        return _parseConstDefinition(docComment);
+      case .kwTypedef:
+        return _parseTypedefDefinition(docComment);
+      case .kwEnum:
+        return _parseEnumDefinition(docComment);
+      case .kwStruct:
+        return _parseStructDefinition(docComment);
+      case .kwUnion:
+        return _parseUnionDefinition(docComment);
+      case .kwException:
+        return _parseExceptionDefinition(docComment);
+      case .kwService:
+        return _parseServiceDefinition(docComment);
+      case _:
         _reportError(
           'Expected a definition '
           '(const, typedef, enum, struct, union, exception, service)',
@@ -142,26 +146,29 @@ class LakeParser {
     }
   }
 
-  ConstDefinitionNode _parseConstDefinition() {
+  ConstDefinitionNode _parseConstDefinition(String? docComment) {
     final start = _lexer.currentStart;
-    _expect(TokenType.kwConst, "Expected 'const'");
+    _expect(.kwConst, "Expected 'const'");
     final type = _parseType();
     final identifier = _parseIdentifier();
-    _expect(TokenType.equals, "Expected '=' in const definition");
+    _expect(.equals, "Expected '=' in const definition");
+
     final value = _parseLiteralValue();
     _optionalListSeparator();
+
     return ConstDefinitionNode(
       type: type,
       identifier: identifier,
       value: value,
       startOffset: start,
       endOffset: _lexer.currentEnd,
+      docComment: docComment,
     );
   }
 
-  TypedefDefinitionNode _parseTypedefDefinition() {
+  TypedefDefinitionNode _parseTypedefDefinition(String? docComment) {
     final start = _lexer.currentStart;
-    _expect(TokenType.kwTypedef, "Expected 'typedef'");
+    _expect(.kwTypedef, "Expected 'typedef'");
     // DefinitionType ::= ContainerType | BaseType
     final type = _parseType();
     if (type is CustomTypeNode || type is StreamTypeNode) {
@@ -169,139 +176,156 @@ class LakeParser {
     }
     final identifier = _parseIdentifier();
     _optionalListSeparator();
+
     return TypedefDefinitionNode(
       type: type,
       identifier: identifier,
       startOffset: start,
       endOffset: _lexer.currentEnd,
+      docComment: docComment,
     );
   }
 
-  EnumDefinitionNode _parseEnumDefinition() {
+  EnumDefinitionNode _parseEnumDefinition(String? docComment) {
     final start = _lexer.currentStart;
-    _expect(TokenType.kwEnum, "Expected 'enum'");
+    _expect(.kwEnum, "Expected 'enum'");
     final identifier = _parseIdentifier();
-    _expect(TokenType.braceLeft, "Expected '{' after enum name");
+    _expect(.braceLeft, "Expected '{' after enum name");
 
     final members = <EnumValueNode>[];
-    while (_lexer.currentType != TokenType.braceRight &&
-        _lexer.currentType != TokenType.eof) {
+    while (_lexer.currentType != .braceRight && _lexer.currentType != .eof) {
+      final docComment = _lexer.consumeDocComments();
       final memberStart = _lexer.currentStart;
       final memberId = _parseIdentifier();
+
       IntLiteralNode? value;
-      if (_lexer.currentType == TokenType.equals) {
+      if (_lexer.currentType == .equals) {
         _lexer.advance();
         value = _parseIntLiteral();
       }
+
       _optionalListSeparator();
+
       members.add(
         EnumValueNode(
           identifier: memberId,
           value: value,
           startOffset: memberStart,
           endOffset: _lexer.currentEnd,
+          docComment: docComment,
         ),
       );
     }
+
     _expect(TokenType.braceRight, "Expected '}' to close enum definition");
+
     return EnumDefinitionNode(
       identifier: identifier,
       members: members,
       startOffset: start,
       endOffset: _lexer.currentEnd,
+      docComment: docComment,
     );
   }
 
-  StructDefinitionNode _parseStructDefinition() {
+  StructDefinitionNode _parseStructDefinition(String? docComment) {
     final start = _lexer.currentStart;
-    _expect(TokenType.kwStruct, "Expected 'struct'");
+    _expect(.kwStruct, "Expected 'struct'");
     final identifier = _parseIdentifier();
-    _expect(TokenType.braceLeft, "Expected '{' after struct name");
+    _expect(.braceLeft, "Expected '{' after struct name");
     final fields = _parseFields();
-    _expect(TokenType.braceRight, "Expected '}' to close struct definition");
+    _expect(.braceRight, "Expected '}' to close struct definition");
+
     return StructDefinitionNode(
       identifier: identifier,
       fields: fields,
       startOffset: start,
       endOffset: _lexer.currentEnd,
+      docComment: docComment,
     );
   }
 
-  UnionDefinitionNode _parseUnionDefinition() {
+  UnionDefinitionNode _parseUnionDefinition(String? docComment) {
     final start = _lexer.currentStart;
-    _expect(TokenType.kwUnion, "Expected 'union'");
+    _expect(.kwUnion, "Expected 'union'");
     final identifier = _parseIdentifier();
-    _expect(TokenType.braceLeft, "Expected '{' after union name");
+    _expect(.braceLeft, "Expected '{' after union name");
     final fields = _parseFields();
-    _expect(TokenType.braceRight, "Expected '}' to close union definition");
+    _expect(.braceRight, "Expected '}' to close union definition");
+
     return UnionDefinitionNode(
       identifier: identifier,
       fields: fields,
       startOffset: start,
       endOffset: _lexer.currentEnd,
+      docComment: docComment,
     );
   }
 
-  ExceptionDefinitionNode _parseExceptionDefinition() {
+  ExceptionDefinitionNode _parseExceptionDefinition(String? docComment) {
     final start = _lexer.currentStart;
-    _expect(TokenType.kwException, "Expected 'exception'");
+    _expect(.kwException, "Expected 'exception'");
     final identifier = _parseIdentifier();
-    _expect(TokenType.braceLeft, "Expected '{' after exception name");
+    _expect(.braceLeft, "Expected '{' after exception name");
     final fields = _parseFields();
-    _expect(TokenType.braceRight, "Expected '}' to close exception definition");
+    _expect(.braceRight, "Expected '}' to close exception definition");
+
     return ExceptionDefinitionNode(
       identifier: identifier,
       fields: fields,
       startOffset: start,
       endOffset: _lexer.currentEnd,
+      docComment: docComment,
     );
   }
 
-  ServiceDefinitionNode _parseServiceDefinition() {
+  ServiceDefinitionNode _parseServiceDefinition(String? docComment) {
     final start = _lexer.currentStart;
-    _expect(TokenType.kwService, "Expected 'service'");
+    _expect(.kwService, "Expected 'service'");
     final identifier = _parseIdentifier();
 
     IdentifierNode? extendsService;
-    if (_lexer.currentType == TokenType.kwExtends) {
+    if (_lexer.currentType == .kwExtends) {
       _lexer.advance();
       extendsService = _parseIdentifier();
     }
 
-    _expect(TokenType.braceLeft, "Expected '{' after service name");
+    _expect(.braceLeft, "Expected '{' after service name");
     final methods = <MethodNode>[];
-    while (_lexer.currentType != TokenType.braceRight &&
-        _lexer.currentType != TokenType.eof) {
+    while (_lexer.currentType != .braceRight && _lexer.currentType != .eof) {
       methods.add(_parseMethod());
     }
-    _expect(TokenType.braceRight, "Expected '}' to close service definition");
+    _expect(.braceRight, "Expected '}' to close service definition");
+
     return ServiceDefinitionNode(
       identifier: identifier,
       extendsService: extendsService,
       methods: methods,
       startOffset: start,
       endOffset: _lexer.currentEnd,
+      docComment: docComment,
     );
   }
 
   List<FieldNode> _parseFields() {
     final fields = <FieldNode>[];
-    while (_lexer.currentType != TokenType.braceRight &&
-        _lexer.currentType != TokenType.eof) {
+    while (_lexer.currentType != .braceRight && _lexer.currentType != .eof) {
       fields.add(_parseField());
     }
+
     return fields;
   }
 
   FieldNode _parseField() {
+    final docComment = _lexer.consumeDocComments();
     final start = _lexer.currentStart;
     IntLiteralNode? fieldId;
     var isRequired = false;
 
     // Optional field ID
-    if (_lexer.currentType == TokenType.intLiteral) {
+    if (_lexer.currentType == .intLiteral) {
       final idNode = _parseIntLiteral();
-      if (_lexer.currentType == TokenType.colon) {
+      if (_lexer.currentType == .colon) {
         fieldId = idNode;
         _lexer.advance();
       } else {
@@ -312,25 +336,28 @@ class LakeParser {
       }
     }
 
-    if (_lexer.currentType == TokenType.kwRequired) {
-      isRequired = true;
-      _lexer.advance();
-    } else if (_lexer.currentType == TokenType.kwOptional) {
-      isRequired = false;
-      _lexer.advance();
+    switch (_lexer.currentType) {
+      case .kwRequired:
+        isRequired = true;
+        _lexer.advance();
+      case .kwOptional:
+        isRequired = false;
+        _lexer.advance();
+      case _:
+        break;
     }
 
     final type = _parseType();
 
     // Panic mode: Ensure an identifier comes after type, otherwise throw a
     //clear error
-    if (_lexer.currentType != TokenType.identifier) {
+    if (_lexer.currentType != .identifier) {
       _reportError('Expected field identifier name after its type');
     }
     final identifier = _parseIdentifier();
 
     LiteralValueNode? defaultValue;
-    if (_lexer.currentType == TokenType.equals) {
+    if (_lexer.currentType == .equals) {
       _lexer.advance();
       defaultValue = _parseLiteralValue();
     }
@@ -345,13 +372,15 @@ class LakeParser {
       defaultValue: defaultValue,
       startOffset: start,
       endOffset: _lexer.currentEnd,
+      docComment: docComment,
     );
   }
 
   MethodNode _parseMethod() {
+    final docComment = _lexer.consumeDocComments();
     final start = _lexer.currentStart;
     final TypeNode returnType;
-    if (_lexer.currentType == TokenType.kwVoid) {
+    if (_lexer.currentType == .kwVoid) {
       returnType = VoidTypeNode(
         startOffset: _lexer.currentStart,
         endOffset: _lexer.currentEnd,
@@ -363,23 +392,22 @@ class LakeParser {
 
     final identifier = _parseIdentifier();
 
-    _expect(TokenType.parenLeft, "Expected '(' for method parameters");
+    _expect(.parenLeft, "Expected '(' for method parameters");
     final parameters = <FieldNode>[];
-    while (_lexer.currentType != TokenType.parenRight &&
-        _lexer.currentType != TokenType.eof) {
+    while (_lexer.currentType != .parenRight && _lexer.currentType != .eof) {
       parameters.add(_parseField());
     }
-    _expect(TokenType.parenRight, "Expected ')' to close method parameters");
+
+    _expect(.parenRight, "Expected ')' to close method parameters");
 
     final throwsList = <FieldNode>[];
-    if (_lexer.currentType == TokenType.kwThrows) {
+    if (_lexer.currentType == .kwThrows) {
       _lexer.advance();
-      _expect(TokenType.parenLeft, "Expected '(' after throws");
-      while (_lexer.currentType != TokenType.parenRight &&
-          _lexer.currentType != TokenType.eof) {
+      _expect(.parenLeft, "Expected '(' after throws");
+      while (_lexer.currentType != .parenRight && _lexer.currentType != .eof) {
         throwsList.add(_parseField());
       }
-      _expect(TokenType.parenRight, "Expected ')' to close throws list");
+      _expect(.parenRight, "Expected ')' to close throws list");
     }
 
     _optionalListSeparator();
@@ -391,6 +419,7 @@ class LakeParser {
       throws: throwsList,
       startOffset: start,
       endOffset: _lexer.currentEnd,
+      docComment: docComment,
     );
   }
 
@@ -398,16 +427,16 @@ class LakeParser {
     final start = _lexer.currentStart;
 
     switch (_lexer.currentType) {
-      case TokenType.kwBool:
-      case TokenType.kwByte:
-      case TokenType.kwI8:
-      case TokenType.kwI16:
-      case TokenType.kwI32:
-      case TokenType.kwI64:
-      case TokenType.kwDouble:
-      case TokenType.kwString:
-      case TokenType.kwBinary:
-      case TokenType.kwUuid:
+      case .kwBool:
+      case .kwByte:
+      case .kwI8:
+      case .kwI16:
+      case .kwI32:
+      case .kwI64:
+      case .kwDouble:
+      case .kwString:
+      case .kwBinary:
+      case .kwUuid:
         final name = _lexer.getSlice();
         _lexer.advance();
         return BaseTypeNode(
@@ -416,13 +445,14 @@ class LakeParser {
           endOffset: _lexer.currentEnd,
         );
 
-      case TokenType.kwMap:
+      case .kwMap:
         _lexer.advance();
-        _expect(TokenType.angleLeft, "Expected '<' after map");
+        _expect(.angleLeft, "Expected '<' after map");
         final keyType = _parseType();
-        _expect(TokenType.comma, "Expected ',' between map types");
+        _expect(.comma, "Expected ',' between map types");
         final valueType = _parseType();
-        _expect(TokenType.angleRight, "Expected '>' to close map type");
+        _expect(.angleRight, "Expected '>' to close map type");
+
         return MapTypeNode(
           keyType: keyType,
           valueType: valueType,
@@ -430,11 +460,11 @@ class LakeParser {
           endOffset: _lexer.currentEnd,
         );
 
-      case TokenType.kwSet:
+      case .kwSet:
         _lexer.advance();
-        _expect(TokenType.angleLeft, "Expected '<' after set");
+        _expect(.angleLeft, "Expected '<' after set");
         final elementType = _parseType();
-        _expect(TokenType.angleRight, "Expected '>' to close set type");
+        _expect(.angleRight, "Expected '>' to close set type");
 
         return SetTypeNode(
           elementType: elementType,
@@ -442,11 +472,11 @@ class LakeParser {
           endOffset: _lexer.currentEnd,
         );
 
-      case TokenType.kwList:
+      case .kwList:
         _lexer.advance();
-        _expect(TokenType.angleLeft, "Expected '<' after list");
+        _expect(.angleLeft, "Expected '<' after list");
         final elementType = _parseType();
-        _expect(TokenType.angleRight, "Expected '>' to close list type");
+        _expect(.angleRight, "Expected '>' to close list type");
 
         return ListTypeNode(
           elementType: elementType,
@@ -454,11 +484,11 @@ class LakeParser {
           endOffset: _lexer.currentEnd,
         );
 
-      case TokenType.kwStream:
+      case .kwStream:
         _lexer.advance();
-        _expect(TokenType.angleLeft, "Expected '<' after stream");
+        _expect(.angleLeft, "Expected '<' after stream");
         final elementType = _parseType();
-        _expect(TokenType.angleRight, "Expected '>' to close stream type");
+        _expect(.angleRight, "Expected '>' to close stream type");
 
         return StreamTypeNode(
           elementType: elementType,
@@ -466,7 +496,7 @@ class LakeParser {
           endOffset: _lexer.currentEnd,
         );
 
-      case TokenType.identifier:
+      case .identifier:
         final name = _lexer.getSlice();
         _lexer.advance();
 
@@ -485,22 +515,22 @@ class LakeParser {
 
   LiteralValueNode _parseLiteralValue() {
     switch (_lexer.currentType) {
-      case TokenType.bracketLeft:
+      case .bracketLeft:
         return _parseListLiteral();
 
-      case TokenType.braceLeft:
+      case .braceLeft:
         return _parseMapLiteral();
 
-      case TokenType.intLiteral:
+      case .intLiteral:
         return _parseIntLiteral();
 
-      case TokenType.doubleLiteral:
+      case .doubleLiteral:
         return _parseDoubleLiteral();
 
-      case TokenType.kwTrue:
-      case TokenType.kwFalse:
+      case .kwTrue:
+      case .kwFalse:
         final start = _lexer.currentStart;
-        final val = _lexer.currentType == TokenType.kwTrue;
+        final val = _lexer.currentType == .kwTrue;
         _lexer.advance();
 
         return BoolLiteralNode(
@@ -509,10 +539,10 @@ class LakeParser {
           endOffset: _lexer.currentEnd,
         );
 
-      case TokenType.stringLiteral:
+      case .stringLiteral:
         return _parseStringLiteral();
 
-      case TokenType.identifier:
+      case .identifier:
         return _parseIdentifier();
 
       case _:
@@ -524,14 +554,15 @@ class LakeParser {
 
   ListLiteralNode _parseListLiteral() {
     final start = _lexer.currentStart;
-    _expect(TokenType.bracketLeft, "Expected '[' for list literal");
+    _expect(.bracketLeft, "Expected '[' for list literal");
+
     final elements = <LiteralValueNode>[];
-    while (_lexer.currentType != TokenType.bracketRight &&
-        _lexer.currentType != TokenType.eof) {
+    while (_lexer.currentType != .bracketRight && _lexer.currentType != .eof) {
       elements.add(_parseLiteralValue());
       _optionalListSeparator();
     }
-    _expect(TokenType.bracketRight, "Expected ']' to close list literal");
+
+    _expect(.bracketRight, "Expected ']' to close list literal");
 
     return ListLiteralNode(
       elements: elements,
@@ -542,17 +573,20 @@ class LakeParser {
 
   MapLiteralNode _parseMapLiteral() {
     final start = _lexer.currentStart;
-    _expect(TokenType.braceLeft, "Expected '{' for map literal");
+    _expect(.braceLeft, "Expected '{' for map literal");
+
     final entries = <MapLiteralEntry>[];
-    while (_lexer.currentType != TokenType.braceRight &&
-        _lexer.currentType != TokenType.eof) {
+    while (_lexer.currentType != .braceRight && _lexer.currentType != .eof) {
       final key = _parseLiteralValue();
-      _expect(TokenType.colon, "Expected ':' in map literal entry");
+      _expect(.colon, "Expected ':' in map literal entry");
+
       final value = _parseLiteralValue();
       _optionalListSeparator();
       entries.add((key: key, value: value));
     }
-    _expect(TokenType.braceRight, "Expected '}' to close map literal");
+
+    _expect(.braceRight, "Expected '}' to close map literal");
+
     return MapLiteralNode(
       entries: entries,
       startOffset: start,
@@ -561,7 +595,7 @@ class LakeParser {
   }
 
   IntLiteralNode _parseIntLiteral() {
-    if (_lexer.currentType != TokenType.intLiteral) {
+    if (_lexer.currentType != .intLiteral) {
       _reportError('Expected integer literal');
     }
 
@@ -577,7 +611,7 @@ class LakeParser {
   }
 
   DoubleLiteralNode _parseDoubleLiteral() {
-    if (_lexer.currentType != TokenType.doubleLiteral) {
+    if (_lexer.currentType != .doubleLiteral) {
       _reportError('Expected double literal');
     }
 
@@ -593,7 +627,7 @@ class LakeParser {
   }
 
   StringLiteralNode _parseStringLiteral() {
-    if (_lexer.currentType != TokenType.stringLiteral) {
+    if (_lexer.currentType != .stringLiteral) {
       _reportError('Expected string literal');
     }
 
@@ -610,7 +644,7 @@ class LakeParser {
   }
 
   IdentifierNode _parseIdentifier() {
-    if (_lexer.currentType != TokenType.identifier) {
+    if (_lexer.currentType != .identifier) {
       _reportError('Expected identifier');
     }
 

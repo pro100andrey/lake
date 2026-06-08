@@ -44,6 +44,19 @@ class LakeLexer {
   var _currentEnd = 0;
   var _currentType = TokenType.eof;
 
+  final List<String> _pendingDocComments = [];
+
+  String? consumeDocComments() {
+    if (_pendingDocComments.isEmpty) {
+      return null;
+    }
+
+    final text = _pendingDocComments.join('\n');
+    _pendingDocComments.clear();
+
+    return text;
+  }
+
   void advance() {
     _skipWhitespaceAndComments();
 
@@ -194,10 +207,22 @@ class LakeLexer {
 
         // Single-line comment: //
         if (nextCodeUnit == 47 /* / */ ) {
+          var isDocComment = false;
+          if (_cursor + 2 < _input.length &&
+              _input.codeUnitAt(_cursor + 2) == 47) {
+            isDocComment = true;
+          }
+          final startComment = _cursor;
           _cursor += 2;
           while (_cursor < _input.length &&
               _input.codeUnitAt(_cursor) != 10 /* \n */ ) {
             _cursor++;
+          }
+          if (isDocComment) {
+            final commentText = _input
+                .substring(startComment + 3, _cursor)
+                .trim();
+            _pendingDocComments.add(commentText);
           }
           continue;
         }
