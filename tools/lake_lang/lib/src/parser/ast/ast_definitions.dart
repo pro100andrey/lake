@@ -7,9 +7,11 @@ final class DocumentNode extends AstNode {
     required super.startOffset,
     required super.endOffset,
   });
-  
   final List<HeaderNode> headers;
   final List<DefinitionNode> definitions;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitDocumentNode(this);
 }
 
 sealed class HeaderNode extends AstNode {
@@ -22,8 +24,10 @@ final class ImportNode extends HeaderNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final StringLiteralNode path;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitImportNode(this);
 }
 
 final class NamespaceNode extends HeaderNode {
@@ -33,9 +37,11 @@ final class NamespaceNode extends HeaderNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final IdentifierNode scope;
   final IdentifierNode identifier;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitNamespaceNode(this);
 }
 
 sealed class DefinitionNode extends AstNode {
@@ -50,10 +56,12 @@ final class ConstDefinitionNode extends DefinitionNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final TypeNode type;
   final IdentifierNode identifier;
   final LiteralValueNode value;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitConstDefinitionNode(this);
 }
 
 final class TypedefDefinitionNode extends DefinitionNode {
@@ -63,9 +71,12 @@ final class TypedefDefinitionNode extends DefinitionNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final TypeNode type;
   final IdentifierNode identifier;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) =>
+      visitor.visitTypedefDefinitionNode(this);
 }
 
 final class EnumValueNode extends AstNode {
@@ -75,9 +86,11 @@ final class EnumValueNode extends AstNode {
     required super.endOffset,
     this.value,
   });
-
   final IdentifierNode identifier;
   final IntLiteralNode? value;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitEnumValueNode(this);
 }
 
 final class EnumDefinitionNode extends DefinitionNode {
@@ -87,9 +100,11 @@ final class EnumDefinitionNode extends DefinitionNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final IdentifierNode identifier;
   final List<EnumValueNode> members;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitEnumDefinitionNode(this);
 }
 
 final class FieldNode extends AstNode {
@@ -102,12 +117,14 @@ final class FieldNode extends AstNode {
     this.fieldId,
     this.defaultValue,
   });
-
   final IntLiteralNode? fieldId;
   final bool isRequired;
   final TypeNode type;
   final IdentifierNode identifier;
   final LiteralValueNode? defaultValue;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitFieldNode(this);
 }
 
 final class StructDefinitionNode extends DefinitionNode {
@@ -117,9 +134,11 @@ final class StructDefinitionNode extends DefinitionNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final IdentifierNode identifier;
   final List<FieldNode> fields;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitStructDefinitionNode(this);
 }
 
 final class UnionDefinitionNode extends DefinitionNode {
@@ -129,9 +148,11 @@ final class UnionDefinitionNode extends DefinitionNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final IdentifierNode identifier;
   final List<FieldNode> fields;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitUnionDefinitionNode(this);
 }
 
 final class ExceptionDefinitionNode extends DefinitionNode {
@@ -141,9 +162,12 @@ final class ExceptionDefinitionNode extends DefinitionNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final IdentifierNode identifier;
   final List<FieldNode> fields;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) =>
+      visitor.visitExceptionDefinitionNode(this);
 }
 
 final class MethodNode extends AstNode {
@@ -155,11 +179,13 @@ final class MethodNode extends AstNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final TypeNode returnType;
   final IdentifierNode identifier;
   final List<FieldNode> parameters;
   final List<FieldNode> throws;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitMethodNode(this);
 }
 
 final class ServiceDefinitionNode extends DefinitionNode {
@@ -170,8 +196,11 @@ final class ServiceDefinitionNode extends DefinitionNode {
     required super.endOffset,
     this.extendsService,
   });
-
   final IdentifierNode identifier;
   final IdentifierNode? extendsService;
   final List<MethodNode> methods;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) =>
+      visitor.visitServiceDefinitionNode(this);
 }

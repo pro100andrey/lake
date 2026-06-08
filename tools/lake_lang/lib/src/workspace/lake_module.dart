@@ -1,6 +1,6 @@
 import '../parser/ast/ast_base.dart';
 
-/// Represents a compiled Lake file with its resolved AST and immediate 
+/// Represents a compiled Lake file with its resolved AST and immediate
 /// dependencies.
 class LakeModule {
   LakeModule({

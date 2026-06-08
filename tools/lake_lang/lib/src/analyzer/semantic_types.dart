@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../ast/nodes/ast_nodes.dart';
+import '../parser/ast/ast_base.dart';
 
 sealed class SemanticType extends Equatable {
   const SemanticType(this.name);
@@ -194,7 +194,7 @@ final class VoidType extends SemanticType {
 }
 
 final class StructType extends SemanticType {
-  StructType(this.declaration) : super(declaration.identifier.value);
+  StructType(this.declaration) : super(declaration.identifier.name);
 
   final StructDefinitionNode declaration;
 
@@ -213,12 +213,12 @@ final class StructType extends SemanticType {
 
     // For now, we assume struct types are not assignable to each other
     // unless they are the same type.
-    return declaration.identifier.value == other.declaration.identifier.value;
+    return declaration.identifier.name == other.declaration.identifier.name;
   }
 }
 
 final class UnionType extends SemanticType {
-  UnionType(this.declaration) : super(declaration.identifier.value);
+  UnionType(this.declaration) : super(declaration.identifier.name);
 
   final UnionDefinitionNode declaration;
 
@@ -237,12 +237,12 @@ final class UnionType extends SemanticType {
 
     // For now, we assume union types are not assignable to each other
     // unless they are the same type.
-    return declaration.identifier.value == other.declaration.identifier.value;
+    return declaration.identifier.name == other.declaration.identifier.name;
   }
 }
 
 final class EnumType extends SemanticType {
-  EnumType(this.declaration) : super(declaration.identifier.value);
+  EnumType(this.declaration) : super(declaration.identifier.name);
 
   final EnumDefinitionNode declaration;
 
@@ -261,7 +261,7 @@ final class EnumType extends SemanticType {
 
     // For now, we assume enum types are not assignable to each other
     // unless they are the same type.
-    return declaration.identifier.value == other.declaration.identifier.value;
+    return declaration.identifier.name == other.declaration.identifier.name;
   }
 }
 
@@ -290,7 +290,7 @@ final class LazyBox<T extends SemanticType> {
 final class TypedefType extends SemanticType {
   TypedefType(this.declaration)
     : _targetType = LazyBox(),
-      super(declaration.identifier.value);
+      super(declaration.identifier.name);
 
   final TypedefDefinitionNode declaration;
 
@@ -311,7 +311,7 @@ final class TypedefType extends SemanticType {
 }
 
 final class ServiceType extends SemanticType {
-  ServiceType(this.declaration) : super(declaration.identifier.value);
+  ServiceType(this.declaration) : super(declaration.identifier.name);
 
   final ServiceDefinitionNode declaration;
 
@@ -330,12 +330,12 @@ final class ServiceType extends SemanticType {
 
     // For now, we assume service types are not assignable to each other
     // unless they are the same type.
-    return declaration.identifier.value == other.declaration.identifier.value;
+    return declaration.identifier.name == other.declaration.identifier.name;
   }
 }
 
 final class ExceptionType extends SemanticType {
-  ExceptionType(this.declaration) : super(declaration.identifier.value);
+  ExceptionType(this.declaration) : super(declaration.identifier.name);
 
   final ExceptionDefinitionNode declaration;
 
@@ -354,6 +354,6 @@ final class ExceptionType extends SemanticType {
 
     // For now, we assume exception types are not assignable to each other
     // unless they are the same type.
-    return declaration.identifier.value == other.declaration.identifier.value;
+    return declaration.identifier.name == other.declaration.identifier.name;
   }
 }

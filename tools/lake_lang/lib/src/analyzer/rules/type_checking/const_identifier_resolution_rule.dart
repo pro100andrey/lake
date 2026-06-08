@@ -1,4 +1,4 @@
-import '../../../ast/nodes/ast_nodes.dart';
+import '../../../parser/ast/ast_base.dart';
 import '../../errors/error_reporter.dart';
 import '../../symbols/symbol_table.dart';
 import '../../utils.dart';
@@ -24,7 +24,7 @@ final class ConstIdentifierResolutionRule
 
       // 1. Resolve the identifier in the symbol table
       final symbolEntry = symbolTable.lookup(
-        identifierNode.value,
+        identifierNode.name,
         identifierNode.span,
       );
 
@@ -43,7 +43,7 @@ final class ConstIdentifierResolutionRule
         reporter.reportGeneric(
           message:
               'Could not determine type of constant identifier '
-              "'${identifierNode.value}'.",
+              "'${identifierNode.name}'.",
           span: identifierNode.span,
         );
         return;

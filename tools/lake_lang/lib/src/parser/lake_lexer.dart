@@ -74,7 +74,7 @@ class LakeLexer {
           _input.codeUnitAt(_cursor) != codeUnit) {
         _cursor++;
       }
-      
+
       if (_cursor < _input.length) {
         _cursor++; // Consume closing quote
       }

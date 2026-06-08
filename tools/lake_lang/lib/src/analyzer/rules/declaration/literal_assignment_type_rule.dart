@@ -1,4 +1,4 @@
-import '../../../ast/nodes/ast_nodes.dart';
+import '../../../parser/ast/ast_base.dart';
 import '../../errors/error_reporter.dart';
 import '../base_rule.dart';
 import '../utils.dart';
@@ -15,15 +15,15 @@ final class _BaseTypeRule extends BaseRule<ConstDefinitionNode> {
   @override
   void check(ConstDefinitionNode node) {
     if ((node.type, node.value) case (
-      BaseTypeNode(value: final constTypeName),
-      LiteralValueNode(:final valueKind, :final valueType, :final span),
+      BaseTypeNode(name: final constTypeName),
+      LiteralValueNode(:final span),
     )) {
       if (!isLiteralValueCompatibleWithBaseType(constTypeName, node.value)) {
         reporter.reportLiteralValueCannotBeAssigned(
           literalTypeName: constTypeName,
-          valueKindName: valueKind,
+          valueKindName: 'literal',
           valueSpan: span,
-          valueTypeName: valueType,
+          valueTypeName: node.value.runtimeType.toString(),
           literalTypeSpan: node.type.span,
         );
       }
@@ -46,7 +46,7 @@ final class _ListTypeRule extends BaseRule<ConstDefinitionNode> {
       ListTypeNode(:final elementType),
       ListLiteralNode(:final elements),
     )) {
-      if (elementType case BaseTypeNode(value: final expectedType)) {
+      if (elementType case BaseTypeNode(name: final expectedType)) {
         for (final element in elements) {
           if (element is IdentifierNode) {
             // Skip identifiers in list literal elements for now.
@@ -59,7 +59,7 @@ final class _ListTypeRule extends BaseRule<ConstDefinitionNode> {
               // (e.g., 'i32')
               expectedType: expectedType,
               // (e.g., 'integer', 'string', etc.)
-              actualType: element.valueType,
+              actualType: element.runtimeType.toString(),
               span: element.span,
             );
           }
@@ -90,7 +90,7 @@ final class _MapTypeRule extends BaseRule<ConstDefinitionNode> {
         )) {
           reporter.reportMapValueTypeMismatch(
             expectedType: getTypeName(keyType),
-            actualType: entry.key.valueType,
+            actualType: entry.key.runtimeType.toString(),
             span: entry.key.span,
           );
         }
@@ -101,7 +101,7 @@ final class _MapTypeRule extends BaseRule<ConstDefinitionNode> {
         )) {
           reporter.reportMapValueTypeMismatch(
             expectedType: getTypeName(valueType),
-            actualType: entry.value.valueType,
+            actualType: entry.value.runtimeType.toString(),
             span: entry.value.span,
           );
         }

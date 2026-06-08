@@ -12,8 +12,10 @@ final class BaseTypeNode extends TypeNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final String name;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitBaseTypeNode(this);
 }
 
 sealed class ContainerTypeNode extends TypeNode {
@@ -30,9 +32,11 @@ final class MapTypeNode extends ContainerTypeNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final TypeNode keyType;
   final TypeNode valueType;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitMapTypeNode(this);
 }
 
 final class SetTypeNode extends ContainerTypeNode {
@@ -41,8 +45,10 @@ final class SetTypeNode extends ContainerTypeNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final TypeNode elementType;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitSetTypeNode(this);
 }
 
 final class ListTypeNode extends ContainerTypeNode {
@@ -51,8 +57,10 @@ final class ListTypeNode extends ContainerTypeNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final TypeNode elementType;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitListTypeNode(this);
 }
 
 final class StreamTypeNode extends TypeNode {
@@ -61,8 +69,10 @@ final class StreamTypeNode extends TypeNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final TypeNode elementType;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitStreamTypeNode(this);
 }
 
 final class CustomTypeNode extends TypeNode {
@@ -71,12 +81,17 @@ final class CustomTypeNode extends TypeNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final String name;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitCustomTypeNode(this);
 }
 
 final class VoidTypeNode extends TypeNode {
   const VoidTypeNode({required super.startOffset, required super.endOffset});
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitVoidTypeNode(this);
 }
 
 // --- LITERALS & EXPRESSIONS ---
@@ -94,8 +109,10 @@ final class IntLiteralNode extends LiteralValueNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final int value;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitIntLiteralNode(this);
 }
 
 final class DoubleLiteralNode extends LiteralValueNode {
@@ -104,8 +121,10 @@ final class DoubleLiteralNode extends LiteralValueNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final double value;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitDoubleLiteralNode(this);
 }
 
 final class BoolLiteralNode extends LiteralValueNode {
@@ -114,8 +133,10 @@ final class BoolLiteralNode extends LiteralValueNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final bool value;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitBoolLiteralNode(this);
 }
 
 final class StringLiteralNode extends LiteralValueNode {
@@ -124,8 +145,10 @@ final class StringLiteralNode extends LiteralValueNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final String value;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitStringLiteralNode(this);
 }
 
 final class IdentifierNode extends LiteralValueNode {
@@ -134,8 +157,10 @@ final class IdentifierNode extends LiteralValueNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final String name;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitIdentifierNode(this);
 }
 
 final class ListLiteralNode extends LiteralValueNode {
@@ -144,8 +169,10 @@ final class ListLiteralNode extends LiteralValueNode {
     required super.startOffset,
     required super.endOffset,
   });
-
   final List<LiteralValueNode> elements;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitListLiteralNode(this);
 }
 
 typedef MapLiteralEntry = ({LiteralValueNode key, LiteralValueNode value});
@@ -156,6 +183,8 @@ final class MapLiteralNode extends LiteralValueNode {
     required super.startOffset,
     required super.endOffset,
   });
-  
   final List<MapLiteralEntry> entries;
+
+  @override
+  T accept<T>(AstVisitor<T> visitor) => visitor.visitMapLiteralNode(this);
 }

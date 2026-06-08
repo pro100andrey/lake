@@ -1,5 +1,5 @@
-import '../../ast/base/types.dart';
-import '../../ast/nodes/ast_nodes.dart';
+import 'package:source_span/source_span.dart';
+import '../../parser/ast/ast_base.dart';
 import '../errors/error_reporter.dart';
 import '../semantic_types.dart';
 import 'symbol_entry.dart';
@@ -14,7 +14,7 @@ class Scope {
     required String name,
     required SymbolKind kind,
     required AstNode declaration,
-    required Span span,
+    required SourceSpan span,
     required ErrorReporter reporter,
     SemanticType? resolvedType,
   }) {
@@ -70,7 +70,7 @@ class SymbolTable {
     if (_currentScope?.parent == null) {
       _errorReporter.reportGeneric(
         message: 'Cannot pop the global scope.',
-        span: (start: 0, end: 0),
+        span: SourceSpan(SourceLocation(0), SourceLocation(0), ''),
       );
       return;
     }
@@ -82,7 +82,7 @@ class SymbolTable {
     required String name,
     required SymbolKind kind,
     required AstNode declaration,
-    required Span span,
+    required SourceSpan span,
     required SemanticType? resolvedType,
   }) {
     if (_currentScope == null) {
@@ -105,7 +105,7 @@ class SymbolTable {
     );
   }
 
-  SymbolEntry? lookup(String name, Span span) {
+  SymbolEntry? lookup(String name, SourceSpan span) {
     if (_currentScope == null) {
       _errorReporter.reportGeneric(
         message:

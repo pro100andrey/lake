@@ -532,7 +532,7 @@ class LakeParser {
       _optionalListSeparator();
     }
     _expect(TokenType.bracketRight, "Expected ']' to close list literal");
-    
+
     return ListLiteralNode(
       elements: elements,
       startOffset: start,

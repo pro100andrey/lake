@@ -1,7 +1,7 @@
 import 'package:source_span/source_span.dart';
 
+import '../../parser/ast/ast_base.dart';
 import '../ast_visitor.dart';
-import '../nodes/ast_nodes.dart';
 
 /// An AST visitor that pretty-prints the Lake AST.
 class AstPrettyPrinterVisitor implements AstVisitor<void> {
@@ -58,7 +58,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
         .map((e) => '${e.key}: ${e.value}')
         .join(', ');
 
-    final span = _sourceFile.span(node.span.start, node.span.end);
+    final span = _sourceFile.span(node.startOffset, node.endOffset);
     final location = ' [${span.start.line + 1}:${span.start.column + 1}]';
 
     _writeResult('$nodeName${propsStr != null ? '($propsStr)' : ''}$location');
@@ -195,17 +195,10 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
   }
 
   @override
-  void visitFieldRequirementNode(FieldRequirementNode node) {
-    _printNode(node, {'value': node.value});
-  }
-
-  @override
   void visitFieldNode(FieldNode node) {
     _printNode(node);
 
     _visitChildren([
-      ?node.fieldId,
-      ?node.requirement,
       node.type,
       node.identifier,
       ?node.defaultValue,
@@ -235,7 +228,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
 
   @override
   void visitBaseTypeNode(BaseTypeNode node) {
-    _printNode(node, {'value': node.value});
+    _printNode(node, {'name': node.name});
   }
 
   @override
@@ -266,7 +259,7 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
 
   @override
   void visitCustomTypeNode(CustomTypeNode node) {
-    _printNode(node, {'value': node.value});
+    _printNode(node, {'name': node.name});
   }
 
   @override
@@ -278,27 +271,27 @@ class AstPrettyPrinterVisitor implements AstVisitor<void> {
 
   @override
   void visitIntLiteralNode(IntLiteralNode node) {
-    _printNode(node, {'value': node.value, 'rawValue': node.rawValue});
+    _printNode(node, {'value': node.value});
   }
 
   @override
   void visitDoubleLiteralNode(DoubleLiteralNode node) {
-    _printNode(node, {'value': node.value, 'rawValue': node.rawValue});
+    _printNode(node, {'value': node.value});
   }
 
   @override
   void visitBoolLiteralNode(BoolLiteralNode node) {
-    _printNode(node, {'value': node.value, 'rawValue': node.rawValue});
+    _printNode(node, {'value': node.value});
   }
 
   @override
   void visitStringLiteralNode(StringLiteralNode node) {
-    _printNode(node, {'value': node.value, 'rawValue': node.rawValue});
+    _printNode(node, {'value': node.value});
   }
 
   @override
   void visitIdentifierNode(IdentifierNode node) {
-    _printNode(node, {'value': node.value});
+    _printNode(node, {'name': node.name});
   }
 
   @override

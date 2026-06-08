@@ -61,8 +61,8 @@ final class ErrorReporter {
 
     for (final diag in _diagnostics) {
       final diagSpan = sourceFile.span(
-        diag.span.start,
-        diag.span.end,
+        diag.span.start.offset,
+        diag.span.end.offset,
       );
 
       final codeText = diag.code != null ? ' [${diag.code!.id}]' : '';
@@ -75,8 +75,8 @@ final class ErrorReporter {
 
       for (final (:span, :message) in diag.labels) {
         final labelSpan = sourceFile.span(
-          span.start,
-          span.end,
+          span.start.offset,
+          span.end.offset,
         );
 
         print(
@@ -124,7 +124,7 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// [DiagnosticCode].
   void reportGeneric({
     required String message,
-    required Span span,
+    required SourceSpan span,
     DiagnosticSeverity severity = DiagnosticSeverity.error,
     DiagnosticCode? code,
     List<DiagnosticLabel> labels = const [],
@@ -149,7 +149,7 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// - Parameters:
   ///   - [name]: The name of the undefined symbol.
   ///   - [span]: The [Span] where the undefined symbol was encountered.
-  void reportUndefinedSymbol({required String name, required Span span}) {
+  void reportUndefinedSymbol({required String name, required SourceSpan span}) {
     report(UndefinedSymbolDiagnostic(name: name, span: span));
   }
 
@@ -165,8 +165,8 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// location of the original declaration, providing helpful context.
   void reportDuplicateDeclaration({
     required String name,
-    required Span span,
-    required Span previousDeclarationSpan,
+    required SourceSpan span,
+    required SourceSpan previousDeclarationSpan,
   }) {
     report(
       DuplicateDeclarationDiagnostic(
@@ -183,7 +183,7 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// members.
   ///
   /// - Parameter [span]: The [Span] of the empty enum definition.
-  void reportEmptyEnumDefinition({required Span span}) {
+  void reportEmptyEnumDefinition({required SourceSpan span}) {
     report(EmptyEnumDefinitionDiagnostic(span: span));
   }
 
@@ -193,7 +193,7 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// fields.
   ///
   /// - Parameter [span]: The [Span] of the empty struct definition.
-  void reportEmptyStructDefinition({required Span span}) {
+  void reportEmptyStructDefinition({required SourceSpan span}) {
     report(EmptyStructDefinitionDiagnostic(span: span));
   }
 
@@ -214,8 +214,8 @@ extension ErrorReporterGenericExtension on ErrorReporter {
     required String valueTypeName,
     required String valueKindName,
     required String literalTypeName,
-    required Span valueSpan,
-    Span? literalTypeSpan,
+    required SourceSpan valueSpan,
+    SourceSpan? literalTypeSpan,
   }) {
     report(
       LiteralValueCannotBeAssignedDiagnostic(
@@ -240,7 +240,7 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   void reportListElementTypeMismatch({
     required String expectedType,
     required String actualType,
-    required Span span,
+    required SourceSpan span,
   }) {
     report(
       ListElementTypeMismatchDiagnostic(
@@ -261,7 +261,7 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   ///   - [span]: The [Span] where the keyword was used as an identifier.
   void reportKeywordAsIdentifier({
     required String identifier,
-    required Span span,
+    required SourceSpan span,
   }) {
     report(KeywordAsIdentifierDiagnostic(identifier: identifier, span: span));
   }
@@ -278,7 +278,7 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   ///     encountered.
   void reportUnsupportedListElementType({
     required String elementType,
-    required Span span,
+    required SourceSpan span,
   }) {
     report(
       UnsupportedListElementTypeDiagnostic(
@@ -300,7 +300,7 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   void reportMapKeyTypeMismatch({
     required String expectedType,
     required String actualType,
-    required Span span,
+    required SourceSpan span,
   }) {
     report(
       MapKeyTypeMismatchDiagnostic(
@@ -323,7 +323,7 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   void reportMapValueTypeMismatch({
     required String expectedType,
     required String actualType,
-    required Span span,
+    required SourceSpan span,
   }) {
     report(
       MapValueTypeMismatchDiagnostic(
@@ -346,7 +346,7 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   ///   - [span]: The [Span] where the error was detected.
   void reportRequiredFieldCannotHaveDefaultValue({
     required String fieldName,
-    required Span span,
+    required SourceSpan span,
   }) {
     report(
       RequiredFieldCannotHaveDefaultValueDiagnostic(

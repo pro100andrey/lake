@@ -1,4 +1,4 @@
-import 'package:lake_lang/src/ast/nodes/ast_nodes.dart';
+import 'package:lake_lang/src/parser/ast/ast_base.dart';
 import 'package:test/test.dart';
 
 import '../_ast_helpers.dart';
@@ -24,25 +24,25 @@ void main() {
 
     test('should correctly parse first namespace header (dart core_utils)', () {
       final namespace = ast.headers[1].cast<NamespaceNode>();
-      expect(namespace.scope.value, 'dart');
-      expect(namespace.identifier.value, 'core_utils');
+      expect(namespace.scope.name, 'dart');
+      expect(namespace.identifier.name, 'core_utils');
     });
 
     test(
       'should correctly parse second namespace header (js web_components)',
       () {
         final namespace = ast.headers[2].cast<NamespaceNode>();
-        expect(namespace.scope.value, 'js');
-        expect(namespace.identifier.value, 'web_components');
+        expect(namespace.scope.name, 'js');
+        expect(namespace.identifier.name, 'web_components');
       },
     );
 
     test('should parse i32 MAX_USERS constant', () {
       final constant = ast.definitions[0].cast<ConstDefinitionNode>();
       final type = constant.type.cast<BaseTypeNode>();
-      expect(type.value, 'i32');
+      expect(type.name, 'i32');
 
-      expect(constant.identifier.value, 'MAX_USERS');
+      expect(constant.identifier.name, 'MAX_USERS');
 
       final literal = constant.value.cast<IntLiteralNode>();
       expect(literal.value, 1000);
@@ -51,9 +51,9 @@ void main() {
     test('should parse string ADMIN_EMAIL constant', () {
       final constant = ast.definitions[1].cast<ConstDefinitionNode>();
       final type = constant.type.cast<BaseTypeNode>();
-      expect(type.value, 'string');
+      expect(type.name, 'string');
 
-      expect(constant.identifier.value, 'ADMIN_EMAIL');
+      expect(constant.identifier.name, 'ADMIN_EMAIL');
 
       final literal = constant.value.cast<StringLiteralNode>();
       expect(literal.value, 'admin@example.com');
@@ -62,9 +62,9 @@ void main() {
     test('should parse bool DEBUG_MODE constant', () {
       final constant = ast.definitions[2].cast<ConstDefinitionNode>();
       final type = constant.type.cast<BaseTypeNode>();
-      expect(type.value, 'bool');
+      expect(type.name, 'bool');
 
-      expect(constant.identifier.value, 'DEBUG_MODE');
+      expect(constant.identifier.name, 'DEBUG_MODE');
 
       final literal = constant.value.cast<BoolLiteralNode>();
       expect(literal.value, true);
@@ -73,9 +73,9 @@ void main() {
     test('should parse double PI constant', () {
       final constant = ast.definitions[3].cast<ConstDefinitionNode>();
       final type = constant.type.cast<BaseTypeNode>();
-      expect(type.value, 'double');
+      expect(type.name, 'double');
 
-      expect(constant.identifier.value, 'PI');
+      expect(constant.identifier.name, 'PI');
 
       final literal = constant.value.cast<DoubleLiteralNode>();
       expect(literal.value, 3.14159);
@@ -84,9 +84,9 @@ void main() {
     test('should parse binary EMPTY_BINARY constant', () {
       final constant = ast.definitions[4].cast<ConstDefinitionNode>();
       final type = constant.type.cast<BaseTypeNode>();
-      expect(type.value, 'binary');
+      expect(type.name, 'binary');
 
-      expect(constant.identifier.value, 'EMPTY_BINARY');
+      expect(constant.identifier.name, 'EMPTY_BINARY');
 
       final literal = constant.value.cast<StringLiteralNode>();
       expect(literal.value, '');
@@ -95,9 +95,9 @@ void main() {
     test('should parse uuid API_KEY_UUID constant', () {
       final constant = ast.definitions[5].cast<ConstDefinitionNode>();
       final type = constant.type.cast<BaseTypeNode>();
-      expect(type.value, 'uuid');
+      expect(type.name, 'uuid');
 
-      expect(constant.identifier.value, 'API_KEY_UUID');
+      expect(constant.identifier.name, 'API_KEY_UUID');
 
       final literal = constant.value.cast<StringLiteralNode>();
       expect(literal.value, 'a1b2c3d4-e5f6-7890-1234-567890abcdef');
@@ -108,9 +108,9 @@ void main() {
       final type = constant.type.cast<ListTypeNode>();
 
       final elementType = type.elementType.cast<BaseTypeNode>();
-      expect(elementType.value, 'i32');
+      expect(elementType.name, 'i32');
 
-      expect(constant.identifier.value, 'PRIME_NUMBERS');
+      expect(constant.identifier.name, 'PRIME_NUMBERS');
 
       final value = constant.value.cast<ListLiteralNode>();
       final elements = value.elements.cast<IntLiteralNode>();
@@ -136,9 +136,9 @@ void main() {
       final type = constant.type.cast<ListTypeNode>();
 
       final elementType = type.elementType.cast<BaseTypeNode>();
-      expect(elementType.value, 'string');
+      expect(elementType.name, 'string');
 
-      expect(constant.identifier.value, 'GREETINGS');
+      expect(constant.identifier.name, 'GREETINGS');
 
       final value = constant.value.cast<ListLiteralNode>();
       final elements = value.elements.cast<StringLiteralNode>();
@@ -157,9 +157,9 @@ void main() {
       final type = constant.type.cast<ListTypeNode>();
 
       final elementType = type.elementType.cast<BaseTypeNode>();
-      expect(elementType.value, 'bool');
+      expect(elementType.name, 'bool');
 
-      expect(constant.identifier.value, 'BOOLEAN_FLAGS');
+      expect(constant.identifier.name, 'BOOLEAN_FLAGS');
 
       final value = constant.value.cast<ListLiteralNode>();
       final elements = value.elements.cast<BoolLiteralNode>();
@@ -176,9 +176,9 @@ void main() {
       final type = constant.type.cast<ListTypeNode>();
 
       final innerListType = type.elementType.cast<ListTypeNode>();
-      expect(innerListType.elementType.cast<BaseTypeNode>().value, 'i32');
+      expect(innerListType.elementType.cast<BaseTypeNode>().name, 'i32');
 
-      expect(constant.identifier.value, 'NESTED_LIST');
+      expect(constant.identifier.name, 'NESTED_LIST');
 
       final value = constant.value.cast<ListLiteralNode>();
       final elements = value.elements.cast<ListLiteralNode>();
@@ -204,10 +204,10 @@ void main() {
       final constant = ast.definitions[10].cast<ConstDefinitionNode>();
       final type = constant.type.cast<MapTypeNode>();
 
-      expect(type.keyType.cast<BaseTypeNode>().value, 'string');
-      expect(type.valueType.cast<BaseTypeNode>().value, 'i32');
+      expect(type.keyType.cast<BaseTypeNode>().name, 'string');
+      expect(type.valueType.cast<BaseTypeNode>().name, 'i32');
 
-      expect(constant.identifier.value, 'HTTP_STATUS_CODES');
+      expect(constant.identifier.name, 'HTTP_STATUS_CODES');
 
       final value = constant.value.cast<MapLiteralNode>();
 
@@ -229,10 +229,10 @@ void main() {
       final constant = ast.definitions[11].cast<ConstDefinitionNode>();
       final type = constant.type.cast<MapTypeNode>();
 
-      expect(type.keyType.cast<BaseTypeNode>().value, 'i32');
-      expect(type.valueType.cast<BaseTypeNode>().value, 'string');
+      expect(type.keyType.cast<BaseTypeNode>().name, 'i32');
+      expect(type.valueType.cast<BaseTypeNode>().name, 'string');
 
-      expect(constant.identifier.value, 'ERROR_MESSAGES');
+      expect(constant.identifier.name, 'ERROR_MESSAGES');
 
       final value = constant.value.cast<MapLiteralNode>();
       final entries = value.entries
@@ -251,13 +251,13 @@ void main() {
       final constant = ast.definitions[12].cast<ConstDefinitionNode>();
       final type = constant.type.cast<MapTypeNode>();
 
-      expect(type.keyType.cast<BaseTypeNode>().value, 'string');
+      expect(type.keyType.cast<BaseTypeNode>().name, 'string');
 
       final listType = type.valueType.cast<ListTypeNode>();
       final elementType = listType.elementType.cast<BaseTypeNode>();
-      expect(elementType.value, 'string');
+      expect(elementType.name, 'string');
 
-      expect(constant.identifier.value, 'USER_ROLES');
+      expect(constant.identifier.name, 'USER_ROLES');
 
       final value = constant.value.cast<MapLiteralNode>();
       final entries = value.entries
@@ -288,26 +288,26 @@ void main() {
 
     test('should parse Timestamp typedef', () {
       final typedefDef = ast.definitions[13].cast<TypedefDefinitionNode>();
-      expect(typedefDef.identifier.value, 'Timestamp');
+      expect(typedefDef.identifier.name, 'Timestamp');
 
       final type = typedefDef.type.cast<BaseTypeNode>();
-      expect(type.value, 'i64');
+      expect(type.name, 'i64');
     });
 
     test('should parse StringMap typedef', () {
       final typedefDef = ast.definitions[14].cast<TypedefDefinitionNode>();
-      expect(typedefDef.identifier.value, 'StringMap');
+      expect(typedefDef.identifier.name, 'StringMap');
 
       final mapType = typedefDef.type.cast<MapTypeNode>();
       final keyType = mapType.keyType.cast<BaseTypeNode>();
       final valueType = mapType.valueType.cast<BaseTypeNode>();
-      expect(keyType.value, 'string');
-      expect(valueType.value, 'string');
+      expect(keyType.name, 'string');
+      expect(valueType.name, 'string');
     });
 
     test('should parse LogLevel enum definition', () {
       final enumDef = ast.definitions[15].cast<EnumDefinitionNode>();
-      expect(enumDef.identifier.value, 'LogLevel');
+      expect(enumDef.identifier.name, 'LogLevel');
 
       final [
         EnumValueNode member1,
@@ -315,33 +315,33 @@ void main() {
         EnumValueNode member3,
       ] = enumDef.members;
 
-      expect(member1.identifier.value, 'INFO');
+      expect(member1.identifier.name, 'INFO');
       expect(member1.value, isNull);
 
-      expect(member2.identifier.value, 'WARNING');
+      expect(member2.identifier.name, 'WARNING');
       expect(member2.value!.value, 1);
 
-      expect(member3.identifier.value, 'ERROR');
+      expect(member3.identifier.name, 'ERROR');
       expect(member3.value, isNull);
     });
 
     test('should parse Point struct definition', () {
       final structDef = ast.definitions[16].cast<StructDefinitionNode>();
-      expect(structDef.identifier.value, 'Point');
+      expect(structDef.identifier.name, 'Point');
 
       final [FieldNode field1, FieldNode field2] = structDef.fields;
 
       expect(field1.fieldId!.value, 1);
-      expect(field1.type.cast<BaseTypeNode>().value, 'i32');
-      expect(field1.identifier.value, 'x');
+      expect(field1.type.cast<BaseTypeNode>().name, 'i32');
+      expect(field1.identifier.name, 'x');
 
-      expect(field2.type.cast<BaseTypeNode>().value, 'i32');
-      expect(field2.identifier.value, 'y');
+      expect(field2.type.cast<BaseTypeNode>().name, 'i32');
+      expect(field2.identifier.name, 'y');
     });
 
     test('should parse UserProfile struct definition', () {
       final structDef = ast.definitions[17].cast<StructDefinitionNode>();
-      expect(structDef.identifier.value, 'UserProfile');
+      expect(structDef.identifier.name, 'UserProfile');
 
       final [
         FieldNode f1,
@@ -356,15 +356,15 @@ void main() {
       // 1: required string username;
       expect(f1.fieldId!.value, 1);
       expect(f1.isRequired, isTrue);
-      expect(f1.type.cast<BaseTypeNode>().value, 'string');
-      expect(f1.identifier.value, 'username');
+      expect(f1.type.cast<BaseTypeNode>().name, 'string');
+      expect(f1.identifier.name, 'username');
 
       // 2: optional string email = "user@example.com";
       expect(f2.fieldId!.value, 2);
       expect(f2.isRequired, isFalse);
-      expect(f2.requirement!.value, 'optional');
-      expect(f2.type.cast<BaseTypeNode>().value, 'string');
-      expect(f2.identifier.value, 'email');
+      expect(f2.isRequired ? 'required' : 'optional', 'optional');
+      expect(f2.type.cast<BaseTypeNode>().name, 'string');
+      expect(f2.identifier.name, 'email');
       expect(
         f2.defaultValue!.cast<StringLiteralNode>().value,
         'user@example.com',
@@ -373,26 +373,26 @@ void main() {
       // 3: Timestamp lastLogin;
       expect(f3.fieldId!.value, 3);
       expect(f3.isRequired, isFalse);
-      expect(f3.type.cast<CustomTypeNode>().value, 'Timestamp');
-      expect(f3.identifier.value, 'lastLogin');
+      expect(f3.type.cast<CustomTypeNode>().name, 'Timestamp');
+      expect(f3.identifier.name, 'lastLogin');
 
       // 4: LogLevel currentLogLevel;
       expect(f4.fieldId!.value, 4);
-      expect(f4.type.cast<CustomTypeNode>().value, 'LogLevel');
-      expect(f4.identifier.value, 'currentLogLevel');
+      expect(f4.type.cast<CustomTypeNode>().name, 'LogLevel');
+      expect(f4.identifier.name, 'currentLogLevel');
 
       // 5: Point location;
       expect(f5.fieldId!.value, 5);
-      expect(f5.type.cast<CustomTypeNode>().value, 'Point');
-      expect(f5.identifier.value, 'location');
+      expect(f5.type.cast<CustomTypeNode>().name, 'Point');
+      expect(f5.identifier.name, 'location');
 
       // 6: list<string> interests = ["coding", "reading"];
       expect(f6.fieldId!.value, 6);
       expect(
-        f6.type.cast<ListTypeNode>().elementType.cast<BaseTypeNode>().value,
+        f6.type.cast<ListTypeNode>().elementType.cast<BaseTypeNode>().name,
         'string',
       );
-      expect(f6.identifier.value, 'interests');
+      expect(f6.identifier.name, 'interests');
 
       final [StringLiteralNode f6e1, StringLiteralNode f6e2] = f6.defaultValue!
           .cast<ListLiteralNode>()
@@ -407,53 +407,53 @@ void main() {
       final mapType = f7.type.cast<MapTypeNode>();
       expect(mapType.keyType, isA<BaseTypeNode>());
       expect(mapType.valueType, isA<BaseTypeNode>());
-      expect(f7.identifier.value, 'metadata');
+      expect(f7.identifier.name, 'metadata');
     });
 
     test('should parse AnyValue union definition', () {
       final unionDef = ast.definitions[18].cast<UnionDefinitionNode>();
-      expect(unionDef.identifier.value, 'AnyValue');
+      expect(unionDef.identifier.name, 'AnyValue');
       expect(unionDef.fields.length, 3);
 
       final [FieldNode f1, FieldNode f2, FieldNode f3] = unionDef.fields;
 
       // 1: i32 intValue;
       expect(f1.fieldId!.value, 1);
-      expect(f1.type.cast<BaseTypeNode>().value, 'i32');
-      expect(f1.identifier.value, 'intValue');
+      expect(f1.type.cast<BaseTypeNode>().name, 'i32');
+      expect(f1.identifier.name, 'intValue');
 
       // 2: string stringValue;
       expect(f2.fieldId!.value, 2);
-      expect(f2.type.cast<BaseTypeNode>().value, 'string');
-      expect(f2.identifier.value, 'stringValue');
+      expect(f2.type.cast<BaseTypeNode>().name, 'string');
+      expect(f2.identifier.name, 'stringValue');
 
       // 3: bool boolValue;
       expect(f3.fieldId!.value, 3);
-      expect(f3.type.cast<BaseTypeNode>().value, 'bool');
-      expect(f3.identifier.value, 'boolValue');
+      expect(f3.type.cast<BaseTypeNode>().name, 'bool');
+      expect(f3.identifier.name, 'boolValue');
     });
 
     test('should parse InvalidArgumentException exception definition', () {
       final exceptionDef = ast.definitions[19].cast<ExceptionDefinitionNode>();
-      expect(exceptionDef.identifier.value, 'InvalidArgumentException');
+      expect(exceptionDef.identifier.name, 'InvalidArgumentException');
       expect(exceptionDef.fields.length, 2);
 
       final [FieldNode f1, FieldNode f2] = exceptionDef.fields;
 
       // 1: string argumentName;
       expect(f1.fieldId!.value, 1);
-      expect(f1.type.cast<BaseTypeNode>().value, 'string');
-      expect(f1.identifier.value, 'argumentName');
+      expect(f1.type.cast<BaseTypeNode>().name, 'string');
+      expect(f1.identifier.name, 'argumentName');
 
       // 2: string details;
       expect(f2.fieldId!.value, 2);
-      expect(f2.type.cast<BaseTypeNode>().value, 'string');
-      expect(f2.identifier.value, 'details');
+      expect(f2.type.cast<BaseTypeNode>().name, 'string');
+      expect(f2.identifier.name, 'details');
     });
 
     test('should parse CalculatorService definition', () {
       final serviceDef = ast.definitions[20].cast<ServiceDefinitionNode>();
-      expect(serviceDef.identifier.value, 'CalculatorService');
+      expect(serviceDef.identifier.name, 'CalculatorService');
       expect(serviceDef.extendsService, isNull);
       expect(serviceDef.methods.length, 6);
 
@@ -468,101 +468,101 @@ void main() {
 
       // i32 add(1: i32 a, 2: i32 b);
 
-      expect(m1.returnType.cast<BaseTypeNode>().value, 'i32');
-      expect(m1.identifier.value, 'add');
+      expect(m1.returnType.cast<BaseTypeNode>().name, 'i32');
+      expect(m1.identifier.name, 'add');
 
       final [FieldNode m1p1, FieldNode m1p2] = m1.parameters;
 
       expect(m1p1.fieldId!.value, 1);
-      expect(m1p1.type.cast<BaseTypeNode>().value, 'i32');
-      expect(m1p1.identifier.value, 'a');
+      expect(m1p1.type.cast<BaseTypeNode>().name, 'i32');
+      expect(m1p1.identifier.name, 'a');
 
       expect(m1p2.fieldId!.value, 2);
-      expect(m1p2.type.cast<BaseTypeNode>().value, 'i32');
-      expect(m1p2.identifier.value, 'b');
+      expect(m1p2.type.cast<BaseTypeNode>().name, 'i32');
+      expect(m1p2.identifier.name, 'b');
 
       expect(m1.throws, isEmpty);
 
       // double divide(...) throws (...)
 
-      expect(m2.returnType.cast<BaseTypeNode>().value, 'double');
-      expect(m2.identifier.value, 'divide');
+      expect(m2.returnType.cast<BaseTypeNode>().name, 'double');
+      expect(m2.identifier.name, 'divide');
       expect(m2.parameters.length, 2);
 
       final [FieldNode m2p1, FieldNode m2p2] = m2.parameters;
       expect(m2p1.fieldId!.value, 1);
-      expect(m2p1.type.cast<BaseTypeNode>().value, 'double');
-      expect(m2p1.identifier.value, 'numerator');
+      expect(m2p1.type.cast<BaseTypeNode>().name, 'double');
+      expect(m2p1.identifier.name, 'numerator');
 
       expect(m2p2.fieldId!.value, 2);
-      expect(m2p2.type.cast<BaseTypeNode>().value, 'double');
-      expect(m2p2.identifier.value, 'denominator');
+      expect(m2p2.type.cast<BaseTypeNode>().name, 'double');
+      expect(m2p2.identifier.name, 'denominator');
 
       final [FieldNode m2t1] = m2.throws;
       expect(m2t1.fieldId!.value, 1);
       expect(
-        m2t1.type.cast<CustomTypeNode>().value,
+        m2t1.type.cast<CustomTypeNode>().name,
         'InvalidArgumentException',
       );
-      expect(m2t1.identifier.value, 'divideByZero');
+      expect(m2t1.identifier.name, 'divideByZero');
 
       // void sendMessage(1: string message, 2: optional string recipient);
       expect(m3.returnType, isA<VoidTypeNode>());
-      expect(m3.identifier.value, 'sendMessage');
+      expect(m3.identifier.name, 'sendMessage');
 
       final [FieldNode m3p1, FieldNode m3p2] = m3.parameters;
 
       expect(m3p1.fieldId!.value, 1);
-      expect(m3p1.type.cast<BaseTypeNode>().value, 'string');
-      expect(m3p1.identifier.value, 'message');
+      expect(m3p1.type.cast<BaseTypeNode>().name, 'string');
+      expect(m3p1.identifier.name, 'message');
 
       expect(m3p2.fieldId!.value, 2);
       expect(m3p2.isRequired, isFalse);
-      expect(m3p2.requirement!.value, 'optional');
-      expect(m3p2.type.cast<BaseTypeNode>().value, 'string');
-      expect(m3p2.identifier.value, 'recipient');
+      expect(m3p2.isRequired ? 'required' : 'optional', 'optional');
+      expect(m3p2.type.cast<BaseTypeNode>().name, 'string');
+      expect(m3p2.identifier.name, 'recipient');
       expect(m3.throws, isEmpty);
 
       // stream<string> getLogs(1: LogLevel level);
       final stream = m4.returnType.cast<StreamTypeNode>();
-      expect(stream.elementType.cast<BaseTypeNode>().value, 'string');
-      expect(m4.identifier.value, 'getLogs');
+      expect(stream.elementType.cast<BaseTypeNode>().name, 'string');
+      expect(m4.identifier.name, 'getLogs');
 
       final [FieldNode m4p1] = m4.parameters;
 
       expect(m4p1.fieldId!.value, 1);
-      expect(m4p1.type.cast<CustomTypeNode>().value, 'LogLevel');
-      expect(m4p1.identifier.value, 'level');
+      expect(m4p1.type.cast<CustomTypeNode>().name, 'LogLevel');
+      expect(m4p1.identifier.name, 'level');
       expect(m4.throws, isEmpty);
 
       // Point getPoint(1: i32 id);
-      expect(m5.returnType.cast<CustomTypeNode>().value, 'Point');
-      expect(m5.identifier.value, 'getPoint');
+      expect(m5.returnType.cast<CustomTypeNode>().name, 'Point');
+      expect(m5.identifier.name, 'getPoint');
 
       final [FieldNode m5p1] = m5.parameters;
 
       expect(m5p1.fieldId!.value, 1);
-      expect(m5p1.type.cast<BaseTypeNode>().value, 'i32');
-      expect(m5p1.identifier.value, 'id');
+      expect(m5p1.type.cast<BaseTypeNode>().name, 'i32');
+      expect(m5p1.identifier.name, 'id');
       expect(m5.throws, isEmpty);
 
       // list<i32> getPrimes(...);
       final listType = m6.returnType.cast<ListTypeNode>();
-      expect(listType.elementType.cast<BaseTypeNode>().value, 'i32');
-      expect(m6.identifier.value, 'getPrimes');
+      expect(listType.elementType.cast<BaseTypeNode>().name, 'i32');
+      expect(m6.identifier.name, 'getPrimes');
 
       final [FieldNode m6p1] = m6.parameters;
       expect(m6p1.fieldId!.value, 1);
-      expect(m6p1.type.cast<BaseTypeNode>().value, 'i32');
-      expect(m6p1.identifier.value, 'count');
+      expect(m6p1.type.cast<BaseTypeNode>().name, 'i32');
+      expect(m6p1.identifier.name, 'count');
       expect(m6.throws, isEmpty);
     });
 
     test('should parse AdminService definition', () {
       final serviceDef = ast.definitions[21].cast<ServiceDefinitionNode>();
-      expect(serviceDef.identifier.value, 'AdminService');
+      expect(serviceDef.identifier.name, 'AdminService');
       expect(serviceDef.extendsService, isNotNull);
-      expect(serviceDef.extendsService!.value, 'CalculatorService');
+      expect(serviceDef.extendsService!.name, 'CalculatorService');
       expect(serviceDef.methods.length, 3);
 
       final [
@@ -572,37 +572,37 @@ void main() {
       ] = serviceDef.methods;
 
       // bool createUser(...) throws (...);
-      expect(m1.returnType.cast<BaseTypeNode>().value, 'bool');
-      expect(m1.identifier.value, 'createUser');
+      expect(m1.returnType.cast<BaseTypeNode>().name, 'bool');
+      expect(m1.identifier.name, 'createUser');
       expect(m1.parameters.length, 1);
 
       final [FieldNode m1p1] = m1.parameters;
       expect(m1p1.fieldId!.value, 1);
-      expect(m1p1.type.cast<CustomTypeNode>().value, 'UserProfile');
-      expect(m1p1.identifier.value, 'profile');
+      expect(m1p1.type.cast<CustomTypeNode>().name, 'UserProfile');
+      expect(m1p1.identifier.name, 'profile');
 
       final [FieldNode m1t1] = m1.throws;
       expect(m1t1.fieldId!.value, 1);
       expect(
-        m1t1.type.cast<CustomTypeNode>().value,
+        m1t1.type.cast<CustomTypeNode>().name,
         'InvalidArgumentException',
       );
-      expect(m1t1.identifier.value, 'invalidProfile');
+      expect(m1t1.identifier.name, 'invalidProfile');
 
       // void deleteUser(1: i32 userId);
       expect(m2.returnType, isA<VoidTypeNode>());
-      expect(m2.identifier.value, 'deleteUser');
+      expect(m2.identifier.name, 'deleteUser');
       expect(m2.parameters.length, 1);
 
       final [FieldNode m2p1] = m2.parameters;
       expect(m2p1.fieldId!.value, 1);
-      expect(m2p1.type.cast<BaseTypeNode>().value, 'i32');
-      expect(m2p1.identifier.value, 'userId');
+      expect(m2p1.type.cast<BaseTypeNode>().name, 'i32');
+      expect(m2p1.identifier.name, 'userId');
       expect(m2.throws, isEmpty);
 
       // void shutdown();
       expect(m3.returnType, isA<VoidTypeNode>());
-      expect(m3.identifier.value, 'shutdown');
+      expect(m3.identifier.name, 'shutdown');
       expect(m3.parameters, isEmpty);
       expect(m3.throws, isEmpty);
     });

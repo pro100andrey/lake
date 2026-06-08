@@ -19,7 +19,7 @@ import '../../ast/base/types.dart';
 ///   message: 'This is related to the error'
 /// );
 /// ```
-typedef DiagnosticLabel = ({Span span, String message});
+typedef DiagnosticLabel = ({SourceSpan span, String message});
 
 /// Enum defining the severity level of a diagnostic message.
 ///
@@ -41,8 +41,7 @@ enum DiagnosticSeverity {
 
   /// A fatal error that makes further compilation impossible or meaningless.
   /// Often indicates an unrecoverable state or a critical internal issue.
-  fatal('FATAL', 4)
-  ;
+  fatal('FATAL', 4);
 
   /// Private constructor for [DiagnosticSeverity]
   const DiagnosticSeverity(this.displayName, this.priority);
@@ -158,8 +157,7 @@ enum DiagnosticCode {
   requiredFieldCannotHaveDefaultValue('E1011', [
     'Remove the default value from the required field.',
     'Consider making the field optional if a default value is needed.',
-  ])
-  ;
+  ]);
 
   /// Creates a [DiagnosticCode] instance.
   ///
@@ -211,7 +209,7 @@ sealed class Diagnostic {
 
   /// The main location in the source code where the diagnostic originates.
   /// This is typically the most relevant part of the code for the issue.
-  final Span span;
+  final SourceSpan span;
 
   /// The main message describing the diagnostic.
   /// This message should be clear and concise, explaining what went wrong.
@@ -279,8 +277,8 @@ final class LiteralValueCannotBeAssignedDiagnostic extends Diagnostic {
     required String valueTypeName,
     required String valueKindName,
     required String literalTypeName,
-    required Span valueSpan,
-    Span? literalTypeSpan,
+    required SourceSpan valueSpan,
+    SourceSpan? literalTypeSpan,
   }) : super(
          span: valueSpan,
          message:
@@ -313,7 +311,7 @@ final class DuplicateDeclarationDiagnostic extends Diagnostic {
   DuplicateDeclarationDiagnostic({
     required String name,
     required super.span,
-    required Span previousDeclarationSpan,
+    required SourceSpan previousDeclarationSpan,
   }) : super(
          message: 'A symbol named "$name" is already declared in this scope.',
          code: DiagnosticCode.duplicateDeclaration,

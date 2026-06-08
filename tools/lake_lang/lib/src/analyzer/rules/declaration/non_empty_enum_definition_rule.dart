@@ -1,4 +1,4 @@
-import '../../../ast/nodes/ast_nodes.dart';
+import '../../../parser/ast/ast_base.dart';
 import '../../errors/error_reporter.dart';
 import '../base_rule.dart';
 

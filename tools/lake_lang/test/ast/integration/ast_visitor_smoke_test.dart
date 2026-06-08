@@ -55,13 +55,11 @@ void main() {
         // 1: required string name;
         FieldNode,
         IntLiteralNode,
-        FieldRequirementNode,
         BaseTypeNode,
         IdentifierNode,
         // 2: optional int age = 30;
         FieldNode,
         IntLiteralNode,
-        FieldRequirementNode,
         BaseTypeNode,
         IdentifierNode,
         IntLiteralNode,

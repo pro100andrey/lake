@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
 
+import 'package:source_span/source_span.dart';
 import '../../ast/base/types.dart';
-import '../../ast/nodes/ast_nodes.dart';
+import '../../parser/ast/ast_base.dart';
 import '../semantic_types.dart';
 
 enum SymbolKind {
@@ -42,7 +43,7 @@ final class SymbolEntry extends Equatable {
 
   /// The [Span] that indicating the location of the symbol's declaration
   /// in the source code. Useful for error reporting and debugging.
-  final Span span;
+  final SourceSpan span;
 
   @override
   List<Object?> get props => [name, kind, declaration, resolvedType, span];

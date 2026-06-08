@@ -50,8 +50,6 @@ void main(List<String> args) {
   }
 
   const analyzer = SemanticAnalyzer();
-  const astGrammar = LakeAstGrammarDefinition();
-  final parser = astGrammar.build();
 
   final isPrintingAst = argResults['ast'] as bool;
   final isRunningSemantic = argResults['semantic'] as bool;
@@ -60,8 +58,8 @@ void main(List<String> args) {
   final sourceCode = loadLakeFile(filePath);
   final sourceFile = SourceFile.fromString(sourceCode, url: filePath);
 
-  final result = parser.parse(sourceCode);
-  final document = result.value as DocumentNode;
+  final parser = LakeParser(sourceCode);
+  final document = parser.parseDocument();
 
   stdout.writeln('Source File: $filePath \n');
 

@@ -1,4 +1,4 @@
-import 'nodes/ast_nodes.dart';
+import '../parser/ast/ast_base.dart';
 
 /// Abstract base class for all AST Visitors
 // (AstVisitor interface remains mostly the same, ensuring exhaustive checking)
@@ -17,7 +17,6 @@ abstract class AstVisitor<T> {
   T visitUnionDefinitionNode(UnionDefinitionNode node);
   T visitExceptionDefinitionNode(ExceptionDefinitionNode node);
   T visitServiceDefinitionNode(ServiceDefinitionNode node);
-  T visitFieldRequirementNode(FieldRequirementNode node);
   T visitFieldNode(FieldNode node);
   T visitMethodNode(MethodNode node);
 

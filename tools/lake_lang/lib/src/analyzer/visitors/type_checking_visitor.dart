@@ -1,5 +1,5 @@
 import '../../ast/ast_visitor.dart';
-import '../../ast/nodes/ast_nodes.dart';
+import '../../parser/ast/ast_base.dart';
 import '../errors/error_reporter.dart';
 import '../rules/base_rule.dart';
 import '../rules/type_checking/const_identifier_resolution_rule.dart';
@@ -60,7 +60,7 @@ class TypeCheckingVisitor implements AstVisitor<void> {
 
     node.type.accept(this);
 
-    final entry = _symbolTable.lookup(node.identifier.value, node.span);
+    final entry = _symbolTable.lookup(node.identifier.name, node.span);
 
     if (entry != null && entry.resolvedType is TypedefType) {
       final typedefSemanticType = entry.resolvedType!.cast<TypedefType>();
@@ -99,11 +99,6 @@ class TypeCheckingVisitor implements AstVisitor<void> {
 
   @override
   void visitServiceDefinitionNode(ServiceDefinitionNode node) {
-    _ruleDispatcher.applyRules(node);
-  }
-
-  @override
-  void visitFieldRequirementNode(FieldRequirementNode node) {
     _ruleDispatcher.applyRules(node);
   }
 

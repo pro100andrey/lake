@@ -1,4 +1,4 @@
-import '../../../ast/nodes/ast_nodes.dart';
+import '../../../parser/ast/ast_base.dart';
 import '../../errors/error_reporter.dart';
 import '../base_rule.dart';
 
@@ -12,11 +12,11 @@ final class RequiredFieldRule extends BaseRule<FieldNode> {
 
   @override
   void check(FieldNode node) {
-    if (node.requirement case FieldRequirementNode(isRequired: true)) {
+    if (node.isRequired) {
       if (node.defaultValue != null) {
         reporter.reportRequiredFieldCannotHaveDefaultValue(
-          fieldName: node.identifier.value,
-          span: node.requirement!.span,
+          fieldName: node.identifier.name,
+          span: node.span,
         );
       }
     }

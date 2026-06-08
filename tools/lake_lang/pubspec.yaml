@@ -8,7 +8,6 @@ environment:
 
 dependencies:
   equatable: ^2.0.8
-  petitparser: ^7.0.2
   source_span: ^1.10.2
   
 dev_dependencies:

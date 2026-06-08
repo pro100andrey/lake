@@ -1,5 +1,5 @@
 import 'package:lake_lang/src/ast/ast_visitor.dart';
-import 'package:lake_lang/src/ast/nodes/ast_nodes.dart';
+import 'package:lake_lang/src/parser/ast/ast_base.dart';
 
 /// A simple AST visitor that records the runtime type of every visited node.
 class RecordingVisitor extends AstVisitor<void> {
@@ -100,15 +100,9 @@ class RecordingVisitor extends AstVisitor<void> {
   }
 
   @override
-  void visitFieldRequirementNode(FieldRequirementNode node) {
-    visitedTypes.add(node.runtimeType);
-  }
-
-  @override
   void visitFieldNode(FieldNode node) {
     visitedTypes.add(node.runtimeType);
     node.fieldId?.accept(this);
-    node.requirement?.accept(this);
     node.type.accept(this);
     node.identifier.accept(this);
     node.defaultValue?.accept(this);

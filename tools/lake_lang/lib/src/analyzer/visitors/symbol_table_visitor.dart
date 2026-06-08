@@ -1,5 +1,5 @@
 import '../../ast/ast_visitor.dart';
-import '../../ast/nodes/ast_nodes.dart';
+import '../../parser/ast/ast_base.dart';
 import '../errors/error_reporter.dart';
 import '../rules/base_rule.dart';
 import '../rules/declaration/keyword_as_identifier_rule.dart';
@@ -75,7 +75,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
     // introduce distinct symbol table scopes by default, or that they are
     // handled by a higher-level module resolution. If they DO introduce
     // scopes, manage them here.
-    // _symbolTable.pushScope(name: node.identifier.value);
+    // _symbolTable.pushScope(name: node.identifier.name);
     // node.identifier.accept(this); // Visit identifier if needed
     // _symbolTable.popScope();
   }
@@ -91,7 +91,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
     );
 
     _symbolTable.addSymbol(
-      name: node.identifier.value,
+      name: node.identifier.name,
       kind: SymbolKind.constant,
       declaration: node,
       span: node.span,
@@ -110,7 +110,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
     final typedefSemanticType = TypedefType(node);
 
     _symbolTable.addSymbol(
-      name: node.identifier.value,
+      name: node.identifier.name,
       kind: SymbolKind.type,
       declaration: node,
       span: node.span,
@@ -132,7 +132,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
     // Add the enum definition to the current scope.
     _symbolTable
       ..addSymbol(
-        name: node.identifier.value,
+        name: node.identifier.name,
         kind: SymbolKind.type,
         declaration: node,
         span: node.span,
@@ -153,7 +153,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
   void visitEnumValueNode(EnumValueNode node) {
     // Add each enum value as an enum member within the enum's scope.
     _symbolTable.addSymbol(
-      name: node.identifier.value,
+      name: node.identifier.name,
       kind: SymbolKind.enumMember,
       declaration: node,
       span: node.span,
@@ -174,7 +174,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
     // Add the struct definition to the current scope.
     _symbolTable
       ..addSymbol(
-        name: node.identifier.value,
+        name: node.identifier.name,
         kind: SymbolKind.type,
         declaration: node,
         span: node.span,
@@ -198,7 +198,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
     // Add the union definition to the current scope.
     _symbolTable
       ..addSymbol(
-        name: node.identifier.value,
+        name: node.identifier.name,
         kind: SymbolKind.type,
         declaration: node,
         span: node.span,
@@ -222,7 +222,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
     // Add the exception definition to the current scope.
     _symbolTable
       ..addSymbol(
-        name: node.identifier.value,
+        name: node.identifier.name,
         kind: SymbolKind.type,
         declaration: node,
         span: node.span,
@@ -247,7 +247,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
     // Add the service definition to the current scope.
     _symbolTable
       ..addSymbol(
-        name: node.identifier.value,
+        name: node.identifier.name,
         kind: SymbolKind.service,
         declaration: node,
         span: node.span,
@@ -269,18 +269,13 @@ class SymbolTableVisitor extends AstVisitor<void> {
   }
 
   @override
-  void visitFieldRequirementNode(FieldRequirementNode node) {
-    // FieldRequirementNode itself doesn't introduce a new symbols or scopes.
-  }
-
-  @override
   void visitFieldNode(FieldNode node) {
     // Apply rules for field declarations, e.g., field requirement checks.
     _ruleDispatcher.applyRules(node);
     // Add the field to the current (struct/exception/service) scope.
 
     _symbolTable.addSymbol(
-      name: node.identifier.value,
+      name: node.identifier.name,
       kind: SymbolKind.field,
       declaration: node,
       span: node.span,
@@ -290,7 +285,6 @@ class SymbolTableVisitor extends AstVisitor<void> {
     // Visit the field's type, default value, and requirement (if any).
     node.type.accept(this);
     node.defaultValue?.accept(this);
-    node.requirement?.accept(this);
   }
 
   @override
@@ -298,7 +292,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
     // Add the  to the current (service) scope.
     _symbolTable
       ..addSymbol(
-        name: node.identifier.value,
+        name: node.identifier.name,
         kind: SymbolKind.method,
         declaration: node,
         span: node.span,
@@ -314,7 +308,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
       // Parameters are FieldNodes, but in method context, they are
       // parameters.
       _symbolTable.addSymbol(
-        name: param.identifier.value,
+        name: param.identifier.name,
         kind: SymbolKind.parameter,
         declaration: param,
         span: param.span,

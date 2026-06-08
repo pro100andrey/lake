@@ -1,8 +1,8 @@
-import '../../ast/nodes/ast_nodes.dart';
+import '../../parser/ast/ast_base.dart';
 
 /// Helper function to get a string representation of a [TypeNode].
 String getTypeName(TypeNode type) => switch (type) {
-  BaseTypeNode(:final value) => value,
+  BaseTypeNode(:final name) => name,
   ListTypeNode(:final elementType) => 'list<${getTypeName(elementType)}>',
   MapTypeNode(:final keyType, :final valueType) =>
     'map<${getTypeName(keyType)}, ${getTypeName(valueType)}>',

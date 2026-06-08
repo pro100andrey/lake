@@ -1,4 +1,4 @@
-import '../../../ast/nodes/ast_nodes.dart';
+import '../../../parser/ast/ast_base.dart';
 import '../../errors/error_reporter.dart';
 import '../base_rule.dart';
 import '../utils.dart';
@@ -10,8 +10,8 @@ final class _BaseTypeRule extends BaseRule<FieldNode> {
   @override
   void check(FieldNode node) {
     if ((node.type, node.defaultValue) case (
-      BaseTypeNode(value: final literalTypeName),
-      LiteralValueNode(:final valueKind, :final valueType, :final span),
+      BaseTypeNode(name: final literalTypeName),
+      LiteralValueNode(:final span),
     )) {
       if (!isLiteralValueCompatibleWithBaseType(
         literalTypeName,
@@ -19,9 +19,9 @@ final class _BaseTypeRule extends BaseRule<FieldNode> {
       )) {
         reporter.reportLiteralValueCannotBeAssigned(
           literalTypeName: literalTypeName,
-          valueKindName: valueKind,
+          valueKindName: 'default value',
           valueSpan: span,
-          valueTypeName: valueType,
+          valueTypeName: node.defaultValue!.runtimeType.toString(),
           literalTypeSpan: node.type.span,
         );
       }
@@ -37,7 +37,7 @@ final class OptionalFieldRule extends BaseRule<FieldNode> {
 
   @override
   void check(FieldNode node) {
-    if (node.requirement case FieldRequirementNode(isRequired: false)) {
+    if (!node.isRequired) {
       _baseTypeCheckRule.check(node);
     }
   }

@@ -1,4 +1,4 @@
-import '../ast/nodes/ast_nodes.dart';
+import '../parser/ast/ast_base.dart';
 import 'errors/error_reporter.dart';
 import 'semantic_types.dart';
 import 'symbols/symbol_table.dart';
@@ -8,24 +8,24 @@ SemanticType? getSemanticType(
   ErrorReporter reporter,
   SymbolTable symbolTable,
 ) {
-  if (typeNode case BaseTypeNode(:final value, :final span)) {
-    final type = BaseType.byName[value];
+  if (typeNode case BaseTypeNode(:final name, :final span)) {
+    final type = BaseType.byName[name];
 
     if (type == null) {
-      reporter.reportGeneric(message: 'Unknown base type: $value', span: span);
+      reporter.reportGeneric(message: 'Unknown base type: $name', span: span);
     }
 
     return type;
   }
 
-  if (typeNode case CustomTypeNode(:final value, :final span)) {
-    final entry = symbolTable.lookup(value, span);
+  if (typeNode case CustomTypeNode(:final name, :final span)) {
+    final entry = symbolTable.lookup(name, span);
 
     if (entry?.declaration != null) {
       return entry!.resolvedType;
     } else {
       reporter.reportGeneric(
-        message: 'Unknown custom type: $value',
+        message: 'Unknown custom type: $name',
         span: span,
       );
     }
@@ -142,7 +142,7 @@ SemanticType? getLiteralValueSemanticType(
   if (node case IntLiteralNode()) {
     // Assuming all integer literals default to i64, or determine based on
     //value range.
-    return BaseType.byName[node.valueType];
+    return BaseType.byName['i32'];
     // For a more precise check, you'd need to parse the string value
     // and determine if it fits i8, i16, i32, i64. For now, i64 is a safe
     // default.
@@ -161,9 +161,9 @@ SemanticType? getLiteralValueSemanticType(
     return BaseType.stringT;
   }
 
-  if (node case IdentifierNode(:final value, :final span)) {
+  if (node case IdentifierNode(:final name, :final span)) {
     // This handles cases like `const double PI_APPROXIMATION = PI;`
-    final symbolEntry = symbolTable.lookup(value, span);
+    final symbolEntry = symbolTable.lookup(name, span);
 
     if (symbolEntry == null) {
       // Error already reported by symbolTable.lookup

@@ -43,8 +43,8 @@ class LakeWorkspace {
       }
 
       if (depsChanged) {
-        // Here we would invalidate dependent modules in a real IDE server 
-        // scenario. For now, it signals that the dependency graph needs an 
+        // Here we would invalidate dependent modules in a real IDE server
+        // scenario. For now, it signals that the dependency graph needs an
         // update.
       }
     }
