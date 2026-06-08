@@ -92,10 +92,10 @@ class AnalysisSession {
     importStack.add(path);
 
     final content = fileReader(path);
-    final parser = LakeParser(content);
-    final document = parser.parseDocument();
-
     final reporter = ErrorReporter();
+    final parser = LakeParser(content, reporter);
+    final document = parser.parseDocument();
+    
     final symbolTable = SymbolTable(reporter);
 
     final context = FileContext(

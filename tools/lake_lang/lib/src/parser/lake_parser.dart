@@ -1,30 +1,32 @@
+import '../analyzer/errors/error_reporter.dart';
 import 'ast/ast_base.dart';
 import 'lake_lexer.dart';
 import 'token_type.dart';
 
+class _ParseException implements Exception {
+  const _ParseException();
+}
+
 class LakeParser {
-  LakeParser(String input) : _lexer = LakeLexer(input), _input = input;
+  LakeParser(String input, [ErrorReporter? reporter])
+      : _lexer = LakeLexer(input),
+        _reporter = reporter ?? ErrorReporter();
 
   final LakeLexer _lexer;
-  final String _input;
+
+  final ErrorReporter _reporter;
 
   Never _reportError(String message) {
-    var line = 1;
-    var column = 1;
 
-    for (var i = 0; i < _lexer.currentStart; i++) {
-      if (_input.codeUnitAt(i) == 10) {
-        line++;
-        column = 1;
-      } else {
-        column++;
-      }
-    }
-
-    throw FormatException(
-      'Lake Parser Error at line $line, column $column: $message. '
-      "Found: ${_lexer.currentType.displayName} ('${_lexer.getSlice()}')",
+    // We no longer need line/column calculation because ErrorReporter handles offsets directly.
+    _reporter.reportGeneric(
+      message: 'Lake Parser Error: $message. '
+          "Found: ${_lexer.currentType.displayName} ('${_lexer.getSlice()}')",
+      startOffset: _lexer.currentStart,
+      endOffset: _lexer.currentEnd,
     );
+
+    throw const _ParseException();
   }
 
   void _expect(TokenType type, String errorMessage) {
@@ -47,10 +49,14 @@ class LakeParser {
     final definitions = <DefinitionNode>[];
 
     while (_lexer.currentType != .eof) {
-      if (_lexer.currentType case .kwImport || .kwNamespace) {
-        headers.add(_parseHeader());
-      } else {
-        definitions.add(_parseDefinition());
+      try {
+        if (_lexer.currentType case .kwImport || .kwNamespace) {
+          headers.add(_parseHeader());
+        } else {
+          definitions.add(_parseDefinition());
+        }
+      } on _ParseException {
+        _synchronizeDeclaration();
       }
     }
 
@@ -60,6 +66,26 @@ class LakeParser {
       startOffset: start,
       endOffset: _lexer.currentEnd,
     );
+  }
+
+  void _synchronizeDeclaration() {
+
+    while (_lexer.currentType != .eof) {
+      switch (_lexer.currentType) {
+        case .kwImport:
+        case .kwNamespace:
+        case .kwStruct:
+        case .kwEnum:
+        case .kwUnion:
+        case .kwException:
+        case .kwService:
+        case .kwConst:
+        case .kwTypedef:
+          return;
+        case _:
+          _lexer.advance();
+      }
+    }
   }
 
   HeaderNode _parseHeader() {
@@ -293,7 +319,11 @@ class LakeParser {
     _expect(.braceLeft, "Expected '{' after service name");
     final methods = <MethodNode>[];
     while (_lexer.currentType != .braceRight && _lexer.currentType != .eof) {
-      methods.add(_parseMethod());
+      try {
+        methods.add(_parseMethod());
+      } on _ParseException {
+        _synchronizeMethod();
+      }
     }
     _expect(.braceRight, "Expected '}' to close service definition");
 
@@ -310,10 +340,70 @@ class LakeParser {
   List<FieldNode> _parseFields() {
     final fields = <FieldNode>[];
     while (_lexer.currentType != .braceRight && _lexer.currentType != .eof) {
-      fields.add(_parseField());
+      try {
+        fields.add(_parseField());
+      } on _ParseException {
+        _synchronizeField();
+      }
     }
 
     return fields;
+  }
+
+  void _synchronizeField() {
+    while (_lexer.currentType != .eof) {
+      switch (_lexer.currentType) {
+        case .kwRequired:
+        case .kwOptional:
+        case .identifier:
+        case .braceRight:
+        case .intLiteral:
+        case .kwBool:
+        case .kwByte:
+        case .kwI8:
+        case .kwI16:
+        case .kwI32:
+        case .kwI64:
+        case .kwDouble:
+        case .kwString:
+        case .kwBinary:
+        case .kwList:
+        case .kwMap:
+        case .kwSet:
+        case .kwStream:
+        case .kwUuid:
+          return;
+        case _:
+          _lexer.advance();
+      }
+    }
+  }
+
+  void _synchronizeMethod() {
+    while (_lexer.currentType != .eof) {
+      switch (_lexer.currentType) {
+        case .identifier:
+        case .braceRight:
+        case .kwVoid:
+        case .kwBool:
+        case .kwByte:
+        case .kwI8:
+        case .kwI16:
+        case .kwI32:
+        case .kwI64:
+        case .kwDouble:
+        case .kwString:
+        case .kwBinary:
+        case .kwList:
+        case .kwMap:
+        case .kwSet:
+        case .kwStream:
+        case .kwUuid:
+          return;
+        case _:
+          _lexer.advance();
+      }
+    }
   }
 
   FieldNode _parseField() {
