@@ -389,8 +389,7 @@ void main() {
       final doc = parser.parseDocument();
       final typedefNode = doc.definitions.first as TypedefDefinitionNode;
 
-      final typedefType = TypedefType(typedefNode)
-        ..targetType = BaseType.i32T;
+      final typedefType = TypedefType(typedefNode)..targetType = BaseType.i32T;
 
       // i32 is assignable to i32
       expect(typedefType.isAssignableTo(BaseType.i32T), isTrue);

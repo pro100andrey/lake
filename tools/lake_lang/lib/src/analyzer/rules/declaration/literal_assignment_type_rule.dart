@@ -88,24 +88,22 @@ final class _MapTypeRule extends BaseRule<ConstDefinitionNode> {
       MapLiteralNode(:final entries),
     )) {
       for (final entry in entries) {
-        if (!isLiteralValueCompatibleWithBaseType(
-          getTypeName(keyType),
-          entry.key,
-        )) {
+        final keyTypeName = getTypeName(keyType);
+
+        if (!isLiteralValueCompatibleWithBaseType(keyTypeName, entry.key)) {
           reporter.reportMapValueTypeMismatch(
-            expectedType: getTypeName(keyType),
+            expectedType: keyTypeName,
             actualType: entry.key.runtimeType.toString(),
             startOffset: entry.key.startOffset,
             endOffset: entry.key.endOffset,
           );
         }
 
-        if (!isLiteralValueCompatibleWithBaseType(
-          getTypeName(valueType),
-          entry.value,
-        )) {
+        final valueTypeName = getTypeName(valueType);
+
+        if (!isLiteralValueCompatibleWithBaseType(valueTypeName, entry.value)) {
           reporter.reportMapValueTypeMismatch(
-            expectedType: getTypeName(valueType),
+            expectedType: valueTypeName,
             actualType: entry.value.runtimeType.toString(),
             startOffset: entry.value.startOffset,
             endOffset: entry.value.endOffset,

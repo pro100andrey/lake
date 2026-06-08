@@ -34,10 +34,6 @@ List<FieldNode> _structFields(String source, ErrorReporter reporter) {
 }
 
 void main() {
-
-  // ─────────────────────────────────────────────
-  // KeywordAsIdentifierRule tests
-  // ─────────────────────────────────────────────
   group('KeywordAsIdentifierRule', () {
     late ErrorReporter reporter;
     late KeywordAsIdentifierRule rule;
@@ -101,9 +97,6 @@ void main() {
     });
   });
 
-  // ─────────────────────────────────────────────
-  // NonEmptyEnumDefinitionRule tests
-  // ─────────────────────────────────────────────
   group('NonEmptyEnumDefinitionRule', () {
     late ErrorReporter reporter;
 
@@ -137,9 +130,6 @@ void main() {
     });
   });
 
-  // ─────────────────────────────────────────────
-  // NonEmptyStructDefinitionRule tests
-  // ─────────────────────────────────────────────
   group('NonEmptyStructDefinitionRule', () {
     late ErrorReporter reporter;
 
@@ -172,9 +162,6 @@ void main() {
     });
   });
 
-  // ─────────────────────────────────────────────
-  // LiteralAssignmentTypeRule tests
-  // ─────────────────────────────────────────────
   group('LiteralAssignmentTypeRule', () {
     late ErrorReporter reporter;
 
@@ -344,9 +331,6 @@ void main() {
     });
   });
 
-  // ─────────────────────────────────────────────
-  // RequiredFieldRule tests
-  // ─────────────────────────────────────────────
   group('RequiredFieldRule', () {
     late ErrorReporter reporter;
 
@@ -399,9 +383,6 @@ void main() {
     });
   });
 
-  // ─────────────────────────────────────────────
-  // OptionalFieldRule tests
-  // ─────────────────────────────────────────────
   group('OptionalFieldRule', () {
     late ErrorReporter reporter;
 
@@ -472,9 +453,6 @@ void main() {
     });
   });
 
-  // ─────────────────────────────────────────────
-  // ConstIdentifierResolutionRule tests
-  // ─────────────────────────────────────────────
   group('ConstIdentifierResolutionRule', () {
     test('resolves identifier reference in const definition', () {
       final reporter = ErrorReporter();
@@ -555,9 +533,6 @@ const i32 B = UNDEFINED_CONST
     });
   });
 
-  // ─────────────────────────────────────────────
-  // Integration: full visitor pipeline
-  // ─────────────────────────────────────────────
   group('Integration: SymbolTableVisitor applies rules', () {
     test('empty enum detected via visitor pipeline', () {
       final reporter = ErrorReporter();
@@ -610,9 +585,6 @@ const i32 B = UNDEFINED_CONST
     });
   });
 
-  // ─────────────────────────────────────────────
-  // UniqueFieldIdRule tests
-  // ─────────────────────────────────────────────
   group('UniqueFieldIdRule', () {
     late ErrorReporter reporter;
 
@@ -655,9 +627,6 @@ const i32 B = UNDEFINED_CONST
     });
   });
 
-  // ─────────────────────────────────────────────
-  // UnionFieldModifiersRule tests
-  // ─────────────────────────────────────────────
   group('UnionFieldModifiersRule', () {
     late ErrorReporter reporter;
 
