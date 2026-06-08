@@ -2,14 +2,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "lake cli",
-            "type": "dart",
-            "request": "launch",
-            "program": "bin/lake.dart",
-            "cwd": "${workspaceFolder}/tools/lake_cli",
-            "args": []
-        },
-        {
             "name": "lang exampel (debug)",
             "type": "dart",
             "request": "launch",
@@ -25,6 +17,7 @@
                 "-i",
                 "schema/service.lake",
                 "-s",
+                "-a"
             ]
         }
     ]
