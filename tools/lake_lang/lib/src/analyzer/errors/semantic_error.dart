@@ -153,6 +153,26 @@ enum DiagnosticCode {
   requiredFieldCannotHaveDefaultValue('E1011', [
     'Remove the default value from the required field.',
     'Consider making the field optional if a default value is needed.',
+  ]),
+
+  /// Error code for duplicate field IDs in a struct, union, or exception.
+  duplicateFieldId('E1012', [
+    'Change the ID to a unique positive integer.',
+  ]),
+
+  /// Error code for invalid modifiers on union fields.
+  invalidUnionFieldModifier('E1013', [
+    'Remove the required/optional modifier and default values from union fields.',
+  ]),
+
+  /// Error code for invalid service extensions.
+  invalidServiceExtends('E1014', [
+    'Ensure the extended entity is a valid service.',
+  ]),
+
+  /// Error code for invalid types in a throws clause.
+  invalidThrowsType('E1015', [
+    'Ensure the thrown type is a declared exception.',
   ]);
 
   /// Creates a [DiagnosticCode] instance.
@@ -520,5 +540,61 @@ final class RequiredFieldCannotHaveDefaultValueDiagnostic extends Diagnostic {
   }) : super(
          message: 'A required field "$fieldName" cannot have a default value.',
          code: DiagnosticCode.requiredFieldCannotHaveDefaultValue,
+       );
+}
+
+/// Diagnostic for a duplicate field ID.
+final class DuplicateFieldIdDiagnostic extends Diagnostic {
+  DuplicateFieldIdDiagnostic({
+    required int id,
+    required super.startOffset,
+    required super.endOffset,
+    required int prevStart,
+    required int prevEnd,
+  }) : super(
+         message: 'Field ID "$id" is already used in this definition.',
+         code: DiagnosticCode.duplicateFieldId,
+         labels: [
+           (
+             startOffset: prevStart,
+             endOffset: prevEnd,
+             message: 'Previous usage of ID "$id" was here',
+           ),
+         ],
+       );
+}
+
+/// Diagnostic for invalid union field modifiers.
+final class InvalidUnionFieldModifierDiagnostic extends Diagnostic {
+  const InvalidUnionFieldModifierDiagnostic({
+    required super.startOffset,
+    required super.endOffset,
+  }) : super(
+         message: 'Union fields cannot be required or have default values.',
+         code: DiagnosticCode.invalidUnionFieldModifier,
+       );
+}
+
+/// Diagnostic for an invalid service extension.
+final class InvalidServiceExtendsDiagnostic extends Diagnostic {
+  const InvalidServiceExtendsDiagnostic({
+    required String name,
+    required super.startOffset,
+    required super.endOffset,
+  }) : super(
+         message: '"$name" is not a valid service to extend.',
+         code: DiagnosticCode.invalidServiceExtends,
+       );
+}
+
+/// Diagnostic for an invalid throws type.
+final class InvalidThrowsTypeDiagnostic extends Diagnostic {
+  const InvalidThrowsTypeDiagnostic({
+    required String name,
+    required super.startOffset,
+    required super.endOffset,
+  }) : super(
+         message: '"$name" is not an exception. Only exceptions can be thrown.',
+         code: DiagnosticCode.invalidThrowsType,
        );
 }

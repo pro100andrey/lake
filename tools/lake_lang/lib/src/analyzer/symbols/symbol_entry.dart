@@ -1,5 +1,3 @@
-
-
 import '../../parser/ast/ast_base.dart';
 import '../semantic_types.dart';
 

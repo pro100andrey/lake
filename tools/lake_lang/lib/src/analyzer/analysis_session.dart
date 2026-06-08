@@ -95,7 +95,6 @@ class AnalysisSession {
     final reporter = ErrorReporter();
     final parser = LakeParser(content, reporter);
     final document = parser.parseDocument();
-    
     final symbolTable = SymbolTable(reporter);
 
     final context = FileContext(

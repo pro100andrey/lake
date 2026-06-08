@@ -8,6 +8,8 @@ import '../rules/declaration/non_empty_enum_definition_rule.dart';
 import '../rules/declaration/non_empty_struct_definition_rule.dart';
 import '../rules/declaration/optional_field_rule.dart';
 import '../rules/declaration/required_field_rule.dart';
+import '../rules/declaration/union_field_modifiers_rule.dart';
+import '../rules/declaration/unique_field_id_rule.dart';
 import '../semantic_types.dart';
 import '../symbols/symbol_entry.dart';
 import '../symbols/symbol_table.dart';
@@ -24,6 +26,21 @@ class SymbolTableVisitor extends AstVisitor<void> {
       )
       ..addRule<StructDefinitionNode>(
         NonEmptyStructDefinitionRule(reporter: _reporter),
+      )
+      ..addRule<StructDefinitionNode>(
+        UniqueFieldIdRule<StructDefinitionNode>(reporter: _reporter),
+      )
+      ..addRule<UnionDefinitionNode>(
+        UniqueFieldIdRule<UnionDefinitionNode>(reporter: _reporter),
+      )
+      ..addRule<UnionDefinitionNode>(
+        UnionFieldModifiersRule(reporter: _reporter),
+      )
+      ..addRule<ExceptionDefinitionNode>(
+        UniqueFieldIdRule<ExceptionDefinitionNode>(reporter: _reporter),
+      )
+      ..addRule<MethodNode>(
+        UniqueFieldIdRule<MethodNode>(reporter: _reporter),
       )
       ..addRule<IdentifierNode>(
         KeywordAsIdentifierRule(reporter: _reporter),

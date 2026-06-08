@@ -407,4 +407,62 @@ extension ErrorReporterGenericExtension on ErrorReporter {
       ),
     );
   }
+
+  void reportDuplicateFieldId({
+    required int id,
+    required int startOffset,
+    required int endOffset,
+    required int prevStart,
+    required int prevEnd,
+  }) {
+    report(
+      DuplicateFieldIdDiagnostic(
+        id: id,
+        startOffset: startOffset,
+        endOffset: endOffset,
+        prevStart: prevStart,
+        prevEnd: prevEnd,
+      ),
+    );
+  }
+
+  void reportInvalidUnionFieldModifier({
+    required int startOffset,
+    required int endOffset,
+  }) {
+    report(
+      InvalidUnionFieldModifierDiagnostic(
+        startOffset: startOffset,
+        endOffset: endOffset,
+      ),
+    );
+  }
+
+  void reportInvalidServiceExtends({
+    required String name,
+    required int startOffset,
+    required int endOffset,
+  }) {
+    report(
+      InvalidServiceExtendsDiagnostic(
+        name: name,
+        startOffset: startOffset,
+        endOffset: endOffset,
+      ),
+    );
+  }
+
+  void reportInvalidThrowsType({
+    required String name,
+    required int startOffset,
+    required int endOffset,
+  }) {
+    report(
+      InvalidThrowsTypeDiagnostic(
+        name: name,
+        startOffset: startOffset,
+        endOffset: endOffset,
+      ),
+    );
+  }
 }

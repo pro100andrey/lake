@@ -3,6 +3,8 @@ import '../../parser/ast/ast_base.dart';
 import '../errors/error_reporter.dart';
 import '../rules/base_rule.dart';
 import '../rules/type_checking/const_identifier_resolution_rule.dart';
+import '../rules/type_checking/service_extends_resolution_rule.dart';
+import '../rules/type_checking/service_method_throws_rule.dart';
 import '../semantic_types.dart';
 import '../symbols/symbol_table.dart';
 import '../utils.dart';
@@ -10,12 +12,25 @@ import '../utils.dart';
 class TypeCheckingVisitor implements AstVisitor<void> {
   TypeCheckingVisitor(this._symbolTable, this._reporter)
     : _ruleDispatcher = RuleDispatcher() {
-    _ruleDispatcher.addRule<ConstDefinitionNode>(
-      ConstIdentifierResolutionRule(
-        reporter: _reporter,
-        symbolTable: _symbolTable,
-      ),
-    );
+    _ruleDispatcher
+      ..addRule<ConstDefinitionNode>(
+        ConstIdentifierResolutionRule(
+          reporter: _reporter,
+          symbolTable: _symbolTable,
+        ),
+      )
+      ..addRule<ServiceDefinitionNode>(
+        ServiceExtendsResolutionRule(
+          reporter: _reporter,
+          symbolTable: _symbolTable,
+        ),
+      )
+      ..addRule<MethodNode>(
+        ServiceMethodThrowsRule(
+          reporter: _reporter,
+          symbolTable: _symbolTable,
+        ),
+      );
   }
 
   final SymbolTable _symbolTable;
@@ -80,10 +95,18 @@ class TypeCheckingVisitor implements AstVisitor<void> {
   }
 
   @override
-  void visitEnumDefinitionNode(EnumDefinitionNode node) {}
+  void visitEnumDefinitionNode(EnumDefinitionNode node) {
+    _ruleDispatcher.applyRules(node);
+    for (final member in node.members) {
+      member.accept(this);
+    }
+  }
 
   @override
-  void visitEnumValueNode(EnumValueNode node) {}
+  void visitEnumValueNode(EnumValueNode node) {
+    _ruleDispatcher.applyRules(node);
+    node.value?.accept(this);
+  }
 
   @override
   void visitStructDefinitionNode(StructDefinitionNode node) {
@@ -97,16 +120,26 @@ class TypeCheckingVisitor implements AstVisitor<void> {
   @override
   void visitUnionDefinitionNode(UnionDefinitionNode node) {
     _ruleDispatcher.applyRules(node);
+    for (final field in node.fields) {
+      field.accept(this);
+    }
   }
 
   @override
   void visitExceptionDefinitionNode(ExceptionDefinitionNode node) {
     _ruleDispatcher.applyRules(node);
+    for (final field in node.fields) {
+      field.accept(this);
+    }
   }
 
   @override
   void visitServiceDefinitionNode(ServiceDefinitionNode node) {
     _ruleDispatcher.applyRules(node);
+    node.extendsService?.accept(this);
+    for (final method in node.methods) {
+      method.accept(this);
+    }
   }
 
   @override
@@ -148,8 +181,15 @@ class TypeCheckingVisitor implements AstVisitor<void> {
   void visitMethodNode(MethodNode node) {
     _ruleDispatcher.applyRules(node);
 
+    getSemanticType(node.returnType, _reporter, _symbolTable);
+    node.returnType.accept(this);
+
     for (final parameter in node.parameters) {
       parameter.accept(this);
+    }
+
+    for (final throwType in node.throws) {
+      throwType.accept(this);
     }
   }
 

@@ -7,6 +7,8 @@ import 'package:lake_lang/src/analyzer/rules/declaration/non_empty_enum_definiti
 import 'package:lake_lang/src/analyzer/rules/declaration/non_empty_struct_definition_rule.dart';
 import 'package:lake_lang/src/analyzer/rules/declaration/optional_field_rule.dart';
 import 'package:lake_lang/src/analyzer/rules/declaration/required_field_rule.dart';
+import 'package:lake_lang/src/analyzer/rules/declaration/union_field_modifiers_rule.dart';
+import 'package:lake_lang/src/analyzer/rules/declaration/unique_field_id_rule.dart';
 import 'package:lake_lang/src/analyzer/symbols/symbol_table.dart';
 import 'package:lake_lang/src/analyzer/visitors/symbol_table_visitor.dart';
 import 'package:lake_lang/src/analyzer/visitors/type_checking_visitor.dart';
@@ -691,6 +693,89 @@ const i32 B = UNDEFINED_CONST
         );
       expect(reporter.hasErrors, isTrue);
       expect(symbolTable, isNotNull); // just to use it
+    });
+  });
+
+  // ─────────────────────────────────────────────
+  // UniqueFieldIdRule tests
+  // ─────────────────────────────────────────────
+  group('UniqueFieldIdRule', () {
+    late ErrorReporter reporter;
+
+    setUp(() {
+      reporter = ErrorReporter();
+    });
+
+    test('reports error on duplicate field IDs in struct', () {
+      final parser = LakeParser(
+        'struct User { 1: i32 a; 1: string b; }',
+        reporter,
+      );
+      final doc = parser.parseDocument();
+      final structNode = doc.definitions.first as StructDefinitionNode;
+
+      UniqueFieldIdRule<StructDefinitionNode>(
+        reporter: reporter,
+      ).check(structNode);
+
+      expect(reporter.hasErrors, isTrue);
+      expect(
+        reporter.diagnostics.first.code,
+        DiagnosticCode.duplicateFieldId,
+      );
+    });
+
+    test('does NOT report error for unique field IDs', () {
+      final parser = LakeParser(
+        'struct User { 1: i32 a; 2: string b; }',
+        reporter,
+      );
+      final doc = parser.parseDocument();
+      final structNode = doc.definitions.first as StructDefinitionNode;
+
+      UniqueFieldIdRule<StructDefinitionNode>(
+        reporter: reporter,
+      ).check(structNode);
+
+      expect(reporter.hasErrors, isFalse);
+    });
+  });
+
+  // ─────────────────────────────────────────────
+  // UnionFieldModifiersRule tests
+  // ─────────────────────────────────────────────
+  group('UnionFieldModifiersRule', () {
+    late ErrorReporter reporter;
+
+    setUp(() {
+      reporter = ErrorReporter();
+    });
+
+    test('reports error if union field is required', () {
+      final parser = LakeParser(
+        'union Result { 1: required i32 a; }',
+        reporter,
+      );
+      final doc = parser.parseDocument();
+      final unionNode = doc.definitions.first as UnionDefinitionNode;
+
+      UnionFieldModifiersRule(reporter: reporter).check(unionNode);
+
+      expect(reporter.hasErrors, isTrue);
+      expect(
+        reporter.diagnostics.first.code,
+        DiagnosticCode.invalidUnionFieldModifier,
+      );
+    });
+
+    test('does NOT report error for normal union fields', () {
+      final parser = LakeParser('union Result { 1: i32 a; }', reporter);
+      final doc = parser.parseDocument();
+      final unionNode = doc.definitions.first as UnionDefinitionNode;
+
+      UnionFieldModifiersRule(reporter: reporter).check(unionNode);
+
+      expect(reporter.hasErrors, isFalse);
     });
   });
 }

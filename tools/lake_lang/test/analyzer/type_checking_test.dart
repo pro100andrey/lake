@@ -88,5 +88,43 @@ void main() {
         contains('Enum definition cannot be empty'),
       );
     });
+
+    test('reports error on invalid service extends', () {
+      final parser = LakeParser(
+        'struct S { 1: i32 a; } service A extends S {}',
+        reporter,
+      );
+      final _ = parser.parseDocument()
+        ..accept(symbolVisitor)
+        ..accept(typeVisitor);
+
+      expect(reporter.hasErrors, isTrue);
+      expect(
+        reporter.diagnostics.any(
+          (d) => d.message.contains('"S" is not a valid service to extend'),
+        ),
+        isTrue,
+      );
+    });
+
+    test('reports error on invalid throws type', () {
+      final parser = LakeParser(
+        'struct E { 1: i32 a; } service A { void foo() throws (1: E e); }',
+        reporter,
+      );
+      final _ = parser.parseDocument()
+        ..accept(symbolVisitor)
+        ..accept(typeVisitor);
+
+      expect(reporter.hasErrors, isTrue);
+      expect(
+        reporter.diagnostics.any(
+          (d) => d.message.contains(
+            '"E" is not an exception. Only exceptions can be thrown',
+          ),
+        ),
+        isTrue,
+      );
+    });
   });
 }

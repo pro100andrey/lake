@@ -9,18 +9,18 @@ class _ParseException implements Exception {
 
 class LakeParser {
   LakeParser(String input, [ErrorReporter? reporter])
-      : _lexer = LakeLexer(input),
-        _reporter = reporter ?? ErrorReporter();
+    : _lexer = LakeLexer(input),
+      _reporter = reporter ?? ErrorReporter();
 
   final LakeLexer _lexer;
 
   final ErrorReporter _reporter;
 
   Never _reportError(String message) {
-
     // We no longer need line/column calculation because ErrorReporter handles offsets directly.
     _reporter.reportGeneric(
-      message: 'Lake Parser Error: $message. '
+      message:
+          'Lake Parser Error: $message. '
           "Found: ${_lexer.currentType.displayName} ('${_lexer.getSlice()}')",
       startOffset: _lexer.currentStart,
       endOffset: _lexer.currentEnd,
@@ -69,7 +69,6 @@ class LakeParser {
   }
 
   void _synchronizeDeclaration() {
-
     while (_lexer.currentType != .eof) {
       switch (_lexer.currentType) {
         case .kwImport:
