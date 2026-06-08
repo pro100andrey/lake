@@ -1,8 +1,8 @@
-// ignore_for_file: avoid_print
+import 'dart:io';
 
 class ExecutionTimer {
   final Map<String, int> _stepTimings = {};
-  final Stopwatch _overallWatch = Stopwatch();
+  final _overallWatch = Stopwatch();
 
   /// Starts the overall timer for the entire process.
   void start() {
@@ -36,7 +36,7 @@ class ExecutionTimer {
 
   /// Prints a summary of all measured step timings and the total overall time.
   void printSummary() {
-    print('--- Total Timing Summary ---');
+    stdout.writeln('--- Total Timing Summary ---');
     _stepTimings.forEach(printElapsedTime);
 
     printElapsedTime(
@@ -44,7 +44,7 @@ class ExecutionTimer {
       _overallWatch.elapsedMicroseconds,
     );
 
-    print('----------------------------');
+    stdout.writeln('----------------------------');
   }
 
   /// Prints the elapsed time for a specific step.
@@ -54,6 +54,6 @@ class ExecutionTimer {
     final elapsed = elapsedMicroseconds > 1000
         ? '${elapsedMicroseconds / 1000} ms'
         : '$elapsedMicroseconds μs';
-    print('$description: $elapsed');
+    stdout.writeln('$description: $elapsed');
   }
 }
