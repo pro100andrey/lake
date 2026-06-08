@@ -6,19 +6,19 @@ import '../base_rule.dart';
 /// have unique integer identifiers.
 class UniqueFieldIdRule<T extends AstNode> extends BaseRule<T> {
   const UniqueFieldIdRule({required super.reporter});
-
   @override
   void check(T node) {
-    Iterable<FieldNode> fields;
-    if (node is StructDefinitionNode) {
-      fields = node.fields;
-    } else if (node is UnionDefinitionNode) {
-      fields = node.fields;
-    } else if (node is ExceptionDefinitionNode) {
-      fields = node.fields;
-    } else if (node is MethodNode) {
-      fields = node.parameters;
-    } else {
+    final Iterable<FieldNode> fields =
+        switch (node) {
+          StructDefinitionNode(:final fields) => fields,
+          UnionDefinitionNode(:final fields) => fields,
+          ExceptionDefinitionNode(:final fields) => fields,
+          MethodNode(:final parameters) => parameters,
+          _ => null,
+        } ??
+        const [];
+
+    if (fields.isEmpty) {
       return;
     }
 

@@ -22,7 +22,7 @@ class ServiceExtendsResolutionRule extends BaseRule<ServiceDefinitionNode> {
     final extendsName = node.extendsService!.name;
     final entry = symbolTable.lookup(extendsName, node.extendsService!);
 
-    // If entry is null, the SymbolTable already reported 
+    // If entry is null, the SymbolTable already reported
     // UndefinedSymbolDiagnostic.
     if (entry != null) {
       if (entry.resolvedType is! ServiceType) {
