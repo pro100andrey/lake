@@ -1,0 +1,6 @@
+service MyService {
+    void goodMethod();
+    i32 badMethod( // Missing closing paren and semicolon
+    void anotherGoodMethod();
+}
+      

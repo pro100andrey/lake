@@ -1,0 +1,5 @@
+const i32 COUNT = 10;
+const double PI = 3.14;
+const string MSG = "Hello";
+const bool IS_VALID = true;
+      

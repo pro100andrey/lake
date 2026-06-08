@@ -1,0 +1,4 @@
+import "b.lake";
+
+const i32 a = 1;
+        

@@ -1,0 +1,4 @@
+import "models.lake";
+
+const User myUser = { 1: 1, 2: "Alice" };
+        

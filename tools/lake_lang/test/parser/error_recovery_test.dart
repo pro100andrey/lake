@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:lake_lang/src/analyzer/errors/error_reporter.dart';
 import 'package:lake_lang/src/parser/ast/ast_base.dart';
 import 'package:lake_lang/src/parser/lake_parser.dart';
@@ -6,16 +7,9 @@ import 'package:test/test.dart';
 void main() {
   group('Parser Error Recovery', () {
     test('File-level recovery: Recovers and parses the second struct', () {
-      const source = '''
-        struct BadStruct {
-          i32 x;
-          string y = ; // Syntax error: missing literal after =
-        }
-
-        struct GoodStruct {
-          bool z;
-        }
-      ''';
+      final source = File(
+        'test/test_data/lake_sources/error_recovery_test_15.lake',
+      ).readAsStringSync();
 
       final reporter = ErrorReporter();
       final parser = LakeParser(source, reporter);
@@ -35,15 +29,9 @@ void main() {
     });
 
     test('Field-level recovery: Recovers inside a struct', () {
-      const source = '''
-        struct MyStruct {
-          i32 a;
-          bad_type b; // parsed as CustomTypeNode!
-          // Let's make a real syntax error:
-          i32 ; // missing identifier
-          string c;
-        }
-      ''';
+      final source = File(
+        'test/test_data/lake_sources/error_recovery_test_14.lake',
+      ).readAsStringSync();
 
       final reporter = ErrorReporter();
       final parser = LakeParser(source, reporter);
@@ -63,13 +51,9 @@ void main() {
     });
 
     test('Method-level recovery: Recovers inside a service', () {
-      const source = '''
-        service MyService {
-          void goodMethod();
-          i32 badMethod( // Missing closing paren and semicolon
-          void anotherGoodMethod();
-        }
-      ''';
+      final source = File(
+        'test/test_data/lake_sources/error_recovery_test_13.lake',
+      ).readAsStringSync();
 
       final reporter = ErrorReporter();
       final parser = LakeParser(source, reporter);

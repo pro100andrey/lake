@@ -1,0 +1,6 @@
+/// This is a doc comment
+/// for a struct
+struct Point {
+  /// X coordinate
+  1: double x;
+}

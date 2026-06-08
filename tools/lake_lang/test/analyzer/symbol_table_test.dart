@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:lake_lang/src/analyzer/errors/error_reporter.dart';
 import 'package:lake_lang/src/analyzer/symbols/symbol_entry.dart';
 import 'package:lake_lang/src/analyzer/symbols/symbol_table.dart';
@@ -18,26 +19,9 @@ void main() {
     });
 
     test('adds top-level symbols correctly', () {
-      const source = '''
-        const i32 MAX_USERS = 100;
-        typedef i32 UserId;
-        struct User {
-          i32 id;
-        }
-        service UserService {
-          void getUser();
-        }
-        enum Role {
-          ADMIN
-        }
-        union Result {
-          User user;
-          string msg;
-        }
-        exception NotFoundException {
-          string msg;
-        }
-      ''';
+      final source = File(
+        'test/test_data/lake_sources/symbol_table_test_3.lake',
+      ).readAsStringSync();
 
       final parser = LakeParser(source, reporter);
       parser.parseDocument().accept(visitor);
@@ -75,15 +59,9 @@ void main() {
     });
 
     test('reports duplicate symbols in the same scope', () {
-      const source = '''
-        struct User {
-          i32 id;
-        }
-        
-        struct User { // Duplicate
-          string name;
-        }
-      ''';
+      final source = File(
+        'test/test_data/lake_sources/symbol_table_test_2.lake',
+      ).readAsStringSync();
 
       final parser = LakeParser(source, reporter);
       parser.parseDocument().accept(visitor);
@@ -96,12 +74,9 @@ void main() {
     });
 
     test('reports duplicate fields in struct', () {
-      const source = '''
-        struct Point {
-          i32 x;
-          i32 x; // Duplicate
-        }
-      ''';
+      final source = File(
+        'test/test_data/lake_sources/symbol_table_test_1.lake',
+      ).readAsStringSync();
 
       final parser = LakeParser(source, reporter);
       parser.parseDocument().accept(visitor);

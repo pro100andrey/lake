@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:lake_lang/src/analyzer/errors/error_reporter.dart';
 import 'package:lake_lang/src/analyzer/symbols/symbol_table.dart';
 import 'package:lake_lang/src/analyzer/visitors/symbol_table_visitor.dart';
@@ -36,20 +37,21 @@ void main() {
     }
 
     test('validates correct constant types', () {
-      parseAndCheck('''
-        const i32 COUNT = 10;
-        const double PI = 3.14;
-        const string MSG = "Hello";
-        const bool IS_VALID = true;
-      ''');
+      parseAndCheck(
+        File(
+          'test/test_data/lake_sources/type_checking_test_7.lake',
+        ).readAsStringSync(),
+      );
 
       expect(reporter.hasErrors, isFalse);
     });
 
     test('reports error on invalid constant types', () {
-      parseAndCheck('''
-        const i32 COUNT = "Not an integer";
-      ''');
+      parseAndCheck(
+        File(
+          'test/test_data/lake_sources/type_checking_test_6.lake',
+        ).readAsStringSync(),
+      );
 
       expect(reporter.hasErrors, isTrue);
       expect(
@@ -59,9 +61,11 @@ void main() {
     });
 
     test('reports error on empty struct', () {
-      parseAndCheck('''
-        struct Empty {}
-      ''');
+      parseAndCheck(
+        File(
+          'test/test_data/lake_sources/type_checking_test_5.lake',
+        ).readAsStringSync(),
+      );
 
       expect(reporter.hasErrors, isTrue);
       expect(
@@ -71,9 +75,11 @@ void main() {
     });
 
     test('reports error on empty enum', () {
-      parseAndCheck('''
-        enum EmptyEnum {}
-      ''');
+      parseAndCheck(
+        File(
+          'test/test_data/lake_sources/type_checking_test_4.lake',
+        ).readAsStringSync(),
+      );
 
       expect(reporter.hasErrors, isTrue);
       expect(

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:lake_lang/src/parser/lake_lexer.dart';
 import 'package:lake_lang/src/parser/token_type.dart';
 import 'package:test/test.dart';
@@ -187,13 +188,9 @@ void main() {
     });
 
     test('ignores whitespace and comments', () {
-      const input = '''
-        // single line comment
-        /* multi
-           line
-           comment */
-        const i32 x = 5;
-      ''';
+      final input = File(
+        'test/test_data/lake_sources/lexer_test_17.lake',
+      ).readAsStringSync();
 
       final lexer = LakeLexer(input);
       expect(lexer.currentType, TokenType.kwConst);
@@ -248,14 +245,9 @@ void main() {
     });
 
     test('captures doc comments correctly', () {
-      const input = '''
-        /// This is a doc comment
-        /// for a struct
-        struct Point {
-          /// X coordinate
-          1: double x;
-        }
-      ''';
+      final input = File(
+        'test/test_data/lake_sources/lexer_test_16.lake',
+      ).readAsStringSync();
 
       final lexer = LakeLexer(input);
 

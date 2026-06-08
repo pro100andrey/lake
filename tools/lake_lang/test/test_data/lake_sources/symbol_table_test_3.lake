@@ -1,0 +1,25 @@
+const i32 MAX_USERS = 100;
+
+typedef i32 UserId;
+
+struct User {
+  i32 id;
+}
+
+service UserService {
+  void getUser();
+}
+
+enum Role {
+  ADMIN
+}
+
+union Result {
+  User user;
+  string msg;
+}
+
+exception NotFoundException {
+  string msg;
+}
+      

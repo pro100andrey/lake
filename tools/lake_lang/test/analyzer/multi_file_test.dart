@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:lake_lang/src/analyzer/analysis_session.dart';
 import 'package:test/test.dart';
 
@@ -5,17 +6,12 @@ void main() {
   group('AnalysisSession (Multi-file Resolution)', () {
     test('Successfully imports and resolves symbols from another file', () {
       final fileSystem = {
-        'main.lake': '''
-          import "models.lake";
-
-          const User myUser = { 1: 1, 2: "Alice" };
-        ''',
-        'models.lake': '''
-          struct User {
-            1: required i32 id;
-            2: required string name;
-          }
-        ''',
+        'main.lake': File(
+          'test/test_data/lake_sources/multi_file_test_12.lake',
+        ).readAsStringSync(),
+        'models.lake': File(
+          'test/test_data/lake_sources/multi_file_test_11.lake',
+        ).readAsStringSync(),
       };
 
       final session = AnalysisSession((path) {
@@ -44,9 +40,9 @@ void main() {
 
     test('Reports error on missing imported file', () {
       final fileSystem = {
-        'main.lake': '''
-          import "missing.lake";
-        ''',
+        'main.lake': File(
+          'test/test_data/lake_sources/multi_file_test_10.lake',
+        ).readAsStringSync(),
       };
 
       final session = AnalysisSession((path) {
@@ -69,14 +65,12 @@ void main() {
 
     test('Reports error on circular imports', () {
       final fileSystem = {
-        'a.lake': '''
-          import "b.lake";
-          const i32 a = 1;
-        ''',
-        'b.lake': '''
-          import "a.lake";
-          const i32 b = 2;
-        ''',
+        'a.lake': File(
+          'test/test_data/lake_sources/multi_file_test_9.lake',
+        ).readAsStringSync(),
+        'b.lake': File(
+          'test/test_data/lake_sources/multi_file_test_8.lake',
+        ).readAsStringSync(),
       };
 
       final session = AnalysisSession((path) {

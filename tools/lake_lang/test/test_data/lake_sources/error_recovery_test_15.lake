@@ -1,0 +1,9 @@
+struct BadStruct {
+  i32 x;
+  string y = ; // Syntax error: missing literal after =
+}
+
+struct GoodStruct {
+  bool z;
+}
+      

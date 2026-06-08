@@ -1,0 +1,7 @@
+struct MyStruct {
+  i32 a;
+  bad_type b; // parsed as CustomTypeNode!
+  // Let's make a real syntax error:
+  i32 ; // missing identifier
+  string c;
+}
