@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:lake_lang/src/analyzer/errors/error_reporter.dart';
 import 'package:lake_lang/src/parser/ast/ast_base.dart';
 import 'package:lake_lang/src/parser/lake_parser.dart';

@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:lake_lang/src/analyzer/errors/error_reporter.dart';
 import 'package:lake_lang/src/analyzer/symbols/symbol_table.dart';
 import 'package:lake_lang/src/analyzer/visitors/symbol_table_visitor.dart';

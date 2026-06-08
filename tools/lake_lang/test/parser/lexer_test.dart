@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:lake_lang/src/parser/lake_lexer.dart';
 import 'package:lake_lang/src/parser/token_type.dart';
 import 'package:test/test.dart';
