@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+
 
 import '../../parser/ast/ast_base.dart';
 import '../semantic_types.dart';
@@ -14,8 +14,8 @@ enum SymbolKind {
   exception,
 }
 
-final class SymbolEntry extends Equatable {
-  const SymbolEntry({
+class SymbolEntry {
+  SymbolEntry({
     required this.name,
     required this.kind,
     required this.declaration,
@@ -36,8 +36,18 @@ final class SymbolEntry extends Equatable {
   /// This will be determined during type-checking phase. It can be null if the
   /// type has't been resolved yet or if it's a symbol kind that  doesn't
   /// directly have a single semantic type (e.g., a service itself).
-  final SemanticType? resolvedType;
+  SemanticType? resolvedType;
 
   @override
-  List<Object?> get props => [name, kind, declaration, resolvedType];
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SymbolEntry &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          kind == other.kind &&
+          declaration == other.declaration &&
+          resolvedType == other.resolvedType;
+
+  @override
+  int get hashCode => Object.hash(name, kind, declaration, resolvedType);
 }

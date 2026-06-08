@@ -47,9 +47,16 @@ class TypeCheckingVisitor implements AstVisitor<void> {
   }
 
   @override
+  @override
   void visitConstDefinitionNode(ConstDefinitionNode node) {
     node.type.accept(this);
     node.value.accept(this);
+
+    final targetType = getSemanticType(node.type, _reporter, _symbolTable);
+    final entry = _symbolTable.lookup(node.identifier.name, node);
+    if (entry != null) {
+      entry.resolvedType = targetType;
+    }
 
     _ruleDispatcher.applyRules(node);
   }

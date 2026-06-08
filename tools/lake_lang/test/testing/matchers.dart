@@ -7,7 +7,7 @@ class HasSpan extends Matcher {
   final int expectedEnd;
 
   @override
-  bool matches(Object? item, Map matchState) {
+  bool matches(Object? item, Map<dynamic, dynamic> matchState) {
     if (item is! Span) {
       matchState['type'] = item.runtimeType;
       return false;
@@ -27,7 +27,7 @@ class HasSpan extends Matcher {
   Description describeMismatch(
     Object? item,
     Description mismatchDescription,
-    Map matchState,
+    Map<dynamic, dynamic> matchState,
     bool verbose,
   ) {
     if (item is! Span) {

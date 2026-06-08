@@ -11,7 +11,6 @@ import '../rules/declaration/required_field_rule.dart';
 import '../semantic_types.dart';
 import '../symbols/symbol_entry.dart';
 import '../symbols/symbol_table.dart';
-import '../utils.dart';
 
 class SymbolTableVisitor extends AstVisitor<void> {
   SymbolTableVisitor(this._symbolTable, this._reporter)
@@ -84,17 +83,11 @@ class SymbolTableVisitor extends AstVisitor<void> {
   void visitConstDefinitionNode(ConstDefinitionNode node) {
     _ruleDispatcher.applyRules(node);
 
-    final declaredSemanticType = getSemanticType(
-      node.type,
-      _reporter,
-      _symbolTable,
-    );
-
     _symbolTable.addSymbol(
       name: node.identifier.name,
       kind: SymbolKind.constant,
       declaration: node,
-      resolvedType: declaredSemanticType,
+      resolvedType: null, // Resolved in TypeCheckingVisitor
     );
 
     // Continue visiting children to ensure all parts of the AST are covered

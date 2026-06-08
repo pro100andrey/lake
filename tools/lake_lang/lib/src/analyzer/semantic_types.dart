@@ -1,14 +1,19 @@
-import 'package:equatable/equatable.dart';
-
 import '../parser/ast/ast_base.dart';
 
-sealed class SemanticType extends Equatable {
+sealed class SemanticType {
   const SemanticType(this.name);
 
   final String name;
 
   @override
-  List<Object?> get props => [name];
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SemanticType &&
+          other.runtimeType == runtimeType &&
+          other.name == name);
+
+  @override
+  int get hashCode => name.hashCode;
 
   bool isAssignableTo(SemanticType other);
 }
@@ -100,7 +105,11 @@ final class ListType extends SemanticType {
   final SemanticType elementType;
 
   @override
-  List<Object?> get props => [...super.props, elementType];
+  bool operator ==(Object other) =>
+      super == other && other is ListType && elementType == other.elementType;
+
+  @override
+  int get hashCode => Object.hash(super.hashCode, elementType);
 
   @override
   bool isAssignableTo(SemanticType other) {
@@ -124,7 +133,14 @@ final class MapType extends SemanticType {
   final SemanticType valueType;
 
   @override
-  List<Object?> get props => [...super.props, keyType, valueType];
+  bool operator ==(Object other) =>
+      super == other &&
+      other is MapType &&
+      keyType == other.keyType &&
+      valueType == other.valueType;
+
+  @override
+  int get hashCode => Object.hash(super.hashCode, keyType, valueType);
 
   @override
   bool isAssignableTo(SemanticType other) {
@@ -147,7 +163,11 @@ final class SetType extends SemanticType {
   final SemanticType elementType;
 
   @override
-  List<Object?> get props => [...super.props, elementType];
+  bool operator ==(Object other) =>
+      super == other && other is SetType && elementType == other.elementType;
+
+  @override
+  int get hashCode => Object.hash(super.hashCode, elementType);
 
   @override
   bool isAssignableTo(SemanticType other) {
@@ -169,7 +189,11 @@ final class StreamType extends SemanticType {
   final SemanticType elementType;
 
   @override
-  List<Object?> get props => [...super.props, elementType];
+  bool operator ==(Object other) =>
+      super == other && other is StreamType && elementType == other.elementType;
+
+  @override
+  int get hashCode => Object.hash(super.hashCode, elementType);
 
   @override
   bool isAssignableTo(SemanticType other) {
@@ -199,7 +223,11 @@ final class StructType extends SemanticType {
   final StructDefinitionNode declaration;
 
   @override
-  List<Object?> get props => [...super.props, declaration];
+  bool operator ==(Object other) =>
+      super == other && other is StructType && declaration == other.declaration;
+
+  @override
+  int get hashCode => Object.hash(super.hashCode, declaration);
 
   @override
   bool isAssignableTo(SemanticType other) {
@@ -223,7 +251,11 @@ final class UnionType extends SemanticType {
   final UnionDefinitionNode declaration;
 
   @override
-  List<Object?> get props => [...super.props, declaration];
+  bool operator ==(Object other) =>
+      super == other && other is UnionType && declaration == other.declaration;
+
+  @override
+  int get hashCode => Object.hash(super.hashCode, declaration);
 
   @override
   bool isAssignableTo(SemanticType other) {
@@ -247,7 +279,11 @@ final class EnumType extends SemanticType {
   final EnumDefinitionNode declaration;
 
   @override
-  List<Object?> get props => [...super.props, declaration];
+  bool operator ==(Object other) =>
+      super == other && other is EnumType && declaration == other.declaration;
+
+  @override
+  int get hashCode => Object.hash(super.hashCode, declaration);
 
   @override
   bool isAssignableTo(SemanticType other) {
@@ -273,7 +309,13 @@ final class TypedefType extends SemanticType {
   late final SemanticType targetType;
 
   @override
-  List<Object?> get props => [...super.props, declaration];
+  bool operator ==(Object other) =>
+      super == other &&
+      other is TypedefType &&
+      declaration == other.declaration;
+
+  @override
+  int get hashCode => Object.hash(super.hashCode, declaration);
 
   @override
   bool isAssignableTo(SemanticType other) => targetType.isAssignableTo(other);
@@ -285,7 +327,13 @@ final class ServiceType extends SemanticType {
   final ServiceDefinitionNode declaration;
 
   @override
-  List<Object?> get props => [...super.props, declaration];
+  bool operator ==(Object other) =>
+      super == other &&
+      other is ServiceType &&
+      declaration == other.declaration;
+
+  @override
+  int get hashCode => Object.hash(super.hashCode, declaration);
 
   @override
   bool isAssignableTo(SemanticType other) {
@@ -309,7 +357,13 @@ final class ExceptionType extends SemanticType {
   final ExceptionDefinitionNode declaration;
 
   @override
-  List<Object?> get props => [...super.props, declaration];
+  bool operator ==(Object other) =>
+      super == other &&
+      other is ExceptionType &&
+      declaration == other.declaration;
+
+  @override
+  int get hashCode => Object.hash(super.hashCode, declaration);
 
   @override
   bool isAssignableTo(SemanticType other) {

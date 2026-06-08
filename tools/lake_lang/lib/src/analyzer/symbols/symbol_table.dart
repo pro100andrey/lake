@@ -54,11 +54,14 @@ class Scope {
 class SymbolTable {
   /// Creates a new symbol table and initializes it with a global scope.
   SymbolTable(this._errorReporter) {
-    _currentScope = Scope();
+    _globalScope = Scope();
+    _currentScope = _globalScope;
   }
 
+  late final Scope _globalScope;
   Scope? _currentScope;
   final ErrorReporter _errorReporter;
+  final List<SymbolTable> importedTables = [];
 
   void pushScope() {
     final newScope = Scope(parent: _currentScope);
@@ -118,17 +121,26 @@ class SymbolTable {
 
     final symbol = _currentScope!.lookup(name);
 
-    if (symbol == null) {
-      _errorReporter.reportUndefinedSymbol(
-        name: name,
-        startOffset: referencingNode.startOffset,
-        endOffset: referencingNode.endOffset,
-      );
-      return null;
+    if (symbol != null) {
+      return symbol;
     }
 
-    return symbol;
+    // Lookup in imported tables' global scopes
+    for (final importedTable in importedTables) {
+      final importedSymbol = importedTable.globalScope.lookup(name);
+      if (importedSymbol != null) {
+        return importedSymbol;
+      }
+    }
+
+    _errorReporter.reportUndefinedSymbol(
+      name: name,
+      startOffset: referencingNode.startOffset,
+      endOffset: referencingNode.endOffset,
+    );
+    return null;
   }
 
   Scope? get currentScope => _currentScope;
+  Scope get globalScope => _globalScope;
 }
