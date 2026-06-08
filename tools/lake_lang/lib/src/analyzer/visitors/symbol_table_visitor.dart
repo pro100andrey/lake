@@ -94,7 +94,6 @@ class SymbolTableVisitor extends AstVisitor<void> {
       name: node.identifier.name,
       kind: SymbolKind.constant,
       declaration: node,
-      span: node.span,
       resolvedType: declaredSemanticType,
     );
 
@@ -113,7 +112,6 @@ class SymbolTableVisitor extends AstVisitor<void> {
       name: node.identifier.name,
       kind: SymbolKind.type,
       declaration: node,
-      span: node.span,
       resolvedType: typedefSemanticType,
     );
 
@@ -135,7 +133,6 @@ class SymbolTableVisitor extends AstVisitor<void> {
         name: node.identifier.name,
         kind: SymbolKind.type,
         declaration: node,
-        span: node.span,
         resolvedType: enumSemanticType, // Set the enum's own semantic type
       )
       // Enums introduce a new scope for their members.
@@ -156,7 +153,6 @@ class SymbolTableVisitor extends AstVisitor<void> {
       name: node.identifier.name,
       kind: SymbolKind.enumMember,
       declaration: node,
-      span: node.span,
       //Type (parent EnumType) will be resolved by TypeCheckingVisitor
       resolvedType: null,
     );
@@ -177,7 +173,6 @@ class SymbolTableVisitor extends AstVisitor<void> {
         name: node.identifier.name,
         kind: SymbolKind.type,
         declaration: node,
-        span: node.span,
         resolvedType: structSemanticType, // Set the struct's own semantic type
       )
       // Structs introduce a new scope for their fields.
@@ -201,7 +196,6 @@ class SymbolTableVisitor extends AstVisitor<void> {
         name: node.identifier.name,
         kind: SymbolKind.type,
         declaration: node,
-        span: node.span,
         resolvedType: unionSemanticType,
       )
       // Unions introduce a new scope for their fields.
@@ -225,7 +219,6 @@ class SymbolTableVisitor extends AstVisitor<void> {
         name: node.identifier.name,
         kind: SymbolKind.type,
         declaration: node,
-        span: node.span,
         // Set the exception's own semantic type
         resolvedType: exceptionSemanticType,
       )
@@ -250,7 +243,6 @@ class SymbolTableVisitor extends AstVisitor<void> {
         name: node.identifier.name,
         kind: SymbolKind.service,
         declaration: node,
-        span: node.span,
         resolvedType: serviceSemanticType,
       )
       // Services introduce a new scope for their methods.
@@ -278,7 +270,6 @@ class SymbolTableVisitor extends AstVisitor<void> {
       name: node.identifier.name,
       kind: SymbolKind.field,
       declaration: node,
-      span: node.span,
       resolvedType: null, // Type will be resolved by TypeCheckingVisitor
     );
 
@@ -295,7 +286,6 @@ class SymbolTableVisitor extends AstVisitor<void> {
         name: node.identifier.name,
         kind: SymbolKind.method,
         declaration: node,
-        span: node.span,
         resolvedType: null, // A MethodType will be set by TypeCheckingVisitor
       )
       // Methods introduce a new scope for their parameters and throws.
@@ -311,7 +301,6 @@ class SymbolTableVisitor extends AstVisitor<void> {
         name: param.identifier.name,
         kind: SymbolKind.parameter,
         declaration: param,
-        span: param.span,
         // Parameter type will be resolved by TypeCheckingVisitor
         resolvedType: null,
       );

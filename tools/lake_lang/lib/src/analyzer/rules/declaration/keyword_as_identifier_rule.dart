@@ -26,7 +26,8 @@ final class KeywordAsIdentifierRule extends BaseRule<IdentifierNode> {
     if (_reservedKeywords.contains(node.name)) {
       reporter.reportKeywordAsIdentifier(
         identifier: node.name,
-        span: node.span,
+        startOffset: node.startOffset,
+        endOffset: node.endOffset,
       );
     }
   }

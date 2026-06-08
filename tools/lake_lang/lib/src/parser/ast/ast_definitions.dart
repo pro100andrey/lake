@@ -7,6 +7,7 @@ final class DocumentNode extends AstNode {
     required super.startOffset,
     required super.endOffset,
   });
+
   final List<HeaderNode> headers;
   final List<DefinitionNode> definitions;
 
@@ -24,6 +25,7 @@ final class ImportNode extends HeaderNode {
     required super.startOffset,
     required super.endOffset,
   });
+
   final StringLiteralNode path;
 
   @override
@@ -37,6 +39,7 @@ final class NamespaceNode extends HeaderNode {
     required super.startOffset,
     required super.endOffset,
   });
+
   final IdentifierNode scope;
   final IdentifierNode identifier;
 
@@ -50,6 +53,7 @@ sealed class DefinitionNode extends AstNode {
     required super.endOffset,
     this.docComment,
   });
+
   final String? docComment;
 }
 
@@ -62,6 +66,7 @@ final class ConstDefinitionNode extends DefinitionNode {
     required super.endOffset,
     super.docComment,
   });
+
   final TypeNode type;
   final IdentifierNode identifier;
   final LiteralValueNode value;
@@ -78,6 +83,7 @@ final class TypedefDefinitionNode extends DefinitionNode {
     required super.endOffset,
     super.docComment,
   });
+
   final TypeNode type;
   final IdentifierNode identifier;
 
@@ -94,6 +100,7 @@ final class EnumValueNode extends AstNode {
     this.value,
     this.docComment,
   });
+
   final IdentifierNode identifier;
   final IntLiteralNode? value;
   final String? docComment;
@@ -110,6 +117,7 @@ final class EnumDefinitionNode extends DefinitionNode {
     required super.endOffset,
     super.docComment,
   });
+
   final IdentifierNode identifier;
   final List<EnumValueNode> members;
 
@@ -128,6 +136,7 @@ final class FieldNode extends AstNode {
     this.defaultValue,
     this.docComment,
   });
+
   final IntLiteralNode? fieldId;
   final bool isRequired;
   final TypeNode type;
@@ -147,6 +156,7 @@ final class StructDefinitionNode extends DefinitionNode {
     required super.endOffset,
     super.docComment,
   });
+
   final IdentifierNode identifier;
   final List<FieldNode> fields;
 
@@ -162,6 +172,7 @@ final class UnionDefinitionNode extends DefinitionNode {
     required super.endOffset,
     super.docComment,
   });
+
   final IdentifierNode identifier;
   final List<FieldNode> fields;
 
@@ -177,6 +188,7 @@ final class ExceptionDefinitionNode extends DefinitionNode {
     required super.endOffset,
     super.docComment,
   });
+
   final IdentifierNode identifier;
   final List<FieldNode> fields;
 
@@ -195,6 +207,7 @@ final class MethodNode extends AstNode {
     required super.endOffset,
     this.docComment,
   });
+
   final TypeNode returnType;
   final IdentifierNode identifier;
   final List<FieldNode> parameters;
@@ -214,6 +227,7 @@ final class ServiceDefinitionNode extends DefinitionNode {
     this.extendsService,
     super.docComment,
   });
+
   final IdentifierNode identifier;
   final IdentifierNode? extendsService;
   final List<MethodNode> methods;

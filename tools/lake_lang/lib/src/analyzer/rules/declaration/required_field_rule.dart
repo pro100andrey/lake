@@ -16,7 +16,8 @@ final class RequiredFieldRule extends BaseRule<FieldNode> {
       if (node.defaultValue != null) {
         reporter.reportRequiredFieldCannotHaveDefaultValue(
           fieldName: node.identifier.name,
-          span: node.span,
+          startOffset: node.startOffset,
+          endOffset: node.endOffset,
         );
       }
     }

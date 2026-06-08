@@ -1,5 +1,3 @@
-import 'package:source_span/source_span.dart';
-
 import '../../ast/ast_visitor.dart';
 
 part 'ast_definitions.dart';
@@ -19,13 +17,6 @@ sealed class AstNode {
   /// The absolute ending character index of this node in the source text
   /// (exclusive).
   final int endOffset;
-
-  /// Returns a [SourceSpan] for this node.
-  SourceSpan get span => SourceSpan(
-    SourceLocation(startOffset),
-    SourceLocation(endOffset),
-    '',
-  );
 
   /// Accepts an [AstVisitor] to traverse the tree.
   T accept<T>(AstVisitor<T> visitor);

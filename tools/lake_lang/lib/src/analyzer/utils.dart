@@ -8,32 +8,49 @@ SemanticType? getSemanticType(
   ErrorReporter reporter,
   SymbolTable symbolTable,
 ) {
-  if (typeNode case BaseTypeNode(:final name, :final span)) {
+  if (typeNode case BaseTypeNode(
+    :final name,
+    :final startOffset,
+    :final endOffset,
+  )) {
     final type = BaseType.byName[name];
 
     if (type == null) {
-      reporter.reportGeneric(message: 'Unknown base type: $name', span: span);
+      reporter.reportGeneric(
+        message: 'Unknown base type: $name',
+        startOffset: startOffset,
+        endOffset: endOffset,
+      );
     }
 
     return type;
   }
 
-  if (typeNode case CustomTypeNode(:final name, :final span)) {
-    final entry = symbolTable.lookup(name, span);
+  if (typeNode case CustomTypeNode(
+    :final name,
+    :final startOffset,
+    :final endOffset,
+  )) {
+    final entry = symbolTable.lookup(name, typeNode);
 
     if (entry?.declaration != null) {
       return entry!.resolvedType;
     } else {
       reporter.reportGeneric(
         message: 'Unknown custom type: $name',
-        span: span,
+        startOffset: startOffset,
+        endOffset: endOffset,
       );
     }
 
     return entry?.resolvedType;
   }
 
-  if (typeNode case ListTypeNode(:final elementType, :final span)) {
+  if (typeNode case ListTypeNode(
+    :final elementType,
+    :final startOffset,
+    :final endOffset,
+  )) {
     final elementSemanticType = getSemanticType(
       elementType,
       reporter,
@@ -43,7 +60,8 @@ SemanticType? getSemanticType(
     if (elementSemanticType == null) {
       reporter.reportGeneric(
         message: 'Invalid element type in list',
-        span: span,
+        startOffset: startOffset,
+        endOffset: endOffset,
       );
 
       return null;
@@ -55,7 +73,8 @@ SemanticType? getSemanticType(
   if (typeNode case MapTypeNode(
     :final keyType,
     :final valueType,
-    :final span,
+    :final startOffset,
+    :final endOffset,
   )) {
     final keySemanticType = getSemanticType(
       keyType,
@@ -70,11 +89,19 @@ SemanticType? getSemanticType(
     );
 
     if (keySemanticType == null) {
-      reporter.reportGeneric(message: 'Invalid key type in map', span: span);
+      reporter.reportGeneric(
+        message: 'Invalid key type in map',
+        startOffset: startOffset,
+        endOffset: endOffset,
+      );
     }
 
     if (valueSemanticType == null) {
-      reporter.reportGeneric(message: 'Invalid value type in map', span: span);
+      reporter.reportGeneric(
+        message: 'Invalid value type in map',
+        startOffset: startOffset,
+        endOffset: endOffset,
+      );
     }
 
     if (keySemanticType == null || valueSemanticType == null) {
@@ -84,7 +111,11 @@ SemanticType? getSemanticType(
     return MapType(keySemanticType, valueSemanticType);
   }
 
-  if (typeNode case SetTypeNode(:final elementType, :final span)) {
+  if (typeNode case SetTypeNode(
+    :final elementType,
+    :final startOffset,
+    :final endOffset,
+  )) {
     final elementSemanticType = getSemanticType(
       elementType,
       reporter,
@@ -94,7 +125,8 @@ SemanticType? getSemanticType(
     if (elementSemanticType == null) {
       reporter.reportGeneric(
         message: 'Invalid element type in set',
-        span: span,
+        startOffset: startOffset,
+        endOffset: endOffset,
       );
 
       return null;
@@ -103,7 +135,11 @@ SemanticType? getSemanticType(
     return SetType(elementSemanticType);
   }
 
-  if (typeNode case StreamTypeNode(:final elementType, :final span)) {
+  if (typeNode case StreamTypeNode(
+    :final elementType,
+    :final startOffset,
+    :final endOffset,
+  )) {
     final elementSemanticType = getSemanticType(
       elementType,
       reporter,
@@ -113,7 +149,8 @@ SemanticType? getSemanticType(
     if (elementSemanticType == null) {
       reporter.reportGeneric(
         message: 'Invalid element type in stream',
-        span: span,
+        startOffset: startOffset,
+        endOffset: endOffset,
       );
 
       return null;
@@ -128,7 +165,8 @@ SemanticType? getSemanticType(
 
   reporter.reportGeneric(
     message: 'Unsupported type node: ${typeNode.runtimeType}',
-    span: typeNode.span,
+    startOffset: typeNode.startOffset,
+    endOffset: typeNode.endOffset,
   );
 
   return null;
@@ -161,9 +199,9 @@ SemanticType? getLiteralValueSemanticType(
     return BaseType.stringT;
   }
 
-  if (node case IdentifierNode(:final name, :final span)) {
+  if (node case IdentifierNode(:final name)) {
     // This handles cases like `const double PI_APPROXIMATION = PI;`
-    final symbolEntry = symbolTable.lookup(name, span);
+    final symbolEntry = symbolTable.lookup(name, node);
 
     if (symbolEntry == null) {
       // Error already reported by symbolTable.lookup
@@ -201,7 +239,8 @@ SemanticType? getLiteralValueSemanticType(
           message:
               'Inconsistent types in list literal. '
               'Expected ${commonElementType.name}, got ${elementType.name}.',
-          span: element.span,
+          startOffset: element.startOffset,
+          endOffset: element.endOffset,
         );
 
         return null; // Mixed types, cannot infer single type

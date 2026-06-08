@@ -25,7 +25,7 @@ final class ConstIdentifierResolutionRule
       // 1. Resolve the identifier in the symbol table
       final symbolEntry = symbolTable.lookup(
         identifierNode.name,
-        identifierNode.span,
+        identifierNode,
       );
 
       if (symbolEntry == null) {
@@ -44,7 +44,8 @@ final class ConstIdentifierResolutionRule
           message:
               'Could not determine type of constant identifier '
               "'${identifierNode.name}'.",
-          span: identifierNode.span,
+          startOffset: identifierNode.startOffset,
+          endOffset: identifierNode.endOffset,
         );
         return;
       }
@@ -67,9 +68,11 @@ final class ConstIdentifierResolutionRule
           literalTypeName: declaredSemanticType.name,
           // Or a more specific kind if known from symbolEntry.kind
           valueKindName: 'identifier',
-          valueSpan: identifierNode.span,
+          startOffset: identifierNode.startOffset,
+          endOffset: identifierNode.endOffset,
           valueTypeName: identifierSemanticType.name,
-          literalTypeSpan: node.type.span,
+          literalTypeStart: node.type.startOffset,
+          literalTypeEnd: node.type.endOffset,
         );
       }
     }

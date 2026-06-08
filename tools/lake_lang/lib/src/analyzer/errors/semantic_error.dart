@@ -1,7 +1,3 @@
-import 'package:source_span/source_span.dart';
-
-import '../../ast/base/types.dart';
-
 /// Represents an additional label for a specific part of the code
 /// that provides context to a diagnostic message.
 ///
@@ -9,17 +5,17 @@ import '../../ast/base/types.dart';
 /// in the source code that are relevant to the primary diagnostic message.
 ///
 /// Fields:
-/// - `span`: The [Span] indicating the exact location in the code.
+/// - `span`: The span indicating the exact location in the code.
 /// - `message`: A concise message explaining the context of this label.
 ///
 /// Example:
 /// ```dart
 /// DiagnosticLabel myLabel = (
-///   span: mySourceFile.span(10, 20),
+///   node: $1(10, 20),
 ///   message: 'This is related to the error'
 /// );
 /// ```
-typedef DiagnosticLabel = ({SourceSpan span, String message});
+typedef DiagnosticLabel = ({int startOffset, int endOffset, String message});
 
 /// Enum defining the severity level of a diagnostic message.
 ///
@@ -188,7 +184,7 @@ sealed class Diagnostic {
   /// Creates a new [Diagnostic] instance.
   ///
   /// - Parameters:
-  ///   - [span]: The main location in the source code where the diagnostic
+  ///   - span: The main location in the source code where the diagnostic
   /// originates. This is the most important piece of location information.
   ///   - [message]: The main message describing the diagnostic, intended to be
   /// user-friendly and actionable.
@@ -200,16 +196,19 @@ sealed class Diagnostic {
   /// to parts of the code related to the primary span. Defaults to an empty
   /// list.
   const Diagnostic({
-    required this.span,
+    required this.startOffset,
+    required this.endOffset,
     required this.message,
     this.severity = DiagnosticSeverity.error,
     this.code,
     this.labels = const [],
   });
 
-  /// The main location in the source code where the diagnostic originates.
-  /// This is typically the most relevant part of the code for the issue.
-  final SourceSpan span;
+  /// The start offset in the source code.
+  final int startOffset;
+
+  /// The end offset in the source code.
+  final int endOffset;
 
   /// The main message describing the diagnostic.
   /// This message should be clear and concise, explaining what went wrong.
@@ -240,14 +239,15 @@ final class GenericDiagnostic extends Diagnostic {
   ///
   /// - Parameters:
   ///   - [message]: The main diagnostic message.
-  ///   - [span]: The primary [SourceSpan] for this diagnostic.
+  ///   - span: The primary source span for this diagnostic.
   ///   - [severity]: The severity level. Defaults to
   /// [DiagnosticSeverity.error].
   ///   - [code]: An optional diagnostic code.
   ///   - [labels]: Additional contextual labels.
   const GenericDiagnostic({
     required super.message,
-    required super.span,
+    required super.startOffset,
+    required super.endOffset,
     required super.severity,
     required super.labels,
     super.code,
@@ -269,26 +269,28 @@ final class LiteralValueCannotBeAssignedDiagnostic extends Diagnostic {
   /// "expression").
   ///   - [literalTypeName]: The name of the type declared for the literal
   /// (e.g., "i32").
-  ///   - [valueSpan]: The [SourceSpan] of the value that is causing the type
+  ///   - `startOffset`/`endOffset`: The source span of the value that is causing the type
   /// mismatch.
-  ///   - [literalTypeSpan]: An optional [SourceSpan] indicating the location
+  ///   - `literalTypeStart`/`literalTypeEnd`: An optional source span indicating the location
   /// where the literal's type was declared, providing additional context.
   LiteralValueCannotBeAssignedDiagnostic({
     required String valueTypeName,
     required String valueKindName,
     required String literalTypeName,
-    required SourceSpan valueSpan,
-    SourceSpan? literalTypeSpan,
+    required super.startOffset,
+    required super.endOffset,
+    int? literalTypeStart,
+    int? literalTypeEnd,
   }) : super(
-         span: valueSpan,
          message:
              'Cannot assign a value of type "$valueTypeName" ($valueKindName) '
              'to a literal of type "$literalTypeName".',
          code: DiagnosticCode.literalValueCannotBeAssigned,
          labels: [
-           if (literalTypeSpan != null)
+           if (literalTypeStart != null && literalTypeEnd != null)
              (
-               span: literalTypeSpan,
+               startOffset: literalTypeStart,
+               endOffset: literalTypeEnd,
                message: 'Literal declared here as "$literalTypeName"',
              ),
          ],
@@ -304,20 +306,23 @@ final class DuplicateDeclarationDiagnostic extends Diagnostic {
   ///
   /// - Parameters:
   ///   - [name]: The name of the symbol that is duplicated.
-  ///   - [span]: The [SourceSpan] of the current, duplicate declaration.
-  ///   - [previousDeclarationSpan]: An optional [SourceSpan] indicating the
+  ///   - span: The source span of the current, duplicate declaration.
+  ///   - previousDeclarationSpan: An optional source span indicating the
   /// location of the original declaration of the symbol, providing helpful
   /// context.
   DuplicateDeclarationDiagnostic({
     required String name,
-    required super.span,
-    required SourceSpan previousDeclarationSpan,
+    required super.startOffset,
+    required super.endOffset,
+    required int prevStart,
+    required int prevEnd,
   }) : super(
          message: 'A symbol named "$name" is already declared in this scope.',
          code: DiagnosticCode.duplicateDeclaration,
          labels: [
            (
-             span: previousDeclarationSpan,
+             startOffset: prevStart,
+             endOffset: prevEnd,
              message: 'Previous declaration of "$name" was here',
            ),
          ],
@@ -333,10 +338,11 @@ final class UndefinedSymbolDiagnostic extends Diagnostic {
   ///
   /// - Parameters:
   ///   - [name]: The name of the undefined symbol.
-  ///   - [span]: The [SourceSpan] where the undefined symbol was used.
+  ///   - span: The source span where the undefined symbol was used.
   const UndefinedSymbolDiagnostic({
     required String name,
-    required super.span,
+    required super.startOffset,
+    required super.endOffset,
   }) : super(
          message: 'Undefined symbol: "$name".',
          code: DiagnosticCode.undefinedSymbol,
@@ -350,14 +356,16 @@ final class EmptyEnumDefinitionDiagnostic extends Diagnostic {
   /// Creates an [EmptyEnumDefinitionDiagnostic] instance.
   ///
   /// - Parameters:
-  ///   - [span]: The [SourceSpan] of the empty enum definition.
-  const EmptyEnumDefinitionDiagnostic({required super.span})
-    : super(
-        message:
-            'Enum definition cannot be empty. '
-            'Enums must have at least one member.',
-        code: DiagnosticCode.emptyEnumDefinition,
-      );
+  ///   - span: The source span of the empty enum definition.
+  const EmptyEnumDefinitionDiagnostic({
+    required super.startOffset,
+    required super.endOffset,
+  }) : super(
+         message:
+             'Enum definition cannot be empty. '
+             'Enums must have at least one member.',
+         code: DiagnosticCode.emptyEnumDefinition,
+       );
 }
 
 /// Diagnostic for an empty struct definition.
@@ -367,14 +375,16 @@ final class EmptyStructDefinitionDiagnostic extends Diagnostic {
   /// Creates an [EmptyStructDefinitionDiagnostic] instance.
   ///
   /// - Parameters:
-  ///   - [span]: The [SourceSpan] of the empty struct definition
-  const EmptyStructDefinitionDiagnostic({required super.span})
-    : super(
-        message:
-            'Struct definition cannot be empty. '
-            'Structs must have at least one field.',
-        code: DiagnosticCode.emptyStructDefinition,
-      );
+  ///   - span: The source span of the empty struct definition
+  const EmptyStructDefinitionDiagnostic({
+    required super.startOffset,
+    required super.endOffset,
+  }) : super(
+         message:
+             'Struct definition cannot be empty. '
+             'Structs must have at least one field.',
+         code: DiagnosticCode.emptyStructDefinition,
+       );
 }
 
 /// Diagnostic for using a reserved keyword as an identifier.
@@ -387,10 +397,11 @@ final class KeywordAsIdentifierDiagnostic extends Diagnostic {
   ///
   /// - Parameters:
   ///   - [identifier]: The reserved keyword that was used as an identifier.
-  ///   - [span]: The [SourceSpan] where the keyword was used as an identifier.
+  ///   - span: The source span where the keyword was used as an identifier.
   const KeywordAsIdentifierDiagnostic({
     required String identifier,
-    required super.span,
+    required super.startOffset,
+    required super.endOffset,
   }) : super(
          message:
              'Invalid identifier name: "$identifier" '
@@ -409,11 +420,12 @@ final class ListElementTypeMismatchDiagnostic extends Diagnostic {
   /// - Parameters:
   ///   - [expectedType]: The expected type for the list elements.
   ///   - [actualType]: The actual type found for the list element.
-  ///   - [span]: The [SourceSpan] of the list element causing the mismatch.
+  ///   - span: The source span of the list element causing the mismatch.
   const ListElementTypeMismatchDiagnostic({
     required String expectedType,
     required String actualType,
-    required super.span,
+    required super.startOffset,
+    required super.endOffset,
   }) : super(
          message:
              'List element type mismatch: expected "$expectedType", '
@@ -431,10 +443,11 @@ final class UnsupportedListElementTypeDiagnostic extends Diagnostic {
   ///
   /// - Parameters:
   ///   - [elementType]: The name of the unsupported element type.
-  ///   - [span]: The [SourceSpan] of the unsupported list element type.
+  ///   - span: The source span of the unsupported list element type.
   const UnsupportedListElementTypeDiagnostic({
     required String elementType,
-    required super.span,
+    required super.startOffset,
+    required super.endOffset,
   }) : super(
          message:
              'Unsupported list element type: "$elementType". '
@@ -452,11 +465,12 @@ final class MapKeyTypeMismatchDiagnostic extends Diagnostic {
   /// - Parameters:
   ///   - [expectedType]: The expected type for the map keys.
   ///   - [actualType]: The actual type found for the map key.
-  ///   - [span]: The [SourceSpan] of the map key causing the mismatch.
+  ///   - span: The source span of the map key causing the mismatch.
   const MapKeyTypeMismatchDiagnostic({
     required String expectedType,
     required String actualType,
-    required super.span,
+    required super.startOffset,
+    required super.endOffset,
   }) : super(
          message:
              'Map key type mismatch: expected "$expectedType", '
@@ -475,11 +489,12 @@ final class MapValueTypeMismatchDiagnostic extends Diagnostic {
   /// - Parameters:
   ///   - [expectedType]: The expected type for the map values.
   ///   - [actualType]: The actual type found for the map value.
-  ///   - [span]: The [SourceSpan] of the map value causing the mismatch.
+  ///   - span: The source span of the map value causing the mismatch.
   const MapValueTypeMismatchDiagnostic({
     required String expectedType,
     required String actualType,
-    required super.span,
+    required super.startOffset,
+    required super.endOffset,
   }) : super(
          message:
              'Map value type mismatch: expected "$expectedType", '
@@ -497,10 +512,11 @@ final class RequiredFieldCannotHaveDefaultValueDiagnostic extends Diagnostic {
   ///
   /// - Parameters:
   ///   - [fieldName]: The name of the field that is required.
-  ///   - [span]: The [SourceSpan] of the field declaration.
+  ///   - span: The source span of the field declaration.
   const RequiredFieldCannotHaveDefaultValueDiagnostic({
     required String fieldName,
-    required super.span,
+    required super.startOffset,
+    required super.endOffset,
   }) : super(
          message: 'A required field "$fieldName" cannot have a default value.',
          code: DiagnosticCode.requiredFieldCannotHaveDefaultValue,

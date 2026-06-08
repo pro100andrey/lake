@@ -11,7 +11,7 @@ final class _BaseTypeRule extends BaseRule<FieldNode> {
   void check(FieldNode node) {
     if ((node.type, node.defaultValue) case (
       BaseTypeNode(name: final literalTypeName),
-      LiteralValueNode(:final span),
+      LiteralValueNode(),
     )) {
       if (!isLiteralValueCompatibleWithBaseType(
         literalTypeName,
@@ -20,9 +20,11 @@ final class _BaseTypeRule extends BaseRule<FieldNode> {
         reporter.reportLiteralValueCannotBeAssigned(
           literalTypeName: literalTypeName,
           valueKindName: 'default value',
-          valueSpan: span,
+          startOffset: node.defaultValue!.startOffset,
+          endOffset: node.defaultValue!.endOffset,
           valueTypeName: node.defaultValue!.runtimeType.toString(),
-          literalTypeSpan: node.type.span,
+          literalTypeStart: node.type.startOffset,
+          literalTypeEnd: node.type.endOffset,
         );
       }
     }

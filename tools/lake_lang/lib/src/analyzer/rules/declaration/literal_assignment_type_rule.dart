@@ -16,15 +16,17 @@ final class _BaseTypeRule extends BaseRule<ConstDefinitionNode> {
   void check(ConstDefinitionNode node) {
     if ((node.type, node.value) case (
       BaseTypeNode(name: final constTypeName),
-      LiteralValueNode(:final span),
+      LiteralValueNode(),
     )) {
       if (!isLiteralValueCompatibleWithBaseType(constTypeName, node.value)) {
         reporter.reportLiteralValueCannotBeAssigned(
           literalTypeName: constTypeName,
           valueKindName: 'literal',
-          valueSpan: span,
+          startOffset: node.value.startOffset,
+          endOffset: node.value.endOffset,
           valueTypeName: node.value.runtimeType.toString(),
-          literalTypeSpan: node.type.span,
+          literalTypeStart: node.type.startOffset,
+          literalTypeEnd: node.type.endOffset,
         );
       }
     }
@@ -60,14 +62,16 @@ final class _ListTypeRule extends BaseRule<ConstDefinitionNode> {
               expectedType: expectedType,
               // (e.g., 'integer', 'string', etc.)
               actualType: element.runtimeType.toString(),
-              span: element.span,
+              startOffset: element.startOffset,
+              endOffset: element.endOffset,
             );
           }
         }
       } else {
         reporter.reportUnsupportedListElementType(
           elementType: getTypeName(elementType),
-          span: node.type.span,
+          startOffset: node.type.startOffset,
+          endOffset: node.type.endOffset,
         );
       }
     }
@@ -91,7 +95,8 @@ final class _MapTypeRule extends BaseRule<ConstDefinitionNode> {
           reporter.reportMapValueTypeMismatch(
             expectedType: getTypeName(keyType),
             actualType: entry.key.runtimeType.toString(),
-            span: entry.key.span,
+            startOffset: entry.key.startOffset,
+            endOffset: entry.key.endOffset,
           );
         }
 
@@ -102,7 +107,8 @@ final class _MapTypeRule extends BaseRule<ConstDefinitionNode> {
           reporter.reportMapValueTypeMismatch(
             expectedType: getTypeName(valueType),
             actualType: entry.value.runtimeType.toString(),
-            span: entry.value.span,
+            startOffset: entry.value.startOffset,
+            endOffset: entry.value.endOffset,
           );
         }
       }

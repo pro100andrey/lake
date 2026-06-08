@@ -3,7 +3,6 @@
 
 import 'package:source_span/source_span.dart';
 
-import '../../ast/base/types.dart';
 import 'semantic_error.dart';
 
 /// A class responsible for collecting and reporting diagnostic messages.
@@ -61,8 +60,8 @@ final class ErrorReporter {
 
     for (final diag in _diagnostics) {
       final diagSpan = sourceFile.span(
-        diag.span.start.offset,
-        diag.span.end.offset,
+        diag.startOffset,
+        diag.endOffset,
       );
 
       final codeText = diag.code != null ? ' [${diag.code!.id}]' : '';
@@ -73,10 +72,10 @@ final class ErrorReporter {
         '${diagSpan.highlight(color: true)}\n',
       );
 
-      for (final (:span, :message) in diag.labels) {
+      for (final (:startOffset, :endOffset, :message) in diag.labels) {
         final labelSpan = sourceFile.span(
-          span.start.offset,
-          span.end.offset,
+          startOffset,
+          endOffset,
         );
 
         print(
@@ -115,7 +114,7 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   ///
   /// - Parameters:
   ///   - [message]: The main diagnostic message.
-  ///   - [span]: The primary [Span] for this diagnostic.
+  ///   - span: The primary span for this diagnostic.
   ///   - [severity]: The severity level. Defaults to
   /// [DiagnosticSeverity.error].
   ///   - [code]: An optional diagnostic code.
@@ -124,7 +123,8 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// [DiagnosticCode].
   void reportGeneric({
     required String message,
-    required SourceSpan span,
+    required int startOffset,
+    required int endOffset,
     DiagnosticSeverity severity = DiagnosticSeverity.error,
     DiagnosticCode? code,
     List<DiagnosticLabel> labels = const [],
@@ -133,7 +133,8 @@ extension ErrorReporterGenericExtension on ErrorReporter {
     report(
       GenericDiagnostic(
         message: message,
-        span: span,
+        startOffset: startOffset,
+        endOffset: endOffset,
         severity: severity,
         labels: labels,
       ),
@@ -148,9 +149,19 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   ///
   /// - Parameters:
   ///   - [name]: The name of the undefined symbol.
-  ///   - [span]: The [Span] where the undefined symbol was encountered.
-  void reportUndefinedSymbol({required String name, required SourceSpan span}) {
-    report(UndefinedSymbolDiagnostic(name: name, span: span));
+  ///   - span: The span where the undefined symbol was encountered.
+  void reportUndefinedSymbol({
+    required String name,
+    required int startOffset,
+    required int endOffset,
+  }) {
+    report(
+      UndefinedSymbolDiagnostic(
+        name: name,
+        startOffset: startOffset,
+        endOffset: endOffset,
+      ),
+    );
   }
 
   /// Reports a [DuplicateDeclarationDiagnostic].
@@ -160,19 +171,23 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   ///
   /// - Parameters:
   ///   - [name]: The name of the duplicated symbol.
-  ///   - [span]: The [Span] of the current, duplicate declaration.
-  ///   - [previousDeclarationSpan]: An optional [Span] pointing to the
+  ///   - span: The span of the current, duplicate declaration.
+  ///   - previousDeclarationSpan: An optional span pointing to the
   /// location of the original declaration, providing helpful context.
   void reportDuplicateDeclaration({
     required String name,
-    required SourceSpan span,
-    required SourceSpan previousDeclarationSpan,
+    required int startOffset,
+    required int endOffset,
+    required int prevStart,
+    required int prevEnd,
   }) {
     report(
       DuplicateDeclarationDiagnostic(
         name: name,
-        span: span,
-        previousDeclarationSpan: previousDeclarationSpan,
+        startOffset: startOffset,
+        endOffset: endOffset,
+        prevStart: prevStart,
+        prevEnd: prevEnd,
       ),
     );
   }
@@ -182,9 +197,17 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// This diagnostic is triggered when an `enum` is defined without any
   /// members.
   ///
-  /// - Parameter [span]: The [Span] of the empty enum definition.
-  void reportEmptyEnumDefinition({required SourceSpan span}) {
-    report(EmptyEnumDefinitionDiagnostic(span: span));
+  /// - Parameter span: The span of the empty enum definition.
+  void reportEmptyEnumDefinition({
+    required int startOffset,
+    required int endOffset,
+  }) {
+    report(
+      EmptyEnumDefinitionDiagnostic(
+        startOffset: startOffset,
+        endOffset: endOffset,
+      ),
+    );
   }
 
   /// Reports an [EmptyStructDefinitionDiagnostic].
@@ -192,9 +215,17 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// This diagnostic is triggered when a `struct` is defined without any
   /// fields.
   ///
-  /// - Parameter [span]: The [Span] of the empty struct definition.
-  void reportEmptyStructDefinition({required SourceSpan span}) {
-    report(EmptyStructDefinitionDiagnostic(span: span));
+  /// - Parameter span: The span of the empty struct definition.
+  void reportEmptyStructDefinition({
+    required int startOffset,
+    required int endOffset,
+  }) {
+    report(
+      EmptyStructDefinitionDiagnostic(
+        startOffset: startOffset,
+        endOffset: endOffset,
+      ),
+    );
   }
 
   /// Reports a [LiteralValueCannotBeAssignedDiagnostic].
@@ -207,23 +238,27 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   ///   - [valueKindName]: A description of the kind of value (e.g., "literal",
   /// "expression").
   ///   - [literalTypeName]: The name of the type declared for the literal.
-  ///   - [valueSpan]: The [Span] of the value causing the type mismatch.
-  ///   - [literalTypeSpan]: An optional [Span] indicating the literal's
+  ///   - `startOffset`/`endOffset`: The span of the value causing the type mismatch.
+  ///   - `literalTypeStart`/`literalTypeEnd`: An optional span indicating the literal's
   /// type declaration for additional context.
   void reportLiteralValueCannotBeAssigned({
     required String valueTypeName,
     required String valueKindName,
     required String literalTypeName,
-    required SourceSpan valueSpan,
-    SourceSpan? literalTypeSpan,
+    required int startOffset,
+    required int endOffset,
+    int? literalTypeStart,
+    int? literalTypeEnd,
   }) {
     report(
       LiteralValueCannotBeAssignedDiagnostic(
         valueTypeName: valueTypeName,
         valueKindName: valueKindName,
         literalTypeName: literalTypeName,
-        valueSpan: valueSpan,
-        literalTypeSpan: literalTypeSpan,
+        startOffset: startOffset,
+        endOffset: endOffset,
+        literalTypeStart: literalTypeStart,
+        literalTypeEnd: literalTypeEnd,
       ),
     );
   }
@@ -236,17 +271,19 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// - Parameters:
   ///   - [expectedType]: The name of the type expected for list elements.
   ///   - [actualType]: The name of the type found for the mismatched element.
-  ///   - [span]: The [Span] of the list element with the type mismatch.
+  ///   - span: The span of the list element with the type mismatch.
   void reportListElementTypeMismatch({
     required String expectedType,
     required String actualType,
-    required SourceSpan span,
+    required int startOffset,
+    required int endOffset,
   }) {
     report(
       ListElementTypeMismatchDiagnostic(
         expectedType: expectedType,
         actualType: actualType,
-        span: span,
+        startOffset: startOffset,
+        endOffset: endOffset,
       ),
     );
   }
@@ -258,12 +295,19 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   ///
   /// - Parameters:
   ///   - [identifier]: The reserved keyword that was used as an identifier.
-  ///   - [span]: The [Span] where the keyword was used as an identifier.
+  ///   - span: The span where the keyword was used as an identifier.
   void reportKeywordAsIdentifier({
     required String identifier,
-    required SourceSpan span,
+    required int startOffset,
+    required int endOffset,
   }) {
-    report(KeywordAsIdentifierDiagnostic(identifier: identifier, span: span));
+    report(
+      KeywordAsIdentifierDiagnostic(
+        identifier: identifier,
+        startOffset: startOffset,
+        endOffset: endOffset,
+      ),
+    );
   }
 
   /// Reports an [UnsupportedListElementTypeDiagnostic].
@@ -274,16 +318,18 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   ///
   /// - Parameters:
   ///   - [elementType]: The name of the unsupported element type.
-  ///   - [span]: The [Span] where the unsupported list element type was
+  ///   - span: The span where the unsupported list element type was
   ///     encountered.
   void reportUnsupportedListElementType({
     required String elementType,
-    required SourceSpan span,
+    required int startOffset,
+    required int endOffset,
   }) {
     report(
       UnsupportedListElementTypeDiagnostic(
         elementType: elementType,
-        span: span,
+        startOffset: startOffset,
+        endOffset: endOffset,
       ),
     );
   }
@@ -296,17 +342,19 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// - Parameters:
   ///   - [expectedType]: The name of the type expected for the map key.
   ///   - [actualType]: The name of the type found for the map key.
-  ///   - [span]: The [Span] of the map entry with the type mismatch.
+  ///   - span: The span of the map entry with the type mismatch.
   void reportMapKeyTypeMismatch({
     required String expectedType,
     required String actualType,
-    required SourceSpan span,
+    required int startOffset,
+    required int endOffset,
   }) {
     report(
       MapKeyTypeMismatchDiagnostic(
         expectedType: expectedType,
         actualType: actualType,
-        span: span,
+        startOffset: startOffset,
+        endOffset: endOffset,
       ),
     );
   }
@@ -319,17 +367,19 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// - Parameters:
   ///   - [expectedType]: The name of the type expected for the map entry.
   ///   - [actualType]: The name of the type found for the map entry.
-  ///   - [span]: The [Span] of the map entry with the type mismatch.
+  ///   - span: The span of the map entry with the type mismatch.
   void reportMapValueTypeMismatch({
     required String expectedType,
     required String actualType,
-    required SourceSpan span,
+    required int startOffset,
+    required int endOffset,
   }) {
     report(
       MapValueTypeMismatchDiagnostic(
         expectedType: expectedType,
         actualType: actualType,
-        span: span,
+        startOffset: startOffset,
+        endOffset: endOffset,
       ),
     );
   }
@@ -343,15 +393,17 @@ extension ErrorReporterGenericExtension on ErrorReporter {
   /// - Parameters:
   ///   - [fieldName]: The name of the field that is required but has a default
   /// value.
-  ///   - [span]: The [Span] where the error was detected.
+  ///   - span: The span where the error was detected.
   void reportRequiredFieldCannotHaveDefaultValue({
     required String fieldName,
-    required SourceSpan span,
+    required int startOffset,
+    required int endOffset,
   }) {
     report(
       RequiredFieldCannotHaveDefaultValueDiagnostic(
         fieldName: fieldName,
-        span: span,
+        startOffset: startOffset,
+        endOffset: endOffset,
       ),
     );
   }

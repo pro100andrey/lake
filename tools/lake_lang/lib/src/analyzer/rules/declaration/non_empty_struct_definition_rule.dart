@@ -15,7 +15,10 @@ final class NonEmptyStructDefinitionRule
   @override
   void check(StructDefinitionNode node) {
     if (node.fields.isEmpty) {
-      reporter.reportEmptyStructDefinition(span: node.span);
+      reporter.reportEmptyStructDefinition(
+        startOffset: node.startOffset,
+        endOffset: node.endOffset,
+      );
     }
   }
 }

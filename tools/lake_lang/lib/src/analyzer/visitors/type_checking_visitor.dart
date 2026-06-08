@@ -60,7 +60,7 @@ class TypeCheckingVisitor implements AstVisitor<void> {
 
     node.type.accept(this);
 
-    final entry = _symbolTable.lookup(node.identifier.name, node.span);
+    final entry = _symbolTable.lookup(node.identifier.name, node);
 
     if (entry != null && entry.resolvedType is TypedefType) {
       final typedefSemanticType = entry.resolvedType!.cast<TypedefType>();
@@ -125,8 +125,10 @@ class TypeCheckingVisitor implements AstVisitor<void> {
             literalTypeName: fieldSemanticType.name,
             valueKindName: 'default value',
             valueTypeName: defaultValueSemanticType.name,
-            valueSpan: node.defaultValue!.span,
-            literalTypeSpan: node.type.span,
+            startOffset: node.defaultValue!.startOffset,
+            endOffset: node.defaultValue!.endOffset,
+            literalTypeStart: node.type.startOffset,
+            literalTypeEnd: node.type.endOffset,
           );
         }
       }

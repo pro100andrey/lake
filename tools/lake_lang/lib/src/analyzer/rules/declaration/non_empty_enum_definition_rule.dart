@@ -14,7 +14,10 @@ final class NonEmptyEnumDefinitionRule extends BaseRule<EnumDefinitionNode> {
   @override
   void check(EnumDefinitionNode node) {
     if (node.members.isEmpty) {
-      reporter.reportEmptyEnumDefinition(span: node.span);
+      reporter.reportEmptyEnumDefinition(
+        startOffset: node.startOffset,
+        endOffset: node.endOffset,
+      );
     }
   }
 }

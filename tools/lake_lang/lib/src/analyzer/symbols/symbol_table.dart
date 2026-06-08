@@ -1,4 +1,3 @@
-import 'package:source_span/source_span.dart';
 import '../../parser/ast/ast_base.dart';
 import '../errors/error_reporter.dart';
 import '../semantic_types.dart';
@@ -14,7 +13,6 @@ class Scope {
     required String name,
     required SymbolKind kind,
     required AstNode declaration,
-    required SourceSpan span,
     required ErrorReporter reporter,
     SemanticType? resolvedType,
   }) {
@@ -22,8 +20,10 @@ class Scope {
       final existingEntry = _symbols[name]!;
       reporter.reportDuplicateDeclaration(
         name: name,
-        span: span,
-        previousDeclarationSpan: existingEntry.span,
+        startOffset: declaration.startOffset,
+        endOffset: declaration.endOffset,
+        prevStart: existingEntry.declaration.startOffset,
+        prevEnd: existingEntry.declaration.endOffset,
       );
 
       return;
@@ -34,7 +34,6 @@ class Scope {
       kind: kind,
       declaration: declaration,
       resolvedType: resolvedType,
-      span: span,
     );
   }
 
@@ -70,7 +69,8 @@ class SymbolTable {
     if (_currentScope?.parent == null) {
       _errorReporter.reportGeneric(
         message: 'Cannot pop the global scope.',
-        span: SourceSpan(SourceLocation(0), SourceLocation(0), ''),
+        startOffset: 0,
+        endOffset: 0,
       );
       return;
     }
@@ -82,7 +82,6 @@ class SymbolTable {
     required String name,
     required SymbolKind kind,
     required AstNode declaration,
-    required SourceSpan span,
     required SemanticType? resolvedType,
   }) {
     if (_currentScope == null) {
@@ -90,7 +89,8 @@ class SymbolTable {
         message:
             'Cannot add symbol "$name": no active scope. '
             'This is an internal error.',
-        span: span,
+        startOffset: declaration.startOffset,
+        endOffset: declaration.endOffset,
       );
       return;
     }
@@ -99,19 +99,19 @@ class SymbolTable {
       name: name,
       kind: kind,
       declaration: declaration,
-      span: span,
       reporter: _errorReporter,
       resolvedType: resolvedType,
     );
   }
 
-  SymbolEntry? lookup(String name, SourceSpan span) {
+  SymbolEntry? lookup(String name, AstNode referencingNode) {
     if (_currentScope == null) {
       _errorReporter.reportGeneric(
         message:
             'Cannot lookup symbol "$name": no active scope. '
             'This is an internal error.',
-        span: span,
+        startOffset: referencingNode.startOffset,
+        endOffset: referencingNode.endOffset,
       );
       return null;
     }
@@ -119,7 +119,11 @@ class SymbolTable {
     final symbol = _currentScope!.lookup(name);
 
     if (symbol == null) {
-      _errorReporter.reportUndefinedSymbol(name: name, span: span);
+      _errorReporter.reportUndefinedSymbol(
+        name: name,
+        startOffset: referencingNode.startOffset,
+        endOffset: referencingNode.endOffset,
+      );
       return null;
     }
 

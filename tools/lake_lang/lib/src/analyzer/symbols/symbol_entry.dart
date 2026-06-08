@@ -1,7 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-import 'package:source_span/source_span.dart';
-import '../../ast/base/types.dart';
 import '../../parser/ast/ast_base.dart';
 import '../semantic_types.dart';
 
@@ -21,7 +19,6 @@ final class SymbolEntry extends Equatable {
     required this.name,
     required this.kind,
     required this.declaration,
-    required this.span,
     this.resolvedType,
   });
 
@@ -41,10 +38,6 @@ final class SymbolEntry extends Equatable {
   /// directly have a single semantic type (e.g., a service itself).
   final SemanticType? resolvedType;
 
-  /// The [Span] that indicating the location of the symbol's declaration
-  /// in the source code. Useful for error reporting and debugging.
-  final SourceSpan span;
-
   @override
-  List<Object?> get props => [name, kind, declaration, resolvedType, span];
+  List<Object?> get props => [name, kind, declaration, resolvedType];
 }

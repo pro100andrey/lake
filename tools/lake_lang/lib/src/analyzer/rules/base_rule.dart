@@ -17,13 +17,13 @@ abstract class BaseRule<T extends AstNode> {
   /// Reporter used to emit semantic errors.
   final ErrorReporter reporter;
 
-  /// Validates the provided [node] against the rule's logic.
+  /// Validates the provided node against the rule's logic.
   ///
   /// Subclasses must implement this method to define the specific validation
   /// logic for the AST node type [T]. Any issues found should be reported
   /// using the [reporter].
   ///
-  /// - Parameter [node]: The [AstNode] of type [T] to be checked.
+  /// - Parameter node: The [AstNode] of type [T] to be checked.
   void check(T node);
 }
 
@@ -65,15 +65,15 @@ final class RuleDispatcher {
     _ruleMap.putIfAbsent(T, () => []).add(rule);
   }
 
-  /// Applies all registered rules to the given [node].
+  /// Applies all registered rules to the given node.
   ///
   /// This method looks up rules associated with the exact [runtimeType] of the
-  /// provided [node] and executes their `check` method. It is important to note
+  /// provided node and executes their `check` method. It is important to note
   /// that rules are matched by the *exact* runtime type, not by supertypes.
   ///
   /// Rules are applied in the order they were added for a specific node type.
   ///
-  /// - Parameter [node]: The [AstNode] to which the rules should be applied.
+  /// - Parameter node: The [AstNode] to which the rules should be applied.
   void applyRules(AstNode node) {
     final rulesForNode = _ruleMap[node.runtimeType];
 
