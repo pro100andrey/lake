@@ -1,7 +1,7 @@
 import '../../ast/ast_visitor.dart';
 import '../../parser/ast/ast_base.dart';
 import '../errors/error_reporter.dart';
-import '../rules/base_rule.dart';
+
 import '../rules/type_checking/const_identifier_resolution_rule.dart';
 import '../rules/type_checking/service_extends_resolution_rule.dart';
 import '../rules/type_checking/service_method_throws_rule.dart';
@@ -10,38 +10,31 @@ import '../symbols/symbol_table.dart';
 import '../utils.dart';
 
 class TypeCheckingVisitor implements AstVisitor<void> {
-  TypeCheckingVisitor(this._symbolTable, this._reporter)
-    : _ruleDispatcher = RuleDispatcher() {
-    _ruleDispatcher
-      ..addRule<ConstDefinitionNode>(
-        ConstIdentifierResolutionRule(
-          reporter: _reporter,
-          symbolTable: _symbolTable,
-        ),
-      )
-      ..addRule<ServiceDefinitionNode>(
-        ServiceExtendsResolutionRule(
-          reporter: _reporter,
-          symbolTable: _symbolTable,
-        ),
-      )
-      ..addRule<MethodNode>(
-        ServiceMethodThrowsRule(
-          reporter: _reporter,
-          symbolTable: _symbolTable,
-        ),
-      );
+  TypeCheckingVisitor(this._symbolTable, this._reporter) {
+    _constIdentifierResolutionRule = ConstIdentifierResolutionRule(
+      reporter: _reporter,
+      symbolTable: _symbolTable,
+    );
+    _serviceExtendsResolutionRule = ServiceExtendsResolutionRule(
+      reporter: _reporter,
+      symbolTable: _symbolTable,
+    );
+    _serviceMethodThrowsRule = ServiceMethodThrowsRule(
+      reporter: _reporter,
+      symbolTable: _symbolTable,
+    );
   }
 
   final SymbolTable _symbolTable;
   final ErrorReporter _reporter;
-  final RuleDispatcher _ruleDispatcher;
+
+  late final ConstIdentifierResolutionRule _constIdentifierResolutionRule;
+  late final ServiceExtendsResolutionRule _serviceExtendsResolutionRule;
+  late final ServiceMethodThrowsRule _serviceMethodThrowsRule;
 
   /// Visits the root node of the AST.
   @override
   void visitDocumentNode(DocumentNode node) {
-    _ruleDispatcher.applyRules(node);
-
     for (final header in node.headers) {
       header.accept(this);
     }
@@ -52,18 +45,15 @@ class TypeCheckingVisitor implements AstVisitor<void> {
   }
 
   @override
-  void visitImportNode(ImportNode node) {
-    _ruleDispatcher.applyRules(node);
-  }
+  void visitImportNode(ImportNode node) {}
 
   @override
-  void visitNamespaceNode(NamespaceNode node) {
-    _ruleDispatcher.applyRules(node);
-  }
+  void visitNamespaceNode(NamespaceNode node) {}
 
   @override
   @override
   void visitConstDefinitionNode(ConstDefinitionNode node) {
+    _constIdentifierResolutionRule.check(node);
     node.type.accept(this);
     node.value.accept(this);
 
@@ -72,14 +62,10 @@ class TypeCheckingVisitor implements AstVisitor<void> {
     if (entry != null) {
       entry.resolvedType = targetType;
     }
-
-    _ruleDispatcher.applyRules(node);
   }
 
   @override
   void visitTypedefDefinitionNode(TypedefDefinitionNode node) {
-    _ruleDispatcher.applyRules(node);
-
     node.type.accept(this);
 
     final entry = _symbolTable.lookup(node.identifier.name, node);
@@ -96,7 +82,6 @@ class TypeCheckingVisitor implements AstVisitor<void> {
 
   @override
   void visitEnumDefinitionNode(EnumDefinitionNode node) {
-    _ruleDispatcher.applyRules(node);
     for (final member in node.members) {
       member.accept(this);
     }
@@ -104,14 +89,11 @@ class TypeCheckingVisitor implements AstVisitor<void> {
 
   @override
   void visitEnumValueNode(EnumValueNode node) {
-    _ruleDispatcher.applyRules(node);
     node.value?.accept(this);
   }
 
   @override
   void visitStructDefinitionNode(StructDefinitionNode node) {
-    _ruleDispatcher.applyRules(node);
-
     for (final field in node.fields) {
       field.accept(this);
     }
@@ -119,7 +101,6 @@ class TypeCheckingVisitor implements AstVisitor<void> {
 
   @override
   void visitUnionDefinitionNode(UnionDefinitionNode node) {
-    _ruleDispatcher.applyRules(node);
     for (final field in node.fields) {
       field.accept(this);
     }
@@ -127,7 +108,6 @@ class TypeCheckingVisitor implements AstVisitor<void> {
 
   @override
   void visitExceptionDefinitionNode(ExceptionDefinitionNode node) {
-    _ruleDispatcher.applyRules(node);
     for (final field in node.fields) {
       field.accept(this);
     }
@@ -135,7 +115,8 @@ class TypeCheckingVisitor implements AstVisitor<void> {
 
   @override
   void visitServiceDefinitionNode(ServiceDefinitionNode node) {
-    _ruleDispatcher.applyRules(node);
+    _serviceExtendsResolutionRule.check(node);
+
     node.extendsService?.accept(this);
     for (final method in node.methods) {
       method.accept(this);
@@ -144,8 +125,6 @@ class TypeCheckingVisitor implements AstVisitor<void> {
 
   @override
   void visitFieldNode(FieldNode node) {
-    _ruleDispatcher.applyRules(node);
-
     final fieldSemanticType = getSemanticType(
       node.type,
       _reporter,
@@ -179,7 +158,7 @@ class TypeCheckingVisitor implements AstVisitor<void> {
 
   @override
   void visitMethodNode(MethodNode node) {
-    _ruleDispatcher.applyRules(node);
+    _serviceMethodThrowsRule.check(node);
 
     getSemanticType(node.returnType, _reporter, _symbolTable);
     node.returnType.accept(this);
@@ -196,85 +175,57 @@ class TypeCheckingVisitor implements AstVisitor<void> {
   // Type nodes
 
   @override
-  void visitBaseTypeNode(BaseTypeNode node) {
-    _ruleDispatcher.applyRules(node);
-  }
+  void visitBaseTypeNode(BaseTypeNode node) {}
 
   @override
   void visitMapTypeNode(MapTypeNode node) {
-    _ruleDispatcher.applyRules(node);
-
     node.keyType.accept(this);
     node.valueType.accept(this);
   }
 
   @override
   void visitSetTypeNode(SetTypeNode node) {
-    _ruleDispatcher.applyRules(node);
-
     node.elementType.accept(this);
   }
 
   @override
   void visitListTypeNode(ListTypeNode node) {
-    _ruleDispatcher.applyRules(node);
-
     node.elementType.accept(this);
   }
 
   @override
   void visitStreamTypeNode(StreamTypeNode node) {
-    _ruleDispatcher.applyRules(node);
-
     node.elementType.accept(this);
   }
 
   @override
-  void visitCustomTypeNode(CustomTypeNode node) {
-    _ruleDispatcher.applyRules(node);
-  }
+  void visitCustomTypeNode(CustomTypeNode node) {}
 
   @override
-  void visitVoidTypeNode(VoidTypeNode node) {
-    _ruleDispatcher.applyRules(node);
-  }
+  void visitVoidTypeNode(VoidTypeNode node) {}
 
   // Literal value nodes
 
   @override
-  void visitIntLiteralNode(IntLiteralNode node) {
-    _ruleDispatcher.applyRules(node);
-  }
+  void visitIntLiteralNode(IntLiteralNode node) {}
 
   @override
-  void visitDoubleLiteralNode(DoubleLiteralNode node) {
-    _ruleDispatcher.applyRules(node);
-  }
+  void visitDoubleLiteralNode(DoubleLiteralNode node) {}
 
   @override
-  void visitBoolLiteralNode(BoolLiteralNode node) {
-    _ruleDispatcher.applyRules(node);
-  }
+  void visitBoolLiteralNode(BoolLiteralNode node) {}
 
   @override
-  void visitStringLiteralNode(StringLiteralNode node) {
-    _ruleDispatcher.applyRules(node);
-  }
+  void visitStringLiteralNode(StringLiteralNode node) {}
 
   @override
-  void visitIdentifierNode(IdentifierNode node) {
-    _ruleDispatcher.applyRules(node);
-  }
+  void visitIdentifierNode(IdentifierNode node) {}
 
   @override
-  void visitListLiteralNode(ListLiteralNode node) {
-    _ruleDispatcher.applyRules(node);
-  }
+  void visitListLiteralNode(ListLiteralNode node) {}
 
   @override
   void visitMapLiteralNode(MapLiteralNode node) {
-    _ruleDispatcher.applyRules(node);
-
     for (final entry in node.entries) {
       entry.key.accept(this);
       entry.value.accept(this);

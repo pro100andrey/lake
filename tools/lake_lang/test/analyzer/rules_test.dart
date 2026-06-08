@@ -1,6 +1,5 @@
 import 'package:lake_lang/src/analyzer/errors/error_reporter.dart';
 import 'package:lake_lang/src/analyzer/errors/semantic_error.dart';
-import 'package:lake_lang/src/analyzer/rules/base_rule.dart';
 import 'package:lake_lang/src/analyzer/rules/declaration/keyword_as_identifier_rule.dart';
 import 'package:lake_lang/src/analyzer/rules/declaration/literal_assignment_type_rule.dart';
 import 'package:lake_lang/src/analyzer/rules/declaration/non_empty_enum_definition_rule.dart';
@@ -35,91 +34,6 @@ List<FieldNode> _structFields(String source, ErrorReporter reporter) {
 }
 
 void main() {
-  // ─────────────────────────────────────────────
-  // RuleDispatcher tests
-  // ─────────────────────────────────────────────
-  group('RuleDispatcher', () {
-    late ErrorReporter reporter;
-
-    setUp(() {
-      reporter = ErrorReporter();
-    });
-
-    test('applyRules with no registered rules is a no-op', () {
-      final dispatcher = RuleDispatcher();
-      const node = IdentifierNode(
-        name: 'foo',
-        startOffset: 0,
-        endOffset: 3,
-      );
-      // Should not throw
-      dispatcher.applyRules(node);
-      expect(reporter.hasErrors, isFalse);
-    });
-
-    test('applyRules dispatches to correct rule type', () {
-      final dispatcher = RuleDispatcher()
-        ..addRule<IdentifierNode>(
-          KeywordAsIdentifierRule(reporter: reporter),
-        );
-
-      // IdentifierNode with keyword name → should fire
-      const keywordNode = IdentifierNode(
-        name: 'struct',
-        startOffset: 0,
-        endOffset: 6,
-      );
-      dispatcher.applyRules(keywordNode);
-      expect(reporter.hasErrors, isTrue);
-    });
-
-    test('does NOT dispatch to wrong rule type', () {
-      final _ = RuleDispatcher()
-        ..addRule<IdentifierNode>(
-          KeywordAsIdentifierRule(reporter: reporter),
-        );
-
-      // Applying a StructDefinitionNode should NOT trigger
-      // the IdentifierNode rule
-      final doc = _parse('struct MyStruct { 1: i32 x }', reporter);
-      final structNode = doc.definitions.first;
-      // Reset reporter
-      reporter = ErrorReporter();
-      RuleDispatcher()
-        ..addRule<IdentifierNode>(
-          KeywordAsIdentifierRule(reporter: reporter),
-        )
-        ..applyRules(structNode);
-      expect(reporter.hasErrors, isFalse);
-    });
-
-    test('multiple rules registered for same type — all fire', () {
-      final dispatcher = RuleDispatcher()
-        ..addRule<FieldNode>(RequiredFieldRule(reporter: reporter))
-        ..addRule<FieldNode>(OptionalFieldRule(reporter: reporter));
-
-      // A required field with a default value → RequiredFieldRule fires
-      // Also optional field check occurs but should be no-op
-      // since isRequired=true
-      const source = '''
-struct S {
-  1: required i32 count = 5
-}
-''';
-      final fields = _structFields(source, reporter);
-      for (final field in fields) {
-        dispatcher.applyRules(field);
-      }
-      // RequiredFieldRule should report an error
-      expect(reporter.hasErrors, isTrue);
-      expect(
-        reporter.diagnostics.any(
-          (d) => d.code == DiagnosticCode.requiredFieldCannotHaveDefaultValue,
-        ),
-        isTrue,
-      );
-    });
-  });
 
   // ─────────────────────────────────────────────
   // KeywordAsIdentifierRule tests

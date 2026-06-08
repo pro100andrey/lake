@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import '../parser/ast/ast_base.dart';
 
 sealed class SemanticType {
@@ -63,13 +65,7 @@ final class BaseType extends SemanticType {
       return false;
     }
 
-    const intTypes = [
-      BaseType.i8T,
-      BaseType.i16T,
-      BaseType.i32T,
-      BaseType.i64T,
-    ];
-
+    const intTypes = <BaseType>[.i8T, .i16T, .i32T, .i64T];
     final thisIndex = intTypes.indexOf(this);
     final otherIndex = intTypes.indexOf(other);
 
@@ -80,17 +76,17 @@ final class BaseType extends SemanticType {
 
     // Specific rules for other primitive types:
 
-    if (this == BaseType.boolT && other == BaseType.byteT) {
+    if (this == .boolT && other == .byteT) {
       //  boolean (1 byte) can be assigned to byte (1 byte)
       return true;
     }
 
-    if (this == BaseType.byteT && other == BaseType.i8T) {
+    if (this == .byteT && other == .i8T) {
       // byte (unsigned) can be assigned to i8 (signed)
       return true;
     }
 
-    if (this == BaseType.i64T && other == BaseType.doubleT) {
+    if (this == .i64T && other == .doubleT) {
       // i64 can be assigned to double (implicit conversion)
       return true;
     }
@@ -100,16 +96,18 @@ final class BaseType extends SemanticType {
 }
 
 final class ListType extends SemanticType {
-  ListType(this.elementType) : super('List<${elementType.name}>');
+  factory ListType(SemanticType elementType) => _cache.putIfAbsent(
+    elementType,
+    () => ._internal(elementType),
+  );
+
+  ListType._internal(this.elementType) : super('List<${elementType.name}>');
 
   final SemanticType elementType;
 
-  @override
-  bool operator ==(Object other) =>
-      super == other && other is ListType && elementType == other.elementType;
+  static final HashMap<SemanticType, ListType> _cache = HashMap();
 
-  @override
-  int get hashCode => Object.hash(super.hashCode, elementType);
+  // operator == and hashCode are inherited from SemanticType (identical)
 
   @override
   bool isAssignableTo(SemanticType other) {
@@ -126,21 +124,37 @@ final class ListType extends SemanticType {
 }
 
 final class MapType extends SemanticType {
-  MapType(this.keyType, this.valueType)
+  factory MapType(SemanticType keyType, SemanticType valueType) {
+    final key = Object.hash(keyType, valueType);
+
+    if (_cache.containsKey(key)) {
+      final cached = _cache[key]!.firstWhere(
+        (t) => t.keyType == keyType && t.valueType == valueType,
+        orElse: () => ._internal(keyType, valueType),
+      );
+
+      if (!_cache[key]!.contains(cached)) {
+        _cache[key]!.add(cached);
+      }
+
+      return cached;
+    } else {
+      final type = MapType._internal(keyType, valueType);
+      _cache[key] = [type];
+
+      return type;
+    }
+  }
+
+  MapType._internal(this.keyType, this.valueType)
     : super('Map<${keyType.name}, ${valueType.name}>');
 
   final SemanticType keyType;
   final SemanticType valueType;
 
-  @override
-  bool operator ==(Object other) =>
-      super == other &&
-      other is MapType &&
-      keyType == other.keyType &&
-      valueType == other.valueType;
+  static final HashMap<int, List<MapType>> _cache = HashMap();
 
-  @override
-  int get hashCode => Object.hash(super.hashCode, keyType, valueType);
+  // operator == and hashCode are inherited from SemanticType (identical)
 
   @override
   bool isAssignableTo(SemanticType other) {
@@ -158,16 +172,16 @@ final class MapType extends SemanticType {
 }
 
 final class SetType extends SemanticType {
-  SetType(this.elementType) : super('Set<${elementType.name}>');
+  factory SetType(SemanticType elementType) => _cache.putIfAbsent(
+    elementType,
+    () => ._internal(elementType),
+  );
+
+  SetType._internal(this.elementType) : super('Set<${elementType.name}>');
 
   final SemanticType elementType;
 
-  @override
-  bool operator ==(Object other) =>
-      super == other && other is SetType && elementType == other.elementType;
-
-  @override
-  int get hashCode => Object.hash(super.hashCode, elementType);
+  static final _cache = HashMap<SemanticType, SetType>();
 
   @override
   bool isAssignableTo(SemanticType other) {
@@ -184,16 +198,16 @@ final class SetType extends SemanticType {
 }
 
 final class StreamType extends SemanticType {
-  StreamType(this.elementType) : super('Stream<${elementType.name}>');
+  factory StreamType(SemanticType elementType) => _cache.putIfAbsent(
+    elementType,
+    () => ._internal(elementType),
+  );
+
+  StreamType._internal(this.elementType) : super('Stream<${elementType.name}>');
 
   final SemanticType elementType;
 
-  @override
-  bool operator ==(Object other) =>
-      super == other && other is StreamType && elementType == other.elementType;
-
-  @override
-  int get hashCode => Object.hash(super.hashCode, elementType);
+  static final _cache = HashMap<SemanticType, StreamType>();
 
   @override
   bool isAssignableTo(SemanticType other) {

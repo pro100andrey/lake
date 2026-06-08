@@ -1,7 +1,6 @@
 import '../../ast/ast_visitor.dart';
 import '../../parser/ast/ast_base.dart';
 import '../errors/error_reporter.dart';
-import '../rules/base_rule.dart';
 import '../rules/declaration/keyword_as_identifier_rule.dart';
 import '../rules/declaration/literal_assignment_type_rule.dart';
 import '../rules/declaration/non_empty_enum_definition_rule.dart';
@@ -15,48 +14,41 @@ import '../symbols/symbol_entry.dart';
 import '../symbols/symbol_table.dart';
 
 class SymbolTableVisitor extends AstVisitor<void> {
-  SymbolTableVisitor(this._symbolTable, this._reporter)
-    : _ruleDispatcher = RuleDispatcher() {
-    _ruleDispatcher
-      ..addRule<ConstDefinitionNode>(
-        LiteralAssignmentTypeRule(reporter: _reporter),
-      )
-      ..addRule<EnumDefinitionNode>(
-        NonEmptyEnumDefinitionRule(reporter: _reporter),
-      )
-      ..addRule<StructDefinitionNode>(
-        NonEmptyStructDefinitionRule(reporter: _reporter),
-      )
-      ..addRule<StructDefinitionNode>(
-        UniqueFieldIdRule<StructDefinitionNode>(reporter: _reporter),
-      )
-      ..addRule<UnionDefinitionNode>(
-        UniqueFieldIdRule<UnionDefinitionNode>(reporter: _reporter),
-      )
-      ..addRule<UnionDefinitionNode>(
-        UnionFieldModifiersRule(reporter: _reporter),
-      )
-      ..addRule<ExceptionDefinitionNode>(
-        UniqueFieldIdRule<ExceptionDefinitionNode>(reporter: _reporter),
-      )
-      ..addRule<MethodNode>(
-        UniqueFieldIdRule<MethodNode>(reporter: _reporter),
-      )
-      ..addRule<IdentifierNode>(
-        KeywordAsIdentifierRule(reporter: _reporter),
-      )
-      // Rules for field declarations
-      ..addRule<FieldNode>(
-        RequiredFieldRule(reporter: _reporter),
-      )
-      ..addRule<FieldNode>(
-        OptionalFieldRule(reporter: _reporter),
-      );
+  SymbolTableVisitor(this._symbolTable, this._reporter) {
+    _literalAssignmentTypeRule = LiteralAssignmentTypeRule(reporter: _reporter);
+    _nonEmptyEnumRule = NonEmptyEnumDefinitionRule(reporter: _reporter);
+    _nonEmptyStructRule = NonEmptyStructDefinitionRule(reporter: _reporter);
+    _structUniqueFieldRule = UniqueFieldIdRule<StructDefinitionNode>(
+      reporter: _reporter,
+    );
+    _unionUniqueFieldRule = UniqueFieldIdRule<UnionDefinitionNode>(
+      reporter: _reporter,
+    );
+    _unionFieldModifiersRule = UnionFieldModifiersRule(reporter: _reporter);
+    _exceptionUniqueFieldRule = UniqueFieldIdRule<ExceptionDefinitionNode>(
+      reporter: _reporter,
+    );
+    _methodUniqueFieldRule = UniqueFieldIdRule<MethodNode>(reporter: _reporter);
+    _keywordAsIdentifierRule = KeywordAsIdentifierRule(reporter: _reporter);
+    _requiredFieldRule = RequiredFieldRule(reporter: _reporter);
+    _optionalFieldRule = OptionalFieldRule(reporter: _reporter);
   }
 
   final SymbolTable _symbolTable;
   final ErrorReporter _reporter;
-  final RuleDispatcher _ruleDispatcher;
+
+  late final LiteralAssignmentTypeRule _literalAssignmentTypeRule;
+  late final NonEmptyEnumDefinitionRule _nonEmptyEnumRule;
+  late final NonEmptyStructDefinitionRule _nonEmptyStructRule;
+  late final UniqueFieldIdRule<StructDefinitionNode> _structUniqueFieldRule;
+  late final UniqueFieldIdRule<UnionDefinitionNode> _unionUniqueFieldRule;
+  late final UnionFieldModifiersRule _unionFieldModifiersRule;
+  late final UniqueFieldIdRule<ExceptionDefinitionNode>
+  _exceptionUniqueFieldRule;
+  late final UniqueFieldIdRule<MethodNode> _methodUniqueFieldRule;
+  late final KeywordAsIdentifierRule _keywordAsIdentifierRule;
+  late final RequiredFieldRule _requiredFieldRule;
+  late final OptionalFieldRule _optionalFieldRule;
 
   // --- Visit Methods ---
   // Each visit method:
@@ -98,7 +90,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
 
   @override
   void visitConstDefinitionNode(ConstDefinitionNode node) {
-    _ruleDispatcher.applyRules(node);
+    _literalAssignmentTypeRule.check(node);
 
     _symbolTable.addSymbol(
       name: node.identifier.name,
@@ -132,8 +124,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
 
   @override
   void visitEnumDefinitionNode(EnumDefinitionNode node) {
-    // Apply rules for enum definitions, e.g., non-empty enum check.
-    _ruleDispatcher.applyRules(node);
+    _nonEmptyEnumRule.check(node);
 
     // Create the semantic type for the enum itself.
     final enumSemanticType = EnumType(node);
@@ -173,8 +164,9 @@ class SymbolTableVisitor extends AstVisitor<void> {
 
   @override
   void visitStructDefinitionNode(StructDefinitionNode node) {
-    // Apply rules for struct definitions, e.g., non-empty struct check.
-    _ruleDispatcher.applyRules(node);
+    _nonEmptyStructRule.check(node);
+    _structUniqueFieldRule.check(node);
+
     // Create the semantic type for the struct itself.
     final structSemanticType = StructType(node);
     // Add the struct definition to the current scope.
@@ -198,6 +190,8 @@ class SymbolTableVisitor extends AstVisitor<void> {
 
   @override
   void visitUnionDefinitionNode(UnionDefinitionNode node) {
+    _unionUniqueFieldRule.check(node);
+    _unionFieldModifiersRule.check(node);
     // Create the semantic type for the union itself.
     final unionSemanticType = UnionType(node);
     // Add the union definition to the current scope.
@@ -221,6 +215,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
 
   @override
   void visitExceptionDefinitionNode(ExceptionDefinitionNode node) {
+    _exceptionUniqueFieldRule.check(node);
     // Create the semantic type for the exception itself.
     final exceptionSemanticType = ExceptionType(node);
     // Add the exception definition to the current scope.
@@ -272,8 +267,9 @@ class SymbolTableVisitor extends AstVisitor<void> {
 
   @override
   void visitFieldNode(FieldNode node) {
-    // Apply rules for field declarations, e.g., field requirement checks.
-    _ruleDispatcher.applyRules(node);
+    _requiredFieldRule.check(node);
+    _optionalFieldRule.check(node);
+
     // Add the field to the current (struct/exception/service) scope.
 
     _symbolTable.addSymbol(
@@ -290,6 +286,7 @@ class SymbolTableVisitor extends AstVisitor<void> {
 
   @override
   void visitMethodNode(MethodNode node) {
+    _methodUniqueFieldRule.check(node);
     // Add the  to the current (service) scope.
     _symbolTable
       ..addSymbol(
@@ -387,8 +384,8 @@ class SymbolTableVisitor extends AstVisitor<void> {
 
   @override
   void visitIdentifierNode(IdentifierNode node) {
-    // Apply rules for identifier usage, e.g., invalid identifier names.
-    _ruleDispatcher.applyRules(node);
+    _keywordAsIdentifierRule.check(node);
+
     // This node represents a *usage* of an identifier.
     // SymbolTableVisitor's job is primarily to *define* symbols.
     // Looking up uses of symbols is typically done in TypeCheckingVisitor
