@@ -259,112 +259,103 @@ class LakeLexer {
 
   // Character class helpers
   bool _isDigit(int c) => c >= 48 && c <= 57;
+
   bool _isLetter(int c) => (c >= 65 && c <= 90) || (c >= 97 && c <= 122);
+
   bool _isLetterOrDigitOrUnderscore(int c) =>
       _isLetter(c) || _isDigit(c) || c == 95;
 
   TokenType _getIdentifierOrKeyword(int start, int end) {
     final len = end - start;
-    switch (len) {
-      case 2:
-        if (_input.startsWith('i8', start)) {
-          return TokenType.kwI8;
-        }
-      case 3:
-        if (_input.startsWith('set', start)) {
-          return TokenType.kwSet;
-        }
-        if (_input.startsWith('map', start)) {
-          return TokenType.kwMap;
-        }
-        if (_input.startsWith('i32', start)) {
-          return TokenType.kwI32;
-        }
-        if (_input.startsWith('i16', start)) {
-          return TokenType.kwI16;
-        }
-        if (_input.startsWith('i64', start)) {
-          return TokenType.kwI64;
-        }
-      case 4:
-        if (_input.startsWith('enum', start)) {
-          return TokenType.kwEnum;
-        }
-        if (_input.startsWith('void', start)) {
-          return TokenType.kwVoid;
-        }
-        if (_input.startsWith('list', start)) {
-          return TokenType.kwList;
-        }
-        if (_input.startsWith('true', start)) {
-          return TokenType.kwTrue;
-        }
-        if (_input.startsWith('bool', start)) {
-          return TokenType.kwBool;
-        }
-        if (_input.startsWith('byte', start)) {
-          return TokenType.kwByte;
-        }
-        if (_input.startsWith('uuid', start)) {
-          return TokenType.kwUuid;
-        }
-      case 5:
-        if (_input.startsWith('const', start)) {
-          return TokenType.kwConst;
-        }
-        if (_input.startsWith('union', start)) {
-          return TokenType.kwUnion;
-        }
-        if (_input.startsWith('false', start)) {
-          return TokenType.kwFalse;
-        }
-      case 6:
-        if (_input.startsWith('import', start)) {
-          return TokenType.kwImport;
-        }
-        if (_input.startsWith('struct', start)) {
-          return TokenType.kwStruct;
-        }
-        if (_input.startsWith('throws', start)) {
-          return TokenType.kwThrows;
-        }
-        if (_input.startsWith('stream', start)) {
-          return TokenType.kwStream;
-        }
-        if (_input.startsWith('double', start)) {
-          return TokenType.kwDouble;
-        }
-        if (_input.startsWith('string', start)) {
-          return TokenType.kwString;
-        }
-        if (_input.startsWith('binary', start)) {
-          return TokenType.kwBinary;
-        }
-      case 7:
-        if (_input.startsWith('typedef', start)) {
-          return TokenType.kwTypedef;
-        }
-        if (_input.startsWith('service', start)) {
-          return TokenType.kwService;
-        }
-        if (_input.startsWith('extends', start)) {
-          return TokenType.kwExtends;
-        }
-      case 8:
-        if (_input.startsWith('required', start)) {
-          return TokenType.kwRequired;
-        }
-        if (_input.startsWith('optional', start)) {
-          return TokenType.kwOptional;
-        }
-      case 9:
-        if (_input.startsWith('namespace', start)) {
-          return TokenType.kwNamespace;
-        }
-        if (_input.startsWith('exception', start)) {
-          return TokenType.kwException;
-        }
+    if (len < 2 || len > 9) {
+      return TokenType.identifier;
     }
-    return TokenType.identifier;
+
+    final c0 = _input.codeUnitAt(start);
+
+    switch ((len, c0)) {
+      case (2, 105 /* i */) when _input.codeUnitAt(start + 1) == 56:
+        return .kwI8;
+
+      case (3, 115 /* s */) when _input.startsWith('et', start + 1):
+        return .kwSet;
+      case (3, 109 /* m */) when _input.startsWith('ap', start + 1):
+        return .kwMap;
+      case (3, 105 /* i */):
+        final c1 = _input.codeUnitAt(start + 1);
+        final c2 = _input.codeUnitAt(start + 2);
+        if (c1 == 51 && c2 == 50) {
+          return .kwI32;
+        }
+        if (c1 == 49 && c2 == 54) {
+          return .kwI16;
+        }
+        if (c1 == 54 && c2 == 52) {
+          return .kwI64;
+        }
+
+      case (4, 101 /* e */) when _input.startsWith('num', start + 1):
+        return .kwEnum;
+      case (4, 118 /* v */) when _input.startsWith('oid', start + 1):
+        return .kwVoid;
+      case (4, 108 /* l */) when _input.startsWith('ist', start + 1):
+        return .kwList;
+      case (4, 116 /* t */) when _input.startsWith('rue', start + 1):
+        return .kwTrue;
+      case (4, 98 /* b */):
+        if (_input.startsWith('ool', start + 1)) {
+          return .kwBool;
+        }
+        if (_input.startsWith('yte', start + 1)) {
+          return .kwByte;
+        }
+      case (4, 117 /* u */) when _input.startsWith('uid', start + 1):
+        return .kwUuid;
+
+      case (5, 99 /* c */) when _input.startsWith('onst', start + 1):
+        return .kwConst;
+      case (5, 117 /* u */) when _input.startsWith('nion', start + 1):
+        return .kwUnion;
+      case (5, 102 /* f */) when _input.startsWith('alse', start + 1):
+        return .kwFalse;
+
+      case (6, 105 /* i */) when _input.startsWith('mport', start + 1):
+        return .kwImport;
+      case (6, 115 /* s */):
+        if (_input.startsWith('truct', start + 1)) {
+          return .kwStruct;
+        }
+        if (_input.startsWith('tream', start + 1)) {
+          return .kwStream;
+        }
+        if (_input.startsWith('tring', start + 1)) {
+          return .kwString;
+        }
+      case (6, 116 /* t */) when _input.startsWith('hrows', start + 1):
+        return .kwThrows;
+      case (6, 100 /* d */) when _input.startsWith('ouble', start + 1):
+        return .kwDouble;
+      case (6, 98 /* b */) when _input.startsWith('inary', start + 1):
+        return .kwBinary;
+
+      case (7, 116 /* t */) when _input.startsWith('ypedef', start + 1):
+        return .kwTypedef;
+      case (7, 115 /* s */) when _input.startsWith('ervice', start + 1):
+        return .kwService;
+      case (7, 101 /* e */) when _input.startsWith('xtends', start + 1):
+        return .kwExtends;
+
+      case (8, 114 /* r */) when _input.startsWith('equired', start + 1):
+        return .kwRequired;
+      case (8, 111 /* o */) when _input.startsWith('ptional', start + 1):
+        return .kwOptional;
+
+      case (9, 110 /* n */) when _input.startsWith('amespace', start + 1):
+        return .kwNamespace;
+      case (9, 101 /* e */) when _input.startsWith('xception', start + 1):
+        return .kwException;
+    }
+
+    return .identifier;
   }
 }

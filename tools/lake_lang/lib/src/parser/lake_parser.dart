@@ -29,11 +29,11 @@ class LakeParser {
     throw const _ParseException();
   }
 
-  void _expect(TokenType type, String errorMessage) {
+  void _expect(TokenType type, [String? errorMessage]) {
     if (_lexer.currentType == type) {
       _lexer.advance();
     } else {
-      _reportError(errorMessage);
+      _reportError(errorMessage ?? 'Expected ${type.displayName}');
     }
   }
 
@@ -100,7 +100,7 @@ class LakeParser {
 
   ImportNode _parseImport() {
     final start = _lexer.currentStart;
-    _expect(.kwImport, "Expected 'import'");
+    _expect(.kwImport);
 
     final path = _parseStringLiteral();
     _optionalListSeparator();
@@ -114,7 +114,7 @@ class LakeParser {
 
   NamespaceNode _parseNamespace() {
     final start = _lexer.currentStart;
-    _expect(.kwNamespace, "Expected 'namespace'");
+    _expect(.kwNamespace);
 
     final scopeStart = _lexer.currentStart;
     String scopeName;
@@ -173,7 +173,7 @@ class LakeParser {
 
   ConstDefinitionNode _parseConstDefinition(String? docComment) {
     final start = _lexer.currentStart;
-    _expect(.kwConst, "Expected 'const'");
+    _expect(.kwConst);
     final type = _parseType();
     final identifier = _parseIdentifier();
     _expect(.equals, "Expected '=' in const definition");
@@ -193,7 +193,7 @@ class LakeParser {
 
   TypedefDefinitionNode _parseTypedefDefinition(String? docComment) {
     final start = _lexer.currentStart;
-    _expect(.kwTypedef, "Expected 'typedef'");
+    _expect(.kwTypedef);
     // DefinitionType ::= ContainerType | BaseType
     final type = _parseType();
     if (type is CustomTypeNode || type is StreamTypeNode) {
@@ -213,7 +213,7 @@ class LakeParser {
 
   EnumDefinitionNode _parseEnumDefinition(String? docComment) {
     final start = _lexer.currentStart;
-    _expect(.kwEnum, "Expected 'enum'");
+    _expect(.kwEnum);
     final identifier = _parseIdentifier();
     _expect(.braceLeft, "Expected '{' after enum name");
 
@@ -255,7 +255,7 @@ class LakeParser {
 
   StructDefinitionNode _parseStructDefinition(String? docComment) {
     final start = _lexer.currentStart;
-    _expect(.kwStruct, "Expected 'struct'");
+    _expect(.kwStruct);
     final identifier = _parseIdentifier();
     _expect(.braceLeft, "Expected '{' after struct name");
     final fields = _parseFields();
@@ -272,7 +272,7 @@ class LakeParser {
 
   UnionDefinitionNode _parseUnionDefinition(String? docComment) {
     final start = _lexer.currentStart;
-    _expect(.kwUnion, "Expected 'union'");
+    _expect(.kwUnion);
     final identifier = _parseIdentifier();
     _expect(.braceLeft, "Expected '{' after union name");
     final fields = _parseFields();
@@ -289,7 +289,7 @@ class LakeParser {
 
   ExceptionDefinitionNode _parseExceptionDefinition(String? docComment) {
     final start = _lexer.currentStart;
-    _expect(.kwException, "Expected 'exception'");
+    _expect(.kwException);
     final identifier = _parseIdentifier();
     _expect(.braceLeft, "Expected '{' after exception name");
     final fields = _parseFields();
@@ -306,7 +306,7 @@ class LakeParser {
 
   ServiceDefinitionNode _parseServiceDefinition(String? docComment) {
     final start = _lexer.currentStart;
-    _expect(.kwService, "Expected 'service'");
+    _expect(.kwService);
     final identifier = _parseIdentifier();
 
     IdentifierNode? extendsService;
