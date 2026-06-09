@@ -83,5 +83,6 @@ void main(List<String> args) {
         : stdout.writeln('No semantic errors found.');
 
     watch.stop();
+    stdout.writeln('Analysis completed in ${watch.elapsedMilliseconds} ms.');
   }
 }
