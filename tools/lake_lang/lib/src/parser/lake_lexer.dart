@@ -268,7 +268,7 @@ class LakeLexer {
   TokenType _getIdentifierOrKeyword(int start, int end) {
     final len = end - start;
     if (len < 2 || len > 9) {
-      return TokenType.identifier;
+      return .identifier;
     }
 
     final c0 = _input.codeUnitAt(start);
