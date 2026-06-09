@@ -33,11 +33,11 @@ class LakeLexer {
     advance();
   }
 
+  final String _input;
+
   int get currentStart => _currentStart;
   int get currentEnd => _currentEnd;
   TokenType get currentType => _currentType;
-
-  final String _input;
 
   var _cursor = 0;
   var _currentStart = 0;
@@ -192,11 +192,7 @@ class LakeLexer {
       final codeUnit = _input.codeUnitAt(_cursor);
 
       // Whitespace
-      if (codeUnit == 32 ||
-          codeUnit == 9 ||
-          codeUnit == 10 ||
-          codeUnit == 13 ||
-          codeUnit == 12) {
+      if (_isWhitespace(codeUnit)) {
         _cursor++;
         continue;
       }
@@ -212,17 +208,27 @@ class LakeLexer {
               _input.codeUnitAt(_cursor + 2) == 47) {
             isDocComment = true;
           }
+
           final startComment = _cursor;
           _cursor += 2;
+
           while (_cursor < _input.length &&
               _input.codeUnitAt(_cursor) != 10 /* \n */ ) {
             _cursor++;
           }
+
           if (isDocComment) {
-            final commentText = _input
-                .substring(startComment + 3, _cursor)
-                .trim();
-            _pendingDocComments.add(commentText);
+            var s = startComment + 3;
+            var e = _cursor;
+            while (s < e && _isWhitespace(_input.codeUnitAt(s))) {
+              s++;
+            }
+
+            while (e > s && _isWhitespace(_input.codeUnitAt(e - 1))) {
+              e--;
+            }
+
+            _pendingDocComments.add(_input.substring(s, e));
           }
           continue;
         }
@@ -257,7 +263,34 @@ class LakeLexer {
 
   String getSlice() => _input.substring(_currentStart, _currentEnd);
 
+  int get currentIntValue {
+    var val = 0;
+    var i = _currentStart;
+    final firstChar = _input.codeUnitAt(i);
+    var isNegative = false;
+
+    if (firstChar == 45 /* - */ ) {
+      isNegative = true;
+      i++;
+    } else if (firstChar == 43 /* + */ ) {
+      i++;
+    }
+
+    for (; i < _currentEnd; i++) {
+      val = val * 10 + (_input.codeUnitAt(i) - 48);
+    }
+    return isNegative ? -val : val;
+  }
+
+  double get currentDoubleValue => double.parse(getSlice());
+
+  String get currentStringValue =>
+      _input.substring(_currentStart + 1, _currentEnd - 1);
+
   // Character class helpers
+  bool _isWhitespace(int c) =>
+      c == 32 || c == 9 || c == 10 || c == 13 || c == 12;
+
   bool _isDigit(int c) => c >= 48 && c <= 57;
 
   bool _isLetter(int c) => (c >= 65 && c <= 90) || (c >= 97 && c <= 122);

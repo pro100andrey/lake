@@ -689,7 +689,7 @@ class LakeParser {
     }
 
     final start = _lexer.currentStart;
-    final value = int.parse(_lexer.getSlice());
+    final value = _lexer.currentIntValue;
     _lexer.advance();
 
     return IntLiteralNode(
@@ -705,7 +705,7 @@ class LakeParser {
     }
 
     final start = _lexer.currentStart;
-    final value = double.parse(_lexer.getSlice());
+    final value = _lexer.currentDoubleValue;
     _lexer.advance();
 
     return DoubleLiteralNode(
@@ -721,8 +721,7 @@ class LakeParser {
     }
 
     final start = _lexer.currentStart;
-    final raw = _lexer.getSlice();
-    final value = raw.substring(1, raw.length - 1);
+    final value = _lexer.currentStringValue;
     _lexer.advance();
 
     return StringLiteralNode(
@@ -739,6 +738,7 @@ class LakeParser {
 
     final start = _lexer.currentStart;
     final name = _lexer.getSlice();
+
     _lexer.advance();
 
     return IdentifierNode(
